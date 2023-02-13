@@ -846,8 +846,10 @@ inductive TextureFilter.Is : UInt32 -> Prop where
   | TEXTURE_FILTER_ANISOTROPIC_4X : TextureFilter.Is 3
   | TEXTURE_FILTER_ANISOTROPIC_8X : TextureFilter.Is 4
   | TEXTURE_FILTER_ANISOTROPIC_16X : TextureFilter.Is 5
+
 /-- Texture parameters: filter mode -/
 def TextureFilter : Type := Subtype TextureFilter.Is
+
 /-- No filter, just pixel approximation -/
 def TEXTURE_FILTER_POINT : TextureFilter := Subtype.mk 0 TextureFilter.Is.TEXTURE_FILTER_POINT
 /-- Linear filtering -/
@@ -1008,8 +1010,10 @@ inductive CameraMode.Is : UInt32 -> Prop where
   | CAMERA_ORBITAL : CameraMode.Is 2
   | CAMERA_FIRST_PERSON : CameraMode.Is 3
   | CAMERA_THIRD_PERSON : CameraMode.Is 4
+
 /-- Camera system modes -/
 def CameraMode : Type := Subtype CameraMode.Is
+
 /-- Custom camera -/
 def CAMERA_CUSTOM : CameraMode := Subtype.mk 0 CameraMode.Is.CAMERA_CUSTOM
 /-- Free camera -/
