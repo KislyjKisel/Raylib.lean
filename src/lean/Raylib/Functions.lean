@@ -15,48 +15,48 @@ opaque WindowShouldClose (_ : Unit) : IO Bool
 /-- Close window and unload OpenGL context -/
 @[extern "lean_raylib__CloseWindow"]
 opaque CloseWindow (_ : Unit) : IO Unit
--- /-- Check if window has been initialized successfully -/
--- @[extern "lean_raylib__IsWindowReady"]
--- opaque IsWindowReady (_ : Unit) : Bool
--- /-- Check if window is currently fullscreen -/
--- @[extern "lean_raylib__IsWindowFullscreen"]
--- opaque IsWindowFullscreen (_ : Unit) : Bool
--- /-- Check if window is currently hidden (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__IsWindowHidden"]
--- opaque IsWindowHidden (_ : Unit) : Bool
--- /-- Check if window is currently minimized (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__IsWindowMinimized"]
--- opaque IsWindowMinimized (_ : Unit) : Bool
--- /-- Check if window is currently maximized (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__IsWindowMaximized"]
--- opaque IsWindowMaximized (_ : Unit) : Bool
--- /-- Check if window is currently focused (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__IsWindowFocused"]
--- opaque IsWindowFocused (_ : Unit) : Bool
--- /-- Check if window has been resized last frame -/
--- @[extern "lean_raylib__IsWindowResized"]
--- opaque IsWindowResized (_ : Unit) : Bool
--- /-- Check if one specific window flag is enabled -/
--- @[extern "lean_raylib__IsWindowState"]
--- opaque IsWindowState (flag : UInt32) : Bool
--- /-- Set window configuration state using flags (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__SetWindowState"]
--- opaque SetWindowState (flags : UInt32) : Unit
--- /-- Clear window configuration state flags -/
--- @[extern "lean_raylib__ClearWindowState"]
--- opaque ClearWindowState (flags : UInt32) : Unit
--- /-- Toggle window state: fullscreen/windowed (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__ToggleFullscreen"]
--- opaque ToggleFullscreen (_ : Unit) : Unit
--- /-- Set window state: maximized, if resizable (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__MaximizeWindow"]
--- opaque MaximizeWindow (_ : Unit) : Unit
--- /-- Set window state: minimized, if resizable (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__MinimizeWindow"]
--- opaque MinimizeWindow (_ : Unit) : Unit
--- /-- Set window state: not minimized/maximized (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__RestoreWindow"]
--- opaque RestoreWindow (_ : Unit) : Unit
+/-- Check if window has been initialized successfully -/
+@[extern "lean_raylib__IsWindowReady"]
+opaque IsWindowReady (_ : Unit) : IO Bool
+/-- Check if window is currently fullscreen -/
+@[extern "lean_raylib__IsWindowFullscreen"]
+opaque IsWindowFullscreen (_ : Unit) : IO Bool
+/-- Check if window is currently hidden (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__IsWindowHidden"]
+opaque IsWindowHidden (_ : Unit) : IO Bool
+/-- Check if window is currently minimized (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__IsWindowMinimized"]
+opaque IsWindowMinimized (_ : Unit) : IO Bool
+/-- Check if window is currently maximized (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__IsWindowMaximized"]
+opaque IsWindowMaximized (_ : Unit) : IO Bool
+/-- Check if window is currently focused (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__IsWindowFocused"]
+opaque IsWindowFocused (_ : Unit) : IO Bool
+/-- Check if window has been resized last frame -/
+@[extern "lean_raylib__IsWindowResized"]
+opaque IsWindowResized (_ : Unit) : IO Bool
+/-- Check if one specific window flag is enabled -/
+@[extern "lean_raylib__IsWindowState"]
+opaque IsWindowState (flag : ConfigFlags) : IO Bool
+/-- Set window configuration state using flags (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__SetWindowState"]
+opaque SetWindowState (flags : ConfigFlags) : IO Unit
+/-- Clear window configuration state flags -/
+@[extern "lean_raylib__ClearWindowState"]
+opaque ClearWindowState (flags : ConfigFlags) : IO Unit
+/-- Toggle window state: fullscreen/windowed (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__ToggleFullscreen"]
+opaque ToggleFullscreen (_ : Unit) : IO Unit
+/-- Set window state: maximized, if resizable (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__MaximizeWindow"]
+opaque MaximizeWindow (_ : Unit) : IO Unit
+/-- Set window state: minimized, if resizable (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__MinimizeWindow"]
+opaque MinimizeWindow (_ : Unit) : IO Unit
+/-- Set window state: not minimized/maximized (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__RestoreWindow"]
+opaque RestoreWindow (_ : Unit) : IO Unit
 -- /-- Set icon for window (only PLATFORM_DESKTOP) -/
 -- @[extern "lean_raylib__SetWindowIcon"]
 -- opaque SetWindowIcon (image : Image) : Unit
@@ -580,123 +580,123 @@ opaque IsKeyUp (key : KeyboardKey) : IO Bool
 /-- Set a custom key to exit program (default is ESC) -/
 @[extern "lean_raylib__SetExitKey"]
 opaque SetExitKey (key : KeyboardKey) : IO Unit
--- /-- Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty -/
--- @[extern "lean_raylib__GetKeyPressed"]
--- opaque GetKeyPressed (_ : Unit) : Int32
--- /-- Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty -/
--- @[extern "lean_raylib__GetCharPressed"]
--- opaque GetCharPressed (_ : Unit) : Int32
--- /-- Check if a gamepad is available -/
--- @[extern "lean_raylib__IsGamepadAvailable"]
--- opaque IsGamepadAvailable (gamepad : Int32) : Bool
--- /-- Get gamepad internal name id -/
--- @[extern "lean_raylib__GetGamepadName"]
--- opaque GetGamepadName (gamepad : Int32) : String
--- /-- Check if a gamepad button has been pressed once -/
--- @[extern "lean_raylib__IsGamepadButtonPressed"]
--- opaque IsGamepadButtonPressed (gamepad : Int32) (button : Int32) : Bool
--- /-- Check if a gamepad button is being pressed -/
--- @[extern "lean_raylib__IsGamepadButtonDown"]
--- opaque IsGamepadButtonDown (gamepad : Int32) (button : Int32) : Bool
--- /-- Check if a gamepad button has been released once -/
--- @[extern "lean_raylib__IsGamepadButtonReleased"]
--- opaque IsGamepadButtonReleased (gamepad : Int32) (button : Int32) : Bool
--- /-- Check if a gamepad button is NOT being pressed -/
--- @[extern "lean_raylib__IsGamepadButtonUp"]
--- opaque IsGamepadButtonUp (gamepad : Int32) (button : Int32) : Bool
--- /-- Get the last gamepad button pressed -/
--- @[extern "lean_raylib__GetGamepadButtonPressed"]
--- opaque GetGamepadButtonPressed (_ : Unit) : Int32
--- /-- Get gamepad axis count for a gamepad -/
--- @[extern "lean_raylib__GetGamepadAxisCount"]
--- opaque GetGamepadAxisCount (gamepad : Int32) : Int32
--- /-- Get axis movement value for a gamepad axis -/
--- @[extern "lean_raylib__GetGamepadAxisMovement"]
--- opaque GetGamepadAxisMovement (gamepad : Int32) (axis : Int32) : Float
--- /-- Set internal gamepad mappings (SDL_GameControllerDB) -/
--- @[extern "lean_raylib__SetGamepadMappings"]
--- opaque SetGamepadMappings (mappings : String) : Int32
--- /-- Check if a mouse button has been pressed once -/
--- @[extern "lean_raylib__IsMouseButtonPressed"]
--- opaque IsMouseButtonPressed (button : Int32) : Bool
--- /-- Check if a mouse button is being pressed -/
--- @[extern "lean_raylib__IsMouseButtonDown"]
--- opaque IsMouseButtonDown (button : Int32) : Bool
--- /-- Check if a mouse button has been released once -/
--- @[extern "lean_raylib__IsMouseButtonReleased"]
--- opaque IsMouseButtonReleased (button : Int32) : Bool
--- /-- Check if a mouse button is NOT being pressed -/
--- @[extern "lean_raylib__IsMouseButtonUp"]
--- opaque IsMouseButtonUp (button : Int32) : Bool
--- /-- Get mouse position X -/
--- @[extern "lean_raylib__GetMouseX"]
--- opaque GetMouseX (_ : Unit) : Int32
--- /-- Get mouse position Y -/
--- @[extern "lean_raylib__GetMouseY"]
--- opaque GetMouseY (_ : Unit) : Int32
--- /-- Get mouse position XY -/
--- @[extern "lean_raylib__GetMousePosition"]
--- opaque GetMousePosition (_ : Unit) : Vector2
--- /-- Get mouse delta between frames -/
--- @[extern "lean_raylib__GetMouseDelta"]
--- opaque GetMouseDelta (_ : Unit) : Vector2
--- /-- Set mouse position XY -/
--- @[extern "lean_raylib__SetMousePosition"]
--- opaque SetMousePosition (x : Int32) (y : Int32) : Unit
--- /-- Set mouse offset -/
--- @[extern "lean_raylib__SetMouseOffset"]
--- opaque SetMouseOffset (offsetX : Int32) (offsetY : Int32) : Unit
--- /-- Set mouse scaling -/
--- @[extern "lean_raylib__SetMouseScale"]
--- opaque SetMouseScale (scaleX : Float) (scaleY : Float) : Unit
--- /-- Get mouse wheel movement for X or Y, whichever is larger -/
--- @[extern "lean_raylib__GetMouseWheelMove"]
--- opaque GetMouseWheelMove (_ : Unit) : Float
--- /-- Get mouse wheel movement for both X and Y -/
--- @[extern "lean_raylib__GetMouseWheelMoveV"]
--- opaque GetMouseWheelMoveV (_ : Unit) : Vector2
--- /-- Set mouse cursor -/
--- @[extern "lean_raylib__SetMouseCursor"]
--- opaque SetMouseCursor (cursor : Int32) : Unit
--- /-- Get touch position X for touch point 0 (relative to screen size) -/
--- @[extern "lean_raylib__GetTouchX"]
--- opaque GetTouchX (_ : Unit) : Int32
--- /-- Get touch position Y for touch point 0 (relative to screen size) -/
--- @[extern "lean_raylib__GetTouchY"]
--- opaque GetTouchY (_ : Unit) : Int32
--- /-- Get touch position XY for a touch point index (relative to screen size) -/
--- @[extern "lean_raylib__GetTouchPosition"]
--- opaque GetTouchPosition (index : Int32) : Vector2
--- /-- Get touch point identifier for given index -/
--- @[extern "lean_raylib__GetTouchPointId"]
--- opaque GetTouchPointId (index : Int32) : Int32
--- /-- Get number of touch points -/
--- @[extern "lean_raylib__GetTouchPointCount"]
--- opaque GetTouchPointCount (_ : Unit) : Int32
--- /-- Enable a set of gestures using flags -/
--- @[extern "lean_raylib__SetGesturesEnabled"]
--- opaque SetGesturesEnabled (flags : UInt32) : Unit
--- /-- Check if a gesture have been detected -/
--- @[extern "lean_raylib__IsGestureDetected"]
--- opaque IsGestureDetected (gesture : Int32) : Bool
--- /-- Get latest detected gesture -/
--- @[extern "lean_raylib__GetGestureDetected"]
--- opaque GetGestureDetected (_ : Unit) : Int32
--- /-- Get gesture hold time in milliseconds -/
--- @[extern "lean_raylib__GetGestureHoldDuration"]
--- opaque GetGestureHoldDuration (_ : Unit) : Float
--- /-- Get gesture drag vector -/
--- @[extern "lean_raylib__GetGestureDragVector"]
--- opaque GetGestureDragVector (_ : Unit) : Vector2
--- /-- Get gesture drag angle -/
--- @[extern "lean_raylib__GetGestureDragAngle"]
--- opaque GetGestureDragAngle (_ : Unit) : Float
--- /-- Get gesture pinch delta -/
--- @[extern "lean_raylib__GetGesturePinchVector"]
--- opaque GetGesturePinchVector (_ : Unit) : Vector2
--- /-- Get gesture pinch angle -/
--- @[extern "lean_raylib__GetGesturePinchAngle"]
--- opaque GetGesturePinchAngle (_ : Unit) : Float
+/-- Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty -/
+@[extern "lean_raylib__GetKeyPressed"]
+opaque GetKeyPressed (_ : Unit) : IO KeyboardKey
+/-- Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty -/
+@[extern "lean_raylib__GetCharPressed"]
+opaque GetCharPressed (_ : Unit) : IO Char
+/-- Check if a gamepad is available -/
+@[extern "lean_raylib__IsGamepadAvailable"]
+opaque IsGamepadAvailable (gamepad : UInt32) : IO Bool
+/-- Get gamepad internal name id -/
+@[extern "lean_raylib__GetGamepadName"]
+opaque GetGamepadName (gamepad : UInt32) : IO String
+/-- Check if a gamepad button has been pressed once -/
+@[extern "lean_raylib__IsGamepadButtonPressed"]
+opaque IsGamepadButtonPressed (gamepad : UInt32) (button : GamepadButton) : IO Bool
+/-- Check if a gamepad button is being pressed -/
+@[extern "lean_raylib__IsGamepadButtonDown"]
+opaque IsGamepadButtonDown (gamepad : UInt32) (button : GamepadButton) : IO Bool
+/-- Check if a gamepad button has been released once -/
+@[extern "lean_raylib__IsGamepadButtonReleased"]
+opaque IsGamepadButtonReleased (gamepad : UInt32) (button : GamepadButton) : IO Bool
+/-- Check if a gamepad button is NOT being pressed -/
+@[extern "lean_raylib__IsGamepadButtonUp"]
+opaque IsGamepadButtonUp (gamepad : UInt32) (button : GamepadButton) : IO Bool
+/-- Get the last gamepad button pressed -/
+@[extern "lean_raylib__GetGamepadButtonPressed"]
+opaque GetGamepadButtonPressed (_ : Unit) : IO GamepadButton
+/-- Get gamepad axis count for a gamepad -/
+@[extern "lean_raylib__GetGamepadAxisCount"]
+opaque GetGamepadAxisCount (gamepad : UInt32) : IO UInt32
+/-- Get axis movement value for a gamepad axis -/
+@[extern "lean_raylib__GetGamepadAxisMovement"]
+opaque GetGamepadAxisMovement (gamepad : UInt32) (axis : UInt32) : Float
+/-- Set internal gamepad mappings (SDL_GameControllerDB) -/
+@[extern "lean_raylib__SetGamepadMappings"]
+opaque SetGamepadMappings (mappings : String) : IO Bool
+/-- Check if a mouse button has been pressed once -/
+@[extern "lean_raylib__IsMouseButtonPressed"]
+opaque IsMouseButtonPressed (button : MouseButton) : IO Bool
+/-- Check if a mouse button is being pressed -/
+@[extern "lean_raylib__IsMouseButtonDown"]
+opaque IsMouseButtonDown (button : MouseButton) : IO Bool
+/-- Check if a mouse button has been released once -/
+@[extern "lean_raylib__IsMouseButtonReleased"]
+opaque IsMouseButtonReleased (button : MouseButton) : IO Bool
+/-- Check if a mouse button is NOT being pressed -/
+@[extern "lean_raylib__IsMouseButtonUp"]
+opaque IsMouseButtonUp (button : MouseButton) : IO Bool
+/-- Get mouse position X -/
+@[extern "lean_raylib__GetMouseX"]
+opaque GetMouseX (_ : Unit) : IO Int32
+/-- Get mouse position Y -/
+@[extern "lean_raylib__GetMouseY"]
+opaque GetMouseY (_ : Unit) : IO Int32
+/-- Get mouse position XY -/
+@[extern "lean_raylib__GetMousePosition"]
+opaque GetMousePosition (_ : Unit) : IO Vector2
+/-- Get mouse delta between frames -/
+@[extern "lean_raylib__GetMouseDelta"]
+opaque GetMouseDelta (_ : Unit) : IO Vector2
+/-- Set mouse position XY -/
+@[extern "lean_raylib__SetMousePosition"]
+opaque SetMousePosition (x : Int32) (y : Int32) : IO Unit
+/-- Set mouse offset -/
+@[extern "lean_raylib__SetMouseOffset"]
+opaque SetMouseOffset (offsetX : Int32) (offsetY : Int32) : IO Unit
+/-- Set mouse scaling -/
+@[extern "lean_raylib__SetMouseScale"]
+opaque SetMouseScale (scaleX : Float) (scaleY : Float) : IO Unit
+/-- Get mouse wheel movement for X or Y, whichever is larger -/
+@[extern "lean_raylib__GetMouseWheelMove"]
+opaque GetMouseWheelMove (_ : Unit) : IO Float
+/-- Get mouse wheel movement for both X and Y -/
+@[extern "lean_raylib__GetMouseWheelMoveV"]
+opaque GetMouseWheelMoveV (_ : Unit) : IO Vector2
+/-- Set mouse cursor -/
+@[extern "lean_raylib__SetMouseCursor"]
+opaque SetMouseCursor (cursor : MouseCursor) : IO Unit
+/-- Get touch position X for touch point 0 (relative to screen size) -/
+@[extern "lean_raylib__GetTouchX"]
+opaque GetTouchX (_ : Unit) : IO Int32
+/-- Get touch position Y for touch point 0 (relative to screen size) -/
+@[extern "lean_raylib__GetTouchY"]
+opaque GetTouchY (_ : Unit) : IO Int32
+/-- Get touch position XY for a touch point index (relative to screen size) -/
+@[extern "lean_raylib__GetTouchPosition"]
+opaque GetTouchPosition (index : UInt32) : IO Vector2
+/-- Get touch point identifier for given index -/
+@[extern "lean_raylib__GetTouchPointId"]
+opaque GetTouchPointId (index : UInt32) : IO Int32
+/-- Get number of touch points -/
+@[extern "lean_raylib__GetTouchPointCount"]
+opaque GetTouchPointCount (_ : Unit) : IO UInt32
+/-- Enable a set of gestures using flags -/
+@[extern "lean_raylib__SetGesturesEnabled"]
+opaque SetGesturesEnabled (flags : GestureFlags) : IO Unit
+/-- Check if a gesture have been detected -/
+@[extern "lean_raylib__IsGestureDetected"]
+opaque IsGestureDetected (gesture : Gesture) : IO Bool
+/-- Get latest detected gesture -/
+@[extern "lean_raylib__GetGestureDetected"]
+opaque GetGestureDetected (_ : Unit) : IO Gesture
+/-- Get gesture hold time in milliseconds -/
+@[extern "lean_raylib__GetGestureHoldDuration"]
+opaque GetGestureHoldDuration (_ : Unit) : IO Float
+/-- Get gesture drag vector -/
+@[extern "lean_raylib__GetGestureDragVector"]
+opaque GetGestureDragVector (_ : Unit) : IO Vector2
+/-- Get gesture drag angle -/
+@[extern "lean_raylib__GetGestureDragAngle"]
+opaque GetGestureDragAngle (_ : Unit) : IO Float
+/-- Get gesture pinch delta -/
+@[extern "lean_raylib__GetGesturePinchVector"]
+opaque GetGesturePinchVector (_ : Unit) : IO Vector2
+/-- Get gesture pinch angle -/
+@[extern "lean_raylib__GetGesturePinchAngle"]
+opaque GetGesturePinchAngle (_ : Unit) : IO Float
 -- /-- Set camera mode (multiple camera modes available) -/
 -- @[extern "lean_raylib__SetCameraMode"]
 -- opaque SetCameraMode (camera : Camera) (mode : Int32) : Unit
@@ -723,30 +723,30 @@ opaque SetExitKey (key : KeyboardKey) : IO Unit
 -- /-- Set texture and rectangle to be used on shapes drawing -/
 -- @[extern "lean_raylib__SetShapesTexture"]
 -- opaque SetShapesTexture (texture : Texture2D) (source : Rectangle) : Unit
--- /-- Draw a pixel -/
--- @[extern "lean_raylib__DrawPixel"]
--- opaque DrawPixel (posX : Int32) (posY : Int32) (color : Color) : Unit
--- /-- Draw a pixel (Vector version) -/
--- @[extern "lean_raylib__DrawPixelV"]
--- opaque DrawPixelV (position : Vector2) (color : Color) : Unit
--- /-- Draw a line -/
--- @[extern "lean_raylib__DrawLine"]
--- opaque DrawLine (startPosX : Int32) (startPosY : Int32) (endPosX : Int32) (endPosY : Int32) (color : Color) : Unit
--- /-- Draw a line (Vector version) -/
--- @[extern "lean_raylib__DrawLineV"]
--- opaque DrawLineV (startPos : Vector2) (endPos : Vector2) (color : Color) : Unit
--- /-- Draw a line defining thickness -/
--- @[extern "lean_raylib__DrawLineEx"]
--- opaque DrawLineEx (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : Unit
--- /-- Draw a line using cubic-bezier curves in-out -/
--- @[extern "lean_raylib__DrawLineBezier"]
--- opaque DrawLineBezier (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : Unit
--- /-- Draw line using quadratic bezier curves with a control point -/
--- @[extern "lean_raylib__DrawLineBezierQuad"]
--- opaque DrawLineBezierQuad (startPos : Vector2) (endPos : Vector2) (controlPos : Vector2) (thick : Float) (color : Color) : Unit
--- /-- Draw line using cubic bezier curves with 2 control points -/
--- @[extern "lean_raylib__DrawLineBezierCubic"]
--- opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControlPos : Vector2) (endControlPos : Vector2) (thick : Float) (color : Color) : Unit
+/-- Draw a pixel -/
+@[extern "lean_raylib__DrawPixel"]
+opaque DrawPixel (posX : Int32) (posY : Int32) (color : Color) : IO Unit
+/-- Draw a pixel (Vector version) -/
+@[extern "lean_raylib__DrawPixelV"]
+opaque DrawPixelV (position : Vector2) (color : Color) : IO Unit
+/-- Draw a line -/
+@[extern "lean_raylib__DrawLine"]
+opaque DrawLine (startPosX : Int32) (startPosY : Int32) (endPosX : Int32) (endPosY : Int32) (color : Color) : IO Unit
+/-- Draw a line (Vector version) -/
+@[extern "lean_raylib__DrawLineV"]
+opaque DrawLineV (startPos : Vector2) (endPos : Vector2) (color : Color) : IO Unit
+/-- Draw a line defining thickness -/
+@[extern "lean_raylib__DrawLineEx"]
+opaque DrawLineEx (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : IO Unit
+/-- Draw a line using cubic-bezier curves in-out -/
+@[extern "lean_raylib__DrawLineBezier"]
+opaque DrawLineBezier (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : IO Unit
+/-- Draw line using quadratic bezier curves with a control point -/
+@[extern "lean_raylib__DrawLineBezierQuad"]
+opaque DrawLineBezierQuad (startPos : Vector2) (endPos : Vector2) (controlPos : Vector2) (thick : Float) (color : Color) : IO Unit
+/-- Draw line using cubic bezier curves with 2 control points -/
+@[extern "lean_raylib__DrawLineBezierCubic"]
+opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControlPos : Vector2) (endControlPos : Vector2) (thick : Float) (color : Color) : IO Unit
 -- /-- Draw lines sequence -/
 -- @[extern "lean_raylib__DrawLineStrip"]
 -- opaque DrawLineStrip : Unit -> Unit

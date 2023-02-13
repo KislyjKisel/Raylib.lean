@@ -6,6 +6,7 @@ structure Int32 where
   val: UInt32
 deriving Inhabited, Repr
 
+-- todo: negative Int32 literals; OfNat Int32 != OfNat UInt32 (UInt32.size > Int32 max)
 instance {n} [n' : OfNat UInt32 n] : OfNat Int32 n := OfNat.mk (Int32.mk n'.ofNat)
 
 opaque floatX2Pointed : NonemptyType

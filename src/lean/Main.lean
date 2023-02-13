@@ -7,6 +7,9 @@ partial def loop : IO Unit := do
   ClearBackground RAYWHITE
   EndDrawing ()
 
+  let mp ← GetMousePosition ()
+  DrawLineV (Vector2.mk 0.0 0.0) mp YELLOW
+
   let exit ← WindowShouldClose ()
   if exit
     then pure ()

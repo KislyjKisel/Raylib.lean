@@ -16,75 +16,67 @@ LEAN_EXPORT lean_obj_res lean_raylib__CloseWindow () {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT uint8_t lean_raylib__IsWindowReady () {
-//     bool result_ = IsWindowReady();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsWindowReady () {
+    return lean_io_result_mk_ok(lean_box(IsWindowReady()));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsWindowFullscreen () {
-//     bool result_ = IsWindowFullscreen();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsWindowFullscreen () {
+    return lean_io_result_mk_ok(lean_box(IsWindowFullscreen()));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsWindowHidden () {
-//     bool result_ = IsWindowHidden();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsWindowHidden () {
+    return lean_io_result_mk_ok(lean_box(IsWindowHidden()));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsWindowMinimized () {
-//     bool result_ = IsWindowMinimized();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsWindowMinimized () {
+    return lean_io_result_mk_ok(lean_box(IsWindowMinimized()));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsWindowMaximized () {
-//     bool result_ = IsWindowMaximized();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsWindowMaximized () {
+    return lean_io_result_mk_ok(lean_box(IsWindowMaximized()));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsWindowFocused () {
-//     bool result_ = IsWindowFocused();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsWindowFocused () {
+    return lean_io_result_mk_ok(lean_box(IsWindowFocused()));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsWindowResized () {
-//     bool result_ = IsWindowResized();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsWindowResized () {
+    return lean_io_result_mk_ok(lean_box(IsWindowResized()));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsWindowState (uint32_t flag) {
-//     bool result_ = IsWindowState(flag);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsWindowState (uint32_t flag) {
+    return lean_io_result_mk_ok(lean_box(IsWindowState(flag)));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetWindowState (uint32_t flags) {
-//     SetWindowState(flags);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowState (uint32_t flags) {
+    SetWindowState(flags);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ClearWindowState (uint32_t flags) {
-//     ClearWindowState(flags);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ClearWindowState (uint32_t flags) {
+    ClearWindowState(flags);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ToggleFullscreen () {
-//     ToggleFullscreen();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ToggleFullscreen () {
+    ToggleFullscreen();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__MaximizeWindow () {
-//     MaximizeWindow();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__MaximizeWindow () {
+    MaximizeWindow();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__MinimizeWindow () {
-//     MinimizeWindow();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__MinimizeWindow () {
+    MinimizeWindow();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__RestoreWindow () {
-//     RestoreWindow();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__RestoreWindow () {
+    RestoreWindow();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__SetWindowIcon (lean_obj_arg image) {
 //     SetWindowIcon(lean_raylib_Image_from(image));
@@ -700,15 +692,15 @@ LEAN_EXPORT lean_obj_res lean_raylib__IsKeyPressed (uint32_t key) {
     return lean_io_result_mk_ok(lean_box(IsKeyPressed(key)));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsKeyDown (uint32_t key) {
+LEAN_EXPORT lean_obj_res lean_raylib__IsKeyDown (uint32_t key) {
     return lean_io_result_mk_ok(lean_box(IsKeyDown(key)));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsKeyReleased (uint32_t key) {
+LEAN_EXPORT lean_obj_res lean_raylib__IsKeyReleased (uint32_t key) {
     return lean_io_result_mk_ok(lean_box(IsKeyReleased(key)));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsKeyUp (uint32_t key) {
+LEAN_EXPORT lean_obj_res lean_raylib__IsKeyUp (uint32_t key) {
     return lean_io_result_mk_ok(lean_box(IsKeyUp(key)));
 }
 
@@ -717,200 +709,175 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetExitKey (uint32_t key) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT uint32_t lean_raylib__GetKeyPressed () {
-//     int result_ = GetKeyPressed();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetKeyPressed () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetKeyPressed()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetCharPressed () {
-//     int result_ = GetCharPressed();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetCharPressed () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetCharPressed()));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsGamepadAvailable (uint32_t gamepad) {
-//     bool result_ = IsGamepadAvailable(gamepad);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsGamepadAvailable (uint32_t gamepad) {
+    return lean_io_result_mk_ok(lean_box(IsGamepadAvailable(gamepad)));
+}
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetGamepadName (uint32_t gamepad) {
-//     const char * result_ = GetGamepadName(gamepad);
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
-// }
+LEAN_EXPORT lean_obj_arg lean_raylib__GetGamepadName (uint32_t gamepad) {
+    const char * result_ = GetGamepadName(gamepad);
+    return lean_io_result_mk_ok(
+        lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_))
+    );
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsGamepadButtonPressed (uint32_t gamepad, uint32_t button) {
-//     bool result_ = IsGamepadButtonPressed(gamepad, button);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsGamepadButtonPressed (uint32_t gamepad, uint32_t button) {
+    return lean_io_result_mk_ok(lean_box(IsGamepadButtonPressed(gamepad, button)));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsGamepadButtonDown (uint32_t gamepad, uint32_t button) {
-//     bool result_ = IsGamepadButtonDown(gamepad, button);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsGamepadButtonDown (uint32_t gamepad, uint32_t button) {
+    return lean_io_result_mk_ok(lean_box(IsGamepadButtonDown(gamepad, button)));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsGamepadButtonReleased (uint32_t gamepad, uint32_t button) {
-//     bool result_ = IsGamepadButtonReleased(gamepad, button);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsGamepadButtonReleased (uint32_t gamepad, uint32_t button) {
+    return lean_io_result_mk_ok(lean_box(IsGamepadButtonReleased(gamepad, button)));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsGamepadButtonUp (uint32_t gamepad, uint32_t button) {
-//     bool result_ = IsGamepadButtonUp(gamepad, button);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsGamepadButtonUp (uint32_t gamepad, uint32_t button) {
+    return lean_io_result_mk_ok(lean_box(IsGamepadButtonUp(gamepad, button)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetGamepadButtonPressed () {
-//     int result_ = GetGamepadButtonPressed();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGamepadButtonPressed () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetGamepadButtonPressed()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetGamepadAxisCount (uint32_t gamepad) {
-//     int result_ = GetGamepadAxisCount(gamepad);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGamepadAxisCount (uint32_t gamepad) {
+    return lean_io_result_mk_ok(lean_box_uint32(GetGamepadAxisCount(gamepad)));
+}
 
-// LEAN_EXPORT double lean_raylib__GetGamepadAxisMovement (uint32_t gamepad, uint32_t axis) {
-//     float result_ = GetGamepadAxisMovement(gamepad, axis);
-//     return (float)result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGamepadAxisMovement (uint32_t gamepad, uint32_t axis) {
+    return lean_io_result_mk_ok(lean_box_float(GetGamepadAxisMovement(gamepad, axis)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__SetGamepadMappings (/* const char* */lean_obj_arg mappings) {
-//     int result_ = SetGamepadMappings(lean_string_cstr(mappings));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetGamepadMappings (lean_obj_arg mappings) {
+    return lean_io_result_mk_ok(lean_box(SetGamepadMappings(lean_string_cstr(mappings))));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsMouseButtonPressed (uint32_t button) {
-//     bool result_ = IsMouseButtonPressed(button);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsMouseButtonPressed (uint32_t button) {
+    return lean_io_result_mk_ok(lean_box(IsMouseButtonPressed(button)));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsMouseButtonDown (uint32_t button) {
-//     bool result_ = IsMouseButtonDown(button);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsMouseButtonDown (uint32_t button) {
+    return lean_io_result_mk_ok(lean_box(IsMouseButtonDown(button)));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsMouseButtonReleased (uint32_t button) {
-//     bool result_ = IsMouseButtonReleased(button);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsMouseButtonReleased (uint32_t button) {
+    return lean_io_result_mk_ok(lean_box(IsMouseButtonReleased(button)));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsMouseButtonUp (uint32_t button) {
-//     bool result_ = IsMouseButtonUp(button);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsMouseButtonUp (uint32_t button) {
+    return lean_io_result_mk_ok(lean_box(IsMouseButtonUp(button)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetMouseX () {
-//     int result_ = GetMouseX();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMouseX () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetMouseX()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetMouseY () {
-//     int result_ = GetMouseY();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMouseY () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetMouseY()));
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetMousePosition () {
-//     Vector2 result_ = GetMousePosition();
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMousePosition () {
+    LET_BOX(Vector2, mousePos, GetMousePosition());
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(mousePos));
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetMouseDelta () {
-//     Vector2 result_ = GetMouseDelta();
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMouseDelta () {
+    LET_BOX(Vector2, mouseDelta, GetMouseDelta());
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(mouseDelta));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMousePosition (uint32_t x, uint32_t y) {
-//     SetMousePosition(x, y);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetMousePosition (uint32_t x, uint32_t y) {
+    SetMousePosition(x, y);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMouseOffset (uint32_t offsetX, uint32_t offsetY) {
-//     SetMouseOffset(offsetX, offsetY);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetMouseOffset (uint32_t offsetX, uint32_t offsetY) {
+    SetMouseOffset(offsetX, offsetY);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMouseScale (double scaleX, double scaleY) {
-//     SetMouseScale((float)scaleX, (float)scaleY);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetMouseScale (double scaleX, double scaleY) {
+    SetMouseScale((float)scaleX, (float)scaleY);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT double lean_raylib__GetMouseWheelMove () {
-//     float result_ = GetMouseWheelMove();
-//     return (float)result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMouseWheelMove () {
+    return lean_io_result_mk_ok(lean_box_float(GetMouseWheelMove()));
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetMouseWheelMoveV () {
-//     Vector2 result_ = GetMouseWheelMoveV();
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMouseWheelMoveV () {
+    LET_BOX(Vector2, mouseWheelMove, GetMouseWheelMoveV());
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(mouseWheelMove));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMouseCursor (uint32_t cursor) {
-//     SetMouseCursor(cursor);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetMouseCursor (uint32_t cursor) {
+    SetMouseCursor(cursor);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetTouchX () {
-//     int result_ = GetTouchX();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetTouchX () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetTouchX()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetTouchY () {
-//     int result_ = GetTouchY();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetTouchY () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetTouchY()));
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetTouchPosition (uint32_t index) {
-//     Vector2 result_ = GetTouchPosition(index);
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_arg lean_raylib__GetTouchPosition (uint32_t index) {
+    LET_BOX(Vector2, touchPos, GetTouchPosition(index));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(touchPos));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetTouchPointId (uint32_t index) {
-//     int result_ = GetTouchPointId(index);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetTouchPointId (uint32_t index) {
+    return lean_io_result_mk_ok(lean_box_uint32(GetTouchPointId(index)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetTouchPointCount () {
-//     int result_ = GetTouchPointCount();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetTouchPointCount () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetTouchPointCount()));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetGesturesEnabled (uint32_t flags) {
-//     SetGesturesEnabled(flags);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetGesturesEnabled (uint32_t flags) {
+    SetGesturesEnabled(flags);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsGestureDetected (uint32_t gesture) {
-//     bool result_ = IsGestureDetected(gesture);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsGestureDetected (uint32_t gesture) {
+    return lean_io_result_mk_ok(lean_box(IsGestureDetected(gesture)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetGestureDetected () {
-//     int result_ = GetGestureDetected();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGestureDetected () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetGestureDetected()));
+}
 
-// LEAN_EXPORT double lean_raylib__GetGestureHoldDuration () {
-//     float result_ = GetGestureHoldDuration();
-//     return (float)result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGestureHoldDuration () {
+    return lean_io_result_mk_ok(lean_box_float(GetGestureHoldDuration()));
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetGestureDragVector () {
-//     Vector2 result_ = GetGestureDragVector();
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_arg lean_raylib__GetGestureDragVector () {
+    LET_BOX(Vector2, gestureDrag, GetGestureDragVector());
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(gestureDrag));
+}
 
-// LEAN_EXPORT double lean_raylib__GetGestureDragAngle () {
-//     float result_ = GetGestureDragAngle();
-//     return (float)result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGestureDragAngle () {
+    return lean_io_result_mk_ok(lean_box_float(GetGestureDragAngle()));
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetGesturePinchVector () {
-//     Vector2 result_ = GetGesturePinchVector();
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGesturePinchVector () {
+    LET_BOX(Vector2, gesturePinch, GetGesturePinchVector());
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(gesturePinch));
+}
 
-// LEAN_EXPORT double lean_raylib__GetGesturePinchAngle () {
-//     float result_ = GetGesturePinchAngle();
-//     return (float)result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGesturePinchAngle () {
+    return lean_io_result_mk_ok(lean_box_float(GetGesturePinchAngle()));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__SetCameraMode (lean_obj_arg camera, uint32_t mode) {
 //     SetCameraMode(/*cast Camera to_lean?false*/(camera), mode);
@@ -947,45 +914,45 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetExitKey (uint32_t key) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawPixel (uint32_t posX, uint32_t posY, uint32_t color) {
-//     DrawPixel(posX, posY, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawPixel (uint32_t posX, uint32_t posY, uint32_t color) {
+    DrawPixel(posX, posY, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawPixelV (lean_obj_arg position, uint32_t color) {
-//     DrawPixelV(lean_raylib_Vector2_from(position), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawPixelV (lean_obj_arg position, uint32_t color) {
+    DrawPixelV(*lean_raylib_Vector2_from(position), lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawLine (uint32_t startPosX, uint32_t startPosY, uint32_t endPosX, uint32_t endPosY, uint32_t color) {
-//     DrawLine(startPosX, startPosY, endPosX, endPosY, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawLine (uint32_t startPosX, uint32_t startPosY, uint32_t endPosX, uint32_t endPosY, uint32_t color) {
+    DrawLine(startPosX, startPosY, endPosX, endPosY, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawLineV (lean_obj_arg startPos, lean_obj_arg endPos, uint32_t color) {
-//     DrawLineV(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawLineV (lean_obj_arg startPos, lean_obj_arg endPos, uint32_t color) {
+    DrawLineV(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawLineEx (lean_obj_arg startPos, lean_obj_arg endPos, double thick, uint32_t color) {
-//     DrawLineEx(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), (float)thick, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawLineEx (lean_obj_arg startPos, lean_obj_arg endPos, double thick, uint32_t color) {
+    DrawLineEx(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), (float)thick, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezier (lean_obj_arg startPos, lean_obj_arg endPos, double thick, uint32_t color) {
-//     DrawLineBezier(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), (float)thick, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezier (lean_obj_arg startPos, lean_obj_arg endPos, double thick, uint32_t color) {
+    DrawLineBezier(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), (float)thick, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierQuad (lean_obj_arg startPos, lean_obj_arg endPos, lean_obj_arg controlPos, double thick, uint32_t color) {
-//     DrawLineBezierQuad(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), lean_raylib_Vector2_from(controlPos), (float)thick, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierQuad (lean_obj_arg startPos, lean_obj_arg endPos, lean_obj_arg controlPos, double thick, uint32_t color) {
+    DrawLineBezierQuad(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), *lean_raylib_Vector2_from(controlPos), (float)thick, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos, lean_obj_arg endPos, lean_obj_arg startControlPos, lean_obj_arg endControlPos, double thick, uint32_t color) {
-//     DrawLineBezierCubic(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), lean_raylib_Vector2_from(startControlPos), lean_raylib_Vector2_from(endControlPos), (float)thick, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos, lean_obj_arg endPos, lean_obj_arg startControlPos, lean_obj_arg endControlPos, double thick, uint32_t color) {
+    DrawLineBezierCubic(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), *lean_raylib_Vector2_from(startControlPos), *lean_raylib_Vector2_from(endControlPos), (float)thick, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__DrawLineStrip (/* Vector2* */lean_obj_arg points, uint32_t pointCount, uint32_t color) {
 //     DrawLineStrip(/*todo: ptr?*/points, pointCount, lean_raylib_Color_from(color));

@@ -2,36 +2,47 @@ namespace Raylib
 
 /-! # Config flags -/
 
+/-- System/Window config flags -/
+structure ConfigFlags where
+  val : UInt32
+deriving Inhabited, Repr
+
+instance : OrOp ConfigFlags where
+  or := λ a b ↦ ConfigFlags.mk (a.val ||| b.val)
+
+instance : AndOp ConfigFlags where
+  and := λ a b ↦ ConfigFlags.mk (a.val &&& b.val)
+
 /-- Set to try enabling V-Sync on GPU -/
-def FLAG_VSYNC_HINT : UInt32 := 64
+def FLAG_VSYNC_HINT : ConfigFlags := ConfigFlags.mk 64
 /-- Set to run program in fullscreen -/
-def FLAG_FULLSCREEN_MODE : UInt32 := 2
+def FLAG_FULLSCREEN_MODE : ConfigFlags := ConfigFlags.mk 2
 /-- Set to allow resizable window -/
-def FLAG_WINDOW_RESIZABLE : UInt32 := 4
+def FLAG_WINDOW_RESIZABLE : ConfigFlags := ConfigFlags.mk 4
 /-- Set to disable window decoration (frame and buttons) -/
-def FLAG_WINDOW_UNDECORATED : UInt32 := 8
+def FLAG_WINDOW_UNDECORATED : ConfigFlags := ConfigFlags.mk 8
 /-- Set to hide window -/
-def FLAG_WINDOW_HIDDEN : UInt32 := 128
+def FLAG_WINDOW_HIDDEN : ConfigFlags := ConfigFlags.mk 128
 /-- Set to minimize window (iconify) -/
-def FLAG_WINDOW_MINIMIZED : UInt32 := 512
+def FLAG_WINDOW_MINIMIZED : ConfigFlags := ConfigFlags.mk 512
 /-- Set to maximize window (expanded to monitor) -/
-def FLAG_WINDOW_MAXIMIZED : UInt32 := 1024
+def FLAG_WINDOW_MAXIMIZED : ConfigFlags := ConfigFlags.mk 1024
 /-- Set to window non focused -/
-def FLAG_WINDOW_UNFOCUSED : UInt32 := 2048
+def FLAG_WINDOW_UNFOCUSED : ConfigFlags := ConfigFlags.mk 2048
 /-- Set to window always on top -/
-def FLAG_WINDOW_TOPMOST : UInt32 := 4096
+def FLAG_WINDOW_TOPMOST : ConfigFlags := ConfigFlags.mk 4096
 /-- Set to allow windows running while minimized -/
-def FLAG_WINDOW_ALWAYS_RUN : UInt32 := 256
+def FLAG_WINDOW_ALWAYS_RUN : ConfigFlags := ConfigFlags.mk 256
 /-- Set to allow transparent framebuffer -/
-def FLAG_WINDOW_TRANSPARENT : UInt32 := 16
+def FLAG_WINDOW_TRANSPARENT : ConfigFlags := ConfigFlags.mk 16
 /-- Set to support HighDPI -/
-def FLAG_WINDOW_HIGHDPI : UInt32 := 8192
+def FLAG_WINDOW_HIGHDPI : ConfigFlags := ConfigFlags.mk 8192
 /-- Set to support mouse passthrough, only supported when FLAG_WINDOW_UNDECORATED -/
-def FLAG_WINDOW_MOUSE_PASSTHROUGH : UInt32 := 16384
+def FLAG_WINDOW_MOUSE_PASSTHROUGH : ConfigFlags := ConfigFlags.mk 16384
 /-- Set to try enabling MSAA 4X -/
-def FLAG_MSAA_4X_HINT : UInt32 := 32
+def FLAG_MSAA_4X_HINT : ConfigFlags := ConfigFlags.mk 32
 /-- Set to try enabling interlaced video format (for V3D) -/
-def FLAG_INTERLACED_HINT : UInt32 := 65536
+def FLAG_INTERLACED_HINT : ConfigFlags := ConfigFlags.mk 65536
 
 
 /-! # TraceLogLevel -/
@@ -586,37 +597,26 @@ def GAMEPAD_AXIS_RIGHT_TRIGGER : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.GAME
 -- def MaterialMapIndex : Type := Subtype MaterialMapIndex.Is
 -- /-- Albedo material (same as: MATERIAL_MAP_DIFFUSE) -/
 -- def MATERIAL_MAP_ALBEDO : MaterialMapIndex := Subtype.mk 0 MaterialMapIndex.Is.MATERIAL_MAP_ALBEDO
--- notation "MATERIAL_MAP_ALBEDO_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
 -- /-- Metalness material (same as: MATERIAL_MAP_SPECULAR) -/
 -- def MATERIAL_MAP_METALNESS : MaterialMapIndex := Subtype.mk 1 MaterialMapIndex.Is.MATERIAL_MAP_METALNESS
--- notation "MATERIAL_MAP_METALNESS_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
 -- /-- Normal material -/
 -- def MATERIAL_MAP_NORMAL : MaterialMapIndex := Subtype.mk 2 MaterialMapIndex.Is.MATERIAL_MAP_NORMAL
--- notation "MATERIAL_MAP_NORMAL_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
 -- /-- Roughness material -/
 -- def MATERIAL_MAP_ROUGHNESS : MaterialMapIndex := Subtype.mk 3 MaterialMapIndex.Is.MATERIAL_MAP_ROUGHNESS
--- notation "MATERIAL_MAP_ROUGHNESS_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
 -- /-- Ambient occlusion material -/
 -- def MATERIAL_MAP_OCCLUSION : MaterialMapIndex := Subtype.mk 4 MaterialMapIndex.Is.MATERIAL_MAP_OCCLUSION
--- notation "MATERIAL_MAP_OCCLUSION_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
 -- /-- Emission material -/
 -- def MATERIAL_MAP_EMISSION : MaterialMapIndex := Subtype.mk 5 MaterialMapIndex.Is.MATERIAL_MAP_EMISSION
--- notation "MATERIAL_MAP_EMISSION_p" => Subtype.mk (UInt8.mk (Fin.mk 5 _)) _
 -- /-- Heightmap material -/
 -- def MATERIAL_MAP_HEIGHT : MaterialMapIndex := Subtype.mk 6 MaterialMapIndex.Is.MATERIAL_MAP_HEIGHT
--- notation "MATERIAL_MAP_HEIGHT_p" => Subtype.mk (UInt8.mk (Fin.mk 6 _)) _
 -- /-- Cubemap material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
 -- def MATERIAL_MAP_CUBEMAP : MaterialMapIndex := Subtype.mk 7 MaterialMapIndex.Is.MATERIAL_MAP_CUBEMAP
--- notation "MATERIAL_MAP_CUBEMAP_p" => Subtype.mk (UInt8.mk (Fin.mk 7 _)) _
 -- /-- Irradiance material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
 -- def MATERIAL_MAP_IRRADIANCE : MaterialMapIndex := Subtype.mk 8 MaterialMapIndex.Is.MATERIAL_MAP_IRRADIANCE
--- notation "MATERIAL_MAP_IRRADIANCE_p" => Subtype.mk (UInt8.mk (Fin.mk 8 _)) _
 -- /-- Prefilter material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
 -- def MATERIAL_MAP_PREFILTER : MaterialMapIndex := Subtype.mk 9 MaterialMapIndex.Is.MATERIAL_MAP_PREFILTER
--- notation "MATERIAL_MAP_PREFILTER_p" => Subtype.mk (UInt8.mk (Fin.mk 9 _)) _
 -- /-- Brdf material -/
 -- def MATERIAL_MAP_BRDF : MaterialMapIndex := Subtype.mk 10 MaterialMapIndex.Is.MATERIAL_MAP_BRDF
--- notation "MATERIAL_MAP_BRDF_p" => Subtype.mk (UInt8.mk (Fin.mk 10 _)) _
 -- inductive ShaderLocationIndex.Is : UInt32 -> Prop where
 --   | SHADER_LOC_VERTEX_POSITION : ShaderLocationIndex.Is 0
 --   | SHADER_LOC_VERTEX_TEXCOORD01 : ShaderLocationIndex.Is 1
@@ -648,82 +648,56 @@ def GAMEPAD_AXIS_RIGHT_TRIGGER : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.GAME
 -- def ShaderLocationIndex : Type := Subtype ShaderLocationIndex.Is
 -- /-- Shader location: vertex attribute: position -/
 -- def SHADER_LOC_VERTEX_POSITION : ShaderLocationIndex := Subtype.mk 0 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_POSITION
--- notation "SHADER_LOC_VERTEX_POSITION_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
 -- /-- Shader location: vertex attribute: texcoord01 -/
 -- def SHADER_LOC_VERTEX_TEXCOORD01 : ShaderLocationIndex := Subtype.mk 1 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TEXCOORD01
--- notation "SHADER_LOC_VERTEX_TEXCOORD01_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
 -- /-- Shader location: vertex attribute: texcoord02 -/
 -- def SHADER_LOC_VERTEX_TEXCOORD02 : ShaderLocationIndex := Subtype.mk 2 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TEXCOORD02
--- notation "SHADER_LOC_VERTEX_TEXCOORD02_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
 -- /-- Shader location: vertex attribute: normal -/
 -- def SHADER_LOC_VERTEX_NORMAL : ShaderLocationIndex := Subtype.mk 3 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_NORMAL
--- notation "SHADER_LOC_VERTEX_NORMAL_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
 -- /-- Shader location: vertex attribute: tangent -/
 -- def SHADER_LOC_VERTEX_TANGENT : ShaderLocationIndex := Subtype.mk 4 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TANGENT
--- notation "SHADER_LOC_VERTEX_TANGENT_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
 -- /-- Shader location: vertex attribute: color -/
 -- def SHADER_LOC_VERTEX_COLOR : ShaderLocationIndex := Subtype.mk 5 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_COLOR
--- notation "SHADER_LOC_VERTEX_COLOR_p" => Subtype.mk (UInt8.mk (Fin.mk 5 _)) _
 -- /-- Shader location: matrix uniform: model-view-projection -/
 -- def SHADER_LOC_MATRIX_MVP : ShaderLocationIndex := Subtype.mk 6 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_MVP
--- notation "SHADER_LOC_MATRIX_MVP_p" => Subtype.mk (UInt8.mk (Fin.mk 6 _)) _
 -- /-- Shader location: matrix uniform: view (camera transform) -/
 -- def SHADER_LOC_MATRIX_VIEW : ShaderLocationIndex := Subtype.mk 7 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_VIEW
--- notation "SHADER_LOC_MATRIX_VIEW_p" => Subtype.mk (UInt8.mk (Fin.mk 7 _)) _
 -- /-- Shader location: matrix uniform: projection -/
 -- def SHADER_LOC_MATRIX_PROJECTION : ShaderLocationIndex := Subtype.mk 8 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_PROJECTION
--- notation "SHADER_LOC_MATRIX_PROJECTION_p" => Subtype.mk (UInt8.mk (Fin.mk 8 _)) _
 -- /-- Shader location: matrix uniform: model (transform) -/
 -- def SHADER_LOC_MATRIX_MODEL : ShaderLocationIndex := Subtype.mk 9 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_MODEL
--- notation "SHADER_LOC_MATRIX_MODEL_p" => Subtype.mk (UInt8.mk (Fin.mk 9 _)) _
 -- /-- Shader location: matrix uniform: normal -/
 -- def SHADER_LOC_MATRIX_NORMAL : ShaderLocationIndex := Subtype.mk 10 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_NORMAL
--- notation "SHADER_LOC_MATRIX_NORMAL_p" => Subtype.mk (UInt8.mk (Fin.mk 10 _)) _
 -- /-- Shader location: vector uniform: view -/
 -- def SHADER_LOC_VECTOR_VIEW : ShaderLocationIndex := Subtype.mk 11 ShaderLocationIndex.Is.SHADER_LOC_VECTOR_VIEW
--- notation "SHADER_LOC_VECTOR_VIEW_p" => Subtype.mk (UInt8.mk (Fin.mk 11 _)) _
 -- /-- Shader location: vector uniform: diffuse color -/
 -- def SHADER_LOC_COLOR_DIFFUSE : ShaderLocationIndex := Subtype.mk 12 ShaderLocationIndex.Is.SHADER_LOC_COLOR_DIFFUSE
--- notation "SHADER_LOC_COLOR_DIFFUSE_p" => Subtype.mk (UInt8.mk (Fin.mk 12 _)) _
 -- /-- Shader location: vector uniform: specular color -/
 -- def SHADER_LOC_COLOR_SPECULAR : ShaderLocationIndex := Subtype.mk 13 ShaderLocationIndex.Is.SHADER_LOC_COLOR_SPECULAR
--- notation "SHADER_LOC_COLOR_SPECULAR_p" => Subtype.mk (UInt8.mk (Fin.mk 13 _)) _
 -- /-- Shader location: vector uniform: ambient color -/
 -- def SHADER_LOC_COLOR_AMBIENT : ShaderLocationIndex := Subtype.mk 14 ShaderLocationIndex.Is.SHADER_LOC_COLOR_AMBIENT
--- notation "SHADER_LOC_COLOR_AMBIENT_p" => Subtype.mk (UInt8.mk (Fin.mk 14 _)) _
 -- /-- Shader location: sampler2d texture: albedo (same as: SHADER_LOC_MAP_DIFFUSE) -/
 -- def SHADER_LOC_MAP_ALBEDO : ShaderLocationIndex := Subtype.mk 15 ShaderLocationIndex.Is.SHADER_LOC_MAP_ALBEDO
--- notation "SHADER_LOC_MAP_ALBEDO_p" => Subtype.mk (UInt8.mk (Fin.mk 15 _)) _
 -- /-- Shader location: sampler2d texture: metalness (same as: SHADER_LOC_MAP_SPECULAR) -/
 -- def SHADER_LOC_MAP_METALNESS : ShaderLocationIndex := Subtype.mk 16 ShaderLocationIndex.Is.SHADER_LOC_MAP_METALNESS
--- notation "SHADER_LOC_MAP_METALNESS_p" => Subtype.mk (UInt8.mk (Fin.mk 16 _)) _
 -- /-- Shader location: sampler2d texture: normal -/
 -- def SHADER_LOC_MAP_NORMAL : ShaderLocationIndex := Subtype.mk 17 ShaderLocationIndex.Is.SHADER_LOC_MAP_NORMAL
--- notation "SHADER_LOC_MAP_NORMAL_p" => Subtype.mk (UInt8.mk (Fin.mk 17 _)) _
 -- /-- Shader location: sampler2d texture: roughness -/
 -- def SHADER_LOC_MAP_ROUGHNESS : ShaderLocationIndex := Subtype.mk 18 ShaderLocationIndex.Is.SHADER_LOC_MAP_ROUGHNESS
--- notation "SHADER_LOC_MAP_ROUGHNESS_p" => Subtype.mk (UInt8.mk (Fin.mk 18 _)) _
 -- /-- Shader location: sampler2d texture: occlusion -/
 -- def SHADER_LOC_MAP_OCCLUSION : ShaderLocationIndex := Subtype.mk 19 ShaderLocationIndex.Is.SHADER_LOC_MAP_OCCLUSION
--- notation "SHADER_LOC_MAP_OCCLUSION_p" => Subtype.mk (UInt8.mk (Fin.mk 19 _)) _
 -- /-- Shader location: sampler2d texture: emission -/
 -- def SHADER_LOC_MAP_EMISSION : ShaderLocationIndex := Subtype.mk 20 ShaderLocationIndex.Is.SHADER_LOC_MAP_EMISSION
--- notation "SHADER_LOC_MAP_EMISSION_p" => Subtype.mk (UInt8.mk (Fin.mk 20 _)) _
 -- /-- Shader location: sampler2d texture: height -/
 -- def SHADER_LOC_MAP_HEIGHT : ShaderLocationIndex := Subtype.mk 21 ShaderLocationIndex.Is.SHADER_LOC_MAP_HEIGHT
--- notation "SHADER_LOC_MAP_HEIGHT_p" => Subtype.mk (UInt8.mk (Fin.mk 21 _)) _
 -- /-- Shader location: samplerCube texture: cubemap -/
 -- def SHADER_LOC_MAP_CUBEMAP : ShaderLocationIndex := Subtype.mk 22 ShaderLocationIndex.Is.SHADER_LOC_MAP_CUBEMAP
--- notation "SHADER_LOC_MAP_CUBEMAP_p" => Subtype.mk (UInt8.mk (Fin.mk 22 _)) _
 -- /-- Shader location: samplerCube texture: irradiance -/
 -- def SHADER_LOC_MAP_IRRADIANCE : ShaderLocationIndex := Subtype.mk 23 ShaderLocationIndex.Is.SHADER_LOC_MAP_IRRADIANCE
--- notation "SHADER_LOC_MAP_IRRADIANCE_p" => Subtype.mk (UInt8.mk (Fin.mk 23 _)) _
 -- /-- Shader location: samplerCube texture: prefilter -/
 -- def SHADER_LOC_MAP_PREFILTER : ShaderLocationIndex := Subtype.mk 24 ShaderLocationIndex.Is.SHADER_LOC_MAP_PREFILTER
--- notation "SHADER_LOC_MAP_PREFILTER_p" => Subtype.mk (UInt8.mk (Fin.mk 24 _)) _
 -- /-- Shader location: sampler2d texture: brdf -/
 -- def SHADER_LOC_MAP_BRDF : ShaderLocationIndex := Subtype.mk 25 ShaderLocationIndex.Is.SHADER_LOC_MAP_BRDF
--- notation "SHADER_LOC_MAP_BRDF_p" => Subtype.mk (UInt8.mk (Fin.mk 25 _)) _
 -- inductive ShaderUniformDataType.Is : UInt32 -> Prop where
 --   | SHADER_UNIFORM_FLOAT : ShaderUniformDataType.Is 0
 --   | SHADER_UNIFORM_VEC2 : ShaderUniformDataType.Is 1
@@ -738,31 +712,22 @@ def GAMEPAD_AXIS_RIGHT_TRIGGER : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.GAME
 -- def ShaderUniformDataType : Type := Subtype ShaderUniformDataType.Is
 -- /-- Shader uniform type: float -/
 -- def SHADER_UNIFORM_FLOAT : ShaderUniformDataType := Subtype.mk 0 ShaderUniformDataType.Is.SHADER_UNIFORM_FLOAT
--- notation "SHADER_UNIFORM_FLOAT_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
 -- /-- Shader uniform type: vec2 (2 float) -/
 -- def SHADER_UNIFORM_VEC2 : ShaderUniformDataType := Subtype.mk 1 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC2
--- notation "SHADER_UNIFORM_VEC2_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
 -- /-- Shader uniform type: vec3 (3 float) -/
 -- def SHADER_UNIFORM_VEC3 : ShaderUniformDataType := Subtype.mk 2 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC3
--- notation "SHADER_UNIFORM_VEC3_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
 -- /-- Shader uniform type: vec4 (4 float) -/
 -- def SHADER_UNIFORM_VEC4 : ShaderUniformDataType := Subtype.mk 3 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC4
--- notation "SHADER_UNIFORM_VEC4_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
 -- /-- Shader uniform type: int -/
 -- def SHADER_UNIFORM_INT : ShaderUniformDataType := Subtype.mk 4 ShaderUniformDataType.Is.SHADER_UNIFORM_INT
--- notation "SHADER_UNIFORM_INT_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
 -- /-- Shader uniform type: ivec2 (2 int) -/
 -- def SHADER_UNIFORM_IVEC2 : ShaderUniformDataType := Subtype.mk 5 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC2
--- notation "SHADER_UNIFORM_IVEC2_p" => Subtype.mk (UInt8.mk (Fin.mk 5 _)) _
 -- /-- Shader uniform type: ivec3 (3 int) -/
 -- def SHADER_UNIFORM_IVEC3 : ShaderUniformDataType := Subtype.mk 6 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC3
--- notation "SHADER_UNIFORM_IVEC3_p" => Subtype.mk (UInt8.mk (Fin.mk 6 _)) _
 -- /-- Shader uniform type: ivec4 (4 int) -/
 -- def SHADER_UNIFORM_IVEC4 : ShaderUniformDataType := Subtype.mk 7 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC4
--- notation "SHADER_UNIFORM_IVEC4_p" => Subtype.mk (UInt8.mk (Fin.mk 7 _)) _
 -- /-- Shader uniform type: sampler2d -/
 -- def SHADER_UNIFORM_SAMPLER2D : ShaderUniformDataType := Subtype.mk 8 ShaderUniformDataType.Is.SHADER_UNIFORM_SAMPLER2D
--- notation "SHADER_UNIFORM_SAMPLER2D_p" => Subtype.mk (UInt8.mk (Fin.mk 8 _)) _
 -- inductive ShaderAttributeDataType.Is : UInt32 -> Prop where
 --   | SHADER_ATTRIB_FLOAT : ShaderAttributeDataType.Is 0
 --   | SHADER_ATTRIB_VEC2 : ShaderAttributeDataType.Is 1
@@ -772,16 +737,12 @@ def GAMEPAD_AXIS_RIGHT_TRIGGER : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.GAME
 -- def ShaderAttributeDataType : Type := Subtype ShaderAttributeDataType.Is
 -- /-- Shader attribute type: float -/
 -- def SHADER_ATTRIB_FLOAT : ShaderAttributeDataType := Subtype.mk 0 ShaderAttributeDataType.Is.SHADER_ATTRIB_FLOAT
--- notation "SHADER_ATTRIB_FLOAT_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
 -- /-- Shader attribute type: vec2 (2 float) -/
 -- def SHADER_ATTRIB_VEC2 : ShaderAttributeDataType := Subtype.mk 1 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC2
--- notation "SHADER_ATTRIB_VEC2_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
 -- /-- Shader attribute type: vec3 (3 float) -/
 -- def SHADER_ATTRIB_VEC3 : ShaderAttributeDataType := Subtype.mk 2 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC3
--- notation "SHADER_ATTRIB_VEC3_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
 -- /-- Shader attribute type: vec4 (4 float) -/
 -- def SHADER_ATTRIB_VEC4 : ShaderAttributeDataType := Subtype.mk 3 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC4
--- notation "SHADER_ATTRIB_VEC4_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
 -- inductive PixelFormat.Is : UInt32 -> Prop where
 --   | PIXELFORMAT_UNCOMPRESSED_GRAYSCALE : PixelFormat.Is 1
 --   | PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA : PixelFormat.Is 2
@@ -808,67 +769,46 @@ def GAMEPAD_AXIS_RIGHT_TRIGGER : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.GAME
 -- def PixelFormat : Type := Subtype PixelFormat.Is
 -- /-- 8 bit per pixel (no alpha) -/
 -- def PIXELFORMAT_UNCOMPRESSED_GRAYSCALE : PixelFormat := Subtype.mk 1 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_GRAYSCALE
--- notation "PIXELFORMAT_UNCOMPRESSED_GRAYSCALE_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
 -- /-- 8*2 bpp (2 channels) -/
 -- def PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA : PixelFormat := Subtype.mk 2 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA
--- notation "PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
 -- /-- 16 bpp -/
 -- def PIXELFORMAT_UNCOMPRESSED_R5G6B5 : PixelFormat := Subtype.mk 3 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R5G6B5
--- notation "PIXELFORMAT_UNCOMPRESSED_R5G6B5_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
 -- /-- 24 bpp -/
 -- def PIXELFORMAT_UNCOMPRESSED_R8G8B8 : PixelFormat := Subtype.mk 4 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R8G8B8
--- notation "PIXELFORMAT_UNCOMPRESSED_R8G8B8_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
 -- /-- 16 bpp (1 bit alpha) -/
 -- def PIXELFORMAT_UNCOMPRESSED_R5G5B5A1 : PixelFormat := Subtype.mk 5 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R5G5B5A1
--- notation "PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_p" => Subtype.mk (UInt8.mk (Fin.mk 5 _)) _
 -- /-- 16 bpp (4 bit alpha) -/
 -- def PIXELFORMAT_UNCOMPRESSED_R4G4B4A4 : PixelFormat := Subtype.mk 6 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R4G4B4A4
--- notation "PIXELFORMAT_UNCOMPRESSED_R4G4B4A4_p" => Subtype.mk (UInt8.mk (Fin.mk 6 _)) _
 -- /-- 32 bpp -/
 -- def PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 : PixelFormat := Subtype.mk 7 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
--- notation "PIXELFORMAT_UNCOMPRESSED_R8G8B8A8_p" => Subtype.mk (UInt8.mk (Fin.mk 7 _)) _
 -- /-- 32 bpp (1 channel - float) -/
 -- def PIXELFORMAT_UNCOMPRESSED_R32 : PixelFormat := Subtype.mk 8 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32
--- notation "PIXELFORMAT_UNCOMPRESSED_R32_p" => Subtype.mk (UInt8.mk (Fin.mk 8 _)) _
 -- /-- 32*3 bpp (3 channels - float) -/
 -- def PIXELFORMAT_UNCOMPRESSED_R32G32B32 : PixelFormat := Subtype.mk 9 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32G32B32
--- notation "PIXELFORMAT_UNCOMPRESSED_R32G32B32_p" => Subtype.mk (UInt8.mk (Fin.mk 9 _)) _
 -- /-- 32*4 bpp (4 channels - float) -/
 -- def PIXELFORMAT_UNCOMPRESSED_R32G32B32A32 : PixelFormat := Subtype.mk 10 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32G32B32A32
--- notation "PIXELFORMAT_UNCOMPRESSED_R32G32B32A32_p" => Subtype.mk (UInt8.mk (Fin.mk 10 _)) _
 -- /-- 4 bpp (no alpha) -/
 -- def PIXELFORMAT_COMPRESSED_DXT1_RGB : PixelFormat := Subtype.mk 11 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT1_RGB
--- notation "PIXELFORMAT_COMPRESSED_DXT1_RGB_p" => Subtype.mk (UInt8.mk (Fin.mk 11 _)) _
 -- /-- 4 bpp (1 bit alpha) -/
 -- def PIXELFORMAT_COMPRESSED_DXT1_RGBA : PixelFormat := Subtype.mk 12 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT1_RGBA
--- notation "PIXELFORMAT_COMPRESSED_DXT1_RGBA_p" => Subtype.mk (UInt8.mk (Fin.mk 12 _)) _
 -- /-- 8 bpp -/
 -- def PIXELFORMAT_COMPRESSED_DXT3_RGBA : PixelFormat := Subtype.mk 13 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT3_RGBA
--- notation "PIXELFORMAT_COMPRESSED_DXT3_RGBA_p" => Subtype.mk (UInt8.mk (Fin.mk 13 _)) _
 -- /-- 8 bpp -/
 -- def PIXELFORMAT_COMPRESSED_DXT5_RGBA : PixelFormat := Subtype.mk 14 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT5_RGBA
--- notation "PIXELFORMAT_COMPRESSED_DXT5_RGBA_p" => Subtype.mk (UInt8.mk (Fin.mk 14 _)) _
 -- /-- 4 bpp -/
 -- def PIXELFORMAT_COMPRESSED_ETC1_RGB : PixelFormat := Subtype.mk 15 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC1_RGB
--- notation "PIXELFORMAT_COMPRESSED_ETC1_RGB_p" => Subtype.mk (UInt8.mk (Fin.mk 15 _)) _
 -- /-- 4 bpp -/
 -- def PIXELFORMAT_COMPRESSED_ETC2_RGB : PixelFormat := Subtype.mk 16 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC2_RGB
--- notation "PIXELFORMAT_COMPRESSED_ETC2_RGB_p" => Subtype.mk (UInt8.mk (Fin.mk 16 _)) _
 -- /-- 8 bpp -/
 -- def PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA : PixelFormat := Subtype.mk 17 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA
--- notation "PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA_p" => Subtype.mk (UInt8.mk (Fin.mk 17 _)) _
 -- /-- 4 bpp -/
 -- def PIXELFORMAT_COMPRESSED_PVRT_RGB : PixelFormat := Subtype.mk 18 PixelFormat.Is.PIXELFORMAT_COMPRESSED_PVRT_RGB
--- notation "PIXELFORMAT_COMPRESSED_PVRT_RGB_p" => Subtype.mk (UInt8.mk (Fin.mk 18 _)) _
 -- /-- 4 bpp -/
 -- def PIXELFORMAT_COMPRESSED_PVRT_RGBA : PixelFormat := Subtype.mk 19 PixelFormat.Is.PIXELFORMAT_COMPRESSED_PVRT_RGBA
--- notation "PIXELFORMAT_COMPRESSED_PVRT_RGBA_p" => Subtype.mk (UInt8.mk (Fin.mk 19 _)) _
 -- /-- 8 bpp -/
 -- def PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA : PixelFormat := Subtype.mk 20 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA
--- notation "PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA_p" => Subtype.mk (UInt8.mk (Fin.mk 20 _)) _
 -- /-- 2 bpp -/
 -- def PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA : PixelFormat := Subtype.mk 21 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
--- notation "PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA_p" => Subtype.mk (UInt8.mk (Fin.mk 21 _)) _
 -- inductive TextureFilter.Is : UInt32 -> Prop where
 --   | TEXTURE_FILTER_POINT : TextureFilter.Is 0
 --   | TEXTURE_FILTER_BILINEAR : TextureFilter.Is 1
@@ -880,22 +820,16 @@ def GAMEPAD_AXIS_RIGHT_TRIGGER : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.GAME
 -- def TextureFilter : Type := Subtype TextureFilter.Is
 -- /-- No filter, just pixel approximation -/
 -- def TEXTURE_FILTER_POINT : TextureFilter := Subtype.mk 0 TextureFilter.Is.TEXTURE_FILTER_POINT
--- notation "TEXTURE_FILTER_POINT_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
 -- /-- Linear filtering -/
 -- def TEXTURE_FILTER_BILINEAR : TextureFilter := Subtype.mk 1 TextureFilter.Is.TEXTURE_FILTER_BILINEAR
--- notation "TEXTURE_FILTER_BILINEAR_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
 -- /-- Trilinear filtering (linear with mipmaps) -/
 -- def TEXTURE_FILTER_TRILINEAR : TextureFilter := Subtype.mk 2 TextureFilter.Is.TEXTURE_FILTER_TRILINEAR
--- notation "TEXTURE_FILTER_TRILINEAR_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
 -- /-- Anisotropic filtering 4x -/
 -- def TEXTURE_FILTER_ANISOTROPIC_4X : TextureFilter := Subtype.mk 3 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_4X
--- notation "TEXTURE_FILTER_ANISOTROPIC_4X_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
 -- /-- Anisotropic filtering 8x -/
 -- def TEXTURE_FILTER_ANISOTROPIC_8X : TextureFilter := Subtype.mk 4 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_8X
--- notation "TEXTURE_FILTER_ANISOTROPIC_8X_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
 -- /-- Anisotropic filtering 16x -/
 -- def TEXTURE_FILTER_ANISOTROPIC_16X : TextureFilter := Subtype.mk 5 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_16X
--- notation "TEXTURE_FILTER_ANISOTROPIC_16X_p" => Subtype.mk (UInt8.mk (Fin.mk 5 _)) _
 -- inductive TextureWrap.Is : UInt32 -> Prop where
 --   | TEXTURE_WRAP_REPEAT : TextureWrap.Is 0
 --   | TEXTURE_WRAP_CLAMP : TextureWrap.Is 1
@@ -905,188 +839,176 @@ def GAMEPAD_AXIS_RIGHT_TRIGGER : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.GAME
 -- def TextureWrap : Type := Subtype TextureWrap.Is
 -- /-- Repeats texture in tiled mode -/
 -- def TEXTURE_WRAP_REPEAT : TextureWrap := Subtype.mk 0 TextureWrap.Is.TEXTURE_WRAP_REPEAT
--- notation "TEXTURE_WRAP_REPEAT_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
 -- /-- Clamps texture to edge pixel in tiled mode -/
 -- def TEXTURE_WRAP_CLAMP : TextureWrap := Subtype.mk 1 TextureWrap.Is.TEXTURE_WRAP_CLAMP
--- notation "TEXTURE_WRAP_CLAMP_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
 -- /-- Mirrors and repeats the texture in tiled mode -/
 -- def TEXTURE_WRAP_MIRROR_REPEAT : TextureWrap := Subtype.mk 2 TextureWrap.Is.TEXTURE_WRAP_MIRROR_REPEAT
--- notation "TEXTURE_WRAP_MIRROR_REPEAT_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
 -- /-- Mirrors and clamps to border the texture in tiled mode -/
 -- def TEXTURE_WRAP_MIRROR_CLAMP : TextureWrap := Subtype.mk 3 TextureWrap.Is.TEXTURE_WRAP_MIRROR_CLAMP
--- notation "TEXTURE_WRAP_MIRROR_CLAMP_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
--- inductive CubemapLayout.Is : UInt32 -> Prop where
---   | CUBEMAP_LAYOUT_AUTO_DETECT : CubemapLayout.Is 0
---   | CUBEMAP_LAYOUT_LINE_VERTICAL : CubemapLayout.Is 1
---   | CUBEMAP_LAYOUT_LINE_HORIZONTAL : CubemapLayout.Is 2
---   | CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR : CubemapLayout.Is 3
---   | CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE : CubemapLayout.Is 4
---   | CUBEMAP_LAYOUT_PANORAMA : CubemapLayout.Is 5
--- /-- Cubemap layouts -/
--- def CubemapLayout : Type := Subtype CubemapLayout.Is
--- /-- Automatically detect layout type -/
--- def CUBEMAP_LAYOUT_AUTO_DETECT : CubemapLayout := Subtype.mk 0 CubemapLayout.Is.CUBEMAP_LAYOUT_AUTO_DETECT
--- notation "CUBEMAP_LAYOUT_AUTO_DETECT_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
--- /-- Layout is defined by a vertical line with faces -/
--- def CUBEMAP_LAYOUT_LINE_VERTICAL : CubemapLayout := Subtype.mk 1 CubemapLayout.Is.CUBEMAP_LAYOUT_LINE_VERTICAL
--- notation "CUBEMAP_LAYOUT_LINE_VERTICAL_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
--- /-- Layout is defined by an horizontal line with faces -/
--- def CUBEMAP_LAYOUT_LINE_HORIZONTAL : CubemapLayout := Subtype.mk 2 CubemapLayout.Is.CUBEMAP_LAYOUT_LINE_HORIZONTAL
--- notation "CUBEMAP_LAYOUT_LINE_HORIZONTAL_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
--- /-- Layout is defined by a 3x4 cross with cubemap faces -/
--- def CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR : CubemapLayout := Subtype.mk 3 CubemapLayout.Is.CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR
--- notation "CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
--- /-- Layout is defined by a 4x3 cross with cubemap faces -/
--- def CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE : CubemapLayout := Subtype.mk 4 CubemapLayout.Is.CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE
--- notation "CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
--- /-- Layout is defined by a panorama image (equirectangular map) -/
--- def CUBEMAP_LAYOUT_PANORAMA : CubemapLayout := Subtype.mk 5 CubemapLayout.Is.CUBEMAP_LAYOUT_PANORAMA
--- notation "CUBEMAP_LAYOUT_PANORAMA_p" => Subtype.mk (UInt8.mk (Fin.mk 5 _)) _
--- inductive FontType.Is : UInt32 -> Prop where
---   | FONT_DEFAULT : FontType.Is 0
---   | FONT_BITMAP : FontType.Is 1
---   | FONT_SDF : FontType.Is 2
--- /-- Font type, defines generation method -/
--- def FontType : Type := Subtype FontType.Is
--- /-- Default font generation, anti-aliased -/
--- def FONT_DEFAULT : FontType := Subtype.mk 0 FontType.Is.FONT_DEFAULT
--- notation "FONT_DEFAULT_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
--- /-- Bitmap font generation, no anti-aliasing -/
--- def FONT_BITMAP : FontType := Subtype.mk 1 FontType.Is.FONT_BITMAP
--- notation "FONT_BITMAP_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
--- /-- SDF font generation, requires external shader -/
--- def FONT_SDF : FontType := Subtype.mk 2 FontType.Is.FONT_SDF
--- notation "FONT_SDF_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
--- inductive BlendMode.Is : UInt32 -> Prop where
---   | BLEND_ALPHA : BlendMode.Is 0
---   | BLEND_ADDITIVE : BlendMode.Is 1
---   | BLEND_MULTIPLIED : BlendMode.Is 2
---   | BLEND_ADD_COLORS : BlendMode.Is 3
---   | BLEND_SUBTRACT_COLORS : BlendMode.Is 4
---   | BLEND_ALPHA_PREMULTIPLY : BlendMode.Is 5
---   | BLEND_CUSTOM : BlendMode.Is 6
---   | BLEND_CUSTOM_SEPARATE : BlendMode.Is 7
--- /-- Color blending modes (pre-defined) -/
--- def BlendMode : Type := Subtype BlendMode.Is
--- /-- Blend textures considering alpha (default) -/
--- def BLEND_ALPHA : BlendMode := Subtype.mk 0 BlendMode.Is.BLEND_ALPHA
--- notation "BLEND_ALPHA_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
--- /-- Blend textures adding colors -/
--- def BLEND_ADDITIVE : BlendMode := Subtype.mk 1 BlendMode.Is.BLEND_ADDITIVE
--- notation "BLEND_ADDITIVE_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
--- /-- Blend textures multiplying colors -/
--- def BLEND_MULTIPLIED : BlendMode := Subtype.mk 2 BlendMode.Is.BLEND_MULTIPLIED
--- notation "BLEND_MULTIPLIED_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
--- /-- Blend textures adding colors (alternative) -/
--- def BLEND_ADD_COLORS : BlendMode := Subtype.mk 3 BlendMode.Is.BLEND_ADD_COLORS
--- notation "BLEND_ADD_COLORS_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
--- /-- Blend textures subtracting colors (alternative) -/
--- def BLEND_SUBTRACT_COLORS : BlendMode := Subtype.mk 4 BlendMode.Is.BLEND_SUBTRACT_COLORS
--- notation "BLEND_SUBTRACT_COLORS_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
--- /-- Blend premultiplied textures considering alpha -/
--- def BLEND_ALPHA_PREMULTIPLY : BlendMode := Subtype.mk 5 BlendMode.Is.BLEND_ALPHA_PREMULTIPLY
--- notation "BLEND_ALPHA_PREMULTIPLY_p" => Subtype.mk (UInt8.mk (Fin.mk 5 _)) _
--- /-- Blend textures using custom src/dst factors (use rlSetBlendFactors()) -/
--- def BLEND_CUSTOM : BlendMode := Subtype.mk 6 BlendMode.Is.BLEND_CUSTOM
--- notation "BLEND_CUSTOM_p" => Subtype.mk (UInt8.mk (Fin.mk 6 _)) _
--- /-- Blend textures using custom rgb/alpha separate src/dst factors (use rlSetBlendFactorsSeparate()) -/
--- def BLEND_CUSTOM_SEPARATE : BlendMode := Subtype.mk 7 BlendMode.Is.BLEND_CUSTOM_SEPARATE
--- notation "BLEND_CUSTOM_SEPARATE_p" => Subtype.mk (UInt8.mk (Fin.mk 7 _)) _
--- inductive Gesture.Is : UInt32 -> Prop where
---   | GESTURE_NONE : Gesture.Is 0
---   | GESTURE_TAP : Gesture.Is 1
---   | GESTURE_DOUBLETAP : Gesture.Is 2
---   | GESTURE_HOLD : Gesture.Is 4
---   | GESTURE_DRAG : Gesture.Is 8
---   | GESTURE_SWIPE_RIGHT : Gesture.Is 16
---   | GESTURE_SWIPE_LEFT : Gesture.Is 32
---   | GESTURE_SWIPE_UP : Gesture.Is 64
---   | GESTURE_SWIPE_DOWN : Gesture.Is 128
---   | GESTURE_PINCH_IN : Gesture.Is 256
---   | GESTURE_PINCH_OUT : Gesture.Is 512
--- /-- Gesture -/
--- def Gesture : Type := Subtype Gesture.Is
--- /-- No gesture -/
--- def GESTURE_NONE : Gesture := Subtype.mk 0 Gesture.Is.GESTURE_NONE
--- notation "GESTURE_NONE_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
--- /-- Tap gesture -/
--- def GESTURE_TAP : Gesture := Subtype.mk 1 Gesture.Is.GESTURE_TAP
--- notation "GESTURE_TAP_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
--- /-- Double tap gesture -/
--- def GESTURE_DOUBLETAP : Gesture := Subtype.mk 2 Gesture.Is.GESTURE_DOUBLETAP
--- notation "GESTURE_DOUBLETAP_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
--- /-- Hold gesture -/
--- def GESTURE_HOLD : Gesture := Subtype.mk 4 Gesture.Is.GESTURE_HOLD
--- notation "GESTURE_HOLD_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
--- /-- Drag gesture -/
--- def GESTURE_DRAG : Gesture := Subtype.mk 8 Gesture.Is.GESTURE_DRAG
--- notation "GESTURE_DRAG_p" => Subtype.mk (UInt8.mk (Fin.mk 8 _)) _
--- /-- Swipe right gesture -/
--- def GESTURE_SWIPE_RIGHT : Gesture := Subtype.mk 16 Gesture.Is.GESTURE_SWIPE_RIGHT
--- notation "GESTURE_SWIPE_RIGHT_p" => Subtype.mk (UInt8.mk (Fin.mk 16 _)) _
--- /-- Swipe left gesture -/
--- def GESTURE_SWIPE_LEFT : Gesture := Subtype.mk 32 Gesture.Is.GESTURE_SWIPE_LEFT
--- notation "GESTURE_SWIPE_LEFT_p" => Subtype.mk (UInt8.mk (Fin.mk 32 _)) _
--- /-- Swipe up gesture -/
--- def GESTURE_SWIPE_UP : Gesture := Subtype.mk 64 Gesture.Is.GESTURE_SWIPE_UP
--- notation "GESTURE_SWIPE_UP_p" => Subtype.mk (UInt8.mk (Fin.mk 64 _)) _
--- /-- Swipe down gesture -/
--- def GESTURE_SWIPE_DOWN : Gesture := Subtype.mk 128 Gesture.Is.GESTURE_SWIPE_DOWN
--- notation "GESTURE_SWIPE_DOWN_p" => Subtype.mk (UInt8.mk (Fin.mk 128 _)) _
--- /-- Pinch in gesture -/
--- def GESTURE_PINCH_IN : Gesture := Subtype.mk 256 Gesture.Is.GESTURE_PINCH_IN
--- notation "GESTURE_PINCH_IN_p" => Subtype.mk (UInt8.mk (Fin.mk 256 _)) _
--- /-- Pinch out gesture -/
--- def GESTURE_PINCH_OUT : Gesture := Subtype.mk 512 Gesture.Is.GESTURE_PINCH_OUT
--- notation "GESTURE_PINCH_OUT_p" => Subtype.mk (UInt8.mk (Fin.mk 512 _)) _
--- inductive CameraMode.Is : UInt32 -> Prop where
---   | CAMERA_CUSTOM : CameraMode.Is 0
---   | CAMERA_FREE : CameraMode.Is 1
---   | CAMERA_ORBITAL : CameraMode.Is 2
---   | CAMERA_FIRST_PERSON : CameraMode.Is 3
---   | CAMERA_THIRD_PERSON : CameraMode.Is 4
--- /-- Camera system modes -/
--- def CameraMode : Type := Subtype CameraMode.Is
--- /-- Custom camera -/
--- def CAMERA_CUSTOM : CameraMode := Subtype.mk 0 CameraMode.Is.CAMERA_CUSTOM
--- notation "CAMERA_CUSTOM_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
--- /-- Free camera -/
--- def CAMERA_FREE : CameraMode := Subtype.mk 1 CameraMode.Is.CAMERA_FREE
--- notation "CAMERA_FREE_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
--- /-- Orbital camera -/
--- def CAMERA_ORBITAL : CameraMode := Subtype.mk 2 CameraMode.Is.CAMERA_ORBITAL
--- notation "CAMERA_ORBITAL_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
--- /-- First person camera -/
--- def CAMERA_FIRST_PERSON : CameraMode := Subtype.mk 3 CameraMode.Is.CAMERA_FIRST_PERSON
--- notation "CAMERA_FIRST_PERSON_p" => Subtype.mk (UInt8.mk (Fin.mk 3 _)) _
--- /-- Third person camera -/
--- def CAMERA_THIRD_PERSON : CameraMode := Subtype.mk 4 CameraMode.Is.CAMERA_THIRD_PERSON
--- notation "CAMERA_THIRD_PERSON_p" => Subtype.mk (UInt8.mk (Fin.mk 4 _)) _
--- inductive CameraProjection.Is : UInt32 -> Prop where
---   | CAMERA_PERSPECTIVE : CameraProjection.Is 0
---   | CAMERA_ORTHOGRAPHIC : CameraProjection.Is 1
--- /-- Camera projection -/
--- def CameraProjection : Type := Subtype CameraProjection.Is
--- /-- Perspective projection -/
--- def CAMERA_PERSPECTIVE : CameraProjection := Subtype.mk 0 CameraProjection.Is.CAMERA_PERSPECTIVE
--- notation "CAMERA_PERSPECTIVE_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
--- /-- Orthographic projection -/
--- def CAMERA_ORTHOGRAPHIC : CameraProjection := Subtype.mk 1 CameraProjection.Is.CAMERA_ORTHOGRAPHIC
--- notation "CAMERA_ORTHOGRAPHIC_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
--- inductive NPatchLayout.Is : UInt32 -> Prop where
---   | NPATCH_NINE_PATCH : NPatchLayout.Is 0
---   | NPATCH_THREE_PATCH_VERTICAL : NPatchLayout.Is 1
---   | NPATCH_THREE_PATCH_HORIZONTAL : NPatchLayout.Is 2
--- /-- N-patch layout -/
--- def NPatchLayout : Type := Subtype NPatchLayout.Is
--- /-- Npatch layout: 3x3 tiles -/
--- def NPATCH_NINE_PATCH : NPatchLayout := Subtype.mk 0 NPatchLayout.Is.NPATCH_NINE_PATCH
--- notation "NPATCH_NINE_PATCH_p" => Subtype.mk (UInt8.mk (Fin.mk 0 _)) _
--- /-- Npatch layout: 1x3 tiles -/
--- def NPATCH_THREE_PATCH_VERTICAL : NPatchLayout := Subtype.mk 1 NPatchLayout.Is.NPATCH_THREE_PATCH_VERTICAL
--- notation "NPATCH_THREE_PATCH_VERTICAL_p" => Subtype.mk (UInt8.mk (Fin.mk 1 _)) _
--- /-- Npatch layout: 3x1 tiles -/
--- def NPATCH_THREE_PATCH_HORIZONTAL : NPatchLayout := Subtype.mk 2 NPatchLayout.Is.NPATCH_THREE_PATCH_HORIZONTAL
--- notation "NPATCH_THREE_PATCH_HORIZONTAL_p" => Subtype.mk (UInt8.mk (Fin.mk 2 _)) _
+
+
+/-! # Cubemap layout -/
+
+inductive CubemapLayout.Is : UInt32 -> Prop where
+  | CUBEMAP_LAYOUT_AUTO_DETECT : CubemapLayout.Is 0
+  | CUBEMAP_LAYOUT_LINE_VERTICAL : CubemapLayout.Is 1
+  | CUBEMAP_LAYOUT_LINE_HORIZONTAL : CubemapLayout.Is 2
+  | CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR : CubemapLayout.Is 3
+  | CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE : CubemapLayout.Is 4
+  | CUBEMAP_LAYOUT_PANORAMA : CubemapLayout.Is 5
+
+/-- Cubemap layouts -/
+def CubemapLayout : Type := Subtype CubemapLayout.Is
+
+/-- Automatically detect layout type -/
+def CUBEMAP_LAYOUT_AUTO_DETECT : CubemapLayout := Subtype.mk 0 CubemapLayout.Is.CUBEMAP_LAYOUT_AUTO_DETECT
+/-- Layout is defined by a vertical line with faces -/
+def CUBEMAP_LAYOUT_LINE_VERTICAL : CubemapLayout := Subtype.mk 1 CubemapLayout.Is.CUBEMAP_LAYOUT_LINE_VERTICAL
+/-- Layout is defined by an horizontal line with faces -/
+def CUBEMAP_LAYOUT_LINE_HORIZONTAL : CubemapLayout := Subtype.mk 2 CubemapLayout.Is.CUBEMAP_LAYOUT_LINE_HORIZONTAL
+/-- Layout is defined by a 3x4 cross with cubemap faces -/
+def CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR : CubemapLayout := Subtype.mk 3 CubemapLayout.Is.CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR
+/-- Layout is defined by a 4x3 cross with cubemap faces -/
+def CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE : CubemapLayout := Subtype.mk 4 CubemapLayout.Is.CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE
+/-- Layout is defined by a panorama image (equirectangular map) -/
+def CUBEMAP_LAYOUT_PANORAMA : CubemapLayout := Subtype.mk 5 CubemapLayout.Is.CUBEMAP_LAYOUT_PANORAMA
+
+
+/-! # Font type -/
+
+inductive FontType.Is : UInt32 -> Prop where
+  | FONT_DEFAULT : FontType.Is 0
+  | FONT_BITMAP : FontType.Is 1
+  | FONT_SDF : FontType.Is 2
+
+/-- Font type, defines generation method -/
+def FontType : Type := Subtype FontType.Is
+
+/-- Default font generation, anti-aliased -/
+def FONT_DEFAULT : FontType := Subtype.mk 0 FontType.Is.FONT_DEFAULT
+/-- Bitmap font generation, no anti-aliasing -/
+def FONT_BITMAP : FontType := Subtype.mk 1 FontType.Is.FONT_BITMAP
+/-- SDF font generation, requires external shader -/
+def FONT_SDF : FontType := Subtype.mk 2 FontType.Is.FONT_SDF
+
+
+/-! # Color blending mode -/
+
+inductive BlendMode.Is : UInt32 -> Prop where
+  | BLEND_ALPHA : BlendMode.Is 0
+  | BLEND_ADDITIVE : BlendMode.Is 1
+  | BLEND_MULTIPLIED : BlendMode.Is 2
+  | BLEND_ADD_COLORS : BlendMode.Is 3
+  | BLEND_SUBTRACT_COLORS : BlendMode.Is 4
+  | BLEND_ALPHA_PREMULTIPLY : BlendMode.Is 5
+  | BLEND_CUSTOM : BlendMode.Is 6
+  | BLEND_CUSTOM_SEPARATE : BlendMode.Is 7
+
+/-- Color blending modes (pre-defined) -/
+def BlendMode : Type := Subtype BlendMode.Is
+
+/-- Blend textures considering alpha (default) -/
+def BLEND_ALPHA : BlendMode := Subtype.mk 0 BlendMode.Is.BLEND_ALPHA
+/-- Blend textures adding colors -/
+def BLEND_ADDITIVE : BlendMode := Subtype.mk 1 BlendMode.Is.BLEND_ADDITIVE
+/-- Blend textures multiplying colors -/
+def BLEND_MULTIPLIED : BlendMode := Subtype.mk 2 BlendMode.Is.BLEND_MULTIPLIED
+/-- Blend textures adding colors (alternative) -/
+def BLEND_ADD_COLORS : BlendMode := Subtype.mk 3 BlendMode.Is.BLEND_ADD_COLORS
+/-- Blend textures subtracting colors (alternative) -/
+def BLEND_SUBTRACT_COLORS : BlendMode := Subtype.mk 4 BlendMode.Is.BLEND_SUBTRACT_COLORS
+/-- Blend premultiplied textures considering alpha -/
+def BLEND_ALPHA_PREMULTIPLY : BlendMode := Subtype.mk 5 BlendMode.Is.BLEND_ALPHA_PREMULTIPLY
+/-- Blend textures using custom src/dst factors (use rlSetBlendFactors()) -/
+def BLEND_CUSTOM : BlendMode := Subtype.mk 6 BlendMode.Is.BLEND_CUSTOM
+/-- Blend textures using custom rgb/alpha separate src/dst factors (use rlSetBlendFactorsSeparate()) -/
+def BLEND_CUSTOM_SEPARATE : BlendMode := Subtype.mk 7 BlendMode.Is.BLEND_CUSTOM_SEPARATE
+
+
+/-! # Gesture -/
+
+/-- Gesture -/
+structure Gesture where
+  val : UInt32
+deriving Inhabited, Repr
+
+abbrev GestureFlags := Gesture
+
+instance : OrOp Gesture where
+  or := λ a b ↦ Gesture.mk (a.val ||| b.val)
+
+instance : AndOp Gesture where
+  and := λ a b ↦ Gesture.mk (a.val &&& b.val)
+
+/-- No gesture -/
+def GESTURE_NONE : Gesture := Gesture.mk 0
+/-- Tap gesture -/
+def GESTURE_TAP : Gesture := Gesture.mk 1
+/-- Double tap gesture -/
+def GESTURE_DOUBLETAP : Gesture := Gesture.mk 2
+/-- Hold gesture -/
+def GESTURE_HOLD : Gesture := Gesture.mk 4
+/-- Drag gesture -/
+def GESTURE_DRAG : Gesture := Gesture.mk 8
+/-- Swipe right gesture -/
+def GESTURE_SWIPE_RIGHT : Gesture := Gesture.mk 16
+/-- Swipe left gesture -/
+def GESTURE_SWIPE_LEFT : Gesture := Gesture.mk 32
+/-- Swipe up gesture -/
+def GESTURE_SWIPE_UP : Gesture := Gesture.mk 64
+/-- Swipe down gesture -/
+def GESTURE_SWIPE_DOWN : Gesture := Gesture.mk 128
+/-- Pinch in gesture -/
+def GESTURE_PINCH_IN : Gesture := Gesture.mk 256
+/-- Pinch out gesture -/
+def GESTURE_PINCH_OUT : Gesture := Gesture.mk 512
+
+
+/-! # Camera mode -/
+
+inductive CameraMode.Is : UInt32 -> Prop where
+  | CAMERA_CUSTOM : CameraMode.Is 0
+  | CAMERA_FREE : CameraMode.Is 1
+  | CAMERA_ORBITAL : CameraMode.Is 2
+  | CAMERA_FIRST_PERSON : CameraMode.Is 3
+  | CAMERA_THIRD_PERSON : CameraMode.Is 4
+/-- Camera system modes -/
+def CameraMode : Type := Subtype CameraMode.Is
+/-- Custom camera -/
+def CAMERA_CUSTOM : CameraMode := Subtype.mk 0 CameraMode.Is.CAMERA_CUSTOM
+/-- Free camera -/
+def CAMERA_FREE : CameraMode := Subtype.mk 1 CameraMode.Is.CAMERA_FREE
+/-- Orbital camera -/
+def CAMERA_ORBITAL : CameraMode := Subtype.mk 2 CameraMode.Is.CAMERA_ORBITAL
+/-- First person camera -/
+def CAMERA_FIRST_PERSON : CameraMode := Subtype.mk 3 CameraMode.Is.CAMERA_FIRST_PERSON
+/-- Third person camera -/
+def CAMERA_THIRD_PERSON : CameraMode := Subtype.mk 4 CameraMode.Is.CAMERA_THIRD_PERSON
+inductive CameraProjection.Is : UInt32 -> Prop where
+  | CAMERA_PERSPECTIVE : CameraProjection.Is 0
+  | CAMERA_ORTHOGRAPHIC : CameraProjection.Is 1
+/-- Camera projection -/
+def CameraProjection : Type := Subtype CameraProjection.Is
+/-- Perspective projection -/
+def CAMERA_PERSPECTIVE : CameraProjection := Subtype.mk 0 CameraProjection.Is.CAMERA_PERSPECTIVE
+/-- Orthographic projection -/
+def CAMERA_ORTHOGRAPHIC : CameraProjection := Subtype.mk 1 CameraProjection.Is.CAMERA_ORTHOGRAPHIC
+
+
+/-! # NPatch layout -/
+inductive NPatchLayout.Is : UInt32 -> Prop where
+  | NPATCH_NINE_PATCH : NPatchLayout.Is 0
+  | NPATCH_THREE_PATCH_VERTICAL : NPatchLayout.Is 1
+  | NPATCH_THREE_PATCH_HORIZONTAL : NPatchLayout.Is 2
+
+/-- N-patch layout -/
+def NPatchLayout : Type := Subtype NPatchLayout.Is
+
+/-- Npatch layout: 3x3 tiles -/
+def NPATCH_NINE_PATCH : NPatchLayout := Subtype.mk 0 NPatchLayout.Is.NPATCH_NINE_PATCH
+/-- Npatch layout: 1x3 tiles -/
+def NPATCH_THREE_PATCH_VERTICAL : NPatchLayout := Subtype.mk 1 NPatchLayout.Is.NPATCH_THREE_PATCH_VERTICAL
+/-- Npatch layout: 3x1 tiles -/
+def NPATCH_THREE_PATCH_HORIZONTAL : NPatchLayout := Subtype.mk 2 NPatchLayout.Is.NPATCH_THREE_PATCH_HORIZONTAL
 
 end Raylib
