@@ -1,6 +1,11 @@
+#include <assert.h>
 #include <stdint.h>
 #include <lean/lean.h>
 #include <raylib.h>
+
+#ifdef static_assert
+    static_assert (sizeof(int) == 4, "`sizeof(int) != 4` unsupported");
+#endif
 
 #define LET_BOX(T, n, x)\
     T* n = malloc(sizeof(T));\
