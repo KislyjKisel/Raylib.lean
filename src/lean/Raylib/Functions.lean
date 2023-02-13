@@ -1492,42 +1492,42 @@ opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControl
 -- /-- Draws a texture (or part of it) that stretches or shrinks nicely -/
 -- @[extern "lean_raylib__DrawTextureNPatch"]
 -- opaque DrawTextureNPatch (texture : Texture2D) (nPatchInfo : NPatchInfo) (dest : Rectangle) (origin : Vector2) (rotation : Float) (tint : Color) : Unit
--- /-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
--- @[extern "lean_raylib__Fade"]
--- opaque Fade (color : Color) (alpha : Float) : Color
--- /-- Get hexadecimal value for a Color -/
--- @[extern "lean_raylib__ColorToInt"]
--- opaque ColorToInt (color : Color) : Int32
--- /-- Get Color normalized as float [0..1] -/
--- @[extern "lean_raylib__ColorNormalize"]
--- opaque ColorNormalize (color : Color) : Vector4
--- /-- Get Color from normalized values [0..1] -/
--- @[extern "lean_raylib__ColorFromNormalized"]
--- opaque ColorFromNormalized (normalized : Vector4) : Color
--- /-- Get HSV values for a Color, hue [0..360], saturation/value [0..1] -/
--- @[extern "lean_raylib__ColorToHSV"]
--- opaque ColorToHSV (color : Color) : Vector3
--- /-- Get a Color from HSV values, hue [0..360], saturation/value [0..1] -/
--- @[extern "lean_raylib__ColorFromHSV"]
--- opaque ColorFromHSV (hue : Float) (saturation : Float) (value : Float) : Color
--- /-- Get color multiplied with another color -/
--- @[extern "lean_raylib__ColorTint"]
--- opaque ColorTint (color : Color) (tint : Color) : Color
--- /-- Get color with brightness correction, brightness factor goes from -1.0f to 1.0f -/
--- @[extern "lean_raylib__ColorBrightness"]
--- opaque ColorBrightness (color : Color) (factor : Float) : Color
--- /-- Get color with contrast correction, contrast values between -1.0f and 1.0f -/
--- @[extern "lean_raylib__ColorContrast"]
--- opaque ColorContrast (color : Color) (contrast : Float) : Color
--- /-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
--- @[extern "lean_raylib__ColorAlpha"]
--- opaque ColorAlpha (color : Color) (alpha : Float) : Color
--- /-- Get src alpha-blended into dst color with tint -/
--- @[extern "lean_raylib__ColorAlphaBlend"]
--- opaque ColorAlphaBlend (dst : Color) (src : Color) (tint : Color) : Color
--- /-- Get Color structure from hexadecimal value -/
--- @[extern "lean_raylib__GetColor"]
--- opaque GetColor (hexValue : UInt32) : Color
+/-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
+@[extern "lean_raylib__Fade"]
+opaque Fade (color : Color) (alpha : Float) : Color
+/-- Get hexadecimal value for a Color -/
+@[extern "lean_raylib__ColorToInt"]
+opaque ColorToInt (color : Color) : Int32
+/-- Get Color normalized as float [0..1] -/
+@[extern "lean_raylib__ColorNormalize"]
+opaque ColorNormalize (color : Color) : Vector4
+/-- Get Color from normalized values [0..1] -/
+@[extern "lean_raylib__ColorFromNormalized"]
+opaque ColorFromNormalized (normalized : Vector4) : Color
+/-- Get HSV values for a Color, hue [0..360], saturation/value [0..1] -/
+@[extern "lean_raylib__ColorToHSV"]
+opaque ColorToHSV (color : Color) : Vector3
+/-- Get a Color from HSV values, hue [0..360], saturation/value [0..1] -/
+@[extern "lean_raylib__ColorFromHSV"]
+opaque ColorFromHSV (hue : Float) (saturation : Float) (value : Float) : Color
+/-- Get color multiplied with another color -/
+@[extern "lean_raylib__ColorTint"]
+opaque ColorTint (color : Color) (tint : Color) : Color
+/-- Get color with brightness correction, brightness factor goes from -1.0f to 1.0f -/
+@[extern "lean_raylib__ColorBrightness"]
+opaque ColorBrightness (color : Color) (factor : Float) : Color
+/-- Get color with contrast correction, contrast values between -1.0f and 1.0f -/
+@[extern "lean_raylib__ColorContrast"]
+opaque ColorContrast (color : Color) (contrast : Float) : Color
+/-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
+@[extern "lean_raylib__ColorAlpha"]
+opaque ColorAlpha (color : Color) (alpha : Float) : Color
+/-- Get src alpha-blended into dst color with tint -/
+@[extern "lean_raylib__ColorAlphaBlend"]
+opaque ColorAlphaBlend (dst : Color) (src : Color) (tint : Color) : Color
+/-- Get Color structure from hexadecimal value -/
+@[extern "lean_raylib__GetColor"]
+opaque GetColor (hexValue : UInt32) : Color
 -- /-- Get Color from a source pixel pointer of certain format -/
 -- @[extern "lean_raylib__GetPixelColor"]
 -- opaque GetPixelColor : Unit -> Unit

@@ -148,7 +148,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__RestoreWindow () {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetMonitorPosition (uint32_t monitor) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorPosition (uint32_t monitor) {
 //     Vector2 result_ = GetMonitorPosition(monitor);
 //     return lean_raylib_Vector2_to(result_);
 // }
@@ -178,12 +178,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__RestoreWindow () {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetWindowPosition () {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetWindowPosition () {
 //     Vector2 result_ = GetWindowPosition();
 //     return lean_raylib_Vector2_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetWindowScaleDPI () {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetWindowScaleDPI () {
 //     Vector2 result_ = GetWindowScaleDPI();
 //     return lean_raylib_Vector2_to(result_);
 // }
@@ -343,7 +343,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing () {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadVrStereoConfig (lean_obj_arg device) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadVrStereoConfig (lean_obj_arg device) {
 //     VrStereoConfig result_ = LoadVrStereoConfig(lean_raylib_VrDeviceInfo_from(device));
 //     return lean_raylib_VrStereoConfig_to(result_);
 // }
@@ -353,12 +353,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing () {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadShader (/* const char* */lean_obj_arg vsFileName, /* const char* */lean_obj_arg fsFileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (/* const char* */lean_obj_arg vsFileName, /* const char* */lean_obj_arg fsFileName) {
 //     Shader result_ = LoadShader(lean_string_cstr(vsFileName), lean_string_cstr(fsFileName));
 //     return lean_raylib_Shader_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadShaderFromMemory (/* const char* */lean_obj_arg vsCode, /* const char* */lean_obj_arg fsCode) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (/* const char* */lean_obj_arg vsCode, /* const char* */lean_obj_arg fsCode) {
 //     Shader result_ = LoadShaderFromMemory(lean_string_cstr(vsCode), lean_string_cstr(fsCode));
 //     return lean_raylib_Shader_to(result_);
 // }
@@ -403,37 +403,37 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing () {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetMouseRay (lean_obj_arg mousePosition, lean_obj_arg camera) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetMouseRay (lean_obj_arg mousePosition, lean_obj_arg camera) {
 //     Ray result_ = GetMouseRay(lean_raylib_Vector2_from(mousePosition), /*cast Camera to_lean?false*/(camera));
 //     return lean_raylib_Ray_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetCameraMatrix (lean_obj_arg camera) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix (lean_obj_arg camera) {
 //     Matrix result_ = GetCameraMatrix(/*cast Camera to_lean?false*/(camera));
 //     return lean_raylib_Matrix_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetCameraMatrix2D (lean_obj_arg camera) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix2D (lean_obj_arg camera) {
 //     Matrix result_ = GetCameraMatrix2D(lean_raylib_Camera2D_from(camera));
 //     return lean_raylib_Matrix_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetWorldToScreen (lean_obj_arg position, lean_obj_arg camera) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen (lean_obj_arg position, lean_obj_arg camera) {
 //     Vector2 result_ = GetWorldToScreen(lean_raylib_Vector3_from(position), /*cast Camera to_lean?false*/(camera));
 //     return lean_raylib_Vector2_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetScreenToWorld2D (lean_obj_arg position, lean_obj_arg camera) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetScreenToWorld2D (lean_obj_arg position, lean_obj_arg camera) {
 //     Vector2 result_ = GetScreenToWorld2D(lean_raylib_Vector2_from(position), lean_raylib_Camera2D_from(camera));
 //     return lean_raylib_Vector2_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetWorldToScreenEx (lean_obj_arg position, lean_obj_arg camera, uint32_t width, uint32_t height) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreenEx (lean_obj_arg position, lean_obj_arg camera, uint32_t width, uint32_t height) {
 //     Vector2 result_ = GetWorldToScreenEx(lean_raylib_Vector3_from(position), /*cast Camera to_lean?false*/(camera), width, height);
 //     return lean_raylib_Vector2_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetWorldToScreen2D (lean_obj_arg position, lean_obj_arg camera) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen2D (lean_obj_arg position, lean_obj_arg camera) {
 //     Vector2 result_ = GetWorldToScreen2D(lean_raylib_Vector2_from(position), lean_raylib_Camera2D_from(camera));
 //     return lean_raylib_Vector2_to(result_);
 // }
@@ -633,12 +633,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing () {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadDirectoryFiles (/* const char* */lean_obj_arg dirPath) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFiles (/* const char* */lean_obj_arg dirPath) {
 //     FilePathList result_ = LoadDirectoryFiles(lean_string_cstr(dirPath));
 //     return lean_raylib_FilePathList_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadDirectoryFilesEx (/* const char* */lean_obj_arg basePath, /* const char* */lean_obj_arg filter, uint8_t scanSubdirs) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFilesEx (/* const char* */lean_obj_arg basePath, /* const char* */lean_obj_arg filter, uint8_t scanSubdirs) {
 //     FilePathList result_ = LoadDirectoryFilesEx(lean_string_cstr(basePath), lean_string_cstr(filter), scanSubdirs);
 //     return lean_raylib_FilePathList_to(result_);
 // }
@@ -653,7 +653,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing () {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadDroppedFiles () {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadDroppedFiles () {
 //     FilePathList result_ = LoadDroppedFiles();
 //     return lean_raylib_FilePathList_to(result_);
 // }
@@ -663,7 +663,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing () {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetFileModTime (/* const char* */lean_obj_arg fileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetFileModTime (/* const char* */lean_obj_arg fileName) {
 //     unknown_t result_ = GetFileModTime(lean_string_cstr(fileName));
 //     return /*cast unknown_t to_lean?true*/(result_);
 // }
@@ -721,7 +721,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__IsGamepadAvailable (uint32_t gamepad) {
     return lean_io_result_mk_ok(lean_box(IsGamepadAvailable(gamepad)));
 }
 
-LEAN_EXPORT lean_obj_arg lean_raylib__GetGamepadName (uint32_t gamepad) {
+LEAN_EXPORT lean_obj_res lean_raylib__GetGamepadName (uint32_t gamepad) {
     const char * result_ = GetGamepadName(gamepad);
     return lean_io_result_mk_ok(
         lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_))
@@ -831,7 +831,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetTouchY () {
     return lean_io_result_mk_ok(lean_box_uint32(GetTouchY()));
 }
 
-LEAN_EXPORT lean_obj_arg lean_raylib__GetTouchPosition (uint32_t index) {
+LEAN_EXPORT lean_obj_res lean_raylib__GetTouchPosition (uint32_t index) {
     LET_BOX(Vector2, touchPos, GetTouchPosition(index));
     return lean_io_result_mk_ok(lean_raylib_Vector2_to(touchPos));
 }
@@ -861,7 +861,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetGestureHoldDuration () {
     return lean_io_result_mk_ok(lean_box_float(GetGestureHoldDuration()));
 }
 
-LEAN_EXPORT lean_obj_arg lean_raylib__GetGestureDragVector () {
+LEAN_EXPORT lean_obj_res lean_raylib__GetGestureDragVector () {
     LET_BOX(Vector2, gestureDrag, GetGestureDragVector());
     return lean_io_result_mk_ok(lean_raylib_Vector2_to(gestureDrag));
 }
@@ -1144,37 +1144,37 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetCollisionRec (lean_obj_arg rec1, lean_obj_arg rec2) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetCollisionRec (lean_obj_arg rec1, lean_obj_arg rec2) {
 //     Rectangle result_ = GetCollisionRec(lean_raylib_Rectangle_from(rec1), lean_raylib_Rectangle_from(rec2));
 //     return lean_raylib_Rectangle_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadImage (/* const char* */lean_obj_arg fileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadImage (/* const char* */lean_obj_arg fileName) {
 //     Image result_ = LoadImage(lean_string_cstr(fileName));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadImageRaw (/* const char* */lean_obj_arg fileName, uint32_t width, uint32_t height, uint32_t format, uint32_t headerSize) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageRaw (/* const char* */lean_obj_arg fileName, uint32_t width, uint32_t height, uint32_t format, uint32_t headerSize) {
 //     Image result_ = LoadImageRaw(lean_string_cstr(fileName), width, height, format, headerSize);
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadImageAnim (/* const char* */lean_obj_arg fileName, /* int* */lean_obj_arg frames) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageAnim (/* const char* */lean_obj_arg fileName, /* int* */lean_obj_arg frames) {
 //     Image result_ = LoadImageAnim(lean_string_cstr(fileName), /*todo: ptr?*/frames);
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadImageFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize) {
 //     Image result_ = LoadImageFromMemory(lean_string_cstr(fileType), /*todo: ptr?*/fileData, dataSize);
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadImageFromTexture (lean_obj_arg texture) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromTexture (lean_obj_arg texture) {
 //     Image result_ = LoadImageFromTexture(/*cast Texture2D to_lean?false*/(texture));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadImageFromScreen () {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromScreen () {
 //     Image result_ = LoadImageFromScreen();
 //     return lean_raylib_Image_to(result_);
 // }
@@ -1199,67 +1199,67 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageColor (uint32_t width, uint32_t height, uint32_t color) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageColor (uint32_t width, uint32_t height, uint32_t color) {
 //     Image result_ = GenImageColor(width, height, lean_raylib_Color_from(color));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageGradientV (uint32_t width, uint32_t height, uint32_t top, uint32_t bottom) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientV (uint32_t width, uint32_t height, uint32_t top, uint32_t bottom) {
 //     Image result_ = GenImageGradientV(width, height, lean_raylib_Color_from(top), lean_raylib_Color_from(bottom));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageGradientH (uint32_t width, uint32_t height, uint32_t left, uint32_t right) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientH (uint32_t width, uint32_t height, uint32_t left, uint32_t right) {
 //     Image result_ = GenImageGradientH(width, height, lean_raylib_Color_from(left), lean_raylib_Color_from(right));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageGradientRadial (uint32_t width, uint32_t height, double density, uint32_t inner, uint32_t outer) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientRadial (uint32_t width, uint32_t height, double density, uint32_t inner, uint32_t outer) {
 //     Image result_ = GenImageGradientRadial(width, height, (float)density, lean_raylib_Color_from(inner), lean_raylib_Color_from(outer));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageChecked (uint32_t width, uint32_t height, uint32_t checksX, uint32_t checksY, uint32_t col1, uint32_t col2) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageChecked (uint32_t width, uint32_t height, uint32_t checksX, uint32_t checksY, uint32_t col1, uint32_t col2) {
 //     Image result_ = GenImageChecked(width, height, checksX, checksY, lean_raylib_Color_from(col1), lean_raylib_Color_from(col2));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageWhiteNoise (uint32_t width, uint32_t height, double factor) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageWhiteNoise (uint32_t width, uint32_t height, double factor) {
 //     Image result_ = GenImageWhiteNoise(width, height, (float)factor);
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImagePerlinNoise (uint32_t width, uint32_t height, uint32_t offsetX, uint32_t offsetY, double scale) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImagePerlinNoise (uint32_t width, uint32_t height, uint32_t offsetX, uint32_t offsetY, double scale) {
 //     Image result_ = GenImagePerlinNoise(width, height, offsetX, offsetY, (float)scale);
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageCellular (uint32_t width, uint32_t height, uint32_t tileSize) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageCellular (uint32_t width, uint32_t height, uint32_t tileSize) {
 //     Image result_ = GenImageCellular(width, height, tileSize);
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageText (uint32_t width, uint32_t height, /* const char* */lean_obj_arg text) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageText (uint32_t width, uint32_t height, /* const char* */lean_obj_arg text) {
 //     Image result_ = GenImageText(width, height, lean_string_cstr(text));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__ImageCopy (lean_obj_arg image) {
+// LEAN_EXPORT lean_obj_res lean_raylib__ImageCopy (lean_obj_arg image) {
 //     Image result_ = ImageCopy(lean_raylib_Image_from(image));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__ImageFromImage (lean_obj_arg image, lean_obj_arg rec) {
+// LEAN_EXPORT lean_obj_res lean_raylib__ImageFromImage (lean_obj_arg image, lean_obj_arg rec) {
 //     Image result_ = ImageFromImage(lean_raylib_Image_from(image), lean_raylib_Rectangle_from(rec));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__ImageText (/* const char* */lean_obj_arg text, uint32_t fontSize, uint32_t color) {
+// LEAN_EXPORT lean_obj_res lean_raylib__ImageText (/* const char* */lean_obj_arg text, uint32_t fontSize, uint32_t color) {
 //     Image result_ = ImageText(lean_string_cstr(text), fontSize, lean_raylib_Color_from(color));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__ImageTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, double fontSize, double spacing, uint32_t tint) {
+// LEAN_EXPORT lean_obj_res lean_raylib__ImageTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, double fontSize, double spacing, uint32_t tint) {
 //     Image result_ = ImageTextEx(lean_raylib_Font_from(font), lean_string_cstr(text), (float)fontSize, (float)spacing, lean_raylib_Color_from(tint));
 //     return lean_raylib_Image_to(result_);
 // }
@@ -1399,7 +1399,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetImageAlphaBorder (lean_obj_arg image, double threshold) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetImageAlphaBorder (lean_obj_arg image, double threshold) {
 //     Rectangle result_ = GetImageAlphaBorder(lean_raylib_Image_from(image), (float)threshold);
 //     return lean_raylib_Rectangle_to(result_);
 // }
@@ -1489,22 +1489,22 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadTexture (/* const char* */lean_obj_arg fileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadTexture (/* const char* */lean_obj_arg fileName) {
 //     Texture2D result_ = LoadTexture(lean_string_cstr(fileName));
 //     return /*cast Texture2D to_lean?true*/(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadTextureFromImage (lean_obj_arg image) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureFromImage (lean_obj_arg image) {
 //     Texture2D result_ = LoadTextureFromImage(lean_raylib_Image_from(image));
 //     return /*cast Texture2D to_lean?true*/(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadTextureCubemap (lean_obj_arg image, uint32_t layout) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureCubemap (lean_obj_arg image, uint32_t layout) {
 //     TextureCubemap result_ = LoadTextureCubemap(lean_raylib_Image_from(image), layout);
 //     return /*cast TextureCubemap to_lean?true*/(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadRenderTexture (uint32_t width, uint32_t height) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadRenderTexture (uint32_t width, uint32_t height) {
 //     RenderTexture2D result_ = LoadRenderTexture(width, height);
 //     return /*cast RenderTexture2D to_lean?true*/(result_);
 // }
@@ -1584,65 +1584,75 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT uint32_t lean_raylib__Fade (uint32_t color, double alpha) {
-//     Color result_ = Fade(lean_raylib_Color_from(color), (float)alpha);
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Fade (uint32_t color, double alpha) {
+    return lean_raylib_Color_to(Fade(lean_raylib_Color_from(color), alpha));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ColorToInt (uint32_t color) {
-//     int result_ = ColorToInt(lean_raylib_Color_from(color));
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__ColorToInt (uint32_t color) {
+    return ColorToInt(lean_raylib_Color_from(color));
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__ColorNormalize (uint32_t color) {
-//     Vector4 result_ = ColorNormalize(lean_raylib_Color_from(color));
-//     return lean_raylib_Vector4_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ColorNormalize (uint32_t color) {
+    LET_BOX(Vector4, normalized, ColorNormalize(lean_raylib_Color_from(color)));
+    return lean_raylib_Vector4_to(normalized);
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ColorFromNormalized (lean_obj_arg normalized) {
-//     Color result_ = ColorFromNormalized(lean_raylib_Vector4_from(normalized));
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__ColorFromNormalized (lean_obj_arg normalized) {
+    return lean_raylib_Color_to(ColorFromNormalized(*lean_raylib_Vector4_from(normalized)));
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__ColorToHSV (uint32_t color) {
-//     Vector3 result_ = ColorToHSV(lean_raylib_Color_from(color));
-//     return lean_raylib_Vector3_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ColorToHSV (uint32_t color) {
+    LET_BOX(Vector3, hsv, ColorToHSV(lean_raylib_Color_from(color)));
+    return lean_raylib_Vector3_to(hsv);
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ColorFromHSV (double hue, double saturation, double value) {
-//     Color result_ = ColorFromHSV((float)hue, (float)saturation, (float)value);
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__ColorFromHSV (double hue, double saturation, double value) {
+    return lean_raylib_Color_to(ColorFromHSV(
+        (float)hue,
+        (float)saturation,
+        (float)value
+    ));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ColorTint (uint32_t color, uint32_t tint) {
-//     Color result_ = ColorTint(lean_raylib_Color_from(color), lean_raylib_Color_from(tint));
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__ColorTint (uint32_t color, uint32_t tint) {
+    return lean_raylib_Color_to(ColorTint(
+        lean_raylib_Color_from(color),
+        lean_raylib_Color_from(tint)
+    ));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ColorBrightness (uint32_t color, double factor) {
-//     Color result_ = ColorBrightness(lean_raylib_Color_from(color), (float)factor);
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__ColorBrightness (uint32_t color, double factor) {
+    return lean_raylib_Color_to(ColorBrightness(
+        lean_raylib_Color_from(color),
+        (float)factor
+    ));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ColorContrast (uint32_t color, double contrast) {
-//     Color result_ = ColorContrast(lean_raylib_Color_from(color), (float)contrast);
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__ColorContrast (uint32_t color, double contrast) {
+    return lean_raylib_Color_to(ColorContrast(
+        lean_raylib_Color_from(color),
+        (float)contrast
+    ));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ColorAlpha (uint32_t color, double alpha) {
-//     Color result_ = ColorAlpha(lean_raylib_Color_from(color), (float)alpha);
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__ColorAlpha (uint32_t color, double alpha) {
+    return lean_raylib_Color_to(ColorAlpha(
+        lean_raylib_Color_from(color),
+        (float)alpha
+    ));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ColorAlphaBlend (uint32_t dst, uint32_t src, uint32_t tint) {
-//     Color result_ = ColorAlphaBlend(lean_raylib_Color_from(dst), lean_raylib_Color_from(src), lean_raylib_Color_from(tint));
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__ColorAlphaBlend (uint32_t dst, uint32_t src, uint32_t tint) {
+    return lean_raylib_Color_to(ColorAlphaBlend(
+        lean_raylib_Color_from(dst),
+        lean_raylib_Color_from(src),
+        lean_raylib_Color_from(tint)
+    ));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetColor (uint32_t hexValue) {
-//     Color result_ = GetColor(hexValue);
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__GetColor (uint32_t hexValue) {
+    return lean_raylib_Color_to(GetColor(hexValue));
+}
 
 // LEAN_EXPORT uint32_t lean_raylib__GetPixelColor (/* void* */lean_obj_arg srcPtr, uint32_t format) {
 //     Color result_ = GetPixelColor(/*todo: ptr?*/srcPtr, format);
@@ -1659,27 +1669,27 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetFontDefault () {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetFontDefault () {
 //     Font result_ = GetFontDefault();
 //     return lean_raylib_Font_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadFont (/* const char* */lean_obj_arg fileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadFont (/* const char* */lean_obj_arg fileName) {
 //     Font result_ = LoadFont(lean_string_cstr(fileName));
 //     return lean_raylib_Font_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadFontEx (/* const char* */lean_obj_arg fileName, uint32_t fontSize, /* int* */lean_obj_arg fontChars, uint32_t glyphCount) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadFontEx (/* const char* */lean_obj_arg fileName, uint32_t fontSize, /* int* */lean_obj_arg fontChars, uint32_t glyphCount) {
 //     Font result_ = LoadFontEx(lean_string_cstr(fileName), fontSize, /*todo: ptr?*/fontChars, glyphCount);
 //     return lean_raylib_Font_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadFontFromImage (lean_obj_arg image, uint32_t key, uint32_t firstChar) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromImage (lean_obj_arg image, uint32_t key, uint32_t firstChar) {
 //     Font result_ = LoadFontFromImage(lean_raylib_Image_from(image), lean_raylib_Color_from(key), firstChar);
 //     return lean_raylib_Font_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadFontFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize, uint32_t fontSize, /* int* */lean_obj_arg fontChars, uint32_t glyphCount) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize, uint32_t fontSize, /* int* */lean_obj_arg fontChars, uint32_t glyphCount) {
 //     Font result_ = LoadFontFromMemory(lean_string_cstr(fileType), /*todo: ptr?*/fileData, dataSize, fontSize, /*todo: ptr?*/fontChars, glyphCount);
 //     return lean_raylib_Font_to(result_);
 // }
@@ -1694,7 +1704,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenImageFontAtlas (/* const GlyphInfo* */lean_obj_arg chars, /* Rectangle ** */lean_obj_arg recs, uint32_t glyphCount, uint32_t fontSize, uint32_t padding, uint32_t packMethod) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageFontAtlas (/* const GlyphInfo* */lean_obj_arg chars, /* Rectangle ** */lean_obj_arg recs, uint32_t glyphCount, uint32_t fontSize, uint32_t padding, uint32_t packMethod) {
 //     Image result_ = GenImageFontAtlas(/*todo: ptr?*/chars, /*todo: ptr?*/recs, glyphCount, fontSize, padding, packMethod);
 //     return lean_raylib_Image_to(result_);
 // }
@@ -1749,7 +1759,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__MeasureTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, double fontSize, double spacing) {
+// LEAN_EXPORT lean_obj_res lean_raylib__MeasureTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, double fontSize, double spacing) {
 //     Vector2 result_ = MeasureTextEx(lean_raylib_Font_from(font), lean_string_cstr(text), (float)fontSize, (float)spacing);
 //     return lean_raylib_Vector2_to(result_);
 // }
@@ -1759,12 +1769,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetGlyphInfo (lean_obj_arg font, uint32_t codepoint) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphInfo (lean_obj_arg font, uint32_t codepoint) {
 //     GlyphInfo result_ = GetGlyphInfo(lean_raylib_Font_from(font), codepoint);
 //     return lean_raylib_GlyphInfo_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetGlyphAtlasRec (lean_obj_arg font, uint32_t codepoint) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphAtlasRec (lean_obj_arg font, uint32_t codepoint) {
 //     Rectangle result_ = GetGlyphAtlasRec(lean_raylib_Font_from(font), codepoint);
 //     return lean_raylib_Rectangle_to(result_);
 // }
@@ -1994,12 +2004,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadModel (/* const char* */lean_obj_arg fileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadModel (/* const char* */lean_obj_arg fileName) {
 //     Model result_ = LoadModel(lean_string_cstr(fileName));
 //     return lean_raylib_Model_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadModelFromMesh (lean_obj_arg mesh) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadModelFromMesh (lean_obj_arg mesh) {
 //     Model result_ = LoadModelFromMesh(lean_raylib_Mesh_from(mesh));
 //     return lean_raylib_Model_to(result_);
 // }
@@ -2019,7 +2029,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetModelBoundingBox (lean_obj_arg model) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetModelBoundingBox (lean_obj_arg model) {
 //     BoundingBox result_ = GetModelBoundingBox(lean_raylib_Model_from(model));
 //     return lean_raylib_BoundingBox_to(result_);
 // }
@@ -2094,7 +2104,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetMeshBoundingBox (lean_obj_arg mesh) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetMeshBoundingBox (lean_obj_arg mesh) {
 //     BoundingBox result_ = GetMeshBoundingBox(lean_raylib_Mesh_from(mesh));
 //     return lean_raylib_BoundingBox_to(result_);
 // }
@@ -2104,57 +2114,57 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshPoly (uint32_t sides, double radius) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshPoly (uint32_t sides, double radius) {
 //     Mesh result_ = GenMeshPoly(sides, (float)radius);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshPlane (double width, double length, uint32_t resX, uint32_t resZ) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshPlane (double width, double length, uint32_t resX, uint32_t resZ) {
 //     Mesh result_ = GenMeshPlane((float)width, (float)length, resX, resZ);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshCube (double width, double height, double length) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCube (double width, double height, double length) {
 //     Mesh result_ = GenMeshCube((float)width, (float)height, (float)length);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshSphere (double radius, uint32_t rings, uint32_t slices) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshSphere (double radius, uint32_t rings, uint32_t slices) {
 //     Mesh result_ = GenMeshSphere((float)radius, rings, slices);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshHemiSphere (double radius, uint32_t rings, uint32_t slices) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshHemiSphere (double radius, uint32_t rings, uint32_t slices) {
 //     Mesh result_ = GenMeshHemiSphere((float)radius, rings, slices);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshCylinder (double radius, double height, uint32_t slices) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCylinder (double radius, double height, uint32_t slices) {
 //     Mesh result_ = GenMeshCylinder((float)radius, (float)height, slices);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshCone (double radius, double height, uint32_t slices) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCone (double radius, double height, uint32_t slices) {
 //     Mesh result_ = GenMeshCone((float)radius, (float)height, slices);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshTorus (double radius, double size, uint32_t radSeg, uint32_t sides) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshTorus (double radius, double size, uint32_t radSeg, uint32_t sides) {
 //     Mesh result_ = GenMeshTorus((float)radius, (float)size, radSeg, sides);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshKnot (double radius, double size, uint32_t radSeg, uint32_t sides) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshKnot (double radius, double size, uint32_t radSeg, uint32_t sides) {
 //     Mesh result_ = GenMeshKnot((float)radius, (float)size, radSeg, sides);
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshHeightmap (lean_obj_arg heightmap, lean_obj_arg size) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshHeightmap (lean_obj_arg heightmap, lean_obj_arg size) {
 //     Mesh result_ = GenMeshHeightmap(lean_raylib_Image_from(heightmap), lean_raylib_Vector3_from(size));
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GenMeshCubicmap (lean_obj_arg cubicmap, lean_obj_arg cubeSize) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCubicmap (lean_obj_arg cubicmap, lean_obj_arg cubeSize) {
 //     Mesh result_ = GenMeshCubicmap(lean_raylib_Image_from(cubicmap), lean_raylib_Vector3_from(cubeSize));
 //     return lean_raylib_Mesh_to(result_);
 // }
@@ -2164,7 +2174,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadMaterialDefault () {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadMaterialDefault () {
 //     Material result_ = LoadMaterialDefault();
 //     return lean_raylib_Material_to(result_);
 // }
@@ -2229,27 +2239,27 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetRayCollisionSphere (lean_obj_arg ray, lean_obj_arg center, double radius) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionSphere (lean_obj_arg ray, lean_obj_arg center, double radius) {
 //     RayCollision result_ = GetRayCollisionSphere(lean_raylib_Ray_from(ray), lean_raylib_Vector3_from(center), (float)radius);
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetRayCollisionBox (lean_obj_arg ray, lean_obj_arg box) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionBox (lean_obj_arg ray, lean_obj_arg box) {
 //     RayCollision result_ = GetRayCollisionBox(lean_raylib_Ray_from(ray), lean_raylib_BoundingBox_from(box));
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetRayCollisionMesh (lean_obj_arg ray, lean_obj_arg mesh, lean_obj_arg transform) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionMesh (lean_obj_arg ray, lean_obj_arg mesh, lean_obj_arg transform) {
 //     RayCollision result_ = GetRayCollisionMesh(lean_raylib_Ray_from(ray), lean_raylib_Mesh_from(mesh), lean_raylib_Matrix_from(transform));
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetRayCollisionTriangle (lean_obj_arg ray, lean_obj_arg p1, lean_obj_arg p2, lean_obj_arg p3) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionTriangle (lean_obj_arg ray, lean_obj_arg p1, lean_obj_arg p2, lean_obj_arg p3) {
 //     RayCollision result_ = GetRayCollisionTriangle(lean_raylib_Ray_from(ray), lean_raylib_Vector3_from(p1), lean_raylib_Vector3_from(p2), lean_raylib_Vector3_from(p3));
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__GetRayCollisionQuad (lean_obj_arg ray, lean_obj_arg p1, lean_obj_arg p2, lean_obj_arg p3, lean_obj_arg p4) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionQuad (lean_obj_arg ray, lean_obj_arg p1, lean_obj_arg p2, lean_obj_arg p3, lean_obj_arg p4) {
 //     RayCollision result_ = GetRayCollisionQuad(lean_raylib_Ray_from(ray), lean_raylib_Vector3_from(p1), lean_raylib_Vector3_from(p2), lean_raylib_Vector3_from(p3), lean_raylib_Vector3_from(p4));
 //     return lean_raylib_RayCollision_to(result_);
 // }
@@ -2274,12 +2284,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadWave (/* const char* */lean_obj_arg fileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadWave (/* const char* */lean_obj_arg fileName) {
 //     Wave result_ = LoadWave(lean_string_cstr(fileName));
 //     return lean_raylib_Wave_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadWaveFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadWaveFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize) {
 //     Wave result_ = LoadWaveFromMemory(lean_string_cstr(fileType), /*todo: ptr?*/fileData, dataSize);
 //     return lean_raylib_Wave_to(result_);
 // }
@@ -2289,12 +2299,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadSound (/* const char* */lean_obj_arg fileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadSound (/* const char* */lean_obj_arg fileName) {
 //     Sound result_ = LoadSound(lean_string_cstr(fileName));
 //     return lean_raylib_Sound_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadSoundFromWave (lean_obj_arg wave) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadSoundFromWave (lean_obj_arg wave) {
 //     Sound result_ = LoadSoundFromWave(lean_raylib_Wave_from(wave));
 //     return lean_raylib_Sound_to(result_);
 // }
@@ -2384,7 +2394,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__WaveCopy (lean_obj_arg wave) {
+// LEAN_EXPORT lean_obj_res lean_raylib__WaveCopy (lean_obj_arg wave) {
 //     Wave result_ = WaveCopy(lean_raylib_Wave_from(wave));
 //     return lean_raylib_Wave_to(result_);
 // }
@@ -2409,12 +2419,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadMusicStream (/* const char* */lean_obj_arg fileName) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStream (/* const char* */lean_obj_arg fileName) {
 //     Music result_ = LoadMusicStream(lean_string_cstr(fileName));
 //     return lean_raylib_Music_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadMusicStreamFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg data, uint32_t dataSize) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStreamFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg data, uint32_t dataSize) {
 //     Music result_ = LoadMusicStreamFromMemory(lean_string_cstr(fileType), /*todo: ptr?*/data, dataSize);
 //     return lean_raylib_Music_to(result_);
 // }
@@ -2489,7 +2499,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
 //     return (float)result_;
 // }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__LoadAudioStream (uint32_t sampleRate, uint32_t sampleSize, uint32_t channels) {
+// LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (uint32_t sampleRate, uint32_t sampleSize, uint32_t channels) {
 //     AudioStream result_ = LoadAudioStream(sampleRate, sampleSize, channels);
 //     return lean_raylib_AudioStream_to(result_);
 // }
