@@ -315,9 +315,9 @@ opaque EndDrawing (_ : Unit) : IO Unit
 -- /-- Takes a screenshot of current screen (filename extension defines format) -/
 -- @[extern "lean_raylib__TakeScreenshot"]
 -- opaque TakeScreenshot (fileName : String) : Unit
--- /-- Setup init configuration flags (view FLAGS) -/
--- @[extern "lean_raylib__SetConfigFlags"]
--- opaque SetConfigFlags (flags : UInt32) : Unit
+/-- Setup init configuration flags (view FLAGS) -/
+@[extern "lean_raylib__SetConfigFlags"]
+opaque SetConfigFlags (flags : ConfigFlags) : IO Unit
 -- /-- Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...) -/
 -- @[extern "lean_raylib__TraceLog"]
 -- opaque TraceLog : Unit -> Unit
@@ -1630,9 +1630,9 @@ opaque GetColor (hexValue : UInt32) : Color
 /-- Draw current FPS -/
 @[extern "lean_raylib__DrawFPS"]
 opaque DrawFPS (posX : Int32) (posY : Int32) : IO Unit
--- /-- Draw text (using default font) -/
--- @[extern "lean_raylib__DrawText"]
--- opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32) (color : Color) : Unit
+/-- Draw text (using default font) -/
+@[extern "lean_raylib__DrawText"]
+opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32) (color : Color) : IO Unit
 -- /-- Draw text using font and additional parameters -/
 -- @[extern "lean_raylib__DrawTextEx"]
 -- opaque DrawTextEx (font : Font) (text : String) (position : Vector2) (fontSize : Float) (spacing : Float) (tint : Color) : Unit

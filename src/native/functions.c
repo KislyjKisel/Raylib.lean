@@ -473,10 +473,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing () {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetConfigFlags (uint32_t flags) {
-//     SetConfigFlags(flags);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetConfigFlags (uint32_t flags) {
+    SetConfigFlags(flags);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__TraceLog (uint32_t logLevel, /* const char* */lean_obj_arg text, /* variadic */ ... args) {
 //     TraceLog(logLevel, lean_string_cstr(text), /*todo: variadic*/args);
@@ -1729,10 +1729,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawText (/* const char* */lean_obj_arg text, uint32_t posX, uint32_t posY, uint32_t fontSize, uint32_t color) {
-//     DrawText(lean_string_cstr(text), posX, posY, fontSize, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawText (lean_obj_arg text, uint32_t posX, uint32_t posY, uint32_t fontSize, uint32_t color) {
+    DrawText(lean_string_cstr(text), posX, posY, fontSize, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__DrawTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, lean_obj_arg position, double fontSize, double spacing, uint32_t tint) {
 //     DrawTextEx(lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), (float)fontSize, (float)spacing, lean_raylib_Color_from(tint));
