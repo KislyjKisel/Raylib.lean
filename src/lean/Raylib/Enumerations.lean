@@ -1020,11 +1020,17 @@ def CAMERA_ORBITAL : CameraMode := Subtype.mk 2 CameraMode.Is.CAMERA_ORBITAL
 def CAMERA_FIRST_PERSON : CameraMode := Subtype.mk 3 CameraMode.Is.CAMERA_FIRST_PERSON
 /-- Third person camera -/
 def CAMERA_THIRD_PERSON : CameraMode := Subtype.mk 4 CameraMode.Is.CAMERA_THIRD_PERSON
+
+
+/-! # Camera projection -/
+
 inductive CameraProjection.Is : UInt32 -> Prop where
   | CAMERA_PERSPECTIVE : CameraProjection.Is 0
   | CAMERA_ORTHOGRAPHIC : CameraProjection.Is 1
+
 /-- Camera projection -/
 def CameraProjection : Type := Subtype CameraProjection.Is
+
 /-- Perspective projection -/
 def CAMERA_PERSPECTIVE : CameraProjection := Subtype.mk 0 CameraProjection.Is.CAMERA_PERSPECTIVE
 /-- Orthographic projection -/
@@ -1032,6 +1038,7 @@ def CAMERA_ORTHOGRAPHIC : CameraProjection := Subtype.mk 1 CameraProjection.Is.C
 
 
 /-! # NPatch layout -/
+
 inductive NPatchLayout.Is : UInt32 -> Prop where
   | NPATCH_NINE_PATCH : NPatchLayout.Is 0
   | NPATCH_THREE_PATCH_VERTICAL : NPatchLayout.Is 1
