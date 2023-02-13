@@ -1714,10 +1714,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
-//     DrawFPS(posX, posY);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY) {
+    DrawFPS(posX, posY);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__DrawText (/* const char* */lean_obj_arg text, uint32_t posX, uint32_t posY, uint32_t fontSize, uint32_t color) {
 //     DrawText(lean_string_cstr(text), posX, posY, fontSize, lean_raylib_Color_from(color));

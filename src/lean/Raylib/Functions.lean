@@ -1627,9 +1627,9 @@ opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControl
 -- /-- Export font as code file, returns true on success -/
 -- @[extern "lean_raylib__ExportFontAsCode"]
 -- opaque ExportFontAsCode (font : Font) (fileName : String) : Bool
--- /-- Draw current FPS -/
--- @[extern "lean_raylib__DrawFPS"]
--- opaque DrawFPS (posX : Int32) (posY : Int32) : Unit
+/-- Draw current FPS -/
+@[extern "lean_raylib__DrawFPS"]
+opaque DrawFPS (posX : Int32) (posY : Int32) : IO Unit
 -- /-- Draw text (using default font) -/
 -- @[extern "lean_raylib__DrawText"]
 -- opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32) (color : Color) : Unit
