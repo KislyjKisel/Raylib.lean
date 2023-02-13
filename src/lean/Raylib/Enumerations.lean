@@ -581,270 +581,306 @@ def GAMEPAD_AXIS_RIGHT_TRIGGER : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.GAME
 
 /-! # Material map indices -/
 
--- inductive MaterialMapIndex.Is : UInt32 -> Prop where
---   | MATERIAL_MAP_ALBEDO : MaterialMapIndex.Is 0
---   | MATERIAL_MAP_METALNESS : MaterialMapIndex.Is 1
---   | MATERIAL_MAP_NORMAL : MaterialMapIndex.Is 2
---   | MATERIAL_MAP_ROUGHNESS : MaterialMapIndex.Is 3
---   | MATERIAL_MAP_OCCLUSION : MaterialMapIndex.Is 4
---   | MATERIAL_MAP_EMISSION : MaterialMapIndex.Is 5
---   | MATERIAL_MAP_HEIGHT : MaterialMapIndex.Is 6
---   | MATERIAL_MAP_CUBEMAP : MaterialMapIndex.Is 7
---   | MATERIAL_MAP_IRRADIANCE : MaterialMapIndex.Is 8
---   | MATERIAL_MAP_PREFILTER : MaterialMapIndex.Is 9
---   | MATERIAL_MAP_BRDF : MaterialMapIndex.Is 10
--- /-- Material map index -/
--- def MaterialMapIndex : Type := Subtype MaterialMapIndex.Is
--- /-- Albedo material (same as: MATERIAL_MAP_DIFFUSE) -/
--- def MATERIAL_MAP_ALBEDO : MaterialMapIndex := Subtype.mk 0 MaterialMapIndex.Is.MATERIAL_MAP_ALBEDO
--- /-- Metalness material (same as: MATERIAL_MAP_SPECULAR) -/
--- def MATERIAL_MAP_METALNESS : MaterialMapIndex := Subtype.mk 1 MaterialMapIndex.Is.MATERIAL_MAP_METALNESS
--- /-- Normal material -/
--- def MATERIAL_MAP_NORMAL : MaterialMapIndex := Subtype.mk 2 MaterialMapIndex.Is.MATERIAL_MAP_NORMAL
--- /-- Roughness material -/
--- def MATERIAL_MAP_ROUGHNESS : MaterialMapIndex := Subtype.mk 3 MaterialMapIndex.Is.MATERIAL_MAP_ROUGHNESS
--- /-- Ambient occlusion material -/
--- def MATERIAL_MAP_OCCLUSION : MaterialMapIndex := Subtype.mk 4 MaterialMapIndex.Is.MATERIAL_MAP_OCCLUSION
--- /-- Emission material -/
--- def MATERIAL_MAP_EMISSION : MaterialMapIndex := Subtype.mk 5 MaterialMapIndex.Is.MATERIAL_MAP_EMISSION
--- /-- Heightmap material -/
--- def MATERIAL_MAP_HEIGHT : MaterialMapIndex := Subtype.mk 6 MaterialMapIndex.Is.MATERIAL_MAP_HEIGHT
--- /-- Cubemap material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
--- def MATERIAL_MAP_CUBEMAP : MaterialMapIndex := Subtype.mk 7 MaterialMapIndex.Is.MATERIAL_MAP_CUBEMAP
--- /-- Irradiance material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
--- def MATERIAL_MAP_IRRADIANCE : MaterialMapIndex := Subtype.mk 8 MaterialMapIndex.Is.MATERIAL_MAP_IRRADIANCE
--- /-- Prefilter material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
--- def MATERIAL_MAP_PREFILTER : MaterialMapIndex := Subtype.mk 9 MaterialMapIndex.Is.MATERIAL_MAP_PREFILTER
--- /-- Brdf material -/
--- def MATERIAL_MAP_BRDF : MaterialMapIndex := Subtype.mk 10 MaterialMapIndex.Is.MATERIAL_MAP_BRDF
--- inductive ShaderLocationIndex.Is : UInt32 -> Prop where
---   | SHADER_LOC_VERTEX_POSITION : ShaderLocationIndex.Is 0
---   | SHADER_LOC_VERTEX_TEXCOORD01 : ShaderLocationIndex.Is 1
---   | SHADER_LOC_VERTEX_TEXCOORD02 : ShaderLocationIndex.Is 2
---   | SHADER_LOC_VERTEX_NORMAL : ShaderLocationIndex.Is 3
---   | SHADER_LOC_VERTEX_TANGENT : ShaderLocationIndex.Is 4
---   | SHADER_LOC_VERTEX_COLOR : ShaderLocationIndex.Is 5
---   | SHADER_LOC_MATRIX_MVP : ShaderLocationIndex.Is 6
---   | SHADER_LOC_MATRIX_VIEW : ShaderLocationIndex.Is 7
---   | SHADER_LOC_MATRIX_PROJECTION : ShaderLocationIndex.Is 8
---   | SHADER_LOC_MATRIX_MODEL : ShaderLocationIndex.Is 9
---   | SHADER_LOC_MATRIX_NORMAL : ShaderLocationIndex.Is 10
---   | SHADER_LOC_VECTOR_VIEW : ShaderLocationIndex.Is 11
---   | SHADER_LOC_COLOR_DIFFUSE : ShaderLocationIndex.Is 12
---   | SHADER_LOC_COLOR_SPECULAR : ShaderLocationIndex.Is 13
---   | SHADER_LOC_COLOR_AMBIENT : ShaderLocationIndex.Is 14
---   | SHADER_LOC_MAP_ALBEDO : ShaderLocationIndex.Is 15
---   | SHADER_LOC_MAP_METALNESS : ShaderLocationIndex.Is 16
---   | SHADER_LOC_MAP_NORMAL : ShaderLocationIndex.Is 17
---   | SHADER_LOC_MAP_ROUGHNESS : ShaderLocationIndex.Is 18
---   | SHADER_LOC_MAP_OCCLUSION : ShaderLocationIndex.Is 19
---   | SHADER_LOC_MAP_EMISSION : ShaderLocationIndex.Is 20
---   | SHADER_LOC_MAP_HEIGHT : ShaderLocationIndex.Is 21
---   | SHADER_LOC_MAP_CUBEMAP : ShaderLocationIndex.Is 22
---   | SHADER_LOC_MAP_IRRADIANCE : ShaderLocationIndex.Is 23
---   | SHADER_LOC_MAP_PREFILTER : ShaderLocationIndex.Is 24
---   | SHADER_LOC_MAP_BRDF : ShaderLocationIndex.Is 25
--- /-- Shader location index -/
--- def ShaderLocationIndex : Type := Subtype ShaderLocationIndex.Is
--- /-- Shader location: vertex attribute: position -/
--- def SHADER_LOC_VERTEX_POSITION : ShaderLocationIndex := Subtype.mk 0 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_POSITION
--- /-- Shader location: vertex attribute: texcoord01 -/
--- def SHADER_LOC_VERTEX_TEXCOORD01 : ShaderLocationIndex := Subtype.mk 1 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TEXCOORD01
--- /-- Shader location: vertex attribute: texcoord02 -/
--- def SHADER_LOC_VERTEX_TEXCOORD02 : ShaderLocationIndex := Subtype.mk 2 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TEXCOORD02
--- /-- Shader location: vertex attribute: normal -/
--- def SHADER_LOC_VERTEX_NORMAL : ShaderLocationIndex := Subtype.mk 3 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_NORMAL
--- /-- Shader location: vertex attribute: tangent -/
--- def SHADER_LOC_VERTEX_TANGENT : ShaderLocationIndex := Subtype.mk 4 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TANGENT
--- /-- Shader location: vertex attribute: color -/
--- def SHADER_LOC_VERTEX_COLOR : ShaderLocationIndex := Subtype.mk 5 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_COLOR
--- /-- Shader location: matrix uniform: model-view-projection -/
--- def SHADER_LOC_MATRIX_MVP : ShaderLocationIndex := Subtype.mk 6 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_MVP
--- /-- Shader location: matrix uniform: view (camera transform) -/
--- def SHADER_LOC_MATRIX_VIEW : ShaderLocationIndex := Subtype.mk 7 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_VIEW
--- /-- Shader location: matrix uniform: projection -/
--- def SHADER_LOC_MATRIX_PROJECTION : ShaderLocationIndex := Subtype.mk 8 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_PROJECTION
--- /-- Shader location: matrix uniform: model (transform) -/
--- def SHADER_LOC_MATRIX_MODEL : ShaderLocationIndex := Subtype.mk 9 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_MODEL
--- /-- Shader location: matrix uniform: normal -/
--- def SHADER_LOC_MATRIX_NORMAL : ShaderLocationIndex := Subtype.mk 10 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_NORMAL
--- /-- Shader location: vector uniform: view -/
--- def SHADER_LOC_VECTOR_VIEW : ShaderLocationIndex := Subtype.mk 11 ShaderLocationIndex.Is.SHADER_LOC_VECTOR_VIEW
--- /-- Shader location: vector uniform: diffuse color -/
--- def SHADER_LOC_COLOR_DIFFUSE : ShaderLocationIndex := Subtype.mk 12 ShaderLocationIndex.Is.SHADER_LOC_COLOR_DIFFUSE
--- /-- Shader location: vector uniform: specular color -/
--- def SHADER_LOC_COLOR_SPECULAR : ShaderLocationIndex := Subtype.mk 13 ShaderLocationIndex.Is.SHADER_LOC_COLOR_SPECULAR
--- /-- Shader location: vector uniform: ambient color -/
--- def SHADER_LOC_COLOR_AMBIENT : ShaderLocationIndex := Subtype.mk 14 ShaderLocationIndex.Is.SHADER_LOC_COLOR_AMBIENT
--- /-- Shader location: sampler2d texture: albedo (same as: SHADER_LOC_MAP_DIFFUSE) -/
--- def SHADER_LOC_MAP_ALBEDO : ShaderLocationIndex := Subtype.mk 15 ShaderLocationIndex.Is.SHADER_LOC_MAP_ALBEDO
--- /-- Shader location: sampler2d texture: metalness (same as: SHADER_LOC_MAP_SPECULAR) -/
--- def SHADER_LOC_MAP_METALNESS : ShaderLocationIndex := Subtype.mk 16 ShaderLocationIndex.Is.SHADER_LOC_MAP_METALNESS
--- /-- Shader location: sampler2d texture: normal -/
--- def SHADER_LOC_MAP_NORMAL : ShaderLocationIndex := Subtype.mk 17 ShaderLocationIndex.Is.SHADER_LOC_MAP_NORMAL
--- /-- Shader location: sampler2d texture: roughness -/
--- def SHADER_LOC_MAP_ROUGHNESS : ShaderLocationIndex := Subtype.mk 18 ShaderLocationIndex.Is.SHADER_LOC_MAP_ROUGHNESS
--- /-- Shader location: sampler2d texture: occlusion -/
--- def SHADER_LOC_MAP_OCCLUSION : ShaderLocationIndex := Subtype.mk 19 ShaderLocationIndex.Is.SHADER_LOC_MAP_OCCLUSION
--- /-- Shader location: sampler2d texture: emission -/
--- def SHADER_LOC_MAP_EMISSION : ShaderLocationIndex := Subtype.mk 20 ShaderLocationIndex.Is.SHADER_LOC_MAP_EMISSION
--- /-- Shader location: sampler2d texture: height -/
--- def SHADER_LOC_MAP_HEIGHT : ShaderLocationIndex := Subtype.mk 21 ShaderLocationIndex.Is.SHADER_LOC_MAP_HEIGHT
--- /-- Shader location: samplerCube texture: cubemap -/
--- def SHADER_LOC_MAP_CUBEMAP : ShaderLocationIndex := Subtype.mk 22 ShaderLocationIndex.Is.SHADER_LOC_MAP_CUBEMAP
--- /-- Shader location: samplerCube texture: irradiance -/
--- def SHADER_LOC_MAP_IRRADIANCE : ShaderLocationIndex := Subtype.mk 23 ShaderLocationIndex.Is.SHADER_LOC_MAP_IRRADIANCE
--- /-- Shader location: samplerCube texture: prefilter -/
--- def SHADER_LOC_MAP_PREFILTER : ShaderLocationIndex := Subtype.mk 24 ShaderLocationIndex.Is.SHADER_LOC_MAP_PREFILTER
--- /-- Shader location: sampler2d texture: brdf -/
--- def SHADER_LOC_MAP_BRDF : ShaderLocationIndex := Subtype.mk 25 ShaderLocationIndex.Is.SHADER_LOC_MAP_BRDF
--- inductive ShaderUniformDataType.Is : UInt32 -> Prop where
---   | SHADER_UNIFORM_FLOAT : ShaderUniformDataType.Is 0
---   | SHADER_UNIFORM_VEC2 : ShaderUniformDataType.Is 1
---   | SHADER_UNIFORM_VEC3 : ShaderUniformDataType.Is 2
---   | SHADER_UNIFORM_VEC4 : ShaderUniformDataType.Is 3
---   | SHADER_UNIFORM_INT : ShaderUniformDataType.Is 4
---   | SHADER_UNIFORM_IVEC2 : ShaderUniformDataType.Is 5
---   | SHADER_UNIFORM_IVEC3 : ShaderUniformDataType.Is 6
---   | SHADER_UNIFORM_IVEC4 : ShaderUniformDataType.Is 7
---   | SHADER_UNIFORM_SAMPLER2D : ShaderUniformDataType.Is 8
--- /-- Shader uniform data type -/
--- def ShaderUniformDataType : Type := Subtype ShaderUniformDataType.Is
--- /-- Shader uniform type: float -/
--- def SHADER_UNIFORM_FLOAT : ShaderUniformDataType := Subtype.mk 0 ShaderUniformDataType.Is.SHADER_UNIFORM_FLOAT
--- /-- Shader uniform type: vec2 (2 float) -/
--- def SHADER_UNIFORM_VEC2 : ShaderUniformDataType := Subtype.mk 1 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC2
--- /-- Shader uniform type: vec3 (3 float) -/
--- def SHADER_UNIFORM_VEC3 : ShaderUniformDataType := Subtype.mk 2 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC3
--- /-- Shader uniform type: vec4 (4 float) -/
--- def SHADER_UNIFORM_VEC4 : ShaderUniformDataType := Subtype.mk 3 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC4
--- /-- Shader uniform type: int -/
--- def SHADER_UNIFORM_INT : ShaderUniformDataType := Subtype.mk 4 ShaderUniformDataType.Is.SHADER_UNIFORM_INT
--- /-- Shader uniform type: ivec2 (2 int) -/
--- def SHADER_UNIFORM_IVEC2 : ShaderUniformDataType := Subtype.mk 5 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC2
--- /-- Shader uniform type: ivec3 (3 int) -/
--- def SHADER_UNIFORM_IVEC3 : ShaderUniformDataType := Subtype.mk 6 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC3
--- /-- Shader uniform type: ivec4 (4 int) -/
--- def SHADER_UNIFORM_IVEC4 : ShaderUniformDataType := Subtype.mk 7 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC4
--- /-- Shader uniform type: sampler2d -/
--- def SHADER_UNIFORM_SAMPLER2D : ShaderUniformDataType := Subtype.mk 8 ShaderUniformDataType.Is.SHADER_UNIFORM_SAMPLER2D
--- inductive ShaderAttributeDataType.Is : UInt32 -> Prop where
---   | SHADER_ATTRIB_FLOAT : ShaderAttributeDataType.Is 0
---   | SHADER_ATTRIB_VEC2 : ShaderAttributeDataType.Is 1
---   | SHADER_ATTRIB_VEC3 : ShaderAttributeDataType.Is 2
---   | SHADER_ATTRIB_VEC4 : ShaderAttributeDataType.Is 3
--- /-- Shader attribute data types -/
--- def ShaderAttributeDataType : Type := Subtype ShaderAttributeDataType.Is
--- /-- Shader attribute type: float -/
--- def SHADER_ATTRIB_FLOAT : ShaderAttributeDataType := Subtype.mk 0 ShaderAttributeDataType.Is.SHADER_ATTRIB_FLOAT
--- /-- Shader attribute type: vec2 (2 float) -/
--- def SHADER_ATTRIB_VEC2 : ShaderAttributeDataType := Subtype.mk 1 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC2
--- /-- Shader attribute type: vec3 (3 float) -/
--- def SHADER_ATTRIB_VEC3 : ShaderAttributeDataType := Subtype.mk 2 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC3
--- /-- Shader attribute type: vec4 (4 float) -/
--- def SHADER_ATTRIB_VEC4 : ShaderAttributeDataType := Subtype.mk 3 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC4
--- inductive PixelFormat.Is : UInt32 -> Prop where
---   | PIXELFORMAT_UNCOMPRESSED_GRAYSCALE : PixelFormat.Is 1
---   | PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA : PixelFormat.Is 2
---   | PIXELFORMAT_UNCOMPRESSED_R5G6B5 : PixelFormat.Is 3
---   | PIXELFORMAT_UNCOMPRESSED_R8G8B8 : PixelFormat.Is 4
---   | PIXELFORMAT_UNCOMPRESSED_R5G5B5A1 : PixelFormat.Is 5
---   | PIXELFORMAT_UNCOMPRESSED_R4G4B4A4 : PixelFormat.Is 6
---   | PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 : PixelFormat.Is 7
---   | PIXELFORMAT_UNCOMPRESSED_R32 : PixelFormat.Is 8
---   | PIXELFORMAT_UNCOMPRESSED_R32G32B32 : PixelFormat.Is 9
---   | PIXELFORMAT_UNCOMPRESSED_R32G32B32A32 : PixelFormat.Is 10
---   | PIXELFORMAT_COMPRESSED_DXT1_RGB : PixelFormat.Is 11
---   | PIXELFORMAT_COMPRESSED_DXT1_RGBA : PixelFormat.Is 12
---   | PIXELFORMAT_COMPRESSED_DXT3_RGBA : PixelFormat.Is 13
---   | PIXELFORMAT_COMPRESSED_DXT5_RGBA : PixelFormat.Is 14
---   | PIXELFORMAT_COMPRESSED_ETC1_RGB : PixelFormat.Is 15
---   | PIXELFORMAT_COMPRESSED_ETC2_RGB : PixelFormat.Is 16
---   | PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA : PixelFormat.Is 17
---   | PIXELFORMAT_COMPRESSED_PVRT_RGB : PixelFormat.Is 18
---   | PIXELFORMAT_COMPRESSED_PVRT_RGBA : PixelFormat.Is 19
---   | PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA : PixelFormat.Is 20
---   | PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA : PixelFormat.Is 21
--- /-- Pixel formats -/
--- def PixelFormat : Type := Subtype PixelFormat.Is
--- /-- 8 bit per pixel (no alpha) -/
--- def PIXELFORMAT_UNCOMPRESSED_GRAYSCALE : PixelFormat := Subtype.mk 1 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_GRAYSCALE
--- /-- 8*2 bpp (2 channels) -/
--- def PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA : PixelFormat := Subtype.mk 2 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA
--- /-- 16 bpp -/
--- def PIXELFORMAT_UNCOMPRESSED_R5G6B5 : PixelFormat := Subtype.mk 3 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R5G6B5
--- /-- 24 bpp -/
--- def PIXELFORMAT_UNCOMPRESSED_R8G8B8 : PixelFormat := Subtype.mk 4 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R8G8B8
--- /-- 16 bpp (1 bit alpha) -/
--- def PIXELFORMAT_UNCOMPRESSED_R5G5B5A1 : PixelFormat := Subtype.mk 5 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R5G5B5A1
--- /-- 16 bpp (4 bit alpha) -/
--- def PIXELFORMAT_UNCOMPRESSED_R4G4B4A4 : PixelFormat := Subtype.mk 6 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R4G4B4A4
--- /-- 32 bpp -/
--- def PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 : PixelFormat := Subtype.mk 7 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
--- /-- 32 bpp (1 channel - float) -/
--- def PIXELFORMAT_UNCOMPRESSED_R32 : PixelFormat := Subtype.mk 8 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32
--- /-- 32*3 bpp (3 channels - float) -/
--- def PIXELFORMAT_UNCOMPRESSED_R32G32B32 : PixelFormat := Subtype.mk 9 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32G32B32
--- /-- 32*4 bpp (4 channels - float) -/
--- def PIXELFORMAT_UNCOMPRESSED_R32G32B32A32 : PixelFormat := Subtype.mk 10 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32G32B32A32
--- /-- 4 bpp (no alpha) -/
--- def PIXELFORMAT_COMPRESSED_DXT1_RGB : PixelFormat := Subtype.mk 11 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT1_RGB
--- /-- 4 bpp (1 bit alpha) -/
--- def PIXELFORMAT_COMPRESSED_DXT1_RGBA : PixelFormat := Subtype.mk 12 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT1_RGBA
--- /-- 8 bpp -/
--- def PIXELFORMAT_COMPRESSED_DXT3_RGBA : PixelFormat := Subtype.mk 13 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT3_RGBA
--- /-- 8 bpp -/
--- def PIXELFORMAT_COMPRESSED_DXT5_RGBA : PixelFormat := Subtype.mk 14 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT5_RGBA
--- /-- 4 bpp -/
--- def PIXELFORMAT_COMPRESSED_ETC1_RGB : PixelFormat := Subtype.mk 15 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC1_RGB
--- /-- 4 bpp -/
--- def PIXELFORMAT_COMPRESSED_ETC2_RGB : PixelFormat := Subtype.mk 16 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC2_RGB
--- /-- 8 bpp -/
--- def PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA : PixelFormat := Subtype.mk 17 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA
--- /-- 4 bpp -/
--- def PIXELFORMAT_COMPRESSED_PVRT_RGB : PixelFormat := Subtype.mk 18 PixelFormat.Is.PIXELFORMAT_COMPRESSED_PVRT_RGB
--- /-- 4 bpp -/
--- def PIXELFORMAT_COMPRESSED_PVRT_RGBA : PixelFormat := Subtype.mk 19 PixelFormat.Is.PIXELFORMAT_COMPRESSED_PVRT_RGBA
--- /-- 8 bpp -/
--- def PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA : PixelFormat := Subtype.mk 20 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA
--- /-- 2 bpp -/
--- def PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA : PixelFormat := Subtype.mk 21 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
--- inductive TextureFilter.Is : UInt32 -> Prop where
---   | TEXTURE_FILTER_POINT : TextureFilter.Is 0
---   | TEXTURE_FILTER_BILINEAR : TextureFilter.Is 1
---   | TEXTURE_FILTER_TRILINEAR : TextureFilter.Is 2
---   | TEXTURE_FILTER_ANISOTROPIC_4X : TextureFilter.Is 3
---   | TEXTURE_FILTER_ANISOTROPIC_8X : TextureFilter.Is 4
---   | TEXTURE_FILTER_ANISOTROPIC_16X : TextureFilter.Is 5
--- /-- Texture parameters: filter mode -/
--- def TextureFilter : Type := Subtype TextureFilter.Is
--- /-- No filter, just pixel approximation -/
--- def TEXTURE_FILTER_POINT : TextureFilter := Subtype.mk 0 TextureFilter.Is.TEXTURE_FILTER_POINT
--- /-- Linear filtering -/
--- def TEXTURE_FILTER_BILINEAR : TextureFilter := Subtype.mk 1 TextureFilter.Is.TEXTURE_FILTER_BILINEAR
--- /-- Trilinear filtering (linear with mipmaps) -/
--- def TEXTURE_FILTER_TRILINEAR : TextureFilter := Subtype.mk 2 TextureFilter.Is.TEXTURE_FILTER_TRILINEAR
--- /-- Anisotropic filtering 4x -/
--- def TEXTURE_FILTER_ANISOTROPIC_4X : TextureFilter := Subtype.mk 3 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_4X
--- /-- Anisotropic filtering 8x -/
--- def TEXTURE_FILTER_ANISOTROPIC_8X : TextureFilter := Subtype.mk 4 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_8X
--- /-- Anisotropic filtering 16x -/
--- def TEXTURE_FILTER_ANISOTROPIC_16X : TextureFilter := Subtype.mk 5 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_16X
--- inductive TextureWrap.Is : UInt32 -> Prop where
---   | TEXTURE_WRAP_REPEAT : TextureWrap.Is 0
---   | TEXTURE_WRAP_CLAMP : TextureWrap.Is 1
---   | TEXTURE_WRAP_MIRROR_REPEAT : TextureWrap.Is 2
---   | TEXTURE_WRAP_MIRROR_CLAMP : TextureWrap.Is 3
--- /-- Texture parameters: wrap mode -/
--- def TextureWrap : Type := Subtype TextureWrap.Is
--- /-- Repeats texture in tiled mode -/
--- def TEXTURE_WRAP_REPEAT : TextureWrap := Subtype.mk 0 TextureWrap.Is.TEXTURE_WRAP_REPEAT
--- /-- Clamps texture to edge pixel in tiled mode -/
--- def TEXTURE_WRAP_CLAMP : TextureWrap := Subtype.mk 1 TextureWrap.Is.TEXTURE_WRAP_CLAMP
--- /-- Mirrors and repeats the texture in tiled mode -/
--- def TEXTURE_WRAP_MIRROR_REPEAT : TextureWrap := Subtype.mk 2 TextureWrap.Is.TEXTURE_WRAP_MIRROR_REPEAT
--- /-- Mirrors and clamps to border the texture in tiled mode -/
--- def TEXTURE_WRAP_MIRROR_CLAMP : TextureWrap := Subtype.mk 3 TextureWrap.Is.TEXTURE_WRAP_MIRROR_CLAMP
+inductive MaterialMapIndex.Is : UInt32 -> Prop where
+  | MATERIAL_MAP_ALBEDO : MaterialMapIndex.Is 0
+  | MATERIAL_MAP_METALNESS : MaterialMapIndex.Is 1
+  | MATERIAL_MAP_NORMAL : MaterialMapIndex.Is 2
+  | MATERIAL_MAP_ROUGHNESS : MaterialMapIndex.Is 3
+  | MATERIAL_MAP_OCCLUSION : MaterialMapIndex.Is 4
+  | MATERIAL_MAP_EMISSION : MaterialMapIndex.Is 5
+  | MATERIAL_MAP_HEIGHT : MaterialMapIndex.Is 6
+  | MATERIAL_MAP_CUBEMAP : MaterialMapIndex.Is 7
+  | MATERIAL_MAP_IRRADIANCE : MaterialMapIndex.Is 8
+  | MATERIAL_MAP_PREFILTER : MaterialMapIndex.Is 9
+  | MATERIAL_MAP_BRDF : MaterialMapIndex.Is 10
+
+/-- Material map index -/
+def MaterialMapIndex : Type := Subtype MaterialMapIndex.Is
+
+/-- Albedo material (same as: MATERIAL_MAP_DIFFUSE) -/
+def MATERIAL_MAP_ALBEDO : MaterialMapIndex := Subtype.mk 0 MaterialMapIndex.Is.MATERIAL_MAP_ALBEDO
+/-- Metalness material (same as: MATERIAL_MAP_SPECULAR) -/
+def MATERIAL_MAP_METALNESS : MaterialMapIndex := Subtype.mk 1 MaterialMapIndex.Is.MATERIAL_MAP_METALNESS
+/-- Normal material -/
+def MATERIAL_MAP_NORMAL : MaterialMapIndex := Subtype.mk 2 MaterialMapIndex.Is.MATERIAL_MAP_NORMAL
+/-- Roughness material -/
+def MATERIAL_MAP_ROUGHNESS : MaterialMapIndex := Subtype.mk 3 MaterialMapIndex.Is.MATERIAL_MAP_ROUGHNESS
+/-- Ambient occlusion material -/
+def MATERIAL_MAP_OCCLUSION : MaterialMapIndex := Subtype.mk 4 MaterialMapIndex.Is.MATERIAL_MAP_OCCLUSION
+/-- Emission material -/
+def MATERIAL_MAP_EMISSION : MaterialMapIndex := Subtype.mk 5 MaterialMapIndex.Is.MATERIAL_MAP_EMISSION
+/-- Heightmap material -/
+def MATERIAL_MAP_HEIGHT : MaterialMapIndex := Subtype.mk 6 MaterialMapIndex.Is.MATERIAL_MAP_HEIGHT
+/-- Cubemap material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
+def MATERIAL_MAP_CUBEMAP : MaterialMapIndex := Subtype.mk 7 MaterialMapIndex.Is.MATERIAL_MAP_CUBEMAP
+/-- Irradiance material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
+def MATERIAL_MAP_IRRADIANCE : MaterialMapIndex := Subtype.mk 8 MaterialMapIndex.Is.MATERIAL_MAP_IRRADIANCE
+/-- Prefilter material (NOTE: Uses GL_TEXTURE_CUBE_MAP) -/
+def MATERIAL_MAP_PREFILTER : MaterialMapIndex := Subtype.mk 9 MaterialMapIndex.Is.MATERIAL_MAP_PREFILTER
+/-- Brdf material -/
+def MATERIAL_MAP_BRDF : MaterialMapIndex := Subtype.mk 10 MaterialMapIndex.Is.MATERIAL_MAP_BRDF
+
+
+/-! # Shader location index -/
+
+inductive ShaderLocationIndex.Is : UInt32 -> Prop where
+  | SHADER_LOC_VERTEX_POSITION : ShaderLocationIndex.Is 0
+  | SHADER_LOC_VERTEX_TEXCOORD01 : ShaderLocationIndex.Is 1
+  | SHADER_LOC_VERTEX_TEXCOORD02 : ShaderLocationIndex.Is 2
+  | SHADER_LOC_VERTEX_NORMAL : ShaderLocationIndex.Is 3
+  | SHADER_LOC_VERTEX_TANGENT : ShaderLocationIndex.Is 4
+  | SHADER_LOC_VERTEX_COLOR : ShaderLocationIndex.Is 5
+  | SHADER_LOC_MATRIX_MVP : ShaderLocationIndex.Is 6
+  | SHADER_LOC_MATRIX_VIEW : ShaderLocationIndex.Is 7
+  | SHADER_LOC_MATRIX_PROJECTION : ShaderLocationIndex.Is 8
+  | SHADER_LOC_MATRIX_MODEL : ShaderLocationIndex.Is 9
+  | SHADER_LOC_MATRIX_NORMAL : ShaderLocationIndex.Is 10
+  | SHADER_LOC_VECTOR_VIEW : ShaderLocationIndex.Is 11
+  | SHADER_LOC_COLOR_DIFFUSE : ShaderLocationIndex.Is 12
+  | SHADER_LOC_COLOR_SPECULAR : ShaderLocationIndex.Is 13
+  | SHADER_LOC_COLOR_AMBIENT : ShaderLocationIndex.Is 14
+  | SHADER_LOC_MAP_ALBEDO : ShaderLocationIndex.Is 15
+  | SHADER_LOC_MAP_METALNESS : ShaderLocationIndex.Is 16
+  | SHADER_LOC_MAP_NORMAL : ShaderLocationIndex.Is 17
+  | SHADER_LOC_MAP_ROUGHNESS : ShaderLocationIndex.Is 18
+  | SHADER_LOC_MAP_OCCLUSION : ShaderLocationIndex.Is 19
+  | SHADER_LOC_MAP_EMISSION : ShaderLocationIndex.Is 20
+  | SHADER_LOC_MAP_HEIGHT : ShaderLocationIndex.Is 21
+  | SHADER_LOC_MAP_CUBEMAP : ShaderLocationIndex.Is 22
+  | SHADER_LOC_MAP_IRRADIANCE : ShaderLocationIndex.Is 23
+  | SHADER_LOC_MAP_PREFILTER : ShaderLocationIndex.Is 24
+  | SHADER_LOC_MAP_BRDF : ShaderLocationIndex.Is 25
+
+/-- Shader location index -/
+def ShaderLocationIndex : Type := Subtype ShaderLocationIndex.Is
+
+/-- Shader location: vertex attribute: position -/
+def SHADER_LOC_VERTEX_POSITION : ShaderLocationIndex := Subtype.mk 0 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_POSITION
+/-- Shader location: vertex attribute: texcoord01 -/
+def SHADER_LOC_VERTEX_TEXCOORD01 : ShaderLocationIndex := Subtype.mk 1 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TEXCOORD01
+/-- Shader location: vertex attribute: texcoord02 -/
+def SHADER_LOC_VERTEX_TEXCOORD02 : ShaderLocationIndex := Subtype.mk 2 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TEXCOORD02
+/-- Shader location: vertex attribute: normal -/
+def SHADER_LOC_VERTEX_NORMAL : ShaderLocationIndex := Subtype.mk 3 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_NORMAL
+/-- Shader location: vertex attribute: tangent -/
+def SHADER_LOC_VERTEX_TANGENT : ShaderLocationIndex := Subtype.mk 4 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_TANGENT
+/-- Shader location: vertex attribute: color -/
+def SHADER_LOC_VERTEX_COLOR : ShaderLocationIndex := Subtype.mk 5 ShaderLocationIndex.Is.SHADER_LOC_VERTEX_COLOR
+/-- Shader location: matrix uniform: model-view-projection -/
+def SHADER_LOC_MATRIX_MVP : ShaderLocationIndex := Subtype.mk 6 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_MVP
+/-- Shader location: matrix uniform: view (camera transform) -/
+def SHADER_LOC_MATRIX_VIEW : ShaderLocationIndex := Subtype.mk 7 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_VIEW
+/-- Shader location: matrix uniform: projection -/
+def SHADER_LOC_MATRIX_PROJECTION : ShaderLocationIndex := Subtype.mk 8 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_PROJECTION
+/-- Shader location: matrix uniform: model (transform) -/
+def SHADER_LOC_MATRIX_MODEL : ShaderLocationIndex := Subtype.mk 9 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_MODEL
+/-- Shader location: matrix uniform: normal -/
+def SHADER_LOC_MATRIX_NORMAL : ShaderLocationIndex := Subtype.mk 10 ShaderLocationIndex.Is.SHADER_LOC_MATRIX_NORMAL
+/-- Shader location: vector uniform: view -/
+def SHADER_LOC_VECTOR_VIEW : ShaderLocationIndex := Subtype.mk 11 ShaderLocationIndex.Is.SHADER_LOC_VECTOR_VIEW
+/-- Shader location: vector uniform: diffuse color -/
+def SHADER_LOC_COLOR_DIFFUSE : ShaderLocationIndex := Subtype.mk 12 ShaderLocationIndex.Is.SHADER_LOC_COLOR_DIFFUSE
+/-- Shader location: vector uniform: specular color -/
+def SHADER_LOC_COLOR_SPECULAR : ShaderLocationIndex := Subtype.mk 13 ShaderLocationIndex.Is.SHADER_LOC_COLOR_SPECULAR
+/-- Shader location: vector uniform: ambient color -/
+def SHADER_LOC_COLOR_AMBIENT : ShaderLocationIndex := Subtype.mk 14 ShaderLocationIndex.Is.SHADER_LOC_COLOR_AMBIENT
+/-- Shader location: sampler2d texture: albedo (same as: SHADER_LOC_MAP_DIFFUSE) -/
+def SHADER_LOC_MAP_ALBEDO : ShaderLocationIndex := Subtype.mk 15 ShaderLocationIndex.Is.SHADER_LOC_MAP_ALBEDO
+/-- Shader location: sampler2d texture: metalness (same as: SHADER_LOC_MAP_SPECULAR) -/
+def SHADER_LOC_MAP_METALNESS : ShaderLocationIndex := Subtype.mk 16 ShaderLocationIndex.Is.SHADER_LOC_MAP_METALNESS
+/-- Shader location: sampler2d texture: normal -/
+def SHADER_LOC_MAP_NORMAL : ShaderLocationIndex := Subtype.mk 17 ShaderLocationIndex.Is.SHADER_LOC_MAP_NORMAL
+/-- Shader location: sampler2d texture: roughness -/
+def SHADER_LOC_MAP_ROUGHNESS : ShaderLocationIndex := Subtype.mk 18 ShaderLocationIndex.Is.SHADER_LOC_MAP_ROUGHNESS
+/-- Shader location: sampler2d texture: occlusion -/
+def SHADER_LOC_MAP_OCCLUSION : ShaderLocationIndex := Subtype.mk 19 ShaderLocationIndex.Is.SHADER_LOC_MAP_OCCLUSION
+/-- Shader location: sampler2d texture: emission -/
+def SHADER_LOC_MAP_EMISSION : ShaderLocationIndex := Subtype.mk 20 ShaderLocationIndex.Is.SHADER_LOC_MAP_EMISSION
+/-- Shader location: sampler2d texture: height -/
+def SHADER_LOC_MAP_HEIGHT : ShaderLocationIndex := Subtype.mk 21 ShaderLocationIndex.Is.SHADER_LOC_MAP_HEIGHT
+/-- Shader location: samplerCube texture: cubemap -/
+def SHADER_LOC_MAP_CUBEMAP : ShaderLocationIndex := Subtype.mk 22 ShaderLocationIndex.Is.SHADER_LOC_MAP_CUBEMAP
+/-- Shader location: samplerCube texture: irradiance -/
+def SHADER_LOC_MAP_IRRADIANCE : ShaderLocationIndex := Subtype.mk 23 ShaderLocationIndex.Is.SHADER_LOC_MAP_IRRADIANCE
+/-- Shader location: samplerCube texture: prefilter -/
+def SHADER_LOC_MAP_PREFILTER : ShaderLocationIndex := Subtype.mk 24 ShaderLocationIndex.Is.SHADER_LOC_MAP_PREFILTER
+/-- Shader location: sampler2d texture: brdf -/
+def SHADER_LOC_MAP_BRDF : ShaderLocationIndex := Subtype.mk 25 ShaderLocationIndex.Is.SHADER_LOC_MAP_BRDF
+
+
+/-! # Shader uniform data type -/
+
+inductive ShaderUniformDataType.Is : UInt32 -> Prop where
+  | SHADER_UNIFORM_FLOAT : ShaderUniformDataType.Is 0
+  | SHADER_UNIFORM_VEC2 : ShaderUniformDataType.Is 1
+  | SHADER_UNIFORM_VEC3 : ShaderUniformDataType.Is 2
+  | SHADER_UNIFORM_VEC4 : ShaderUniformDataType.Is 3
+  | SHADER_UNIFORM_INT : ShaderUniformDataType.Is 4
+  | SHADER_UNIFORM_IVEC2 : ShaderUniformDataType.Is 5
+  | SHADER_UNIFORM_IVEC3 : ShaderUniformDataType.Is 6
+  | SHADER_UNIFORM_IVEC4 : ShaderUniformDataType.Is 7
+  | SHADER_UNIFORM_SAMPLER2D : ShaderUniformDataType.Is 8
+
+/-- Shader uniform data type -/
+def ShaderUniformDataType : Type := Subtype ShaderUniformDataType.Is
+
+/-- Shader uniform type: float -/
+def SHADER_UNIFORM_FLOAT : ShaderUniformDataType := Subtype.mk 0 ShaderUniformDataType.Is.SHADER_UNIFORM_FLOAT
+/-- Shader uniform type: vec2 (2 float) -/
+def SHADER_UNIFORM_VEC2 : ShaderUniformDataType := Subtype.mk 1 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC2
+/-- Shader uniform type: vec3 (3 float) -/
+def SHADER_UNIFORM_VEC3 : ShaderUniformDataType := Subtype.mk 2 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC3
+/-- Shader uniform type: vec4 (4 float) -/
+def SHADER_UNIFORM_VEC4 : ShaderUniformDataType := Subtype.mk 3 ShaderUniformDataType.Is.SHADER_UNIFORM_VEC4
+/-- Shader uniform type: int -/
+def SHADER_UNIFORM_INT : ShaderUniformDataType := Subtype.mk 4 ShaderUniformDataType.Is.SHADER_UNIFORM_INT
+/-- Shader uniform type: ivec2 (2 int) -/
+def SHADER_UNIFORM_IVEC2 : ShaderUniformDataType := Subtype.mk 5 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC2
+/-- Shader uniform type: ivec3 (3 int) -/
+def SHADER_UNIFORM_IVEC3 : ShaderUniformDataType := Subtype.mk 6 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC3
+/-- Shader uniform type: ivec4 (4 int) -/
+def SHADER_UNIFORM_IVEC4 : ShaderUniformDataType := Subtype.mk 7 ShaderUniformDataType.Is.SHADER_UNIFORM_IVEC4
+/-- Shader uniform type: sampler2d -/
+def SHADER_UNIFORM_SAMPLER2D : ShaderUniformDataType := Subtype.mk 8 ShaderUniformDataType.Is.SHADER_UNIFORM_SAMPLER2D
+
+
+/-! # Shader attribute data type -/
+
+inductive ShaderAttributeDataType.Is : UInt32 -> Prop where
+  | SHADER_ATTRIB_FLOAT : ShaderAttributeDataType.Is 0
+  | SHADER_ATTRIB_VEC2 : ShaderAttributeDataType.Is 1
+  | SHADER_ATTRIB_VEC3 : ShaderAttributeDataType.Is 2
+  | SHADER_ATTRIB_VEC4 : ShaderAttributeDataType.Is 3
+
+/-- Shader attribute data types -/
+def ShaderAttributeDataType : Type := Subtype ShaderAttributeDataType.Is
+
+/-- Shader attribute type: float -/
+def SHADER_ATTRIB_FLOAT : ShaderAttributeDataType := Subtype.mk 0 ShaderAttributeDataType.Is.SHADER_ATTRIB_FLOAT
+/-- Shader attribute type: vec2 (2 float) -/
+def SHADER_ATTRIB_VEC2 : ShaderAttributeDataType := Subtype.mk 1 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC2
+/-- Shader attribute type: vec3 (3 float) -/
+def SHADER_ATTRIB_VEC3 : ShaderAttributeDataType := Subtype.mk 2 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC3
+/-- Shader attribute type: vec4 (4 float) -/
+def SHADER_ATTRIB_VEC4 : ShaderAttributeDataType := Subtype.mk 3 ShaderAttributeDataType.Is.SHADER_ATTRIB_VEC4
+
+
+/-! # Pixel format -/
+
+inductive PixelFormat.Is : UInt32 -> Prop where
+  | PIXELFORMAT_UNCOMPRESSED_GRAYSCALE : PixelFormat.Is 1
+  | PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA : PixelFormat.Is 2
+  | PIXELFORMAT_UNCOMPRESSED_R5G6B5 : PixelFormat.Is 3
+  | PIXELFORMAT_UNCOMPRESSED_R8G8B8 : PixelFormat.Is 4
+  | PIXELFORMAT_UNCOMPRESSED_R5G5B5A1 : PixelFormat.Is 5
+  | PIXELFORMAT_UNCOMPRESSED_R4G4B4A4 : PixelFormat.Is 6
+  | PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 : PixelFormat.Is 7
+  | PIXELFORMAT_UNCOMPRESSED_R32 : PixelFormat.Is 8
+  | PIXELFORMAT_UNCOMPRESSED_R32G32B32 : PixelFormat.Is 9
+  | PIXELFORMAT_UNCOMPRESSED_R32G32B32A32 : PixelFormat.Is 10
+  | PIXELFORMAT_COMPRESSED_DXT1_RGB : PixelFormat.Is 11
+  | PIXELFORMAT_COMPRESSED_DXT1_RGBA : PixelFormat.Is 12
+  | PIXELFORMAT_COMPRESSED_DXT3_RGBA : PixelFormat.Is 13
+  | PIXELFORMAT_COMPRESSED_DXT5_RGBA : PixelFormat.Is 14
+  | PIXELFORMAT_COMPRESSED_ETC1_RGB : PixelFormat.Is 15
+  | PIXELFORMAT_COMPRESSED_ETC2_RGB : PixelFormat.Is 16
+  | PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA : PixelFormat.Is 17
+  | PIXELFORMAT_COMPRESSED_PVRT_RGB : PixelFormat.Is 18
+  | PIXELFORMAT_COMPRESSED_PVRT_RGBA : PixelFormat.Is 19
+  | PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA : PixelFormat.Is 20
+  | PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA : PixelFormat.Is 21
+
+/-- Pixel formats -/
+def PixelFormat : Type := Subtype PixelFormat.Is
+
+/-- 8 bit per pixel (no alpha) -/
+def PIXELFORMAT_UNCOMPRESSED_GRAYSCALE : PixelFormat := Subtype.mk 1 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_GRAYSCALE
+/-- 8*2 bpp (2 channels) -/
+def PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA : PixelFormat := Subtype.mk 2 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA
+/-- 16 bpp -/
+def PIXELFORMAT_UNCOMPRESSED_R5G6B5 : PixelFormat := Subtype.mk 3 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R5G6B5
+/-- 24 bpp -/
+def PIXELFORMAT_UNCOMPRESSED_R8G8B8 : PixelFormat := Subtype.mk 4 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R8G8B8
+/-- 16 bpp (1 bit alpha) -/
+def PIXELFORMAT_UNCOMPRESSED_R5G5B5A1 : PixelFormat := Subtype.mk 5 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R5G5B5A1
+/-- 16 bpp (4 bit alpha) -/
+def PIXELFORMAT_UNCOMPRESSED_R4G4B4A4 : PixelFormat := Subtype.mk 6 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R4G4B4A4
+/-- 32 bpp -/
+def PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 : PixelFormat := Subtype.mk 7 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
+/-- 32 bpp (1 channel - float) -/
+def PIXELFORMAT_UNCOMPRESSED_R32 : PixelFormat := Subtype.mk 8 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32
+/-- 32*3 bpp (3 channels - float) -/
+def PIXELFORMAT_UNCOMPRESSED_R32G32B32 : PixelFormat := Subtype.mk 9 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32G32B32
+/-- 32*4 bpp (4 channels - float) -/
+def PIXELFORMAT_UNCOMPRESSED_R32G32B32A32 : PixelFormat := Subtype.mk 10 PixelFormat.Is.PIXELFORMAT_UNCOMPRESSED_R32G32B32A32
+/-- 4 bpp (no alpha) -/
+def PIXELFORMAT_COMPRESSED_DXT1_RGB : PixelFormat := Subtype.mk 11 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT1_RGB
+/-- 4 bpp (1 bit alpha) -/
+def PIXELFORMAT_COMPRESSED_DXT1_RGBA : PixelFormat := Subtype.mk 12 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT1_RGBA
+/-- 8 bpp -/
+def PIXELFORMAT_COMPRESSED_DXT3_RGBA : PixelFormat := Subtype.mk 13 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT3_RGBA
+/-- 8 bpp -/
+def PIXELFORMAT_COMPRESSED_DXT5_RGBA : PixelFormat := Subtype.mk 14 PixelFormat.Is.PIXELFORMAT_COMPRESSED_DXT5_RGBA
+/-- 4 bpp -/
+def PIXELFORMAT_COMPRESSED_ETC1_RGB : PixelFormat := Subtype.mk 15 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC1_RGB
+/-- 4 bpp -/
+def PIXELFORMAT_COMPRESSED_ETC2_RGB : PixelFormat := Subtype.mk 16 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC2_RGB
+/-- 8 bpp -/
+def PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA : PixelFormat := Subtype.mk 17 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA
+/-- 4 bpp -/
+def PIXELFORMAT_COMPRESSED_PVRT_RGB : PixelFormat := Subtype.mk 18 PixelFormat.Is.PIXELFORMAT_COMPRESSED_PVRT_RGB
+/-- 4 bpp -/
+def PIXELFORMAT_COMPRESSED_PVRT_RGBA : PixelFormat := Subtype.mk 19 PixelFormat.Is.PIXELFORMAT_COMPRESSED_PVRT_RGBA
+/-- 8 bpp -/
+def PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA : PixelFormat := Subtype.mk 20 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA
+/-- 2 bpp -/
+def PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA : PixelFormat := Subtype.mk 21 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
+
+
+/-! # Texture filter -/
+
+inductive TextureFilter.Is : UInt32 -> Prop where
+  | TEXTURE_FILTER_POINT : TextureFilter.Is 0
+  | TEXTURE_FILTER_BILINEAR : TextureFilter.Is 1
+  | TEXTURE_FILTER_TRILINEAR : TextureFilter.Is 2
+  | TEXTURE_FILTER_ANISOTROPIC_4X : TextureFilter.Is 3
+  | TEXTURE_FILTER_ANISOTROPIC_8X : TextureFilter.Is 4
+  | TEXTURE_FILTER_ANISOTROPIC_16X : TextureFilter.Is 5
+/-- Texture parameters: filter mode -/
+def TextureFilter : Type := Subtype TextureFilter.Is
+/-- No filter, just pixel approximation -/
+def TEXTURE_FILTER_POINT : TextureFilter := Subtype.mk 0 TextureFilter.Is.TEXTURE_FILTER_POINT
+/-- Linear filtering -/
+def TEXTURE_FILTER_BILINEAR : TextureFilter := Subtype.mk 1 TextureFilter.Is.TEXTURE_FILTER_BILINEAR
+/-- Trilinear filtering (linear with mipmaps) -/
+def TEXTURE_FILTER_TRILINEAR : TextureFilter := Subtype.mk 2 TextureFilter.Is.TEXTURE_FILTER_TRILINEAR
+/-- Anisotropic filtering 4x -/
+def TEXTURE_FILTER_ANISOTROPIC_4X : TextureFilter := Subtype.mk 3 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_4X
+/-- Anisotropic filtering 8x -/
+def TEXTURE_FILTER_ANISOTROPIC_8X : TextureFilter := Subtype.mk 4 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_8X
+/-- Anisotropic filtering 16x -/
+def TEXTURE_FILTER_ANISOTROPIC_16X : TextureFilter := Subtype.mk 5 TextureFilter.Is.TEXTURE_FILTER_ANISOTROPIC_16X
+
+
+/-! # Texture wrap -/
+
+inductive TextureWrap.Is : UInt32 -> Prop where
+  | TEXTURE_WRAP_REPEAT : TextureWrap.Is 0
+  | TEXTURE_WRAP_CLAMP : TextureWrap.Is 1
+  | TEXTURE_WRAP_MIRROR_REPEAT : TextureWrap.Is 2
+  | TEXTURE_WRAP_MIRROR_CLAMP : TextureWrap.Is 3
+
+/-- Texture parameters: wrap mode -/
+def TextureWrap : Type := Subtype TextureWrap.Is
+
+/-- Repeats texture in tiled mode -/
+def TEXTURE_WRAP_REPEAT : TextureWrap := Subtype.mk 0 TextureWrap.Is.TEXTURE_WRAP_REPEAT
+/-- Clamps texture to edge pixel in tiled mode -/
+def TEXTURE_WRAP_CLAMP : TextureWrap := Subtype.mk 1 TextureWrap.Is.TEXTURE_WRAP_CLAMP
+/-- Mirrors and repeats the texture in tiled mode -/
+def TEXTURE_WRAP_MIRROR_REPEAT : TextureWrap := Subtype.mk 2 TextureWrap.Is.TEXTURE_WRAP_MIRROR_REPEAT
+/-- Mirrors and clamps to border the texture in tiled mode -/
+def TEXTURE_WRAP_MIRROR_CLAMP : TextureWrap := Subtype.mk 3 TextureWrap.Is.TEXTURE_WRAP_MIRROR_CLAMP
 
 
 /-! # Cubemap layout -/
