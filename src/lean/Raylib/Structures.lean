@@ -1,3 +1,5 @@
+import Raylib.Enumerations
+
 set_option autoImplicit false
 
 namespace Raylib
@@ -110,7 +112,7 @@ opaque Vector4.set_w (w : Float) (self : @& Vector4) : Vector4
 
 
 
-/-! # Matrices -/
+/-! # Matrix -/
 
 opaque MatrixPointed : NonemptyType
 /-- Matrix, 4x4 components, column major, OpenGL style, right handed -/
@@ -291,78 +293,62 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque Rectangle.mk (x : Float) (y : Float) (width : Float) (height : Float) : Rectangle
 -- /-- Getter: Rectangle top-left corner position x -/
 -- @[extern "lean_raylib__Rectangle_x"]
--- opaque Rectangle.x : Rectangle -> Float
+-- opaque Rectangle.x (self : @& Rectangle) : Float
 -- /-- Setter: Rectangle top-left corner position x -/
 -- @[extern "lean_raylib__Rectangle_x_set"]
 -- opaque Rectangle.set_x (x : Float) (self : Rectangle) : Rectangle
 -- /-- Getter: Rectangle top-left corner position y -/
 -- @[extern "lean_raylib__Rectangle_y"]
--- opaque Rectangle.y : Rectangle -> Float
+-- opaque Rectangle.y (self : @& Rectangle) : Float
 -- /-- Setter: Rectangle top-left corner position y -/
 -- @[extern "lean_raylib__Rectangle_y_set"]
 -- opaque Rectangle.set_y (y : Float) (self : Rectangle) : Rectangle
 -- /-- Getter: Rectangle width -/
 -- @[extern "lean_raylib__Rectangle_width"]
--- opaque Rectangle.width : Rectangle -> Float
+-- opaque Rectangle.width (self : @& Rectangle) : Float
 -- /-- Setter: Rectangle width -/
 -- @[extern "lean_raylib__Rectangle_width_set"]
 -- opaque Rectangle.set_width (width : Float) (self : Rectangle) : Rectangle
 -- /-- Getter: Rectangle height -/
 -- @[extern "lean_raylib__Rectangle_height"]
--- opaque Rectangle.height : Rectangle -> Float
+-- opaque Rectangle.height (self : @& Rectangle) : Float
 -- /-- Setter: Rectangle height -/
 -- @[extern "lean_raylib__Rectangle_height_set"]
 -- opaque Rectangle.set_height (height : Float) (self : Rectangle) : Rectangle
--- opaque ImagePointed : NonemptyType
--- /-- Image, pixel data stored in CPU memory (RAM) -/
--- def Image : Type := ImagePointed.type
--- instance : Nonempty Image := ImagePointed.property
--- @[extern "lean_raylib__Image_mk"]
--- opaque Image.mk : Image
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | data: void * -- Image raw data
---   | width: int -- Image base width
---   | height: int -- Image base height
---   | mipmaps: int -- Mipmap levels, 1 by default
---   | format: int -- Data format (PixelFormat type)
--- -/
--- /-- Getter: Image raw data -/
--- @[extern "lean_raylib__Image_data"]
--- opaque Image.data : Image -> Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Image raw data -/
--- @[extern "lean_raylib__Image_data_set"]
--- opaque Image.set_data (data : Unit) (self : Image) : Image
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Image base width -/
--- @[extern "lean_raylib__Image_width"]
--- opaque Image.width : Image -> Int32
--- /-- Setter: Image base width -/
--- @[extern "lean_raylib__Image_width_set"]
--- opaque Image.set_width (width : Int32) (self : Image) : Image
--- /-- Getter: Image base height -/
--- @[extern "lean_raylib__Image_height"]
--- opaque Image.height : Image -> Int32
--- /-- Setter: Image base height -/
--- @[extern "lean_raylib__Image_height_set"]
--- opaque Image.set_height (height : Int32) (self : Image) : Image
--- /-- Getter: Mipmap levels, 1 by default -/
--- @[extern "lean_raylib__Image_mipmaps"]
--- opaque Image.mipmaps : Image -> Int32
--- /-- Setter: Mipmap levels, 1 by default -/
--- @[extern "lean_raylib__Image_mipmaps_set"]
--- opaque Image.set_mipmaps (mipmaps : Int32) (self : Image) : Image
--- /-- Getter: Data format (PixelFormat type) -/
--- @[extern "lean_raylib__Image_format"]
--- opaque Image.format : Image -> Int32
--- /-- Setter: Data format (PixelFormat type) -/
--- @[extern "lean_raylib__Image_format_set"]
--- opaque Image.set_format (format : Int32) (self : Image) : Image
+
+
+
+/-! # Image -/
+
+opaque ImagePointed : NonemptyType
+/-- Image, pixel data stored in CPU memory (RAM) -/
+def Image : Type := ImagePointed.type
+instance : Nonempty Image := ImagePointed.property
+
+@[extern "lean_raylib__Image_mk"]
+unsafe opaque Image.mk
+  (data : ByteArray) (width : UInt32) (height : UInt32)
+  (mipmaps : UInt32) (format : PixelFormat) : Image
+
+/-- Getter: Image base width -/
+@[extern "lean_raylib__Image_width"]
+opaque Image.width (self : @& Image) : UInt32
+
+/-- Getter: Image base height -/
+@[extern "lean_raylib__Image_height"]
+opaque Image.height (self : @& Image) : UInt32
+
+/-- Getter: Mipmap levels, 1 by default -/
+@[extern "lean_raylib__Image_mipmaps"]
+opaque Image.mipmaps (self : @& Image) : UInt32
+
+/-- Getter: Data format (PixelFormat type) -/
+@[extern "lean_raylib__Image_format"]
+opaque Image.format (self : @& Image) : PixelFormat
+
+
+/-! # Texture -/
+
 -- opaque TexturePointed : NonemptyType
 -- /-- Texture, tex data stored in GPU memory (VRAM) -/
 -- def Texture : Type := TexturePointed.type
@@ -371,31 +357,31 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque Texture.mk (id : UInt32) (width : Int32) (height : Int32) (mipmaps : Int32) (format : Int32) : Texture
 -- /-- Getter: OpenGL texture id -/
 -- @[extern "lean_raylib__Texture_id"]
--- opaque Texture.id : Texture -> UInt32
+-- opaque Texture.id (self : @& Texture) : UInt32
 -- /-- Setter: OpenGL texture id -/
 -- @[extern "lean_raylib__Texture_id_set"]
 -- opaque Texture.set_id (id : UInt32) (self : Texture) : Texture
 -- /-- Getter: Texture base width -/
 -- @[extern "lean_raylib__Texture_width"]
--- opaque Texture.width : Texture -> Int32
+-- opaque Texture.width (self : @& Texture) : Int32
 -- /-- Setter: Texture base width -/
 -- @[extern "lean_raylib__Texture_width_set"]
 -- opaque Texture.set_width (width : Int32) (self : Texture) : Texture
 -- /-- Getter: Texture base height -/
 -- @[extern "lean_raylib__Texture_height"]
--- opaque Texture.height : Texture -> Int32
+-- opaque Texture.height (self : @& Texture) : Int32
 -- /-- Setter: Texture base height -/
 -- @[extern "lean_raylib__Texture_height_set"]
 -- opaque Texture.set_height (height : Int32) (self : Texture) : Texture
 -- /-- Getter: Mipmap levels, 1 by default -/
 -- @[extern "lean_raylib__Texture_mipmaps"]
--- opaque Texture.mipmaps : Texture -> Int32
+-- opaque Texture.mipmaps (self : @& Texture) : Int32
 -- /-- Setter: Mipmap levels, 1 by default -/
 -- @[extern "lean_raylib__Texture_mipmaps_set"]
 -- opaque Texture.set_mipmaps (mipmaps : Int32) (self : Texture) : Texture
 -- /-- Getter: Data format (PixelFormat type) -/
 -- @[extern "lean_raylib__Texture_format"]
--- opaque Texture.format : Texture -> Int32
+-- opaque Texture.format (self : @& Texture) : Int32
 -- /-- Setter: Data format (PixelFormat type) -/
 -- @[extern "lean_raylib__Texture_format_set"]
 -- opaque Texture.set_format (format : Int32) (self : Texture) : Texture
@@ -407,19 +393,19 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque RenderTexture.mk (id : UInt32) (texture : Texture) (depth : Texture) : RenderTexture
 -- /-- Getter: OpenGL framebuffer object id -/
 -- @[extern "lean_raylib__RenderTexture_id"]
--- opaque RenderTexture.id : RenderTexture -> UInt32
+-- opaque RenderTexture.id (self : @& RenderTexture) : UInt32
 -- /-- Setter: OpenGL framebuffer object id -/
 -- @[extern "lean_raylib__RenderTexture_id_set"]
 -- opaque RenderTexture.set_id (id : UInt32) (self : RenderTexture) : RenderTexture
 -- /-- Getter: Color buffer attachment texture -/
 -- @[extern "lean_raylib__RenderTexture_texture"]
--- opaque RenderTexture.texture : RenderTexture -> Texture
+-- opaque RenderTexture.texture (self : @& RenderTexture) : Texture
 -- /-- Setter: Color buffer attachment texture -/
 -- @[extern "lean_raylib__RenderTexture_texture_set"]
 -- opaque RenderTexture.set_texture (texture : Texture) (self : RenderTexture) : RenderTexture
 -- /-- Getter: Depth buffer attachment texture -/
 -- @[extern "lean_raylib__RenderTexture_depth"]
--- opaque RenderTexture.depth : RenderTexture -> Texture
+-- opaque RenderTexture.depth (self : @& RenderTexture) : Texture
 -- /-- Setter: Depth buffer attachment texture -/
 -- @[extern "lean_raylib__RenderTexture_depth_set"]
 -- opaque RenderTexture.set_depth (depth : Texture) (self : RenderTexture) : RenderTexture
@@ -431,37 +417,37 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque NPatchInfo.mk (source : Rectangle) (left : Int32) (top : Int32) (right : Int32) (bottom : Int32) (layout : Int32) : NPatchInfo
 -- /-- Getter: Texture source rectangle -/
 -- @[extern "lean_raylib__NPatchInfo_source"]
--- opaque NPatchInfo.source : NPatchInfo -> Rectangle
+-- opaque NPatchInfo.source (self : @& NPatchInfo) : Rectangle
 -- /-- Setter: Texture source rectangle -/
 -- @[extern "lean_raylib__NPatchInfo_source_set"]
 -- opaque NPatchInfo.set_source (source : Rectangle) (self : NPatchInfo) : NPatchInfo
 -- /-- Getter: Left border offset -/
 -- @[extern "lean_raylib__NPatchInfo_left"]
--- opaque NPatchInfo.left : NPatchInfo -> Int32
+-- opaque NPatchInfo.left (self : @& NPatchInfo) : Int32
 -- /-- Setter: Left border offset -/
 -- @[extern "lean_raylib__NPatchInfo_left_set"]
 -- opaque NPatchInfo.set_left (left : Int32) (self : NPatchInfo) : NPatchInfo
 -- /-- Getter: Top border offset -/
 -- @[extern "lean_raylib__NPatchInfo_top"]
--- opaque NPatchInfo.top : NPatchInfo -> Int32
+-- opaque NPatchInfo.top (self : @& NPatchInfo) : Int32
 -- /-- Setter: Top border offset -/
 -- @[extern "lean_raylib__NPatchInfo_top_set"]
 -- opaque NPatchInfo.set_top (top : Int32) (self : NPatchInfo) : NPatchInfo
 -- /-- Getter: Right border offset -/
 -- @[extern "lean_raylib__NPatchInfo_right"]
--- opaque NPatchInfo.right : NPatchInfo -> Int32
+-- opaque NPatchInfo.right (self : @& NPatchInfo) : Int32
 -- /-- Setter: Right border offset -/
 -- @[extern "lean_raylib__NPatchInfo_right_set"]
 -- opaque NPatchInfo.set_right (right : Int32) (self : NPatchInfo) : NPatchInfo
 -- /-- Getter: Bottom border offset -/
 -- @[extern "lean_raylib__NPatchInfo_bottom"]
--- opaque NPatchInfo.bottom : NPatchInfo -> Int32
+-- opaque NPatchInfo.bottom (self : @& NPatchInfo) : Int32
 -- /-- Setter: Bottom border offset -/
 -- @[extern "lean_raylib__NPatchInfo_bottom_set"]
 -- opaque NPatchInfo.set_bottom (bottom : Int32) (self : NPatchInfo) : NPatchInfo
 -- /-- Getter: Layout of the n-patch: 3x3, 1x3 or 3x1 -/
 -- @[extern "lean_raylib__NPatchInfo_layout"]
--- opaque NPatchInfo.layout : NPatchInfo -> Int32
+-- opaque NPatchInfo.layout (self : @& NPatchInfo) : Int32
 -- /-- Setter: Layout of the n-patch: 3x3, 1x3 or 3x1 -/
 -- @[extern "lean_raylib__NPatchInfo_layout_set"]
 -- opaque NPatchInfo.set_layout (layout : Int32) (self : NPatchInfo) : NPatchInfo
@@ -473,31 +459,31 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque GlyphInfo.mk (value : Int32) (offsetX : Int32) (offsetY : Int32) (advanceX : Int32) (image : Image) : GlyphInfo
 -- /-- Getter: Character value (Unicode) -/
 -- @[extern "lean_raylib__GlyphInfo_value"]
--- opaque GlyphInfo.value : GlyphInfo -> Int32
+-- opaque GlyphInfo.value (self : @& GlyphInfo) : Int32
 -- /-- Setter: Character value (Unicode) -/
 -- @[extern "lean_raylib__GlyphInfo_value_set"]
 -- opaque GlyphInfo.set_value (value : Int32) (self : GlyphInfo) : GlyphInfo
 -- /-- Getter: Character offset X when drawing -/
 -- @[extern "lean_raylib__GlyphInfo_offsetX"]
--- opaque GlyphInfo.offsetX : GlyphInfo -> Int32
+-- opaque GlyphInfo.offsetX (self : @& GlyphInfo) : Int32
 -- /-- Setter: Character offset X when drawing -/
 -- @[extern "lean_raylib__GlyphInfo_offsetX_set"]
 -- opaque GlyphInfo.set_offsetX (offsetX : Int32) (self : GlyphInfo) : GlyphInfo
 -- /-- Getter: Character offset Y when drawing -/
 -- @[extern "lean_raylib__GlyphInfo_offsetY"]
--- opaque GlyphInfo.offsetY : GlyphInfo -> Int32
+-- opaque GlyphInfo.offsetY (self : @& GlyphInfo) : Int32
 -- /-- Setter: Character offset Y when drawing -/
 -- @[extern "lean_raylib__GlyphInfo_offsetY_set"]
 -- opaque GlyphInfo.set_offsetY (offsetY : Int32) (self : GlyphInfo) : GlyphInfo
 -- /-- Getter: Character advance position X -/
 -- @[extern "lean_raylib__GlyphInfo_advanceX"]
--- opaque GlyphInfo.advanceX : GlyphInfo -> Int32
+-- opaque GlyphInfo.advanceX (self : @& GlyphInfo) : Int32
 -- /-- Setter: Character advance position X -/
 -- @[extern "lean_raylib__GlyphInfo_advanceX_set"]
 -- opaque GlyphInfo.set_advanceX (advanceX : Int32) (self : GlyphInfo) : GlyphInfo
 -- /-- Getter: Character image data -/
 -- @[extern "lean_raylib__GlyphInfo_image"]
--- opaque GlyphInfo.image : GlyphInfo -> Image
+-- opaque GlyphInfo.image (self : @& GlyphInfo) : Image
 -- /-- Setter: Character image data -/
 -- @[extern "lean_raylib__GlyphInfo_image_set"]
 -- opaque GlyphInfo.set_image (image : Image) (self : GlyphInfo) : GlyphInfo
@@ -518,25 +504,25 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Base size (default chars height) -/
 -- @[extern "lean_raylib__Font_baseSize"]
--- opaque Font.baseSize : Font -> Int32
+-- opaque Font.baseSize (self : @& Font) : Int32
 -- /-- Setter: Base size (default chars height) -/
 -- @[extern "lean_raylib__Font_baseSize_set"]
 -- opaque Font.set_baseSize (baseSize : Int32) (self : Font) : Font
 -- /-- Getter: Number of glyph characters -/
 -- @[extern "lean_raylib__Font_glyphCount"]
--- opaque Font.glyphCount : Font -> Int32
+-- opaque Font.glyphCount (self : @& Font) : Int32
 -- /-- Setter: Number of glyph characters -/
 -- @[extern "lean_raylib__Font_glyphCount_set"]
 -- opaque Font.set_glyphCount (glyphCount : Int32) (self : Font) : Font
 -- /-- Getter: Padding around the glyph characters -/
 -- @[extern "lean_raylib__Font_glyphPadding"]
--- opaque Font.glyphPadding : Font -> Int32
+-- opaque Font.glyphPadding (self : @& Font) : Int32
 -- /-- Setter: Padding around the glyph characters -/
 -- @[extern "lean_raylib__Font_glyphPadding_set"]
 -- opaque Font.set_glyphPadding (glyphPadding : Int32) (self : Font) : Font
 -- /-- Getter: Texture atlas containing the glyphs -/
 -- @[extern "lean_raylib__Font_texture"]
--- opaque Font.texture : Font -> Unit
+-- opaque Font.texture (self : @& Font) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -548,7 +534,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Rectangles in texture for the glyphs -/
 -- @[extern "lean_raylib__Font_recs"]
--- opaque Font.recs : Font -> Unit
+-- opaque Font.recs (self : @& Font) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -560,7 +546,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Glyphs info data -/
 -- @[extern "lean_raylib__Font_glyphs"]
--- opaque Font.glyphs : Font -> Unit
+-- opaque Font.glyphs (self : @& Font) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -578,31 +564,31 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque Camera3D.mk (position : Vector3) (target : Vector3) (up : Vector3) (fovy : Float) (projection : Int32) : Camera3D
 -- /-- Getter: Camera position -/
 -- @[extern "lean_raylib__Camera3D_position"]
--- opaque Camera3D.position : Camera3D -> Vector3
+-- opaque Camera3D.position (self : @& Camera3D) : Vector3
 -- /-- Setter: Camera position -/
 -- @[extern "lean_raylib__Camera3D_position_set"]
 -- opaque Camera3D.set_position (position : Vector3) (self : Camera3D) : Camera3D
 -- /-- Getter: Camera target it looks-at -/
 -- @[extern "lean_raylib__Camera3D_target"]
--- opaque Camera3D.target : Camera3D -> Vector3
+-- opaque Camera3D.target (self : @& Camera3D) : Vector3
 -- /-- Setter: Camera target it looks-at -/
 -- @[extern "lean_raylib__Camera3D_target_set"]
 -- opaque Camera3D.set_target (target : Vector3) (self : Camera3D) : Camera3D
 -- /-- Getter: Camera up vector (rotation over its axis) -/
 -- @[extern "lean_raylib__Camera3D_up"]
--- opaque Camera3D.up : Camera3D -> Vector3
+-- opaque Camera3D.up (self : @& Camera3D) : Vector3
 -- /-- Setter: Camera up vector (rotation over its axis) -/
 -- @[extern "lean_raylib__Camera3D_up_set"]
 -- opaque Camera3D.set_up (up : Vector3) (self : Camera3D) : Camera3D
 -- /-- Getter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
 -- @[extern "lean_raylib__Camera3D_fovy"]
--- opaque Camera3D.fovy : Camera3D -> Float
+-- opaque Camera3D.fovy (self : @& Camera3D) : Float
 -- /-- Setter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
 -- @[extern "lean_raylib__Camera3D_fovy_set"]
 -- opaque Camera3D.set_fovy (fovy : Float) (self : Camera3D) : Camera3D
 -- /-- Getter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
 -- @[extern "lean_raylib__Camera3D_projection"]
--- opaque Camera3D.projection : Camera3D -> Int32
+-- opaque Camera3D.projection (self : @& Camera3D) : Int32
 -- /-- Setter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
 -- @[extern "lean_raylib__Camera3D_projection_set"]
 -- opaque Camera3D.set_projection (projection : Int32) (self : Camera3D) : Camera3D
@@ -614,25 +600,25 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque Camera2D.mk (offset : Vector2) (target : Vector2) (rotation : Float) (zoom : Float) : Camera2D
 -- /-- Getter: Camera offset (displacement from target) -/
 -- @[extern "lean_raylib__Camera2D_offset"]
--- opaque Camera2D.offset : Camera2D -> Vector2
+-- opaque Camera2D.offset (self : @& Camera2D) : Vector2
 -- /-- Setter: Camera offset (displacement from target) -/
 -- @[extern "lean_raylib__Camera2D_offset_set"]
 -- opaque Camera2D.set_offset (offset : Vector2) (self : Camera2D) : Camera2D
 -- /-- Getter: Camera target (rotation and zoom origin) -/
 -- @[extern "lean_raylib__Camera2D_target"]
--- opaque Camera2D.target : Camera2D -> Vector2
+-- opaque Camera2D.target (self : @& Camera2D) : Vector2
 -- /-- Setter: Camera target (rotation and zoom origin) -/
 -- @[extern "lean_raylib__Camera2D_target_set"]
 -- opaque Camera2D.set_target (target : Vector2) (self : Camera2D) : Camera2D
 -- /-- Getter: Camera rotation in degrees -/
 -- @[extern "lean_raylib__Camera2D_rotation"]
--- opaque Camera2D.rotation : Camera2D -> Float
+-- opaque Camera2D.rotation (self : @& Camera2D) : Float
 -- /-- Setter: Camera rotation in degrees -/
 -- @[extern "lean_raylib__Camera2D_rotation_set"]
 -- opaque Camera2D.set_rotation (rotation : Float) (self : Camera2D) : Camera2D
 -- /-- Getter: Camera zoom (scaling), should be 1.0f by default -/
 -- @[extern "lean_raylib__Camera2D_zoom"]
--- opaque Camera2D.zoom : Camera2D -> Float
+-- opaque Camera2D.zoom (self : @& Camera2D) : Float
 -- /-- Setter: Camera zoom (scaling), should be 1.0f by default -/
 -- @[extern "lean_raylib__Camera2D_zoom_set"]
 -- opaque Camera2D.set_zoom (zoom : Float) (self : Camera2D) : Camera2D
@@ -662,19 +648,19 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Number of vertices stored in arrays -/
 -- @[extern "lean_raylib__Mesh_vertexCount"]
--- opaque Mesh.vertexCount : Mesh -> Int32
+-- opaque Mesh.vertexCount (self : @& Mesh) : Int32
 -- /-- Setter: Number of vertices stored in arrays -/
 -- @[extern "lean_raylib__Mesh_vertexCount_set"]
 -- opaque Mesh.set_vertexCount (vertexCount : Int32) (self : Mesh) : Mesh
 -- /-- Getter: Number of triangles stored (indexed or not) -/
 -- @[extern "lean_raylib__Mesh_triangleCount"]
--- opaque Mesh.triangleCount : Mesh -> Int32
+-- opaque Mesh.triangleCount (self : @& Mesh) : Int32
 -- /-- Setter: Number of triangles stored (indexed or not) -/
 -- @[extern "lean_raylib__Mesh_triangleCount_set"]
 -- opaque Mesh.set_triangleCount (triangleCount : Int32) (self : Mesh) : Mesh
 -- /-- Getter: Vertex position (XYZ - 3 components per vertex) (shader-location = 0) -/
 -- @[extern "lean_raylib__Mesh_vertices"]
--- opaque Mesh.vertices : Mesh -> Unit
+-- opaque Mesh.vertices (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -686,7 +672,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1) -/
 -- @[extern "lean_raylib__Mesh_texcoords"]
--- opaque Mesh.texcoords : Mesh -> Unit
+-- opaque Mesh.texcoords (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -698,7 +684,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5) -/
 -- @[extern "lean_raylib__Mesh_texcoords2"]
--- opaque Mesh.texcoords2 : Mesh -> Unit
+-- opaque Mesh.texcoords2 (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -710,7 +696,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Vertex normals (XYZ - 3 components per vertex) (shader-location = 2) -/
 -- @[extern "lean_raylib__Mesh_normals"]
--- opaque Mesh.normals : Mesh -> Unit
+-- opaque Mesh.normals (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -722,7 +708,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4) -/
 -- @[extern "lean_raylib__Mesh_tangents"]
--- opaque Mesh.tangents : Mesh -> Unit
+-- opaque Mesh.tangents (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -734,7 +720,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Vertex colors (RGBA - 4 components per vertex) (shader-location = 3) -/
 -- @[extern "lean_raylib__Mesh_colors"]
--- opaque Mesh.colors : Mesh -> Unit
+-- opaque Mesh.colors (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -746,7 +732,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Vertex indices (in case vertex data comes indexed) -/
 -- @[extern "lean_raylib__Mesh_indices"]
--- opaque Mesh.indices : Mesh -> Unit
+-- opaque Mesh.indices (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -758,7 +744,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Animated vertex positions (after bones transformations) -/
 -- @[extern "lean_raylib__Mesh_animVertices"]
--- opaque Mesh.animVertices : Mesh -> Unit
+-- opaque Mesh.animVertices (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -770,7 +756,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Animated normals (after bones transformations) -/
 -- @[extern "lean_raylib__Mesh_animNormals"]
--- opaque Mesh.animNormals : Mesh -> Unit
+-- opaque Mesh.animNormals (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -782,7 +768,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
 -- @[extern "lean_raylib__Mesh_boneIds"]
--- opaque Mesh.boneIds : Mesh -> Unit
+-- opaque Mesh.boneIds (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -794,7 +780,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
 -- @[extern "lean_raylib__Mesh_boneWeights"]
--- opaque Mesh.boneWeights : Mesh -> Unit
+-- opaque Mesh.boneWeights (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -806,13 +792,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: OpenGL Vertex Array Object id -/
 -- @[extern "lean_raylib__Mesh_vaoId"]
--- opaque Mesh.vaoId : Mesh -> UInt32
+-- opaque Mesh.vaoId (self : @& Mesh) : UInt32
 -- /-- Setter: OpenGL Vertex Array Object id -/
 -- @[extern "lean_raylib__Mesh_vaoId_set"]
 -- opaque Mesh.set_vaoId (vaoId : UInt32) (self : Mesh) : Mesh
 -- /-- Getter: OpenGL Vertex Buffer Objects id (default vertex data) -/
 -- @[extern "lean_raylib__Mesh_vboId"]
--- opaque Mesh.vboId : Mesh -> Unit
+-- opaque Mesh.vboId (self : @& Mesh) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -835,13 +821,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Shader program id -/
 -- @[extern "lean_raylib__Shader_id"]
--- opaque Shader.id : Shader -> UInt32
+-- opaque Shader.id (self : @& Shader) : UInt32
 -- /-- Setter: Shader program id -/
 -- @[extern "lean_raylib__Shader_id_set"]
 -- opaque Shader.set_id (id : UInt32) (self : Shader) : Shader
 -- /-- Getter: Shader locations array (RL_MAX_SHADER_LOCATIONS) -/
 -- @[extern "lean_raylib__Shader_locs"]
--- opaque Shader.locs : Shader -> Unit
+-- opaque Shader.locs (self : @& Shader) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -865,7 +851,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Material map texture -/
 -- @[extern "lean_raylib__MaterialMap_texture"]
--- opaque MaterialMap.texture : MaterialMap -> Unit
+-- opaque MaterialMap.texture (self : @& MaterialMap) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -877,13 +863,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Material map color -/
 -- @[extern "lean_raylib__MaterialMap_color"]
--- opaque MaterialMap.color : MaterialMap -> Color
+-- opaque MaterialMap.color (self : @& MaterialMap) : Color
 -- /-- Setter: Material map color -/
 -- @[extern "lean_raylib__MaterialMap_color_set"]
 -- opaque MaterialMap.set_color (color : Color) (self : MaterialMap) : MaterialMap
 -- /-- Getter: Material map value -/
 -- @[extern "lean_raylib__MaterialMap_value"]
--- opaque MaterialMap.value : MaterialMap -> Float
+-- opaque MaterialMap.value (self : @& MaterialMap) : Float
 -- /-- Setter: Material map value -/
 -- @[extern "lean_raylib__MaterialMap_value_set"]
 -- opaque MaterialMap.set_value (value : Float) (self : MaterialMap) : MaterialMap
@@ -901,13 +887,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Material shader -/
 -- @[extern "lean_raylib__Material_shader"]
--- opaque Material.shader : Material -> Shader
+-- opaque Material.shader (self : @& Material) : Shader
 -- /-- Setter: Material shader -/
 -- @[extern "lean_raylib__Material_shader_set"]
 -- opaque Material.set_shader (shader : Shader) (self : Material) : Material
 -- /-- Getter: Material maps array (MAX_MATERIAL_MAPS) -/
 -- @[extern "lean_raylib__Material_maps"]
--- opaque Material.maps : Material -> Unit
+-- opaque Material.maps (self : @& Material) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -919,7 +905,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Material generic parameters (if required) -/
 -- @[extern "lean_raylib__Material_params"]
--- opaque Material.params : Material -> Unit
+-- opaque Material.params (self : @& Material) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -943,13 +929,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Translation -/
 -- @[extern "lean_raylib__Transform_translation"]
--- opaque Transform.translation : Transform -> Vector3
+-- opaque Transform.translation (self : @& Transform) : Vector3
 -- /-- Setter: Translation -/
 -- @[extern "lean_raylib__Transform_translation_set"]
 -- opaque Transform.set_translation (translation : Vector3) (self : Transform) : Transform
 -- /-- Getter: Rotation -/
 -- @[extern "lean_raylib__Transform_rotation"]
--- opaque Transform.rotation : Transform -> Unit
+-- opaque Transform.rotation (self : @& Transform) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -961,7 +947,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Scale -/
 -- @[extern "lean_raylib__Transform_scale"]
--- opaque Transform.scale : Transform -> Vector3
+-- opaque Transform.scale (self : @& Transform) : Vector3
 -- /-- Setter: Scale -/
 -- @[extern "lean_raylib__Transform_scale_set"]
 -- opaque Transform.set_scale (scale : Vector3) (self : Transform) : Transform
@@ -978,7 +964,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Bone name -/
 -- @[extern "lean_raylib__BoneInfo_name"]
--- opaque BoneInfo.name : BoneInfo -> Unit
+-- opaque BoneInfo.name (self : @& BoneInfo) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -990,7 +976,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Bone parent -/
 -- @[extern "lean_raylib__BoneInfo_parent"]
--- opaque BoneInfo.parent : BoneInfo -> Int32
+-- opaque BoneInfo.parent (self : @& BoneInfo) : Int32
 -- /-- Setter: Bone parent -/
 -- @[extern "lean_raylib__BoneInfo_parent_set"]
 -- opaque BoneInfo.set_parent (parent : Int32) (self : BoneInfo) : BoneInfo
@@ -1014,25 +1000,25 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Local transform matrix -/
 -- @[extern "lean_raylib__Model_transform"]
--- opaque Model.transform : Model -> Matrix
+-- opaque Model.transform (self : @& Model) : Matrix
 -- /-- Setter: Local transform matrix -/
 -- @[extern "lean_raylib__Model_transform_set"]
 -- opaque Model.set_transform (transform : Matrix) (self : Model) : Model
 -- /-- Getter: Number of meshes -/
 -- @[extern "lean_raylib__Model_meshCount"]
--- opaque Model.meshCount : Model -> Int32
+-- opaque Model.meshCount (self : @& Model) : Int32
 -- /-- Setter: Number of meshes -/
 -- @[extern "lean_raylib__Model_meshCount_set"]
 -- opaque Model.set_meshCount (meshCount : Int32) (self : Model) : Model
 -- /-- Getter: Number of materials -/
 -- @[extern "lean_raylib__Model_materialCount"]
--- opaque Model.materialCount : Model -> Int32
+-- opaque Model.materialCount (self : @& Model) : Int32
 -- /-- Setter: Number of materials -/
 -- @[extern "lean_raylib__Model_materialCount_set"]
 -- opaque Model.set_materialCount (materialCount : Int32) (self : Model) : Model
 -- /-- Getter: Meshes array -/
 -- @[extern "lean_raylib__Model_meshes"]
--- opaque Model.meshes : Model -> Unit
+-- opaque Model.meshes (self : @& Model) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1044,7 +1030,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Materials array -/
 -- @[extern "lean_raylib__Model_materials"]
--- opaque Model.materials : Model -> Unit
+-- opaque Model.materials (self : @& Model) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1056,7 +1042,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Mesh material number -/
 -- @[extern "lean_raylib__Model_meshMaterial"]
--- opaque Model.meshMaterial : Model -> Unit
+-- opaque Model.meshMaterial (self : @& Model) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1068,13 +1054,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Number of bones -/
 -- @[extern "lean_raylib__Model_boneCount"]
--- opaque Model.boneCount : Model -> Int32
+-- opaque Model.boneCount (self : @& Model) : Int32
 -- /-- Setter: Number of bones -/
 -- @[extern "lean_raylib__Model_boneCount_set"]
 -- opaque Model.set_boneCount (boneCount : Int32) (self : Model) : Model
 -- /-- Getter: Bones information (skeleton) -/
 -- @[extern "lean_raylib__Model_bones"]
--- opaque Model.bones : Model -> Unit
+-- opaque Model.bones (self : @& Model) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1086,7 +1072,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Bones base transformation (pose) -/
 -- @[extern "lean_raylib__Model_bindPose"]
--- opaque Model.bindPose : Model -> Unit
+-- opaque Model.bindPose (self : @& Model) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1111,19 +1097,19 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Number of bones -/
 -- @[extern "lean_raylib__ModelAnimation_boneCount"]
--- opaque ModelAnimation.boneCount : ModelAnimation -> Int32
+-- opaque ModelAnimation.boneCount (self : @& ModelAnimation) : Int32
 -- /-- Setter: Number of bones -/
 -- @[extern "lean_raylib__ModelAnimation_boneCount_set"]
 -- opaque ModelAnimation.set_boneCount (boneCount : Int32) (self : ModelAnimation) : ModelAnimation
 -- /-- Getter: Number of animation frames -/
 -- @[extern "lean_raylib__ModelAnimation_frameCount"]
--- opaque ModelAnimation.frameCount : ModelAnimation -> Int32
+-- opaque ModelAnimation.frameCount (self : @& ModelAnimation) : Int32
 -- /-- Setter: Number of animation frames -/
 -- @[extern "lean_raylib__ModelAnimation_frameCount_set"]
 -- opaque ModelAnimation.set_frameCount (frameCount : Int32) (self : ModelAnimation) : ModelAnimation
 -- /-- Getter: Bones information (skeleton) -/
 -- @[extern "lean_raylib__ModelAnimation_bones"]
--- opaque ModelAnimation.bones : ModelAnimation -> Unit
+-- opaque ModelAnimation.bones (self : @& ModelAnimation) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1135,7 +1121,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Poses array by frame -/
 -- @[extern "lean_raylib__ModelAnimation_framePoses"]
--- opaque ModelAnimation.framePoses : ModelAnimation -> Unit
+-- opaque ModelAnimation.framePoses (self : @& ModelAnimation) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1153,13 +1139,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque Ray.mk (position : Vector3) (direction : Vector3) : Ray
 -- /-- Getter: Ray position (origin) -/
 -- @[extern "lean_raylib__Ray_position"]
--- opaque Ray.position : Ray -> Vector3
+-- opaque Ray.position (self : @& Ray) : Vector3
 -- /-- Setter: Ray position (origin) -/
 -- @[extern "lean_raylib__Ray_position_set"]
 -- opaque Ray.set_position (position : Vector3) (self : Ray) : Ray
 -- /-- Getter: Ray direction -/
 -- @[extern "lean_raylib__Ray_direction"]
--- opaque Ray.direction : Ray -> Vector3
+-- opaque Ray.direction (self : @& Ray) : Vector3
 -- /-- Setter: Ray direction -/
 -- @[extern "lean_raylib__Ray_direction_set"]
 -- opaque Ray.set_direction (direction : Vector3) (self : Ray) : Ray
@@ -1171,25 +1157,25 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque RayCollision.mk (hit : Bool) (distance : Float) (point : Vector3) (normal : Vector3) : RayCollision
 -- /-- Getter: Did the ray hit something? -/
 -- @[extern "lean_raylib__RayCollision_hit"]
--- opaque RayCollision.hit : RayCollision -> Bool
+-- opaque RayCollision.hit (self : @& RayCollision) : Bool
 -- /-- Setter: Did the ray hit something? -/
 -- @[extern "lean_raylib__RayCollision_hit_set"]
 -- opaque RayCollision.set_hit (hit : Bool) (self : RayCollision) : RayCollision
 -- /-- Getter: Distance to nearest hit -/
 -- @[extern "lean_raylib__RayCollision_distance"]
--- opaque RayCollision.distance : RayCollision -> Float
+-- opaque RayCollision.distance (self : @& RayCollision) : Float
 -- /-- Setter: Distance to nearest hit -/
 -- @[extern "lean_raylib__RayCollision_distance_set"]
 -- opaque RayCollision.set_distance (distance : Float) (self : RayCollision) : RayCollision
 -- /-- Getter: Point of nearest hit -/
 -- @[extern "lean_raylib__RayCollision_point"]
--- opaque RayCollision.point : RayCollision -> Vector3
+-- opaque RayCollision.point (self : @& RayCollision) : Vector3
 -- /-- Setter: Point of nearest hit -/
 -- @[extern "lean_raylib__RayCollision_point_set"]
 -- opaque RayCollision.set_point (point : Vector3) (self : RayCollision) : RayCollision
 -- /-- Getter: Surface normal of hit -/
 -- @[extern "lean_raylib__RayCollision_normal"]
--- opaque RayCollision.normal : RayCollision -> Vector3
+-- opaque RayCollision.normal (self : @& RayCollision) : Vector3
 -- /-- Setter: Surface normal of hit -/
 -- @[extern "lean_raylib__RayCollision_normal_set"]
 -- opaque RayCollision.set_normal (normal : Vector3) (self : RayCollision) : RayCollision
@@ -1201,13 +1187,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque BoundingBox.mk (min : Vector3) (max : Vector3) : BoundingBox
 -- /-- Getter: Minimum vertex box-corner -/
 -- @[extern "lean_raylib__BoundingBox_min"]
--- opaque BoundingBox.min : BoundingBox -> Vector3
+-- opaque BoundingBox.min (self : @& BoundingBox) : Vector3
 -- /-- Setter: Minimum vertex box-corner -/
 -- @[extern "lean_raylib__BoundingBox_min_set"]
 -- opaque BoundingBox.set_min (min : Vector3) (self : BoundingBox) : BoundingBox
 -- /-- Getter: Maximum vertex box-corner -/
 -- @[extern "lean_raylib__BoundingBox_max"]
--- opaque BoundingBox.max : BoundingBox -> Vector3
+-- opaque BoundingBox.max (self : @& BoundingBox) : Vector3
 -- /-- Setter: Maximum vertex box-corner -/
 -- @[extern "lean_raylib__BoundingBox_max_set"]
 -- opaque BoundingBox.set_max (max : Vector3) (self : BoundingBox) : BoundingBox
@@ -1227,31 +1213,31 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Total number of frames (considering channels) -/
 -- @[extern "lean_raylib__Wave_frameCount"]
--- opaque Wave.frameCount : Wave -> UInt32
+-- opaque Wave.frameCount (self : @& Wave) : UInt32
 -- /-- Setter: Total number of frames (considering channels) -/
 -- @[extern "lean_raylib__Wave_frameCount_set"]
 -- opaque Wave.set_frameCount (frameCount : UInt32) (self : Wave) : Wave
 -- /-- Getter: Frequency (samples per second) -/
 -- @[extern "lean_raylib__Wave_sampleRate"]
--- opaque Wave.sampleRate : Wave -> UInt32
+-- opaque Wave.sampleRate (self : @& Wave) : UInt32
 -- /-- Setter: Frequency (samples per second) -/
 -- @[extern "lean_raylib__Wave_sampleRate_set"]
 -- opaque Wave.set_sampleRate (sampleRate : UInt32) (self : Wave) : Wave
 -- /-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
 -- @[extern "lean_raylib__Wave_sampleSize"]
--- opaque Wave.sampleSize : Wave -> UInt32
+-- opaque Wave.sampleSize (self : @& Wave) : UInt32
 -- /-- Setter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
 -- @[extern "lean_raylib__Wave_sampleSize_set"]
 -- opaque Wave.set_sampleSize (sampleSize : UInt32) (self : Wave) : Wave
 -- /-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
 -- @[extern "lean_raylib__Wave_channels"]
--- opaque Wave.channels : Wave -> UInt32
+-- opaque Wave.channels (self : @& Wave) : UInt32
 -- /-- Setter: Number of channels (1-mono, 2-stereo, ...) -/
 -- @[extern "lean_raylib__Wave_channels_set"]
 -- opaque Wave.set_channels (channels : UInt32) (self : Wave) : Wave
 -- /-- Getter: Buffer data pointer -/
 -- @[extern "lean_raylib__Wave_data"]
--- opaque Wave.data : Wave -> Unit
+-- opaque Wave.data (self : @& Wave) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1277,7 +1263,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Pointer to internal data used by the audio system -/
 -- @[extern "lean_raylib__AudioStream_buffer"]
--- opaque AudioStream.buffer : AudioStream -> Unit
+-- opaque AudioStream.buffer (self : @& AudioStream) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1289,7 +1275,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Pointer to internal data processor, useful for audio effects -/
 -- @[extern "lean_raylib__AudioStream_processor"]
--- opaque AudioStream.processor : AudioStream -> Unit
+-- opaque AudioStream.processor (self : @& AudioStream) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1301,19 +1287,19 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Frequency (samples per second) -/
 -- @[extern "lean_raylib__AudioStream_sampleRate"]
--- opaque AudioStream.sampleRate : AudioStream -> UInt32
+-- opaque AudioStream.sampleRate (self : @& AudioStream) : UInt32
 -- /-- Setter: Frequency (samples per second) -/
 -- @[extern "lean_raylib__AudioStream_sampleRate_set"]
 -- opaque AudioStream.set_sampleRate (sampleRate : UInt32) (self : AudioStream) : AudioStream
 -- /-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
 -- @[extern "lean_raylib__AudioStream_sampleSize"]
--- opaque AudioStream.sampleSize : AudioStream -> UInt32
+-- opaque AudioStream.sampleSize (self : @& AudioStream) : UInt32
 -- /-- Setter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
 -- @[extern "lean_raylib__AudioStream_sampleSize_set"]
 -- opaque AudioStream.set_sampleSize (sampleSize : UInt32) (self : AudioStream) : AudioStream
 -- /-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
 -- @[extern "lean_raylib__AudioStream_channels"]
--- opaque AudioStream.channels : AudioStream -> UInt32
+-- opaque AudioStream.channels (self : @& AudioStream) : UInt32
 -- /-- Setter: Number of channels (1-mono, 2-stereo, ...) -/
 -- @[extern "lean_raylib__AudioStream_channels_set"]
 -- opaque AudioStream.set_channels (channels : UInt32) (self : AudioStream) : AudioStream
@@ -1325,13 +1311,13 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- opaque Sound.mk (stream : AudioStream) (frameCount : UInt32) : Sound
 -- /-- Getter: Audio stream -/
 -- @[extern "lean_raylib__Sound_stream"]
--- opaque Sound.stream : Sound -> AudioStream
+-- opaque Sound.stream (self : @& Sound) : AudioStream
 -- /-- Setter: Audio stream -/
 -- @[extern "lean_raylib__Sound_stream_set"]
 -- opaque Sound.set_stream (stream : AudioStream) (self : Sound) : Sound
 -- /-- Getter: Total number of frames (considering channels) -/
 -- @[extern "lean_raylib__Sound_frameCount"]
--- opaque Sound.frameCount : Sound -> UInt32
+-- opaque Sound.frameCount (self : @& Sound) : UInt32
 -- /-- Setter: Total number of frames (considering channels) -/
 -- @[extern "lean_raylib__Sound_frameCount_set"]
 -- opaque Sound.set_frameCount (frameCount : UInt32) (self : Sound) : Sound
@@ -1351,31 +1337,31 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Audio stream -/
 -- @[extern "lean_raylib__Music_stream"]
--- opaque Music.stream : Music -> AudioStream
+-- opaque Music.stream (self : @& Music) : AudioStream
 -- /-- Setter: Audio stream -/
 -- @[extern "lean_raylib__Music_stream_set"]
 -- opaque Music.set_stream (stream : AudioStream) (self : Music) : Music
 -- /-- Getter: Total number of frames (considering channels) -/
 -- @[extern "lean_raylib__Music_frameCount"]
--- opaque Music.frameCount : Music -> UInt32
+-- opaque Music.frameCount (self : @& Music) : UInt32
 -- /-- Setter: Total number of frames (considering channels) -/
 -- @[extern "lean_raylib__Music_frameCount_set"]
 -- opaque Music.set_frameCount (frameCount : UInt32) (self : Music) : Music
 -- /-- Getter: Music looping enable -/
 -- @[extern "lean_raylib__Music_looping"]
--- opaque Music.looping : Music -> Bool
+-- opaque Music.looping (self : @& Music) : Bool
 -- /-- Setter: Music looping enable -/
 -- @[extern "lean_raylib__Music_looping_set"]
 -- opaque Music.set_looping (looping : Bool) (self : Music) : Music
 -- /-- Getter: Type of music context (audio filetype) -/
 -- @[extern "lean_raylib__Music_ctxType"]
--- opaque Music.ctxType : Music -> Int32
+-- opaque Music.ctxType (self : @& Music) : Int32
 -- /-- Setter: Type of music context (audio filetype) -/
 -- @[extern "lean_raylib__Music_ctxType_set"]
 -- opaque Music.set_ctxType (ctxType : Int32) (self : Music) : Music
 -- /-- Getter: Audio context data, depends on type -/
 -- @[extern "lean_raylib__Music_ctxData"]
--- opaque Music.ctxData : Music -> Unit
+-- opaque Music.ctxData (self : @& Music) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1406,55 +1392,55 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Horizontal resolution in pixels -/
 -- @[extern "lean_raylib__VrDeviceInfo_hResolution"]
--- opaque VrDeviceInfo.hResolution : VrDeviceInfo -> Int32
+-- opaque VrDeviceInfo.hResolution (self : @& VrDeviceInfo) : Int32
 -- /-- Setter: Horizontal resolution in pixels -/
 -- @[extern "lean_raylib__VrDeviceInfo_hResolution_set"]
 -- opaque VrDeviceInfo.set_hResolution (hResolution : Int32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Vertical resolution in pixels -/
 -- @[extern "lean_raylib__VrDeviceInfo_vResolution"]
--- opaque VrDeviceInfo.vResolution : VrDeviceInfo -> Int32
+-- opaque VrDeviceInfo.vResolution (self : @& VrDeviceInfo) : Int32
 -- /-- Setter: Vertical resolution in pixels -/
 -- @[extern "lean_raylib__VrDeviceInfo_vResolution_set"]
 -- opaque VrDeviceInfo.set_vResolution (vResolution : Int32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Horizontal size in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_hScreenSize"]
--- opaque VrDeviceInfo.hScreenSize : VrDeviceInfo -> Float
+-- opaque VrDeviceInfo.hScreenSize (self : @& VrDeviceInfo) : Float
 -- /-- Setter: Horizontal size in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_hScreenSize_set"]
 -- opaque VrDeviceInfo.set_hScreenSize (hScreenSize : Float) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Vertical size in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_vScreenSize"]
--- opaque VrDeviceInfo.vScreenSize : VrDeviceInfo -> Float
+-- opaque VrDeviceInfo.vScreenSize (self : @& VrDeviceInfo) : Float
 -- /-- Setter: Vertical size in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_vScreenSize_set"]
 -- opaque VrDeviceInfo.set_vScreenSize (vScreenSize : Float) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Screen center in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_vScreenCenter"]
--- opaque VrDeviceInfo.vScreenCenter : VrDeviceInfo -> Float
+-- opaque VrDeviceInfo.vScreenCenter (self : @& VrDeviceInfo) : Float
 -- /-- Setter: Screen center in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_vScreenCenter_set"]
 -- opaque VrDeviceInfo.set_vScreenCenter (vScreenCenter : Float) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Distance between eye and display in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_eyeToScreenDistance"]
--- opaque VrDeviceInfo.eyeToScreenDistance : VrDeviceInfo -> Float
+-- opaque VrDeviceInfo.eyeToScreenDistance (self : @& VrDeviceInfo) : Float
 -- /-- Setter: Distance between eye and display in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_eyeToScreenDistance_set"]
 -- opaque VrDeviceInfo.set_eyeToScreenDistance (eyeToScreenDistance : Float) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Lens separation distance in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_lensSeparationDistance"]
--- opaque VrDeviceInfo.lensSeparationDistance : VrDeviceInfo -> Float
+-- opaque VrDeviceInfo.lensSeparationDistance (self : @& VrDeviceInfo) : Float
 -- /-- Setter: Lens separation distance in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_lensSeparationDistance_set"]
 -- opaque VrDeviceInfo.set_lensSeparationDistance (lensSeparationDistance : Float) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: IPD (distance between pupils) in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_interpupillaryDistance"]
--- opaque VrDeviceInfo.interpupillaryDistance : VrDeviceInfo -> Float
+-- opaque VrDeviceInfo.interpupillaryDistance (self : @& VrDeviceInfo) : Float
 -- /-- Setter: IPD (distance between pupils) in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_interpupillaryDistance_set"]
 -- opaque VrDeviceInfo.set_interpupillaryDistance (interpupillaryDistance : Float) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Lens distortion constant parameters -/
 -- @[extern "lean_raylib__VrDeviceInfo_lensDistortionValues"]
--- opaque VrDeviceInfo.lensDistortionValues : VrDeviceInfo -> Unit
+-- opaque VrDeviceInfo.lensDistortionValues (self : @& VrDeviceInfo) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1466,7 +1452,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Chromatic aberration correction parameters -/
 -- @[extern "lean_raylib__VrDeviceInfo_chromaAbCorrection"]
--- opaque VrDeviceInfo.chromaAbCorrection : VrDeviceInfo -> Unit
+-- opaque VrDeviceInfo.chromaAbCorrection (self : @& VrDeviceInfo) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1495,7 +1481,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: VR projection matrices (per eye) -/
 -- @[extern "lean_raylib__VrStereoConfig_projection"]
--- opaque VrStereoConfig.projection : VrStereoConfig -> Unit
+-- opaque VrStereoConfig.projection (self : @& VrStereoConfig) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1507,7 +1493,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: VR view offset matrices (per eye) -/
 -- @[extern "lean_raylib__VrStereoConfig_viewOffset"]
--- opaque VrStereoConfig.viewOffset : VrStereoConfig -> Unit
+-- opaque VrStereoConfig.viewOffset (self : @& VrStereoConfig) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1519,7 +1505,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: VR left lens center -/
 -- @[extern "lean_raylib__VrStereoConfig_leftLensCenter"]
--- opaque VrStereoConfig.leftLensCenter : VrStereoConfig -> Unit
+-- opaque VrStereoConfig.leftLensCenter (self : @& VrStereoConfig) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1531,7 +1517,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: VR right lens center -/
 -- @[extern "lean_raylib__VrStereoConfig_rightLensCenter"]
--- opaque VrStereoConfig.rightLensCenter : VrStereoConfig -> Unit
+-- opaque VrStereoConfig.rightLensCenter (self : @& VrStereoConfig) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1543,7 +1529,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: VR left screen center -/
 -- @[extern "lean_raylib__VrStereoConfig_leftScreenCenter"]
--- opaque VrStereoConfig.leftScreenCenter : VrStereoConfig -> Unit
+-- opaque VrStereoConfig.leftScreenCenter (self : @& VrStereoConfig) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1555,7 +1541,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: VR right screen center -/
 -- @[extern "lean_raylib__VrStereoConfig_rightScreenCenter"]
--- opaque VrStereoConfig.rightScreenCenter : VrStereoConfig -> Unit
+-- opaque VrStereoConfig.rightScreenCenter (self : @& VrStereoConfig) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1567,7 +1553,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: VR distortion scale -/
 -- @[extern "lean_raylib__VrStereoConfig_scale"]
--- opaque VrStereoConfig.scale : VrStereoConfig -> Unit
+-- opaque VrStereoConfig.scale (self : @& VrStereoConfig) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1579,7 +1565,7 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: VR distortion scale in -/
 -- @[extern "lean_raylib__VrStereoConfig_scaleIn"]
--- opaque VrStereoConfig.scaleIn : VrStereoConfig -> Unit
+-- opaque VrStereoConfig.scaleIn (self : @& VrStereoConfig) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/
@@ -1603,19 +1589,19 @@ def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 -- -/
 -- /-- Getter: Filepaths max entries -/
 -- @[extern "lean_raylib__FilePathList_capacity"]
--- opaque FilePathList.capacity : FilePathList -> UInt32
+-- opaque FilePathList.capacity (self : @& FilePathList) : UInt32
 -- /-- Setter: Filepaths max entries -/
 -- @[extern "lean_raylib__FilePathList_capacity_set"]
 -- opaque FilePathList.set_capacity (capacity : UInt32) (self : FilePathList) : FilePathList
 -- /-- Getter: Filepaths entries count -/
 -- @[extern "lean_raylib__FilePathList_count"]
--- opaque FilePathList.count : FilePathList -> UInt32
+-- opaque FilePathList.count (self : @& FilePathList) : UInt32
 -- /-- Setter: Filepaths entries count -/
 -- @[extern "lean_raylib__FilePathList_count_set"]
 -- opaque FilePathList.set_count (count : UInt32) (self : FilePathList) : FilePathList
 -- /-- Getter: Filepaths entries -/
 -- @[extern "lean_raylib__FilePathList_paths"]
--- opaque FilePathList.paths : FilePathList -> Unit
+-- opaque FilePathList.paths (self : @& FilePathList) : Unit
 -- /-
 -- todo: ^^ struct getter ^^
 -- -/

@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "util.h"
 #include "structures.h"
 
@@ -414,71 +415,53 @@ LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m15_set(double m15, b_lean_obj_arg 
 //     return lean_raylib_Rectangle_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Image_mk(/* void* */lean_obj_arg data, uint32_t width, uint32_t height, uint32_t mipmaps, uint32_t format) {
-//     LET_BOX_STRUCT(Image, result_,
-//         .data = /*todo: ptr?*/data,
-//         .width = width,
-//         .height = height,
-//         .mipmaps = mipmaps,
-//         .format = format
-//     );
-//     return lean_raylib_Image_to(result_);
-// }
 
-// LEAN_EXPORT /* void* */lean_obj_arg lean_raylib__Image_data(b_lean_obj_arg obj) {
-//     void * result_ = lean_raylib_Image_from(obj)->data;
-//     return /*todo: ptr?*/result_;
-// }
+// # Image
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Image_data_set(/* void* */lean_obj_arg data, b_lean_obj_arg obj) {
-//     LET_BOX(Image, result_, *lean_raylib_Image_from(obj));
-//     result_->data = /*todo: ptr?*/data;
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Image_mk(
+    /* ByteArray */ lean_obj_arg data, uint32_t width, uint32_t height,
+    uint32_t mipmaps, uint32_t format
+) {
+    void* own_data;
+    if(lean_is_exclusive(data)) {
+        own_data = lean_sarray_cptr(data);
+        #ifdef RAYLIB_LEAN_UNSAFE_OPTS
+            lean_dealloc(data);
+        #else
+            lean_dec_ref_cold(data);
+        #endif
+    }
+    else {
+        size_t size = lean_sarray_size(data);
+        own_data = malloc(size);
+        memcpy(own_data, data, size);
+        lean_dec(data);
+    }
+    LET_BOX_STRUCT(Image, image,
+        .data = own_data,
+        .width = width,
+        .height = height,
+        .mipmaps = mipmaps,
+        .format = format
+    );
+    return lean_raylib_Image_to(image);
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Image_width(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Image_from(obj)->width;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Image_width(b_lean_obj_arg obj) {
+    return lean_raylib_Image_from(obj)->width;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Image_width_set(uint32_t width, b_lean_obj_arg obj) {
-//     LET_BOX(Image, result_, *lean_raylib_Image_from(obj));
-//     result_->width = width;
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Image_height(b_lean_obj_arg obj) {
+    return lean_raylib_Image_from(obj)->height;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Image_height(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Image_from(obj)->height;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Image_mipmaps(b_lean_obj_arg obj) {
+    return lean_raylib_Image_from(obj)->mipmaps;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Image_height_set(uint32_t height, b_lean_obj_arg obj) {
-//     LET_BOX(Image, result_, *lean_raylib_Image_from(obj));
-//     result_->height = height;
-//     return lean_raylib_Image_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Image_mipmaps(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Image_from(obj)->mipmaps;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Image_mipmaps_set(uint32_t mipmaps, b_lean_obj_arg obj) {
-//     LET_BOX(Image, result_, *lean_raylib_Image_from(obj));
-//     result_->mipmaps = mipmaps;
-//     return lean_raylib_Image_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Image_format(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Image_from(obj)->format;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Image_format_set(uint32_t format, b_lean_obj_arg obj) {
-//     LET_BOX(Image, result_, *lean_raylib_Image_from(obj));
-//     result_->format = format;
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Image_format(b_lean_obj_arg obj) {
+    return lean_raylib_Image_from(obj)->format;
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__Texture_mk(uint32_t id, uint32_t width, uint32_t height, uint32_t mipmaps, uint32_t format) {
 //     LET_BOX_STRUCT(Texture, result_,

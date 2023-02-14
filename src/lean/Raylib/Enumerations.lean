@@ -836,6 +836,9 @@ def PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA : PixelFormat := Subtype.mk 20 PixelFor
 /-- 2 bpp -/
 def PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA : PixelFormat := Subtype.mk 21 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
 
+instance : Inhabited PixelFormat where
+  default := PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
+
 
 /-! # Texture filter -/
 

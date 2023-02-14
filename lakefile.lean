@@ -1,6 +1,11 @@
 import Lake
 open Lake DSL
 
+/- CONFIGURATION
+* unsafe_opts("") -- enable some optimizations that may be erroneous.
+-- TODO: Type assertions (ex. lean_obj_arg tag check) for ffi api testing
+-/
+
 package raylib {
   srcDir := "src/lean"
 }
@@ -10,13 +15,16 @@ lean_lib Raylib
 @[default_target]
 lean_exe test {
   root := `Main
-  moreLinkArgs := #["-I/usr/local/include", "-L/usr/local/lib", "-lraylib"]
+  moreLinkArgs := #["-L/usr/local/lib", "-lraylib"]
 }
 
 def buildBindingsO (pkg : Package) (stem : String) : IndexBuildM (BuildJob FilePath) := do
   let oFile := pkg.buildDir / "native" / (stem ++ ".o")
   let srcJob ← inputFile <| pkg.dir / "src" / "native" / (stem ++ ".c")
-  let flags := #["-I", (← getLeanIncludeDir).toString, "-fPIC"]
+  let mut flags := #["-I/usr/local/include", "-I", (← getLeanIncludeDir).toString, "-fPIC"]
+  if get_config? unsafe_opts = some "" then {
+    flags := flags.push "-DRAYLIB_LEAN_UNSAFE_OPTS"
+  }
   buildO (stem ++ ".c") oFile srcJob flags "cc"
 
 target bindingsUtilO (pkg : Package) : FilePath := do

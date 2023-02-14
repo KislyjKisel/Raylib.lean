@@ -89,17 +89,27 @@ static inline uint32_t lean_raylib_Color_to(Color color) {
 //     return (Rectangle const*) lean_get_external_data(obj);
 // }
 
-// static inline lean_object* lean_raylib_Image_to (Image const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
 
-// static inline Image const* lean_raylib_Image_from (b_lean_obj_arg obj) {
-//     return (Image const*) lean_get_external_data(obj);
-// }
+// # Image
+
+static inline Image const* lean_raylib_Image_from (b_lean_obj_arg obj) {
+    return (Image const*) lean_get_external_data(obj);
+}
+
+static void lean_raylib_Image_finalize(lean_obj_arg image_obj) {
+    UnloadImage(*lean_raylib_Image_from(image_obj));
+}
+
+static inline lean_object* lean_raylib_Image_to (Image const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Image_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+
+// # Texture
 
 // static inline lean_object* lean_raylib_Texture_to (Texture const* obj) {
 //     static lean_external_class* class_ = NULL;
