@@ -83,180 +83,171 @@ LEAN_EXPORT lean_obj_res lean_raylib__RestoreWindow () {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetWindowTitle (/* const char* */lean_obj_arg title) {
-//     SetWindowTitle(lean_string_cstr(title));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowTitle (lean_obj_arg title) {
+    SetWindowTitle(lean_string_cstr(title));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetWindowPosition (uint32_t x, uint32_t y) {
-//     SetWindowPosition(x, y);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowPosition (uint32_t x, uint32_t y) {
+    SetWindowPosition(x, y);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetWindowMonitor (uint32_t monitor) {
-//     SetWindowMonitor(monitor);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowMonitor (uint32_t monitor) {
+    SetWindowMonitor(monitor);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetWindowMinSize (uint32_t width, uint32_t height) {
-//     SetWindowMinSize(width, height);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowMinSize (uint32_t width, uint32_t height) {
+    SetWindowMinSize(width, height);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetWindowSize (uint32_t width, uint32_t height) {
-//     SetWindowSize(width, height);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowSize (uint32_t width, uint32_t height) {
+    SetWindowSize(width, height);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetWindowOpacity (double opacity) {
-//     SetWindowOpacity((float)opacity);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowOpacity (double opacity) {
+    SetWindowOpacity((float)opacity);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT /* void* */lean_obj_arg lean_raylib__GetWindowHandle () {
 //     void * result_ = GetWindowHandle();
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT uint32_t lean_raylib__GetScreenWidth () {
-//     int result_ = GetScreenWidth();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetScreenWidth () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetScreenWidth()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetScreenHeight () {
-//     int result_ = GetScreenHeight();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetScreenHeight () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetScreenHeight()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetRenderWidth () {
-//     int result_ = GetRenderWidth();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetRenderWidth () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetRenderWidth()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetRenderHeight () {
-//     int result_ = GetRenderHeight();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetRenderHeight () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetRenderHeight()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetMonitorCount () {
-//     int result_ = GetMonitorCount();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorCount () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetMonitorCount()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetCurrentMonitor () {
-//     int result_ = GetCurrentMonitor();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetCurrentMonitor () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetCurrentMonitor()));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorPosition (uint32_t monitor) {
-//     Vector2 result_ = GetMonitorPosition(monitor);
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorPosition (uint32_t monitor) {
+    LET_BOX(Vector2, monitorPos, GetMonitorPosition(monitor));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(monitorPos));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetMonitorWidth (uint32_t monitor) {
-//     int result_ = GetMonitorWidth(monitor);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorWidth (uint32_t monitor) {
+    return lean_io_result_mk_ok(lean_box_uint32(GetMonitorWidth(monitor)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetMonitorHeight (uint32_t monitor) {
-//     int result_ = GetMonitorHeight(monitor);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorHeight (uint32_t monitor) {
+    return lean_io_result_mk_ok(lean_box_uint32(GetMonitorHeight(monitor)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetMonitorPhysicalWidth (uint32_t monitor) {
-//     int result_ = GetMonitorPhysicalWidth(monitor);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorPhysicalWidth (uint32_t monitor) {
+    return lean_io_result_mk_ok(lean_box_uint32(GetMonitorPhysicalWidth(monitor)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetMonitorPhysicalHeight (uint32_t monitor) {
-//     int result_ = GetMonitorPhysicalHeight(monitor);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorPhysicalHeight (uint32_t monitor) {
+    return lean_io_result_mk_ok(lean_box_uint32(GetMonitorPhysicalHeight(monitor)));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetMonitorRefreshRate (uint32_t monitor) {
-//     int result_ = GetMonitorRefreshRate(monitor);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorRefreshRate (uint32_t monitor) {
+    return lean_io_result_mk_ok(lean_box_uint32(GetMonitorRefreshRate(monitor)));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetWindowPosition () {
-//     Vector2 result_ = GetWindowPosition();
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetWindowPosition () {
+    LET_BOX(Vector2, windowPos, GetWindowPosition());
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(windowPos));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetWindowScaleDPI () {
-//     Vector2 result_ = GetWindowScaleDPI();
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetWindowScaleDPI () {
+    LET_BOX(Vector2, windowScaleDpi, GetWindowScaleDPI());
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(windowScaleDpi));
+}
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetMonitorName (uint32_t monitor) {
-//     const char * result_ = GetMonitorName(monitor);
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorName (uint32_t monitor) {
+    const char * monitorName = GetMonitorName(monitor);
+    return lean_io_result_mk_ok(
+        lean_mk_string_from_bytes(monitorName, lean_utf8_strlen(monitorName))
+    );
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetClipboardText (/* const char* */lean_obj_arg text) {
-//     SetClipboardText(lean_string_cstr(text));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetClipboardText (lean_obj_arg text) {
+    SetClipboardText(lean_string_cstr(text));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetClipboardText () {
-//     const char * result_ = GetClipboardText();
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetClipboardText () {
+    const char * clipboardText = GetClipboardText();
+    return lean_io_result_mk_ok(
+        lean_mk_string_from_bytes(clipboardText, lean_utf8_strlen(clipboardText))
+    );
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EnableEventWaiting () {
-//     EnableEventWaiting();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EnableEventWaiting () {
+    EnableEventWaiting();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DisableEventWaiting () {
-//     DisableEventWaiting();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DisableEventWaiting () {
+    DisableEventWaiting();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SwapScreenBuffer () {
-//     SwapScreenBuffer();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SwapScreenBuffer () {
+    SwapScreenBuffer();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__PollInputEvents () {
-//     PollInputEvents();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__PollInputEvents () {
+    PollInputEvents();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__WaitTime (double seconds) {
-//     WaitTime(seconds);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__WaitTime (double seconds) {
+    WaitTime(seconds);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ShowCursor () {
-//     ShowCursor();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ShowCursor () {
+    ShowCursor();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__HideCursor () {
-//     HideCursor();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__HideCursor () {
+    HideCursor();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsCursorHidden () {
-//     bool result_ = IsCursorHidden();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsCursorHidden () {
+    return lean_io_result_mk_ok(lean_box(IsCursorHidden()));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EnableCursor () {
-//     EnableCursor();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EnableCursor () {
+    EnableCursor();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DisableCursor () {
-//     DisableCursor();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DisableCursor () {
+    DisableCursor();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsCursorOnScreen () {
-//     bool result_ = IsCursorOnScreen();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsCursorOnScreen () {
+    return lean_io_result_mk_ok(lean_box(IsCursorOnScreen()));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__ClearBackground (uint32_t color) {
     ClearBackground(lean_raylib_Color_from(color));
@@ -438,40 +429,36 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing () {
 //     return lean_raylib_Vector2_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetTargetFPS (uint32_t fps) {
-//     SetTargetFPS(fps);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetTargetFPS (uint32_t fps) {
+    SetTargetFPS(fps);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetFPS () {
-//     int result_ = GetFPS();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetFPS () {
+    return lean_io_result_mk_ok(lean_box_uint32(GetFPS()));
+}
 
-// LEAN_EXPORT double lean_raylib__GetFrameTime () {
-//     float result_ = GetFrameTime();
-//     return (float)result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetFrameTime () {
+    return lean_io_result_mk_ok(lean_box_float(GetFrameTime()));
+}
 
-// LEAN_EXPORT double lean_raylib__GetTime () {
-//     double result_ = GetTime();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetTime () {
+    return lean_io_result_mk_ok(lean_box_float(GetTime()));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetRandomValue (uint32_t min, uint32_t max) {
-//     int result_ = GetRandomValue(min, max);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetRandomValue (uint32_t min, uint32_t max) {
+    return lean_io_result_mk_ok(lean_box_uint32(GetRandomValue(min, max)));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetRandomSeed (uint32_t seed) {
-//     SetRandomSeed(seed);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetRandomSeed (uint32_t seed) {
+    SetRandomSeed(seed);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__TakeScreenshot (/* const char* */lean_obj_arg fileName) {
-//     TakeScreenshot(lean_string_cstr(fileName));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__TakeScreenshot (lean_obj_arg fileName) {
+    TakeScreenshot(lean_string_cstr(fileName));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetConfigFlags (uint32_t flags) {
     SetConfigFlags(flags);
@@ -483,10 +470,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetConfigFlags (uint32_t flags) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogLevel (uint32_t logLevel) {
-//     SetTraceLogLevel(logLevel);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogLevel (uint32_t logLevel) {
+    SetTraceLogLevel(logLevel);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT /* void* */lean_obj_arg lean_raylib__MemAlloc (uint32_t size) {
 //     void * result_ = MemAlloc(size);

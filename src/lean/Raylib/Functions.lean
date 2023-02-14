@@ -60,24 +60,24 @@ opaque RestoreWindow (_ : Unit) : IO Unit
 -- /-- Set icon for window (only PLATFORM_DESKTOP) -/
 -- @[extern "lean_raylib__SetWindowIcon"]
 -- opaque SetWindowIcon (image : Image) : Unit
--- /-- Set title for window (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__SetWindowTitle"]
--- opaque SetWindowTitle (title : String) : Unit
--- /-- Set window position on screen (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__SetWindowPosition"]
--- opaque SetWindowPosition (x : Int32) (y : Int32) : Unit
--- /-- Set monitor for the current window (fullscreen mode) -/
--- @[extern "lean_raylib__SetWindowMonitor"]
--- opaque SetWindowMonitor (monitor : Int32) : Unit
--- /-- Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE) -/
--- @[extern "lean_raylib__SetWindowMinSize"]
--- opaque SetWindowMinSize (width : Int32) (height : Int32) : Unit
--- /-- Set window dimensions -/
--- @[extern "lean_raylib__SetWindowSize"]
--- opaque SetWindowSize (width : Int32) (height : Int32) : Unit
--- /-- Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__SetWindowOpacity"]
--- opaque SetWindowOpacity (opacity : Float) : Unit
+/-- Set title for window (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__SetWindowTitle"]
+opaque SetWindowTitle (title : String) : IO Unit
+/-- Set window position on screen (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__SetWindowPosition"]
+opaque SetWindowPosition (x : Int32) (y : Int32) : IO Unit
+/-- Set monitor for the current window (fullscreen mode) -/
+@[extern "lean_raylib__SetWindowMonitor"]
+opaque SetWindowMonitor (monitor : Int32) : Unit
+/-- Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE) -/
+@[extern "lean_raylib__SetWindowMinSize"]
+opaque SetWindowMinSize (width : UInt32) (height : UInt32) : IO Unit
+/-- Set window dimensions -/
+@[extern "lean_raylib__SetWindowSize"]
+opaque SetWindowSize (width : UInt32) (height : UInt32) : IO Unit
+/-- Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__SetWindowOpacity"]
+opaque SetWindowOpacity (opacity : Float) : IO Unit
 -- /-- Get native window handle -/
 -- @[extern "lean_raylib__GetWindowHandle"]
 -- opaque GetWindowHandle : Unit -> Unit
@@ -85,90 +85,90 @@ opaque RestoreWindow (_ : Unit) : IO Unit
 --   returns: void *
 --   params:
 -- -/
--- /-- Get current screen width -/
--- @[extern "lean_raylib__GetScreenWidth"]
--- opaque GetScreenWidth (_ : Unit) : Int32
--- /-- Get current screen height -/
--- @[extern "lean_raylib__GetScreenHeight"]
--- opaque GetScreenHeight (_ : Unit) : Int32
--- /-- Get current render width (it considers HiDPI) -/
--- @[extern "lean_raylib__GetRenderWidth"]
--- opaque GetRenderWidth (_ : Unit) : Int32
--- /-- Get current render height (it considers HiDPI) -/
--- @[extern "lean_raylib__GetRenderHeight"]
--- opaque GetRenderHeight (_ : Unit) : Int32
--- /-- Get number of connected monitors -/
--- @[extern "lean_raylib__GetMonitorCount"]
--- opaque GetMonitorCount (_ : Unit) : Int32
--- /-- Get current connected monitor -/
--- @[extern "lean_raylib__GetCurrentMonitor"]
--- opaque GetCurrentMonitor (_ : Unit) : Int32
--- /-- Get specified monitor position -/
--- @[extern "lean_raylib__GetMonitorPosition"]
--- opaque GetMonitorPosition (monitor : Int32) : Vector2
--- /-- Get specified monitor width (current video mode used by monitor) -/
--- @[extern "lean_raylib__GetMonitorWidth"]
--- opaque GetMonitorWidth (monitor : Int32) : Int32
--- /-- Get specified monitor height (current video mode used by monitor) -/
--- @[extern "lean_raylib__GetMonitorHeight"]
--- opaque GetMonitorHeight (monitor : Int32) : Int32
--- /-- Get specified monitor physical width in millimetres -/
--- @[extern "lean_raylib__GetMonitorPhysicalWidth"]
--- opaque GetMonitorPhysicalWidth (monitor : Int32) : Int32
--- /-- Get specified monitor physical height in millimetres -/
--- @[extern "lean_raylib__GetMonitorPhysicalHeight"]
--- opaque GetMonitorPhysicalHeight (monitor : Int32) : Int32
--- /-- Get specified monitor refresh rate -/
--- @[extern "lean_raylib__GetMonitorRefreshRate"]
--- opaque GetMonitorRefreshRate (monitor : Int32) : Int32
--- /-- Get window position XY on monitor -/
--- @[extern "lean_raylib__GetWindowPosition"]
--- opaque GetWindowPosition (_ : Unit) : Vector2
--- /-- Get window scale DPI factor -/
--- @[extern "lean_raylib__GetWindowScaleDPI"]
--- opaque GetWindowScaleDPI (_ : Unit) : Vector2
--- /-- Get the human-readable, UTF-8 encoded name of the primary monitor -/
--- @[extern "lean_raylib__GetMonitorName"]
--- opaque GetMonitorName (monitor : Int32) : String
--- /-- Set clipboard text content -/
--- @[extern "lean_raylib__SetClipboardText"]
--- opaque SetClipboardText (text : String) : Unit
--- /-- Get clipboard text content -/
--- @[extern "lean_raylib__GetClipboardText"]
--- opaque GetClipboardText (_ : Unit) : String
--- /-- Enable waiting for events on EndDrawing(), no automatic event polling -/
--- @[extern "lean_raylib__EnableEventWaiting"]
--- opaque EnableEventWaiting (_ : Unit) : Unit
--- /-- Disable waiting for events on EndDrawing(), automatic events polling -/
--- @[extern "lean_raylib__DisableEventWaiting"]
--- opaque DisableEventWaiting (_ : Unit) : Unit
--- /-- Swap back buffer with front buffer (screen drawing) -/
--- @[extern "lean_raylib__SwapScreenBuffer"]
--- opaque SwapScreenBuffer (_ : Unit) : Unit
--- /-- Register all input events -/
--- @[extern "lean_raylib__PollInputEvents"]
--- opaque PollInputEvents (_ : Unit) : Unit
--- /-- Wait for some time (halt program execution) -/
--- @[extern "lean_raylib__WaitTime"]
--- opaque WaitTime (seconds : Float) : Unit
--- /-- Shows cursor -/
--- @[extern "lean_raylib__ShowCursor"]
--- opaque ShowCursor (_ : Unit) : Unit
--- /-- Hides cursor -/
--- @[extern "lean_raylib__HideCursor"]
--- opaque HideCursor (_ : Unit) : Unit
--- /-- Check if cursor is not visible -/
--- @[extern "lean_raylib__IsCursorHidden"]
--- opaque IsCursorHidden (_ : Unit) : Bool
--- /-- Enables cursor (unlock cursor) -/
--- @[extern "lean_raylib__EnableCursor"]
--- opaque EnableCursor (_ : Unit) : Unit
--- /-- Disables cursor (lock cursor) -/
--- @[extern "lean_raylib__DisableCursor"]
--- opaque DisableCursor (_ : Unit) : Unit
--- /-- Check if cursor is on the screen -/
--- @[extern "lean_raylib__IsCursorOnScreen"]
--- opaque IsCursorOnScreen (_ : Unit) : Bool
+/-- Get current screen width -/
+@[extern "lean_raylib__GetScreenWidth"]
+opaque GetScreenWidth (_ : Unit) : IO UInt32
+/-- Get current screen height -/
+@[extern "lean_raylib__GetScreenHeight"]
+opaque GetScreenHeight (_ : Unit) : IO UInt32
+/-- Get current render width (it considers HiDPI) -/
+@[extern "lean_raylib__GetRenderWidth"]
+opaque GetRenderWidth (_ : Unit) : IO UInt32
+/-- Get current render height (it considers HiDPI) -/
+@[extern "lean_raylib__GetRenderHeight"]
+opaque GetRenderHeight (_ : Unit) : IO UInt32
+/-- Get number of connected monitors -/
+@[extern "lean_raylib__GetMonitorCount"]
+opaque GetMonitorCount (_ : Unit) : IO UInt32
+/-- Get current connected monitor -/
+@[extern "lean_raylib__GetCurrentMonitor"]
+opaque GetCurrentMonitor (_ : Unit) : IO UInt32
+/-- Get specified monitor position -/
+@[extern "lean_raylib__GetMonitorPosition"]
+opaque GetMonitorPosition (monitor : UInt32) : IO Vector2
+/-- Get specified monitor width (current video mode used by monitor) -/
+@[extern "lean_raylib__GetMonitorWidth"]
+opaque GetMonitorWidth (monitor : UInt32) : IO UInt32
+/-- Get specified monitor height (current video mode used by monitor) -/
+@[extern "lean_raylib__GetMonitorHeight"]
+opaque GetMonitorHeight (monitor : UInt32) : IO UInt32
+/-- Get specified monitor physical width in millimetres -/
+@[extern "lean_raylib__GetMonitorPhysicalWidth"]
+opaque GetMonitorPhysicalWidth (monitor : UInt32) : IO UInt32
+/-- Get specified monitor physical height in millimetres -/
+@[extern "lean_raylib__GetMonitorPhysicalHeight"]
+opaque GetMonitorPhysicalHeight (monitor : UInt32) : IO UInt32
+/-- Get specified monitor refresh rate -/
+@[extern "lean_raylib__GetMonitorRefreshRate"]
+opaque GetMonitorRefreshRate (monitor : UInt32) : IO UInt32
+/-- Get window position XY on monitor -/
+@[extern "lean_raylib__GetWindowPosition"]
+opaque GetWindowPosition (_ : Unit) : IO Vector2
+/-- Get window scale DPI factor -/
+@[extern "lean_raylib__GetWindowScaleDPI"]
+opaque GetWindowScaleDPI (_ : Unit) : IO Vector2
+/-- Get the human-readable, UTF-8 encoded name of the primary monitor -/
+@[extern "lean_raylib__GetMonitorName"]
+opaque GetMonitorName (monitor : Int32) : IO String
+/-- Set clipboard text content -/
+@[extern "lean_raylib__SetClipboardText"]
+opaque SetClipboardText (text : String) : IO Unit
+/-- Get clipboard text content -/
+@[extern "lean_raylib__GetClipboardText"]
+opaque GetClipboardText (_ : Unit) : IO String
+/-- Enable waiting for events on EndDrawing(), no automatic event polling -/
+@[extern "lean_raylib__EnableEventWaiting"]
+opaque EnableEventWaiting (_ : Unit) : IO Unit
+/-- Disable waiting for events on EndDrawing(), automatic events polling -/
+@[extern "lean_raylib__DisableEventWaiting"]
+opaque DisableEventWaiting (_ : Unit) : IO Unit
+/-- Swap back buffer with front buffer (screen drawing) -/
+@[extern "lean_raylib__SwapScreenBuffer"]
+opaque SwapScreenBuffer (_ : Unit) : IO Unit
+/-- Register all input events -/
+@[extern "lean_raylib__PollInputEvents"]
+opaque PollInputEvents (_ : Unit) : IO Unit
+/-- Wait for some time (halt program execution) -/
+@[extern "lean_raylib__WaitTime"]
+opaque WaitTime (seconds : Float) : IO Unit
+/-- Shows cursor -/
+@[extern "lean_raylib__ShowCursor"]
+opaque ShowCursor (_ : Unit) : IO Unit
+/-- Hides cursor -/
+@[extern "lean_raylib__HideCursor"]
+opaque HideCursor (_ : Unit) : IO Unit
+/-- Check if cursor is not visible -/
+@[extern "lean_raylib__IsCursorHidden"]
+opaque IsCursorHidden (_ : Unit) : IO Bool
+/-- Enables cursor (unlock cursor) -/
+@[extern "lean_raylib__EnableCursor"]
+opaque EnableCursor (_ : Unit) : IO Unit
+/-- Disables cursor (lock cursor) -/
+@[extern "lean_raylib__DisableCursor"]
+opaque DisableCursor (_ : Unit) : IO Unit
+/-- Check if cursor is on the screen -/
+@[extern "lean_raylib__IsCursorOnScreen"]
+opaque IsCursorOnScreen (_ : Unit) : IO Bool
 /-- Set background color (framebuffer clear color) -/
 @[extern "lean_raylib__ClearBackground"]
 opaque ClearBackground (color : Color) : IO Unit
@@ -294,27 +294,27 @@ opaque EndDrawing (_ : Unit) : IO Unit
 -- /-- Get the screen space position for a 2d camera world space position -/
 -- @[extern "lean_raylib__GetWorldToScreen2D"]
 -- opaque GetWorldToScreen2D (position : Vector2) (camera : Camera2D) : Vector2
--- /-- Set target FPS (maximum) -/
--- @[extern "lean_raylib__SetTargetFPS"]
--- opaque SetTargetFPS (fps : Int32) : Unit
--- /-- Get current FPS -/
--- @[extern "lean_raylib__GetFPS"]
--- opaque GetFPS (_ : Unit) : Int32
--- /-- Get time in seconds for last frame drawn (delta time) -/
--- @[extern "lean_raylib__GetFrameTime"]
--- opaque GetFrameTime (_ : Unit) : Float
--- /-- Get elapsed time in seconds since InitWindow() -/
--- @[extern "lean_raylib__GetTime"]
--- opaque GetTime (_ : Unit) : Float
--- /-- Get a random value between min and max (both included) -/
--- @[extern "lean_raylib__GetRandomValue"]
--- opaque GetRandomValue (min : Int32) (max : Int32) : Int32
--- /-- Set the seed for the random number generator -/
--- @[extern "lean_raylib__SetRandomSeed"]
--- opaque SetRandomSeed (seed : UInt32) : Unit
--- /-- Takes a screenshot of current screen (filename extension defines format) -/
--- @[extern "lean_raylib__TakeScreenshot"]
--- opaque TakeScreenshot (fileName : String) : Unit
+/-- Set target FPS (maximum) -/
+@[extern "lean_raylib__SetTargetFPS"]
+opaque SetTargetFPS (fps : UInt32) : IO Unit
+/-- Get current FPS -/
+@[extern "lean_raylib__GetFPS"]
+opaque GetFPS (_ : Unit) : IO UInt32
+/-- Get time in seconds for last frame drawn (delta time) -/
+@[extern "lean_raylib__GetFrameTime"]
+opaque GetFrameTime (_ : Unit) : IO Float
+/-- Get elapsed time in seconds since InitWindow() -/
+@[extern "lean_raylib__GetTime"]
+opaque GetTime (_ : Unit) : IO Float
+/-- Get a random value between min and max (both included) -/
+@[extern "lean_raylib__GetRandomValue"]
+opaque GetRandomValue (min : Int32) (max : Int32) : IO Int32
+/-- Set the seed for the random number generator -/
+@[extern "lean_raylib__SetRandomSeed"]
+opaque SetRandomSeed (seed : UInt32) : IO Unit
+/-- Takes a screenshot of current screen (filename extension defines format) -/
+@[extern "lean_raylib__TakeScreenshot"]
+opaque TakeScreenshot (fileName : String) : IO Unit
 /-- Setup init configuration flags (view FLAGS) -/
 @[extern "lean_raylib__SetConfigFlags"]
 opaque SetConfigFlags (flags : ConfigFlags) : IO Unit
@@ -328,9 +328,9 @@ opaque SetConfigFlags (flags : ConfigFlags) : IO Unit
 --   | text : const char *
 --   | args : /*variadic*/ ...
 -- -/
--- /-- Set the current threshold (minimum) log level -/
--- @[extern "lean_raylib__SetTraceLogLevel"]
--- opaque SetTraceLogLevel (logLevel : Int32) : Unit
+/-- Set the current threshold (minimum) log level -/
+@[extern "lean_raylib__SetTraceLogLevel"]
+opaque SetTraceLogLevel (logLevel : TraceLogLevel) : IO Unit
 -- /-- Internal memory allocator -/
 -- @[extern "lean_raylib__MemAlloc"]
 -- opaque MemAlloc : Unit -> Unit
