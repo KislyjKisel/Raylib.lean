@@ -1136,45 +1136,64 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return lean_raylib_Rectangle_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadImage (/* const char* */lean_obj_arg fileName) {
-//     Image result_ = LoadImage(lean_string_cstr(fileName));
-//     return lean_raylib_Image_to(result_);
-// }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageRaw (/* const char* */lean_obj_arg fileName, uint32_t width, uint32_t height, uint32_t format, uint32_t headerSize) {
-//     Image result_ = LoadImageRaw(lean_string_cstr(fileName), width, height, format, headerSize);
-//     return lean_raylib_Image_to(result_);
-// }
+// # Images
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageAnim (/* const char* */lean_obj_arg fileName, /* int* */lean_obj_arg frames) {
-//     Image result_ = LoadImageAnim(lean_string_cstr(fileName), /*todo: ptr?*/frames);
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadImage (/* String */ b_lean_obj_arg fileName) {
+    LET_BOX(Image, image, LoadImage(lean_string_cstr(fileName)));
+    return lean_io_result_mk_ok(lean_raylib_Image_to(image));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize) {
-//     Image result_ = LoadImageFromMemory(lean_string_cstr(fileType), /*todo: ptr?*/fileData, dataSize);
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadImageRaw (
+    /* String */ b_lean_obj_arg fileName,
+    uint32_t width, uint32_t height, uint32_t format, uint32_t headerSize
+) {
+    LET_BOX(Image, image, LoadImageRaw(
+        lean_string_cstr(fileName), width, height, format, headerSize
+    ));
+    return lean_io_result_mk_ok(lean_raylib_Image_to(image));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__LoadImageAnim (/* String */ b_lean_obj_arg fileName) {
+    int frames;
+    LET_BOX(Image, image, LoadImageAnim(lean_string_cstr(fileName), &frames));
+    return lean_io_result_mk_ok(lean_mk_tuple2(
+        lean_raylib_Image_to(image),
+        lean_box_uint32(frames)
+    ));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromMemory (
+    /* String */ b_lean_obj_arg fileType,
+    /* ByteArray */ b_lean_obj_arg fileDataArray
+) {
+    size_t dataSize = lean_sarray_byte_size(fileDataArray);
+    uint8_t* fileData = lean_sarray_cptr(fileDataArray);
+    LET_BOX(Image, image, LoadImageFromMemory(
+        lean_string_cstr(fileType),
+        fileData,
+        dataSize
+    ));
+    return lean_io_result_mk_ok(lean_raylib_Image_to(image));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromTexture (lean_obj_arg texture) {
 //     Image result_ = LoadImageFromTexture(/*cast Texture2D to_lean?false*/(texture));
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromScreen () {
-//     Image result_ = LoadImageFromScreen();
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromScreen () {
+    LET_BOX(Image, image, LoadImageFromScreen());
+    return lean_io_result_mk_ok(lean_raylib_Image_to(image));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsImageReady (lean_obj_arg image) {
-//     bool result_ = IsImageReady(lean_raylib_Image_from(image));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsImageReady (b_lean_obj_arg image) {
+    return IsImageReady(*lean_raylib_Image_from(image));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadImage (lean_obj_arg image) {
-//     UnloadImage(lean_raylib_Image_from(image));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadImage (b_lean_obj_arg _image) {
+    return lean_box(0);
+}
 
 // LEAN_EXPORT uint8_t lean_raylib__ExportImage (lean_obj_arg image, /* const char* */lean_obj_arg fileName) {
 //     bool result_ = ExportImage(lean_raylib_Image_from(image), lean_string_cstr(fileName));

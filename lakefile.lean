@@ -27,8 +27,6 @@ def buildBindingsO (pkg : Package) (stem : String) : IndexBuildM (BuildJob FileP
   }
   buildO (stem ++ ".c") oFile srcJob flags "cc"
 
-target bindingsUtilO (pkg : Package) : FilePath := do
-  buildBindingsO pkg "util"
 target bindingsEnumerationsO (pkg : Package) : FilePath := do
   buildBindingsO pkg "enumerations"
 target bindingsStructuresO (pkg : Package) : FilePath := do
@@ -38,12 +36,10 @@ target bindingsFunctionsO (pkg : Package) : FilePath := do
 
 extern_lib «raylib-lean» (pkg : Package) := do
   let name := nameToStaticLib "raylib-lean"
-  let bindingsUtilOFile ← fetch <| pkg.target ``bindingsUtilO
   let bindingsEnumerationsOFile ← fetch <| pkg.target ``bindingsEnumerationsO
   let bindingsStructuresOFile ← fetch <| pkg.target ``bindingsStructuresO
   let bindingsFunctionsOFile ← fetch <| pkg.target ``bindingsFunctionsO
   buildStaticLib (pkg.libDir / name) #[
-    bindingsUtilOFile,
     bindingsEnumerationsOFile,
     bindingsStructuresOFile,
     bindingsFunctionsOFile

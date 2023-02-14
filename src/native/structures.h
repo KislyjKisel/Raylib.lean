@@ -1,3 +1,5 @@
+#pragma once
+
 #include "util.h"
 
 
@@ -96,8 +98,8 @@ static inline Image const* lean_raylib_Image_from (b_lean_obj_arg obj) {
     return (Image const*) lean_get_external_data(obj);
 }
 
-static void lean_raylib_Image_finalize(lean_obj_arg image_obj) {
-    UnloadImage(*lean_raylib_Image_from(image_obj));
+static void lean_raylib_Image_finalize(void* image) {
+    UnloadImage(*(Image*)image);
 }
 
 static inline lean_object* lean_raylib_Image_to (Image const* obj) {

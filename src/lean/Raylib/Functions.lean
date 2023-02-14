@@ -901,43 +901,36 @@ opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControl
 -- /-- Get collision rectangle for two rectangles collision -/
 -- @[extern "lean_raylib__GetCollisionRec"]
 -- opaque GetCollisionRec (rec1 : Rectangle) (rec2 : Rectangle) : Rectangle
--- /-- Load image from file into CPU memory (RAM) -/
--- @[extern "lean_raylib__LoadImage"]
--- opaque LoadImage (fileName : String) : Image
--- /-- Load image from RAW file data -/
--- @[extern "lean_raylib__LoadImageRaw"]
--- opaque LoadImageRaw (fileName : String) (width : Int32) (height : Int32) (format : Int32) (headerSize : Int32) : Image
--- /-- Load image sequence from file (frames appended to image.data) -/
--- @[extern "lean_raylib__LoadImageAnim"]
--- opaque LoadImageAnim : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Image
---   params:
---   | fileName : const char *
---   | frames : int *
--- -/
--- /-- Load image from memory buffer, fileType refers to extension: i.e. '.png' -/
--- @[extern "lean_raylib__LoadImageFromMemory"]
--- opaque LoadImageFromMemory : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Image
---   params:
---   | fileType : const char *
---   | fileData : const unsigned char *
---   | dataSize : int
--- -/
+/-- Load image from file into CPU memory (RAM) -/
+@[extern "lean_raylib__LoadImage"]
+opaque LoadImage (fileName : @& String) : IO Image
+/-- Load image from RAW file data -/
+@[extern "lean_raylib__LoadImageRaw"]
+opaque LoadImageRaw
+  (fileName : @& String) (width : UInt32) (height : UInt32)
+  (format : PixelFormat) (headerSize : UInt32)
+  : IO Image
+/-- Load image sequence from file (frames appended to image.data) -/
+@[extern "lean_raylib__LoadImageAnim"]
+opaque LoadImageAnim (fileName : @& String) : IO (Image × UInt32)
+/-- Load image from memory buffer, fileType refers to extension: i.e. '.png' -/
+@[extern "lean_raylib__LoadImageFromMemory"]
+opaque LoadImageFromMemory (fileType : @& String) (fileData : @& ByteArray) : IO Image
 -- /-- Load image from GPU texture data -/
 -- @[extern "lean_raylib__LoadImageFromTexture"]
 -- opaque LoadImageFromTexture (texture : Texture2D) : Image
--- /-- Load image from screen buffer and (screenshot) -/
--- @[extern "lean_raylib__LoadImageFromScreen"]
--- opaque LoadImageFromScreen (_ : Unit) : Image
--- /-- Check if an image is ready -/
--- @[extern "lean_raylib__IsImageReady"]
--- opaque IsImageReady (image : Image) : Bool
--- /-- Unload image from CPU memory (RAM) -/
--- @[extern "lean_raylib__UnloadImage"]
--- opaque UnloadImage (image : Image) : Unit
+/-- Load image from screen buffer and (screenshot) -/
+@[extern "lean_raylib__LoadImageFromScreen"]
+opaque LoadImageFromScreen (_ : Unit) : IO Image
+/-- Check if an image is ready -/
+@[extern "lean_raylib__IsImageReady"]
+opaque IsImageReady (image : @& Image) : Bool
+/--
+Unload image from CPU memory (RAM)
+DEPRECATED: The image will be freed only when its RC becomes zero.
+-/
+@[extern "lean_raylib__UnloadImage", deprecated]
+opaque UnloadImage (image : @& Image) : Unit
 -- /-- Export image data to file, returns true on success -/
 -- @[extern "lean_raylib__ExportImage"]
 -- opaque ExportImage (image : Image) (fileName : String) : Bool
