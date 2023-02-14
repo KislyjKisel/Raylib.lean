@@ -40,19 +40,22 @@ static inline Vector4 const* lean_raylib_Vector4_from (b_lean_obj_arg obj) {
 }
 
 
-// # Matrices
+// # Matrix
 
-// static inline lean_object* lean_raylib_Matrix_to (Matrix const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static inline lean_object* lean_raylib_Matrix_to (Matrix const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
 
-// static inline Matrix const* lean_raylib_Matrix_from (b_lean_obj_arg obj) {
-//     return (Matrix const*) lean_get_external_data(obj);
-// }
+static inline Matrix const* lean_raylib_Matrix_from (b_lean_obj_arg obj) {
+    return (Matrix const*) lean_get_external_data(obj);
+}
+
+
+// # Color
 
 static inline Color lean_raylib_Color_from(uint32_t color) {
     Color res = {
@@ -70,6 +73,9 @@ static inline uint32_t lean_raylib_Color_to(Color color) {
         | (color.b << 16)
         | (color.a << 24);
 }
+
+
+// # Rectangle
 
 // static inline lean_object* lean_raylib_Rectangle_to (Rectangle const* obj) {
 //     static lean_external_class* class_ = NULL;
