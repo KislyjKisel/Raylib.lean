@@ -8,76 +8,76 @@ namespace Raylib
 
 /-- Initialize window and OpenGL context -/
 @[extern "lean_raylib__InitWindow"]
-opaque InitWindow (width : Int32) (height : Int32) (title : String) : IO Unit
+opaque InitWindow (width : Int32) (height : Int32) (title : String) : BaseIO Unit
 /-- Check if KEY_ESCAPE pressed or Close icon pressed -/
 @[extern "lean_raylib__WindowShouldClose"]
-opaque WindowShouldClose (_ : Unit) : IO Bool
+opaque WindowShouldClose : BaseIO Bool
 /-- Close window and unload OpenGL context -/
 @[extern "lean_raylib__CloseWindow"]
-opaque CloseWindow (_ : Unit) : IO Unit
+opaque CloseWindow : BaseIO Unit
 /-- Check if window has been initialized successfully -/
 @[extern "lean_raylib__IsWindowReady"]
-opaque IsWindowReady (_ : Unit) : IO Bool
+opaque IsWindowReady : BaseIO Bool
 /-- Check if window is currently fullscreen -/
 @[extern "lean_raylib__IsWindowFullscreen"]
-opaque IsWindowFullscreen (_ : Unit) : IO Bool
+opaque IsWindowFullscreen : BaseIO Bool
 /-- Check if window is currently hidden (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__IsWindowHidden"]
-opaque IsWindowHidden (_ : Unit) : IO Bool
+opaque IsWindowHidden : BaseIO Bool
 /-- Check if window is currently minimized (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__IsWindowMinimized"]
-opaque IsWindowMinimized (_ : Unit) : IO Bool
+opaque IsWindowMinimized : BaseIO Bool
 /-- Check if window is currently maximized (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__IsWindowMaximized"]
-opaque IsWindowMaximized (_ : Unit) : IO Bool
+opaque IsWindowMaximized : BaseIO Bool
 /-- Check if window is currently focused (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__IsWindowFocused"]
-opaque IsWindowFocused (_ : Unit) : IO Bool
+opaque IsWindowFocused : BaseIO Bool
 /-- Check if window has been resized last frame -/
 @[extern "lean_raylib__IsWindowResized"]
-opaque IsWindowResized (_ : Unit) : IO Bool
+opaque IsWindowResized : BaseIO Bool
 /-- Check if one specific window flag is enabled -/
 @[extern "lean_raylib__IsWindowState"]
-opaque IsWindowState (flag : ConfigFlags) : IO Bool
+opaque IsWindowState (flag : ConfigFlags) : BaseIO Bool
 /-- Set window configuration state using flags (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowState"]
-opaque SetWindowState (flags : ConfigFlags) : IO Unit
+opaque SetWindowState (flags : ConfigFlags) : BaseIO Unit
 /-- Clear window configuration state flags -/
 @[extern "lean_raylib__ClearWindowState"]
-opaque ClearWindowState (flags : ConfigFlags) : IO Unit
+opaque ClearWindowState (flags : ConfigFlags) : BaseIO Unit
 /-- Toggle window state: fullscreen/windowed (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__ToggleFullscreen"]
-opaque ToggleFullscreen (_ : Unit) : IO Unit
+opaque ToggleFullscreen : BaseIO Unit
 /-- Set window state: maximized, if resizable (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__MaximizeWindow"]
-opaque MaximizeWindow (_ : Unit) : IO Unit
+opaque MaximizeWindow : BaseIO Unit
 /-- Set window state: minimized, if resizable (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__MinimizeWindow"]
-opaque MinimizeWindow (_ : Unit) : IO Unit
+opaque MinimizeWindow : BaseIO Unit
 /-- Set window state: not minimized/maximized (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__RestoreWindow"]
-opaque RestoreWindow (_ : Unit) : IO Unit
+opaque RestoreWindow : BaseIO Unit
 -- /-- Set icon for window (only PLATFORM_DESKTOP) -/
 -- @[extern "lean_raylib__SetWindowIcon"]
 -- opaque SetWindowIcon (image : Image) : Unit
 /-- Set title for window (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowTitle"]
-opaque SetWindowTitle (title : String) : IO Unit
+opaque SetWindowTitle (title : String) : BaseIO Unit
 /-- Set window position on screen (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowPosition"]
-opaque SetWindowPosition (x : Int32) (y : Int32) : IO Unit
+opaque SetWindowPosition (x : Int32) (y : Int32) : BaseIO Unit
 /-- Set monitor for the current window (fullscreen mode) -/
 @[extern "lean_raylib__SetWindowMonitor"]
-opaque SetWindowMonitor (monitor : Int32) : Unit
+opaque SetWindowMonitor (monitor : Int32) : BaseIO Unit
 /-- Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE) -/
 @[extern "lean_raylib__SetWindowMinSize"]
-opaque SetWindowMinSize (width : UInt32) (height : UInt32) : IO Unit
+opaque SetWindowMinSize (width : UInt32) (height : UInt32) : BaseIO Unit
 /-- Set window dimensions -/
 @[extern "lean_raylib__SetWindowSize"]
-opaque SetWindowSize (width : UInt32) (height : UInt32) : IO Unit
+opaque SetWindowSize (width : UInt32) (height : UInt32) : BaseIO Unit
 /-- Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowOpacity"]
-opaque SetWindowOpacity (opacity : Float) : IO Unit
+opaque SetWindowOpacity (opacity : Float) : BaseIO Unit
 -- /-- Get native window handle -/
 -- @[extern "lean_raylib__GetWindowHandle"]
 -- opaque GetWindowHandle : Unit -> Unit
@@ -87,97 +87,97 @@ opaque SetWindowOpacity (opacity : Float) : IO Unit
 -- -/
 /-- Get current screen width -/
 @[extern "lean_raylib__GetScreenWidth"]
-opaque GetScreenWidth (_ : Unit) : IO UInt32
+opaque GetScreenWidth : BaseIO UInt32
 /-- Get current screen height -/
 @[extern "lean_raylib__GetScreenHeight"]
-opaque GetScreenHeight (_ : Unit) : IO UInt32
+opaque GetScreenHeight : BaseIO UInt32
 /-- Get current render width (it considers HiDPI) -/
 @[extern "lean_raylib__GetRenderWidth"]
-opaque GetRenderWidth (_ : Unit) : IO UInt32
+opaque GetRenderWidth : BaseIO UInt32
 /-- Get current render height (it considers HiDPI) -/
 @[extern "lean_raylib__GetRenderHeight"]
-opaque GetRenderHeight (_ : Unit) : IO UInt32
+opaque GetRenderHeight : BaseIO UInt32
 /-- Get number of connected monitors -/
 @[extern "lean_raylib__GetMonitorCount"]
-opaque GetMonitorCount (_ : Unit) : IO UInt32
+opaque GetMonitorCount : BaseIO UInt32
 /-- Get current connected monitor -/
 @[extern "lean_raylib__GetCurrentMonitor"]
-opaque GetCurrentMonitor (_ : Unit) : IO UInt32
+opaque GetCurrentMonitor : BaseIO UInt32
 /-- Get specified monitor position -/
 @[extern "lean_raylib__GetMonitorPosition"]
-opaque GetMonitorPosition (monitor : UInt32) : IO Vector2
+opaque GetMonitorPosition (monitor : UInt32) : BaseIO Vector2
 /-- Get specified monitor width (current video mode used by monitor) -/
 @[extern "lean_raylib__GetMonitorWidth"]
-opaque GetMonitorWidth (monitor : UInt32) : IO UInt32
+opaque GetMonitorWidth (monitor : UInt32) : BaseIO UInt32
 /-- Get specified monitor height (current video mode used by monitor) -/
 @[extern "lean_raylib__GetMonitorHeight"]
-opaque GetMonitorHeight (monitor : UInt32) : IO UInt32
+opaque GetMonitorHeight (monitor : UInt32) : BaseIO UInt32
 /-- Get specified monitor physical width in millimetres -/
 @[extern "lean_raylib__GetMonitorPhysicalWidth"]
-opaque GetMonitorPhysicalWidth (monitor : UInt32) : IO UInt32
+opaque GetMonitorPhysicalWidth (monitor : UInt32) : BaseIO UInt32
 /-- Get specified monitor physical height in millimetres -/
 @[extern "lean_raylib__GetMonitorPhysicalHeight"]
-opaque GetMonitorPhysicalHeight (monitor : UInt32) : IO UInt32
+opaque GetMonitorPhysicalHeight (monitor : UInt32) : BaseIO UInt32
 /-- Get specified monitor refresh rate -/
 @[extern "lean_raylib__GetMonitorRefreshRate"]
-opaque GetMonitorRefreshRate (monitor : UInt32) : IO UInt32
+opaque GetMonitorRefreshRate (monitor : UInt32) : BaseIO UInt32
 /-- Get window position XY on monitor -/
 @[extern "lean_raylib__GetWindowPosition"]
-opaque GetWindowPosition (_ : Unit) : IO Vector2
+opaque GetWindowPosition : BaseIO Vector2
 /-- Get window scale DPI factor -/
 @[extern "lean_raylib__GetWindowScaleDPI"]
-opaque GetWindowScaleDPI (_ : Unit) : IO Vector2
+opaque GetWindowScaleDPI : BaseIO Vector2
 /-- Get the human-readable, UTF-8 encoded name of the primary monitor -/
 @[extern "lean_raylib__GetMonitorName"]
-opaque GetMonitorName (monitor : Int32) : IO String
+opaque GetMonitorName (monitor : Int32) : BaseIO String
 /-- Set clipboard text content -/
 @[extern "lean_raylib__SetClipboardText"]
-opaque SetClipboardText (text : String) : IO Unit
+opaque SetClipboardText (text : String) : BaseIO Unit
 /-- Get clipboard text content -/
 @[extern "lean_raylib__GetClipboardText"]
-opaque GetClipboardText (_ : Unit) : IO String
+opaque GetClipboardText : BaseIO String
 /-- Enable waiting for events on EndDrawing(), no automatic event polling -/
 @[extern "lean_raylib__EnableEventWaiting"]
-opaque EnableEventWaiting (_ : Unit) : IO Unit
+opaque EnableEventWaiting : BaseIO Unit
 /-- Disable waiting for events on EndDrawing(), automatic events polling -/
 @[extern "lean_raylib__DisableEventWaiting"]
-opaque DisableEventWaiting (_ : Unit) : IO Unit
+opaque DisableEventWaiting : BaseIO Unit
 /-- Swap back buffer with front buffer (screen drawing) -/
 @[extern "lean_raylib__SwapScreenBuffer"]
-opaque SwapScreenBuffer (_ : Unit) : IO Unit
+opaque SwapScreenBuffer : BaseIO Unit
 /-- Register all input events -/
 @[extern "lean_raylib__PollInputEvents"]
-opaque PollInputEvents (_ : Unit) : IO Unit
+opaque PollInputEvents : BaseIO Unit
 /-- Wait for some time (halt program execution) -/
 @[extern "lean_raylib__WaitTime"]
-opaque WaitTime (seconds : Float) : IO Unit
+opaque WaitTime (seconds : Float) : BaseIO Unit
 /-- Shows cursor -/
 @[extern "lean_raylib__ShowCursor"]
-opaque ShowCursor (_ : Unit) : IO Unit
+opaque ShowCursor : BaseIO Unit
 /-- Hides cursor -/
 @[extern "lean_raylib__HideCursor"]
-opaque HideCursor (_ : Unit) : IO Unit
+opaque HideCursor : BaseIO Unit
 /-- Check if cursor is not visible -/
 @[extern "lean_raylib__IsCursorHidden"]
-opaque IsCursorHidden (_ : Unit) : IO Bool
+opaque IsCursorHidden : BaseIO Bool
 /-- Enables cursor (unlock cursor) -/
 @[extern "lean_raylib__EnableCursor"]
-opaque EnableCursor (_ : Unit) : IO Unit
+opaque EnableCursor : BaseIO Unit
 /-- Disables cursor (lock cursor) -/
 @[extern "lean_raylib__DisableCursor"]
-opaque DisableCursor (_ : Unit) : IO Unit
+opaque DisableCursor : BaseIO Unit
 /-- Check if cursor is on the screen -/
 @[extern "lean_raylib__IsCursorOnScreen"]
-opaque IsCursorOnScreen (_ : Unit) : IO Bool
+opaque IsCursorOnScreen : BaseIO Bool
 /-- Set background color (framebuffer clear color) -/
 @[extern "lean_raylib__ClearBackground"]
-opaque ClearBackground (color : Color) : IO Unit
+opaque ClearBackground (color : Color) : BaseIO Unit
 /-- Setup canvas (framebuffer) to start drawing -/
 @[extern "lean_raylib__BeginDrawing"]
-opaque BeginDrawing (_ : Unit) : IO Unit
+opaque BeginDrawing : BaseIO Unit
 /-- End canvas drawing and swap buffers (double buffering) -/
 @[extern "lean_raylib__EndDrawing"]
-opaque EndDrawing (_ : Unit) : IO Unit
+opaque EndDrawing : BaseIO Unit
 -- /-- Begin 2D mode with custom camera (2D) -/
 -- @[extern "lean_raylib__BeginMode2D"]
 -- opaque BeginMode2D (camera : Camera2D) : Unit
@@ -296,28 +296,28 @@ opaque EndDrawing (_ : Unit) : IO Unit
 -- opaque GetWorldToScreen2D (position : Vector2) (camera : Camera2D) : Vector2
 /-- Set target FPS (maximum) -/
 @[extern "lean_raylib__SetTargetFPS"]
-opaque SetTargetFPS (fps : UInt32) : IO Unit
+opaque SetTargetFPS (fps : UInt32) : BaseIO Unit
 /-- Get current FPS -/
 @[extern "lean_raylib__GetFPS"]
-opaque GetFPS (_ : Unit) : IO UInt32
+opaque GetFPS : BaseIO UInt32
 /-- Get time in seconds for last frame drawn (delta time) -/
 @[extern "lean_raylib__GetFrameTime"]
-opaque GetFrameTime (_ : Unit) : IO Float
+opaque GetFrameTime : BaseIO Float
 /-- Get elapsed time in seconds since InitWindow() -/
 @[extern "lean_raylib__GetTime"]
-opaque GetTime (_ : Unit) : IO Float
+opaque GetTime : BaseIO Float
 /-- Get a random value between min and max (both included) -/
 @[extern "lean_raylib__GetRandomValue"]
-opaque GetRandomValue (min : Int32) (max : Int32) : IO Int32
+opaque GetRandomValue (min : Int32) (max : Int32) : BaseIO Int32
 /-- Set the seed for the random number generator -/
 @[extern "lean_raylib__SetRandomSeed"]
-opaque SetRandomSeed (seed : UInt32) : IO Unit
+opaque SetRandomSeed (seed : UInt32) : BaseIO Unit
 /-- Takes a screenshot of current screen (filename extension defines format) -/
 @[extern "lean_raylib__TakeScreenshot"]
-opaque TakeScreenshot (fileName : String) : IO Unit
+opaque TakeScreenshot (fileName : String) : BaseIO Unit
 /-- Setup init configuration flags (view FLAGS) -/
 @[extern "lean_raylib__SetConfigFlags"]
-opaque SetConfigFlags (flags : ConfigFlags) : IO Unit
+opaque SetConfigFlags (flags : ConfigFlags) : BaseIO Unit
 -- /-- Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...) -/
 -- @[extern "lean_raylib__TraceLog"]
 -- opaque TraceLog : Unit -> Unit
@@ -330,7 +330,7 @@ opaque SetConfigFlags (flags : ConfigFlags) : IO Unit
 -- -/
 /-- Set the current threshold (minimum) log level -/
 @[extern "lean_raylib__SetTraceLogLevel"]
-opaque SetTraceLogLevel (logLevel : TraceLogLevel) : IO Unit
+opaque SetTraceLogLevel (logLevel : TraceLogLevel) : BaseIO Unit
 -- /-- Internal memory allocator -/
 -- @[extern "lean_raylib__MemAlloc"]
 -- opaque MemAlloc : Unit -> Unit
@@ -567,136 +567,136 @@ opaque SetTraceLogLevel (logLevel : TraceLogLevel) : IO Unit
 -- -/
 /-- Check if a key has been pressed once -/
 @[extern "lean_raylib__IsKeyPressed"]
-opaque IsKeyPressed (key : KeyboardKey) : IO Bool
+opaque IsKeyPressed (key : KeyboardKey) : BaseIO Bool
 /-- Check if a key is being pressed -/
 @[extern "lean_raylib__IsKeyDown"]
-opaque IsKeyDown (key : KeyboardKey) : IO Bool
+opaque IsKeyDown (key : KeyboardKey) : BaseIO Bool
 /-- Check if a key has been released once -/
 @[extern "lean_raylib__IsKeyReleased"]
-opaque IsKeyReleased (key : KeyboardKey) : IO Bool
+opaque IsKeyReleased (key : KeyboardKey) : BaseIO Bool
 /-- Check if a key is NOT being pressed -/
 @[extern "lean_raylib__IsKeyUp"]
-opaque IsKeyUp (key : KeyboardKey) : IO Bool
+opaque IsKeyUp (key : KeyboardKey) : BaseIO Bool
 /-- Set a custom key to exit program (default is ESC) -/
 @[extern "lean_raylib__SetExitKey"]
-opaque SetExitKey (key : KeyboardKey) : IO Unit
+opaque SetExitKey (key : KeyboardKey) : BaseIO Unit
 /-- Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty -/
 @[extern "lean_raylib__GetKeyPressed"]
-opaque GetKeyPressed (_ : Unit) : IO KeyboardKey
+opaque GetKeyPressed : BaseIO KeyboardKey
 /-- Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty -/
 @[extern "lean_raylib__GetCharPressed"]
-opaque GetCharPressed (_ : Unit) : IO Char
+opaque GetCharPressed : BaseIO Char
 /-- Check if a gamepad is available -/
 @[extern "lean_raylib__IsGamepadAvailable"]
-opaque IsGamepadAvailable (gamepad : UInt32) : IO Bool
+opaque IsGamepadAvailable (gamepad : UInt32) : BaseIO Bool
 /-- Get gamepad internal name id -/
 @[extern "lean_raylib__GetGamepadName"]
-opaque GetGamepadName (gamepad : UInt32) : IO String
+opaque GetGamepadName (gamepad : UInt32) : BaseIO String
 /-- Check if a gamepad button has been pressed once -/
 @[extern "lean_raylib__IsGamepadButtonPressed"]
-opaque IsGamepadButtonPressed (gamepad : UInt32) (button : GamepadButton) : IO Bool
+opaque IsGamepadButtonPressed (gamepad : UInt32) (button : GamepadButton) : BaseIO Bool
 /-- Check if a gamepad button is being pressed -/
 @[extern "lean_raylib__IsGamepadButtonDown"]
-opaque IsGamepadButtonDown (gamepad : UInt32) (button : GamepadButton) : IO Bool
+opaque IsGamepadButtonDown (gamepad : UInt32) (button : GamepadButton) : BaseIO Bool
 /-- Check if a gamepad button has been released once -/
 @[extern "lean_raylib__IsGamepadButtonReleased"]
-opaque IsGamepadButtonReleased (gamepad : UInt32) (button : GamepadButton) : IO Bool
+opaque IsGamepadButtonReleased (gamepad : UInt32) (button : GamepadButton) : BaseIO Bool
 /-- Check if a gamepad button is NOT being pressed -/
 @[extern "lean_raylib__IsGamepadButtonUp"]
-opaque IsGamepadButtonUp (gamepad : UInt32) (button : GamepadButton) : IO Bool
+opaque IsGamepadButtonUp (gamepad : UInt32) (button : GamepadButton) : BaseIO Bool
 /-- Get the last gamepad button pressed -/
 @[extern "lean_raylib__GetGamepadButtonPressed"]
-opaque GetGamepadButtonPressed (_ : Unit) : IO GamepadButton
+opaque GetGamepadButtonPressed : BaseIO GamepadButton
 /-- Get gamepad axis count for a gamepad -/
 @[extern "lean_raylib__GetGamepadAxisCount"]
-opaque GetGamepadAxisCount (gamepad : UInt32) : IO UInt32
+opaque GetGamepadAxisCount (gamepad : UInt32) : BaseIO UInt32
 /-- Get axis movement value for a gamepad axis -/
 @[extern "lean_raylib__GetGamepadAxisMovement"]
-opaque GetGamepadAxisMovement (gamepad : UInt32) (axis : UInt32) : Float
+opaque GetGamepadAxisMovement (gamepad : UInt32) (axis : UInt32) : BaseIO Float
 /-- Set internal gamepad mappings (SDL_GameControllerDB) -/
 @[extern "lean_raylib__SetGamepadMappings"]
-opaque SetGamepadMappings (mappings : String) : IO Bool
+opaque SetGamepadMappings (mappings : String) : BaseIO Bool
 /-- Check if a mouse button has been pressed once -/
 @[extern "lean_raylib__IsMouseButtonPressed"]
-opaque IsMouseButtonPressed (button : MouseButton) : IO Bool
+opaque IsMouseButtonPressed (button : MouseButton) : BaseIO Bool
 /-- Check if a mouse button is being pressed -/
 @[extern "lean_raylib__IsMouseButtonDown"]
-opaque IsMouseButtonDown (button : MouseButton) : IO Bool
+opaque IsMouseButtonDown (button : MouseButton) : BaseIO Bool
 /-- Check if a mouse button has been released once -/
 @[extern "lean_raylib__IsMouseButtonReleased"]
-opaque IsMouseButtonReleased (button : MouseButton) : IO Bool
+opaque IsMouseButtonReleased (button : MouseButton) : BaseIO Bool
 /-- Check if a mouse button is NOT being pressed -/
 @[extern "lean_raylib__IsMouseButtonUp"]
-opaque IsMouseButtonUp (button : MouseButton) : IO Bool
+opaque IsMouseButtonUp (button : MouseButton) : BaseIO Bool
 /-- Get mouse position X -/
 @[extern "lean_raylib__GetMouseX"]
-opaque GetMouseX (_ : Unit) : IO Int32
+opaque GetMouseX : BaseIO Int32
 /-- Get mouse position Y -/
 @[extern "lean_raylib__GetMouseY"]
-opaque GetMouseY (_ : Unit) : IO Int32
+opaque GetMouseY : BaseIO Int32
 /-- Get mouse position XY -/
 @[extern "lean_raylib__GetMousePosition"]
-opaque GetMousePosition (_ : Unit) : IO Vector2
+opaque GetMousePosition : BaseIO Vector2
 /-- Get mouse delta between frames -/
 @[extern "lean_raylib__GetMouseDelta"]
-opaque GetMouseDelta (_ : Unit) : IO Vector2
+opaque GetMouseDelta : BaseIO Vector2
 /-- Set mouse position XY -/
 @[extern "lean_raylib__SetMousePosition"]
-opaque SetMousePosition (x : Int32) (y : Int32) : IO Unit
+opaque SetMousePosition (x : Int32) (y : Int32) : BaseIO Unit
 /-- Set mouse offset -/
 @[extern "lean_raylib__SetMouseOffset"]
-opaque SetMouseOffset (offsetX : Int32) (offsetY : Int32) : IO Unit
+opaque SetMouseOffset (offsetX : Int32) (offsetY : Int32) : BaseIO Unit
 /-- Set mouse scaling -/
 @[extern "lean_raylib__SetMouseScale"]
-opaque SetMouseScale (scaleX : Float) (scaleY : Float) : IO Unit
+opaque SetMouseScale (scaleX : Float) (scaleY : Float) : BaseIO Unit
 /-- Get mouse wheel movement for X or Y, whichever is larger -/
 @[extern "lean_raylib__GetMouseWheelMove"]
-opaque GetMouseWheelMove (_ : Unit) : IO Float
+opaque GetMouseWheelMove : BaseIO Float
 /-- Get mouse wheel movement for both X and Y -/
 @[extern "lean_raylib__GetMouseWheelMoveV"]
-opaque GetMouseWheelMoveV (_ : Unit) : IO Vector2
+opaque GetMouseWheelMoveV : BaseIO Vector2
 /-- Set mouse cursor -/
 @[extern "lean_raylib__SetMouseCursor"]
-opaque SetMouseCursor (cursor : MouseCursor) : IO Unit
+opaque SetMouseCursor (cursor : MouseCursor) : BaseIO Unit
 /-- Get touch position X for touch point 0 (relative to screen size) -/
 @[extern "lean_raylib__GetTouchX"]
-opaque GetTouchX (_ : Unit) : IO Int32
+opaque GetTouchX : BaseIO Int32
 /-- Get touch position Y for touch point 0 (relative to screen size) -/
 @[extern "lean_raylib__GetTouchY"]
-opaque GetTouchY (_ : Unit) : IO Int32
+opaque GetTouchY : BaseIO Int32
 /-- Get touch position XY for a touch point index (relative to screen size) -/
 @[extern "lean_raylib__GetTouchPosition"]
-opaque GetTouchPosition (index : UInt32) : IO Vector2
+opaque GetTouchPosition (index : UInt32) : BaseIO Vector2
 /-- Get touch point identifier for given index -/
 @[extern "lean_raylib__GetTouchPointId"]
-opaque GetTouchPointId (index : UInt32) : IO Int32
+opaque GetTouchPointId (index : UInt32) : BaseIO Int32
 /-- Get number of touch points -/
 @[extern "lean_raylib__GetTouchPointCount"]
-opaque GetTouchPointCount (_ : Unit) : IO UInt32
+opaque GetTouchPointCount : BaseIO UInt32
 /-- Enable a set of gestures using flags -/
 @[extern "lean_raylib__SetGesturesEnabled"]
-opaque SetGesturesEnabled (flags : GestureFlags) : IO Unit
+opaque SetGesturesEnabled (flags : GestureFlags) : BaseIO Unit
 /-- Check if a gesture have been detected -/
 @[extern "lean_raylib__IsGestureDetected"]
-opaque IsGestureDetected (gesture : Gesture) : IO Bool
+opaque IsGestureDetected (gesture : Gesture) : BaseIO Bool
 /-- Get latest detected gesture -/
 @[extern "lean_raylib__GetGestureDetected"]
-opaque GetGestureDetected (_ : Unit) : IO Gesture
+opaque GetGestureDetected : BaseIO Gesture
 /-- Get gesture hold time in milliseconds -/
 @[extern "lean_raylib__GetGestureHoldDuration"]
-opaque GetGestureHoldDuration (_ : Unit) : IO Float
+opaque GetGestureHoldDuration : BaseIO Float
 /-- Get gesture drag vector -/
 @[extern "lean_raylib__GetGestureDragVector"]
-opaque GetGestureDragVector (_ : Unit) : IO Vector2
+opaque GetGestureDragVector : BaseIO Vector2
 /-- Get gesture drag angle -/
 @[extern "lean_raylib__GetGestureDragAngle"]
-opaque GetGestureDragAngle (_ : Unit) : IO Float
+opaque GetGestureDragAngle : BaseIO Float
 /-- Get gesture pinch delta -/
 @[extern "lean_raylib__GetGesturePinchVector"]
-opaque GetGesturePinchVector (_ : Unit) : IO Vector2
+opaque GetGesturePinchVector : BaseIO Vector2
 /-- Get gesture pinch angle -/
 @[extern "lean_raylib__GetGesturePinchAngle"]
-opaque GetGesturePinchAngle (_ : Unit) : IO Float
+opaque GetGesturePinchAngle : BaseIO Float
 -- /-- Set camera mode (multiple camera modes available) -/
 -- @[extern "lean_raylib__SetCameraMode"]
 -- opaque SetCameraMode (camera : Camera) (mode : Int32) : Unit
@@ -725,28 +725,28 @@ opaque GetGesturePinchAngle (_ : Unit) : IO Float
 -- opaque SetShapesTexture (texture : Texture2D) (source : Rectangle) : Unit
 /-- Draw a pixel -/
 @[extern "lean_raylib__DrawPixel"]
-opaque DrawPixel (posX : Int32) (posY : Int32) (color : Color) : IO Unit
+opaque DrawPixel (posX : Int32) (posY : Int32) (color : Color) : BaseIO Unit
 /-- Draw a pixel (Vector version) -/
 @[extern "lean_raylib__DrawPixelV"]
-opaque DrawPixelV (position : Vector2) (color : Color) : IO Unit
+opaque DrawPixelV (position : Vector2) (color : Color) : BaseIO Unit
 /-- Draw a line -/
 @[extern "lean_raylib__DrawLine"]
-opaque DrawLine (startPosX : Int32) (startPosY : Int32) (endPosX : Int32) (endPosY : Int32) (color : Color) : IO Unit
+opaque DrawLine (startPosX : Int32) (startPosY : Int32) (endPosX : Int32) (endPosY : Int32) (color : Color) : BaseIO Unit
 /-- Draw a line (Vector version) -/
 @[extern "lean_raylib__DrawLineV"]
-opaque DrawLineV (startPos : Vector2) (endPos : Vector2) (color : Color) : IO Unit
+opaque DrawLineV (startPos : Vector2) (endPos : Vector2) (color : Color) : BaseIO Unit
 /-- Draw a line defining thickness -/
 @[extern "lean_raylib__DrawLineEx"]
-opaque DrawLineEx (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : IO Unit
+opaque DrawLineEx (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : BaseIO Unit
 /-- Draw a line using cubic-bezier curves in-out -/
 @[extern "lean_raylib__DrawLineBezier"]
-opaque DrawLineBezier (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : IO Unit
+opaque DrawLineBezier (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : BaseIO Unit
 /-- Draw line using quadratic bezier curves with a control point -/
 @[extern "lean_raylib__DrawLineBezierQuad"]
-opaque DrawLineBezierQuad (startPos : Vector2) (endPos : Vector2) (controlPos : Vector2) (thick : Float) (color : Color) : IO Unit
+opaque DrawLineBezierQuad (startPos : Vector2) (endPos : Vector2) (controlPos : Vector2) (thick : Float) (color : Color) : BaseIO Unit
 /-- Draw line using cubic bezier curves with 2 control points -/
 @[extern "lean_raylib__DrawLineBezierCubic"]
-opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControlPos : Vector2) (endControlPos : Vector2) (thick : Float) (color : Color) : IO Unit
+opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControlPos : Vector2) (endControlPos : Vector2) (thick : Float) (color : Color) : BaseIO Unit
 -- /-- Draw lines sequence -/
 -- @[extern "lean_raylib__DrawLineStrip"]
 -- opaque DrawLineStrip : Unit -> Unit
@@ -903,25 +903,25 @@ opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControl
 -- opaque GetCollisionRec (rec1 : Rectangle) (rec2 : Rectangle) : Rectangle
 /-- Load image from file into CPU memory (RAM) -/
 @[extern "lean_raylib__LoadImage"]
-opaque LoadImage (fileName : @& String) : IO Image
+opaque LoadImage (fileName : @& String) : BaseIO Image
 /-- Load image from RAW file data -/
 @[extern "lean_raylib__LoadImageRaw"]
 opaque LoadImageRaw
   (fileName : @& String) (width : UInt32) (height : UInt32)
   (format : PixelFormat) (headerSize : UInt32)
-  : IO Image
+  : BaseIO Image
 /-- Load image sequence from file (frames appended to image.data) -/
 @[extern "lean_raylib__LoadImageAnim"]
-opaque LoadImageAnim (fileName : @& String) : IO (Image × UInt32)
+opaque LoadImageAnim (fileName : @& String) : BaseIO (Image × UInt32)
 /-- Load image from memory buffer, fileType refers to extension: i.e. '.png' -/
 @[extern "lean_raylib__LoadImageFromMemory"]
-opaque LoadImageFromMemory (fileType : @& String) (fileData : @& ByteArray) : IO Image
+opaque LoadImageFromMemory (fileType : @& String) (fileData : @& ByteArray) : BaseIO Image
 -- /-- Load image from GPU texture data -/
 -- @[extern "lean_raylib__LoadImageFromTexture"]
 -- opaque LoadImageFromTexture (texture : Texture2D) : Image
 /-- Load image from screen buffer and (screenshot) -/
 @[extern "lean_raylib__LoadImageFromScreen"]
-opaque LoadImageFromScreen (_ : Unit) : IO Image
+opaque LoadImageFromScreen : BaseIO Image
 /-- Check if an image is ready -/
 @[extern "lean_raylib__IsImageReady"]
 opaque IsImageReady (image : @& Image) : Bool
@@ -1489,8 +1489,8 @@ opaque UnloadImage (image : @& Image) : Unit
 @[extern "lean_raylib__Fade"]
 opaque Fade (color : Color) (alpha : Float) : Color
 /-- Get hexadecimal value for a Color -/
-@[extern "lean_raylib__ColorToInt"]
-opaque ColorToInt (color : Color) : Int32
+@[extern "lean_raylib__ColorToInt", deprecated Color.rgba]
+opaque ColorToInt (color : Color) : UInt32
 /-- Get Color normalized as float [0..1] -/
 @[extern "lean_raylib__ColorNormalize"]
 opaque ColorNormalize (color : Color) : Vector4
@@ -1519,7 +1519,7 @@ opaque ColorAlpha (color : Color) (alpha : Float) : Color
 @[extern "lean_raylib__ColorAlphaBlend"]
 opaque ColorAlphaBlend (dst : Color) (src : Color) (tint : Color) : Color
 /-- Get Color structure from hexadecimal value -/
-@[extern "lean_raylib__GetColor"]
+@[extern "lean_raylib__GetColor", deprecated Color.mk]
 opaque GetColor (hexValue : UInt32) : Color
 -- /-- Get Color from a source pixel pointer of certain format -/
 -- @[extern "lean_raylib__GetPixelColor"]
@@ -1622,10 +1622,10 @@ opaque GetColor (hexValue : UInt32) : Color
 -- opaque ExportFontAsCode (font : Font) (fileName : String) : Bool
 /-- Draw current FPS -/
 @[extern "lean_raylib__DrawFPS"]
-opaque DrawFPS (posX : Int32) (posY : Int32) : IO Unit
+opaque DrawFPS (posX : Int32) (posY : Int32) : BaseIO Unit
 /-- Draw text (using default font) -/
 @[extern "lean_raylib__DrawText"]
-opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32) (color : Color) : IO Unit
+opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32) (color : Color) : BaseIO Unit
 -- /-- Draw text using font and additional parameters -/
 -- @[extern "lean_raylib__DrawTextEx"]
 -- opaque DrawTextEx (font : Font) (text : String) (position : Vector2) (fontSize : Float) (spacing : Float) (tint : Color) : Unit

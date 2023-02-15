@@ -3,14 +3,14 @@ import Raylib
 open Raylib
 
 partial def loop : IO Unit := do
-  BeginDrawing ()
+  BeginDrawing
   ClearBackground RAYWHITE
-  EndDrawing ()
+  EndDrawing
 
-  let mp ← GetMousePosition ()
+  let mp ← GetMousePosition
   DrawFPS (Int32.mk mp.x.toUInt32) (Int32.mk mp.y.toUInt32)
 
-  let exit ← WindowShouldClose ()
+  let exit ← WindowShouldClose
   if exit
     then pure ()
     else loop
@@ -20,4 +20,4 @@ def main : IO Unit := do
   InitWindow 640 480 "Hello, Raylib-Lean"
   SetExitKey KEY_NULL
   loop
-  CloseWindow ()
+  CloseWindow

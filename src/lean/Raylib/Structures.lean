@@ -325,6 +325,9 @@ opaque ImagePointed : NonemptyType
 def Image : Type := ImagePointed.type
 instance : Nonempty Image := ImagePointed.property
 
+@[extern "lean_raylib__Image_default"]
+opaque Image.empty (_ : Unit) : Image
+
 @[extern "lean_raylib__Image_mk"]
 unsafe opaque Image.mk
   (data : ByteArray) (width : UInt32) (height : UInt32)

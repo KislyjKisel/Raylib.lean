@@ -416,6 +416,9 @@ def KEY_VOLUME_UP : KeyboardKey := Subtype.mk 24 KeyboardKey.Is.KEY_VOLUME_UP
 /-- Key: Android volume down button -/
 def KEY_VOLUME_DOWN : KeyboardKey := Subtype.mk 25 KeyboardKey.Is.KEY_VOLUME_DOWN
 
+instance instInhabitedKeyboardKey : Inhabited KeyboardKey where
+  default := KEY_NULL
+
 
 /-! # Mouse buttons -/
 
@@ -550,6 +553,9 @@ def GAMEPAD_BUTTON_MIDDLE_RIGHT : GamepadButton := Subtype.mk 15 GamepadButton.I
 def GAMEPAD_BUTTON_LEFT_THUMB : GamepadButton := Subtype.mk 16 GamepadButton.Is.GAMEPAD_BUTTON_LEFT_THUMB
 /-- Gamepad joystick pressed button right -/
 def GAMEPAD_BUTTON_RIGHT_THUMB : GamepadButton := Subtype.mk 17 GamepadButton.Is.GAMEPAD_BUTTON_RIGHT_THUMB
+
+instance instInhabitedGamepadButton : Inhabited GamepadButton where
+  default := GAMEPAD_BUTTON_UNKNOWN
 
 
 /-! # Gamepad axis -/
@@ -836,7 +842,7 @@ def PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA : PixelFormat := Subtype.mk 20 PixelFor
 /-- 2 bpp -/
 def PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA : PixelFormat := Subtype.mk 21 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
 
-instance : Inhabited PixelFormat where
+instance instInhabitedPixelFormat : Inhabited PixelFormat where
   default := PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
 
 

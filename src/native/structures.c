@@ -447,6 +447,17 @@ LEAN_EXPORT lean_obj_res lean_raylib__Image_mk(
     return lean_raylib_Image_to(image);
 }
 
+LEAN_EXPORT lean_obj_res lean_raylib__Image_default(lean_obj_arg unit) {
+    LET_BOX_STRUCT(Image, image,
+        .data = NULL,
+        .width = 0,
+        .height = 0,
+        .mipmaps = 1,
+        .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
+    );
+    return lean_raylib_Image_to(image);
+}
+
 LEAN_EXPORT uint32_t lean_raylib__Image_width(b_lean_obj_arg obj) {
     return lean_raylib_Image_from(obj)->width;
 }
