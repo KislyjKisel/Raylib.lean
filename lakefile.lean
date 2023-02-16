@@ -18,27 +18,25 @@ lean_exe test {
   moreLinkArgs := #["-L/usr/local/lib", "-lraylib"]
 }
 
-def buildBindingsO (pkg : Package) (stem : String) : IndexBuildM (BuildJob FilePath) := do
+def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
   let oFile := pkg.buildDir / "native" / (stem ++ ".o")
   let srcJob ← inputFile <| pkg.dir / "src" / "native" / (stem ++ ".c")
-  let mut flags := #["-I/usr/local/include", "-I", (← getLeanIncludeDir).toString, "-fPIC"]
-  if get_config? unsafe_opts = some "" then {
-    flags := flags.push "-DRAYLIB_LEAN_UNSAFE_OPTS"
-  }
   buildO (stem ++ ".c") oFile srcJob flags "cc"
-
-target bindingsEnumerationsO (pkg : Package) : FilePath := do
-  buildBindingsO pkg "enumerations"
-target bindingsStructuresO (pkg : Package) : FilePath := do
-  buildBindingsO pkg "structures"
-target bindingsFunctionsO (pkg : Package) : FilePath := do
-  buildBindingsO pkg "functions"
 
 extern_lib «raylib-lean» (pkg : Package) := do
   let name := nameToStaticLib "raylib-lean"
-  let bindingsEnumerationsOFile ← fetch <| pkg.target ``bindingsEnumerationsO
-  let bindingsStructuresOFile ← fetch <| pkg.target ``bindingsStructuresO
-  let bindingsFunctionsOFile ← fetch <| pkg.target ``bindingsFunctionsO
+  let raylib_inc := (← IO.Process.output {
+    cmd := "pkg-config"
+    args := #["--cflags", "raylib"]
+    cwd := pkg.dir
+  }).stdout
+  let mut flags := #[raylib_inc, "-I", (← getLeanIncludeDir).toString, "-fPIC"]
+  if get_config? unsafe_opts = some "" then {
+    flags := flags.push "-DRAYLIB_LEAN_UNSAFE_OPTS"
+  }
+  let bindingsEnumerationsOFile ← buildBindingsO pkg flags "enumerations"
+  let bindingsStructuresOFile ← buildBindingsO pkg flags "structures"
+  let bindingsFunctionsOFile ← buildBindingsO pkg flags "functions"
   buildStaticLib (pkg.libDir / name) #[
     bindingsEnumerationsOFile,
     bindingsStructuresOFile,
