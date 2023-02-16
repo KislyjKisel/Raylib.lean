@@ -946,55 +946,55 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawCircle (uint32_t centerX, uint32_t centerY, double radius, uint32_t color, lean_obj_arg world) {
-//     DrawCircle(centerX, centerY, (float)radius, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawCircle (int32_t centerX, int32_t centerY, double radius, uint32_t color, lean_obj_arg world) {
+    DrawCircle(centerX, centerY, (float)radius, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleSector (lean_obj_arg center, double radius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
-//     DrawCircleSector(lean_raylib_Vector2_from(center), (float)radius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleSector (b_lean_obj_arg center, double radius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
+    DrawCircleSector(*lean_raylib_Vector2_from(center), (float)radius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleSectorLines (lean_obj_arg center, double radius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
-//     DrawCircleSectorLines(lean_raylib_Vector2_from(center), (float)radius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleSectorLines (b_lean_obj_arg center, double radius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
+    DrawCircleSectorLines(*lean_raylib_Vector2_from(center), (float)radius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleGradient (uint32_t centerX, uint32_t centerY, double radius, uint32_t color1, uint32_t color2, lean_obj_arg world) {
-//     DrawCircleGradient(centerX, centerY, (float)radius, lean_raylib_Color_from(color1), lean_raylib_Color_from(color2));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleGradient (int32_t centerX, int32_t centerY, double radius, uint32_t color1, uint32_t color2, lean_obj_arg world) {
+    DrawCircleGradient(centerX, centerY, (float)radius, lean_raylib_Color_from(color1), lean_raylib_Color_from(color2));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleV (lean_obj_arg center, double radius, uint32_t color, lean_obj_arg world) {
-//     DrawCircleV(lean_raylib_Vector2_from(center), (float)radius, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleV (b_lean_obj_arg center, double radius, uint32_t color, lean_obj_arg world) {
+    DrawCircleV(*lean_raylib_Vector2_from(center), (float)radius, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleLines (uint32_t centerX, uint32_t centerY, double radius, uint32_t color, lean_obj_arg world) {
-//     DrawCircleLines(centerX, centerY, (float)radius, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleLines (int32_t centerX, int32_t centerY, double radius, uint32_t color, lean_obj_arg world) {
+    DrawCircleLines(centerX, centerY, (float)radius, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawEllipse (uint32_t centerX, uint32_t centerY, double radiusH, double radiusV, uint32_t color, lean_obj_arg world) {
-//     DrawEllipse(centerX, centerY, (float)radiusH, (float)radiusV, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawEllipse (int32_t centerX, int32_t centerY, double radiusH, double radiusV, uint32_t color, lean_obj_arg world) {
+    DrawEllipse(centerX, centerY, (float)radiusH, (float)radiusV, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawEllipseLines (uint32_t centerX, uint32_t centerY, double radiusH, double radiusV, uint32_t color, lean_obj_arg world) {
-//     DrawEllipseLines(centerX, centerY, (float)radiusH, (float)radiusV, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawEllipseLines (int32_t centerX, int32_t centerY, double radiusH, double radiusV, uint32_t color, lean_obj_arg world) {
+    DrawEllipseLines(centerX, centerY, (float)radiusH, (float)radiusV, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRing (lean_obj_arg center, double innerRadius, double outerRadius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
-//     DrawRing(lean_raylib_Vector2_from(center), (float)innerRadius, (float)outerRadius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRing (b_lean_obj_arg center, double innerRadius, double outerRadius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
+    DrawRing(*lean_raylib_Vector2_from(center), (float)innerRadius, (float)outerRadius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRingLines (lean_obj_arg center, double innerRadius, double outerRadius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
-//     DrawRingLines(lean_raylib_Vector2_from(center), (float)innerRadius, (float)outerRadius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRingLines (b_lean_obj_arg center, double innerRadius, double outerRadius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
+    DrawRingLines(*lean_raylib_Vector2_from(center), (float)innerRadius, (float)outerRadius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangle (int32_t posX, int32_t posY, int32_t width, int32_t height, uint32_t color, lean_obj_arg world) {
     DrawRectangle(posX, posY, width, height, lean_raylib_Color_from(color));

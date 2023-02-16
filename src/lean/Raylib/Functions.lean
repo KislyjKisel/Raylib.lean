@@ -757,36 +757,36 @@ opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControl
 --   | pointCount : int
 --   | color : Color
 -- -/
--- /-- Draw a color-filled circle -/
--- @[extern "lean_raylib__DrawCircle"]
--- opaque DrawCircle (centerX : Int32) (centerY : Int32) (radius : Float) (color : Color) : Unit
--- /-- Draw a piece of a circle -/
--- @[extern "lean_raylib__DrawCircleSector"]
--- opaque DrawCircleSector (center : Vector2) (radius : Float) (startAngle : Float) (endAngle : Float) (segments : Int32) (color : Color) : Unit
--- /-- Draw circle sector outline -/
--- @[extern "lean_raylib__DrawCircleSectorLines"]
--- opaque DrawCircleSectorLines (center : Vector2) (radius : Float) (startAngle : Float) (endAngle : Float) (segments : Int32) (color : Color) : Unit
--- /-- Draw a gradient-filled circle -/
--- @[extern "lean_raylib__DrawCircleGradient"]
--- opaque DrawCircleGradient (centerX : Int32) (centerY : Int32) (radius : Float) (color1 : Color) (color2 : Color) : Unit
--- /-- Draw a color-filled circle (Vector version) -/
--- @[extern "lean_raylib__DrawCircleV"]
--- opaque DrawCircleV (center : Vector2) (radius : Float) (color : Color) : Unit
--- /-- Draw circle outline -/
--- @[extern "lean_raylib__DrawCircleLines"]
--- opaque DrawCircleLines (centerX : Int32) (centerY : Int32) (radius : Float) (color : Color) : Unit
--- /-- Draw ellipse -/
--- @[extern "lean_raylib__DrawEllipse"]
--- opaque DrawEllipse (centerX : Int32) (centerY : Int32) (radiusH : Float) (radiusV : Float) (color : Color) : Unit
--- /-- Draw ellipse outline -/
--- @[extern "lean_raylib__DrawEllipseLines"]
--- opaque DrawEllipseLines (centerX : Int32) (centerY : Int32) (radiusH : Float) (radiusV : Float) (color : Color) : Unit
--- /-- Draw ring -/
--- @[extern "lean_raylib__DrawRing"]
--- opaque DrawRing (center : Vector2) (innerRadius : Float) (outerRadius : Float) (startAngle : Float) (endAngle : Float) (segments : Int32) (color : Color) : Unit
--- /-- Draw ring outline -/
--- @[extern "lean_raylib__DrawRingLines"]
--- opaque DrawRingLines (center : Vector2) (innerRadius : Float) (outerRadius : Float) (startAngle : Float) (endAngle : Float) (segments : Int32) (color : Color) : Unit
+/-- Draw a color-filled circle -/
+@[extern "lean_raylib__DrawCircle"]
+opaque DrawCircle (centerX : Int32) (centerY : Int32) (radius : Float) (color : Color) : BaseIO Unit
+/-- Draw a piece of a circle -/
+@[extern "lean_raylib__DrawCircleSector"]
+opaque DrawCircleSector (center : @& Vector2) (radius : Float) (startAngle : Float) (endAngle : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+/-- Draw circle sector outline -/
+@[extern "lean_raylib__DrawCircleSectorLines"]
+opaque DrawCircleSectorLines (center : @& Vector2) (radius : Float) (startAngle : Float) (endAngle : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+/-- Draw a gradient-filled circle -/
+@[extern "lean_raylib__DrawCircleGradient"]
+opaque DrawCircleGradient (centerX : Int32) (centerY : Int32) (radius : Float) (color1 : Color) (color2 : Color) : BaseIO Unit
+/-- Draw a color-filled circle (Vector version) -/
+@[extern "lean_raylib__DrawCircleV"]
+opaque DrawCircleV (center : @& Vector2) (radius : Float) (color : Color) : BaseIO Unit
+/-- Draw circle outline -/
+@[extern "lean_raylib__DrawCircleLines"]
+opaque DrawCircleLines (centerX : Int32) (centerY : Int32) (radius : Float) (color : Color) : BaseIO Unit
+/-- Draw ellipse -/
+@[extern "lean_raylib__DrawEllipse"]
+opaque DrawEllipse (centerX : Int32) (centerY : Int32) (radiusH : Float) (radiusV : Float) (color : Color) : BaseIO Unit
+/-- Draw ellipse outline -/
+@[extern "lean_raylib__DrawEllipseLines"]
+opaque DrawEllipseLines (centerX : Int32) (centerY : Int32) (radiusH : Float) (radiusV : Float) (color : Color) : BaseIO Unit
+/-- Draw ring -/
+@[extern "lean_raylib__DrawRing"]
+opaque DrawRing (center : @& Vector2) (innerRadius : Float) (outerRadius : Float) (startAngle : Float) (endAngle : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+/-- Draw ring outline -/
+@[extern "lean_raylib__DrawRingLines"]
+opaque DrawRingLines (center : @& Vector2) (innerRadius : Float) (outerRadius : Float) (startAngle : Float) (endAngle : Float) (segments : UInt32) (color : Color) : BaseIO Unit
 /-- Draw a color-filled rectangle -/
 @[extern "lean_raylib__DrawRectangle"]
 opaque DrawRectangle (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color : Color) : BaseIO Unit
