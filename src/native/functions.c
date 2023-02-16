@@ -996,70 +996,70 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangle (uint32_t posX, uint32_t posY, uint32_t width, uint32_t height, uint32_t color, lean_obj_arg world) {
-//     DrawRectangle(posX, posY, width, height, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangle (int32_t posX, int32_t posY, int32_t width, int32_t height, uint32_t color, lean_obj_arg world) {
+    DrawRectangle(posX, posY, width, height, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleV (lean_obj_arg position, lean_obj_arg size, uint32_t color, lean_obj_arg world) {
-//     DrawRectangleV(lean_raylib_Vector2_from(position), lean_raylib_Vector2_from(size), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleV (b_lean_obj_arg position, b_lean_obj_arg size, uint32_t color, lean_obj_arg world) {
+    DrawRectangleV(*lean_raylib_Vector2_from(position), *lean_raylib_Vector2_from(size), lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleRec (lean_obj_arg rec, uint32_t color, lean_obj_arg world) {
-//     DrawRectangleRec(lean_raylib_Rectangle_from(rec), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleRec (b_lean_obj_arg rec, uint32_t color, lean_obj_arg world) {
+    DrawRectangleRec(*lean_raylib_Rectangle_from(rec), lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectanglePro (lean_obj_arg rec, lean_obj_arg origin, double rotation, uint32_t color, lean_obj_arg world) {
-//     DrawRectanglePro(lean_raylib_Rectangle_from(rec), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectanglePro (b_lean_obj_arg rec, b_lean_obj_arg origin, double rotation, uint32_t color, lean_obj_arg world) {
+    DrawRectanglePro(*lean_raylib_Rectangle_from(rec), *lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleGradientV (uint32_t posX, uint32_t posY, uint32_t width, uint32_t height, uint32_t color1, uint32_t color2, lean_obj_arg world) {
-//     DrawRectangleGradientV(posX, posY, width, height, lean_raylib_Color_from(color1), lean_raylib_Color_from(color2));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleGradientV (int32_t posX, int32_t posY, int32_t width, int32_t height, uint32_t color1, uint32_t color2, lean_obj_arg world) {
+    DrawRectangleGradientV(posX, posY, width, height, lean_raylib_Color_from(color1), lean_raylib_Color_from(color2));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleGradientH (uint32_t posX, uint32_t posY, uint32_t width, uint32_t height, uint32_t color1, uint32_t color2, lean_obj_arg world) {
-//     DrawRectangleGradientH(posX, posY, width, height, lean_raylib_Color_from(color1), lean_raylib_Color_from(color2));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleGradientH (int32_t posX, int32_t posY, int32_t width, int32_t height, uint32_t color1, uint32_t color2, lean_obj_arg world) {
+    DrawRectangleGradientH(posX, posY, width, height, lean_raylib_Color_from(color1), lean_raylib_Color_from(color2));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleGradientEx (lean_obj_arg rec, uint32_t col1, uint32_t col2, uint32_t col3, uint32_t col4, lean_obj_arg world) {
-//     DrawRectangleGradientEx(lean_raylib_Rectangle_from(rec), lean_raylib_Color_from(col1), lean_raylib_Color_from(col2), lean_raylib_Color_from(col3), lean_raylib_Color_from(col4));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleGradientEx (b_lean_obj_arg rec, uint32_t col1, uint32_t col2, uint32_t col3, uint32_t col4, lean_obj_arg world) {
+    DrawRectangleGradientEx(*lean_raylib_Rectangle_from(rec), lean_raylib_Color_from(col1), lean_raylib_Color_from(col2), lean_raylib_Color_from(col3), lean_raylib_Color_from(col4));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleLines (uint32_t posX, uint32_t posY, uint32_t width, uint32_t height, uint32_t color, lean_obj_arg world) {
-//     DrawRectangleLines(posX, posY, width, height, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleLines (int32_t posX, int32_t posY, int32_t width, int32_t height, uint32_t color, lean_obj_arg world) {
+    DrawRectangleLines(posX, posY, width, height, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleLinesEx (lean_obj_arg rec, double lineThick, uint32_t color, lean_obj_arg world) {
-//     DrawRectangleLinesEx(lean_raylib_Rectangle_from(rec), (float)lineThick, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleLinesEx (b_lean_obj_arg rec, double lineThick, uint32_t color, lean_obj_arg world) {
+    DrawRectangleLinesEx(*lean_raylib_Rectangle_from(rec), (float)lineThick, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleRounded (lean_obj_arg rec, double roundness, uint32_t segments, uint32_t color, lean_obj_arg world) {
-//     DrawRectangleRounded(lean_raylib_Rectangle_from(rec), (float)roundness, segments, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleRounded (b_lean_obj_arg rec, double roundness, uint32_t segments, uint32_t color, lean_obj_arg world) {
+    DrawRectangleRounded(*lean_raylib_Rectangle_from(rec), (float)roundness, segments, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleRoundedLines (lean_obj_arg rec, double roundness, uint32_t segments, double lineThick, uint32_t color, lean_obj_arg world) {
-//     DrawRectangleRoundedLines(lean_raylib_Rectangle_from(rec), (float)roundness, segments, (float)lineThick, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleRoundedLines (b_lean_obj_arg rec, double roundness, uint32_t segments, double lineThick, uint32_t color, lean_obj_arg world) {
+    DrawRectangleRoundedLines(*lean_raylib_Rectangle_from(rec), (float)roundness, segments, (float)lineThick, lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangle (lean_obj_arg v1, lean_obj_arg v2, lean_obj_arg v3, uint32_t color, lean_obj_arg world) {
-//     DrawTriangle(lean_raylib_Vector2_from(v1), lean_raylib_Vector2_from(v2), lean_raylib_Vector2_from(v3), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangle (b_lean_obj_arg v1, b_lean_obj_arg v2, b_lean_obj_arg v3, uint32_t color, lean_obj_arg world) {
+    DrawTriangle(*lean_raylib_Vector2_from(v1), *lean_raylib_Vector2_from(v2), *lean_raylib_Vector2_from(v3), lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangleLines (lean_obj_arg v1, lean_obj_arg v2, lean_obj_arg v3, uint32_t color, lean_obj_arg world) {
-//     DrawTriangleLines(lean_raylib_Vector2_from(v1), lean_raylib_Vector2_from(v2), lean_raylib_Vector2_from(v3), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangleLines (b_lean_obj_arg v1, b_lean_obj_arg v2, b_lean_obj_arg v3, uint32_t color, lean_obj_arg world) {
+    DrawTriangleLines(*lean_raylib_Vector2_from(v1), *lean_raylib_Vector2_from(v2), *lean_raylib_Vector2_from(v3), lean_raylib_Color_from(color));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangleFan (/* Vector2* */lean_obj_arg points, uint32_t pointCount, uint32_t color, lean_obj_arg world) {
 //     DrawTriangleFan(/*todo: ptr?*/points, pointCount, lean_raylib_Color_from(color));

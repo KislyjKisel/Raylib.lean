@@ -6,9 +6,10 @@ partial def loop : IO Unit := do
   BeginDrawing
   ClearBackground RAYWHITE
   EndDrawing
+  DrawFPS 0 0
 
   let mp ← GetMousePosition
-  DrawFPS (Int32.mk mp.x.toUInt32) (Int32.mk mp.y.toUInt32)
+  DrawRectangleGradientEx (Rectangle.mk 100.0 100.0 mp.x mp.y) RED GREEN BLUE YELLOW
 
   let exit ← WindowShouldClose
   if exit

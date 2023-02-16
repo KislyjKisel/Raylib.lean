@@ -787,45 +787,45 @@ opaque DrawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControl
 -- /-- Draw ring outline -/
 -- @[extern "lean_raylib__DrawRingLines"]
 -- opaque DrawRingLines (center : Vector2) (innerRadius : Float) (outerRadius : Float) (startAngle : Float) (endAngle : Float) (segments : Int32) (color : Color) : Unit
--- /-- Draw a color-filled rectangle -/
--- @[extern "lean_raylib__DrawRectangle"]
--- opaque DrawRectangle (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color : Color) : Unit
--- /-- Draw a color-filled rectangle (Vector version) -/
--- @[extern "lean_raylib__DrawRectangleV"]
--- opaque DrawRectangleV (position : Vector2) (size : Vector2) (color : Color) : Unit
--- /-- Draw a color-filled rectangle -/
--- @[extern "lean_raylib__DrawRectangleRec"]
--- opaque DrawRectangleRec (rec : Rectangle) (color : Color) : Unit
--- /-- Draw a color-filled rectangle with pro parameters -/
--- @[extern "lean_raylib__DrawRectanglePro"]
--- opaque DrawRectanglePro (rec : Rectangle) (origin : Vector2) (rotation : Float) (color : Color) : Unit
--- /-- Draw a vertical-gradient-filled rectangle -/
--- @[extern "lean_raylib__DrawRectangleGradientV"]
--- opaque DrawRectangleGradientV (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color1 : Color) (color2 : Color) : Unit
--- /-- Draw a horizontal-gradient-filled rectangle -/
--- @[extern "lean_raylib__DrawRectangleGradientH"]
--- opaque DrawRectangleGradientH (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color1 : Color) (color2 : Color) : Unit
--- /-- Draw a gradient-filled rectangle with custom vertex colors -/
--- @[extern "lean_raylib__DrawRectangleGradientEx"]
--- opaque DrawRectangleGradientEx (rec : Rectangle) (col1 : Color) (col2 : Color) (col3 : Color) (col4 : Color) : Unit
--- /-- Draw rectangle outline -/
--- @[extern "lean_raylib__DrawRectangleLines"]
--- opaque DrawRectangleLines (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color : Color) : Unit
--- /-- Draw rectangle outline with extended parameters -/
--- @[extern "lean_raylib__DrawRectangleLinesEx"]
--- opaque DrawRectangleLinesEx (rec : Rectangle) (lineThick : Float) (color : Color) : Unit
--- /-- Draw rectangle with rounded edges -/
--- @[extern "lean_raylib__DrawRectangleRounded"]
--- opaque DrawRectangleRounded (rec : Rectangle) (roundness : Float) (segments : Int32) (color : Color) : Unit
--- /-- Draw rectangle with rounded edges outline -/
--- @[extern "lean_raylib__DrawRectangleRoundedLines"]
--- opaque DrawRectangleRoundedLines (rec : Rectangle) (roundness : Float) (segments : Int32) (lineThick : Float) (color : Color) : Unit
--- /-- Draw a color-filled triangle (vertex in counter-clockwise order!) -/
--- @[extern "lean_raylib__DrawTriangle"]
--- opaque DrawTriangle (v1 : Vector2) (v2 : Vector2) (v3 : Vector2) (color : Color) : Unit
--- /-- Draw triangle outline (vertex in counter-clockwise order!) -/
--- @[extern "lean_raylib__DrawTriangleLines"]
--- opaque DrawTriangleLines (v1 : Vector2) (v2 : Vector2) (v3 : Vector2) (color : Color) : Unit
+/-- Draw a color-filled rectangle -/
+@[extern "lean_raylib__DrawRectangle"]
+opaque DrawRectangle (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color : Color) : BaseIO Unit
+/-- Draw a color-filled rectangle (Vector version) -/
+@[extern "lean_raylib__DrawRectangleV"]
+opaque DrawRectangleV (position : @& Vector2) (size : @& Vector2) (color : Color) : BaseIO Unit
+/-- Draw a color-filled rectangle -/
+@[extern "lean_raylib__DrawRectangleRec"]
+opaque DrawRectangleRec (rec : @& Rectangle) (color : Color) : BaseIO Unit
+/-- Draw a color-filled rectangle with pro parameters -/
+@[extern "lean_raylib__DrawRectanglePro"]
+opaque DrawRectanglePro (rec : @& Rectangle) (origin : @& Vector2) (rotation : Float) (color : Color) : BaseIO Unit
+/-- Draw a vertical-gradient-filled rectangle -/
+@[extern "lean_raylib__DrawRectangleGradientV"]
+opaque DrawRectangleGradientV (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color1 : Color) (color2 : Color) : BaseIO Unit
+/-- Draw a horizontal-gradient-filled rectangle -/
+@[extern "lean_raylib__DrawRectangleGradientH"]
+opaque DrawRectangleGradientH (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color1 : Color) (color2 : Color) : BaseIO Unit
+/-- Draw a gradient-filled rectangle with custom vertex colors -/
+@[extern "lean_raylib__DrawRectangleGradientEx"]
+opaque DrawRectangleGradientEx (rec : @& Rectangle) (col1 : Color) (col2 : Color) (col3 : Color) (col4 : Color) : BaseIO Unit
+/-- Draw rectangle outline -/
+@[extern "lean_raylib__DrawRectangleLines"]
+opaque DrawRectangleLines (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color : Color) : BaseIO Unit
+/-- Draw rectangle outline with extended parameters -/
+@[extern "lean_raylib__DrawRectangleLinesEx"]
+opaque DrawRectangleLinesEx (rec : @& Rectangle) (lineThick : Float) (color : Color) : BaseIO Unit
+/-- Draw rectangle with rounded edges -/
+@[extern "lean_raylib__DrawRectangleRounded"]
+opaque DrawRectangleRounded (rec : @& Rectangle) (roundness : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+/-- Draw rectangle with rounded edges outline -/
+@[extern "lean_raylib__DrawRectangleRoundedLines"]
+opaque DrawRectangleRoundedLines (rec : @& Rectangle) (roundness : Float) (segments : UInt32) (lineThick : Float) (color : Color) : BaseIO Unit
+/-- Draw a color-filled triangle (vertex in counter-clockwise order!) -/
+@[extern "lean_raylib__DrawTriangle"]
+opaque DrawTriangle (v1 : @& Vector2) (v2 : @& Vector2) (v3 : @& Vector2) (color : Color) : BaseIO Unit
+/-- Draw triangle outline (vertex in counter-clockwise order!) -/
+@[extern "lean_raylib__DrawTriangleLines"]
+opaque DrawTriangleLines (v1 : @& Vector2) (v2 : @& Vector2) (v3 : @& Vector2) (color : Color) : BaseIO Unit
 -- /-- Draw a triangle fan defined by points (first vertex is the center) -/
 -- @[extern "lean_raylib__DrawTriangleFan"]
 -- opaque DrawTriangleFan : Unit -> Unit
