@@ -284,38 +284,47 @@ def Color.setB (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& 
 def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& ⟨0x00FFFFFF, by simp⟩) ||| (x.toUInt32 <<< 24))
 
 
+-- # Rectangle
 
--- opaque RectanglePointed : NonemptyType
--- /-- Rectangle, 4 components -/
--- def Rectangle : Type := RectanglePointed.type
--- instance : Nonempty Rectangle := RectanglePointed.property
--- @[extern "lean_raylib__Rectangle_mk"]
--- opaque Rectangle.mk (x : Float) (y : Float) (width : Float) (height : Float) : Rectangle
--- /-- Getter: Rectangle top-left corner position x -/
--- @[extern "lean_raylib__Rectangle_x"]
--- opaque Rectangle.x (self : @& Rectangle) : Float
--- /-- Setter: Rectangle top-left corner position x -/
--- @[extern "lean_raylib__Rectangle_x_set"]
--- opaque Rectangle.set_x (x : Float) (self : Rectangle) : Rectangle
--- /-- Getter: Rectangle top-left corner position y -/
--- @[extern "lean_raylib__Rectangle_y"]
--- opaque Rectangle.y (self : @& Rectangle) : Float
--- /-- Setter: Rectangle top-left corner position y -/
--- @[extern "lean_raylib__Rectangle_y_set"]
--- opaque Rectangle.set_y (y : Float) (self : Rectangle) : Rectangle
--- /-- Getter: Rectangle width -/
--- @[extern "lean_raylib__Rectangle_width"]
--- opaque Rectangle.width (self : @& Rectangle) : Float
--- /-- Setter: Rectangle width -/
--- @[extern "lean_raylib__Rectangle_width_set"]
--- opaque Rectangle.set_width (width : Float) (self : Rectangle) : Rectangle
--- /-- Getter: Rectangle height -/
--- @[extern "lean_raylib__Rectangle_height"]
--- opaque Rectangle.height (self : @& Rectangle) : Float
--- /-- Setter: Rectangle height -/
--- @[extern "lean_raylib__Rectangle_height_set"]
--- opaque Rectangle.set_height (height : Float) (self : Rectangle) : Rectangle
+opaque RectanglePointed : NonemptyType
+/-- Rectangle, 4 components -/
+def Rectangle : Type := RectanglePointed.type
+instance : Nonempty Rectangle := RectanglePointed.property
 
+@[extern "lean_raylib__Rectangle_mk"]
+opaque Rectangle.mk (x : Float) (y : Float) (width : Float) (height : Float) : Rectangle
+
+/-- Getter: Rectangle top-left corner position x -/
+@[extern "lean_raylib__Rectangle_x"]
+opaque Rectangle.x (self : @& Rectangle) : Float
+
+/-- Setter: Rectangle top-left corner position x -/
+@[extern "lean_raylib__Rectangle_x_set"]
+opaque Rectangle.set_x (x : Float) (self : @& Rectangle) : Rectangle
+
+/-- Getter: Rectangle top-left corner position y -/
+@[extern "lean_raylib__Rectangle_y"]
+opaque Rectangle.y (self : @& Rectangle) : Float
+
+/-- Setter: Rectangle top-left corner position y -/
+@[extern "lean_raylib__Rectangle_y_set"]
+opaque Rectangle.set_y (y : Float) (self : @& Rectangle) : Rectangle
+
+/-- Getter: Rectangle width -/
+@[extern "lean_raylib__Rectangle_width"]
+opaque Rectangle.width (self : @& Rectangle) : Float
+
+/-- Setter: Rectangle width -/
+@[extern "lean_raylib__Rectangle_width_set"]
+opaque Rectangle.set_width (width : Float) (self : @& Rectangle) : Rectangle
+
+/-- Getter: Rectangle height -/
+@[extern "lean_raylib__Rectangle_height"]
+opaque Rectangle.height (self : @& Rectangle) : Float
+
+/-- Setter: Rectangle height -/
+@[extern "lean_raylib__Rectangle_height_set"]
+opaque Rectangle.set_height (height : Float) (self : @& Rectangle) : Rectangle
 
 
 /-! # Image -/

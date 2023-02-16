@@ -79,17 +79,17 @@ static inline uint32_t lean_raylib_Color_to(Color color) {
 
 // # Rectangle
 
-// static inline lean_object* lean_raylib_Rectangle_to (Rectangle const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static inline lean_object* lean_raylib_Rectangle_to (Rectangle const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
 
-// static inline Rectangle const* lean_raylib_Rectangle_from (b_lean_obj_arg obj) {
-//     return (Rectangle const*) lean_get_external_data(obj);
-// }
+static inline Rectangle const* lean_raylib_Rectangle_from (b_lean_obj_arg obj) {
+    return (Rectangle const*) lean_get_external_data(obj);
+}
 
 
 // # Image

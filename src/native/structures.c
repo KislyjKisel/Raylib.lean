@@ -361,59 +361,75 @@ LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m15_set(double m15, b_lean_obj_arg 
 
 // # Rectangle
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_mk(double x, double y, double width, double height) {
-//     LET_BOX_STRUCT(Rectangle, result_,
-//         .x = (float)x,
-//         .y = (float)y,
-//         .width = (float)width,
-//         .height = (float)height
-//     );
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_mk(double x, double y, double width, double height) {
+    LET_BOX_STRUCT(Rectangle, rectangle,
+        .x = (float)x,
+        .y = (float)y,
+        .width = (float)width,
+        .height = (float)height
+    );
+    return lean_raylib_Rectangle_to(rectangle);
+}
 
-// LEAN_EXPORT double lean_raylib__Rectangle_x(b_lean_obj_arg obj) {
-//     float result_ = lean_raylib_Rectangle_from(obj)->x;
-//     return (double)result_;
-// }
+LEAN_EXPORT double lean_raylib__Rectangle_x(b_lean_obj_arg obj) {
+    return lean_raylib_Rectangle_from(obj)->x;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(double x, b_lean_obj_arg obj) {
-//     LET_BOX(Rectangle, result_, *lean_raylib_Rectangle_from(obj));
-//     result_->x = (float)x;
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(double x, b_lean_obj_arg orig_box) {
+    Rectangle const* orig = lean_raylib_Rectangle_from(orig_box);
+    LET_BOX_STRUCT(Rectangle, modified,
+        .x = x,
+        .y = orig->y,
+        .width = orig->width,
+        .height = orig->height,
+    );
+    return lean_raylib_Rectangle_to(modified);
+}
 
-// LEAN_EXPORT double lean_raylib__Rectangle_y(b_lean_obj_arg obj) {
-//     float result_ = lean_raylib_Rectangle_from(obj)->y;
-//     return (double)result_;
-// }
+LEAN_EXPORT double lean_raylib__Rectangle_y(b_lean_obj_arg obj) {
+    return lean_raylib_Rectangle_from(obj)->y;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(double y, b_lean_obj_arg obj) {
-//     LET_BOX(Rectangle, result_, *lean_raylib_Rectangle_from(obj));
-//     result_->y = (float)y;
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(double y, b_lean_obj_arg orig_box) {
+    Rectangle const* orig = lean_raylib_Rectangle_from(orig_box);
+    LET_BOX_STRUCT(Rectangle, modified,
+        .x = orig->x,
+        .y = y,
+        .width = orig->width,
+        .height = orig->height,
+    );
+    return lean_raylib_Rectangle_to(modified);
+}
 
-// LEAN_EXPORT double lean_raylib__Rectangle_width(b_lean_obj_arg obj) {
-//     float result_ = lean_raylib_Rectangle_from(obj)->width;
-//     return (double)result_;
-// }
+LEAN_EXPORT double lean_raylib__Rectangle_width(b_lean_obj_arg obj) {
+    return lean_raylib_Rectangle_from(obj)->width;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(double width, b_lean_obj_arg obj) {
-//     LET_BOX(Rectangle, result_, *lean_raylib_Rectangle_from(obj));
-//     result_->width = (float)width;
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(double width, b_lean_obj_arg orig_box) {
+    Rectangle const* orig = lean_raylib_Rectangle_from(orig_box);
+    LET_BOX_STRUCT(Rectangle, modified,
+        .x = orig->x,
+        .y = orig->y,
+        .width = width,
+        .height = orig->height,
+    );
+    return lean_raylib_Rectangle_to(modified);
+}
 
-// LEAN_EXPORT double lean_raylib__Rectangle_height(b_lean_obj_arg obj) {
-//     float result_ = lean_raylib_Rectangle_from(obj)->height;
-//     return (double)result_;
-// }
+LEAN_EXPORT double lean_raylib__Rectangle_height(b_lean_obj_arg obj) {
+    return lean_raylib_Rectangle_from(obj)->height;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_height_set(double height, b_lean_obj_arg obj) {
-//     LET_BOX(Rectangle, result_, *lean_raylib_Rectangle_from(obj));
-//     result_->height = (float)height;
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_height_set(double height, b_lean_obj_arg orig_box) {
+    Rectangle const* orig = lean_raylib_Rectangle_from(orig_box);
+    LET_BOX_STRUCT(Rectangle, modified,
+        .x = orig->x,
+        .y = orig->y,
+        .width = orig->width,
+        .height = height,
+    );
+    return lean_raylib_Rectangle_to(modified);
+}
 
 
 // # Image
