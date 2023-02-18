@@ -870,9 +870,9 @@ opaque UnloadImage (image : @& Image) : Unit
 -- /-- Export image as code file defining an array of bytes, returns true on success -/
 -- @[extern "lean_raylib__ExportImageAsCode"]
 -- opaque ExportImageAsCode (image : Image) (fileName : String) : Bool
--- /-- Generate image: plain color -/
--- @[extern "lean_raylib__GenImageColor"]
--- opaque GenImageColor (width : Int32) (height : Int32) (color : Color) : Image
+/-- Generate image: plain color -/
+@[extern "lean_raylib__GenImageColor"]
+opaque GenImageColor (width height : UInt32) (color : Color) : Image
 -- /-- Generate image: vertical gradient -/
 -- @[extern "lean_raylib__GenImageGradientV"]
 -- opaque GenImageGradientV (width : Int32) (height : Int32) (top : Color) (bottom : Color) : Image
@@ -897,12 +897,12 @@ opaque UnloadImage (image : @& Image) : Unit
 -- /-- Generate image: grayscale image from text data -/
 -- @[extern "lean_raylib__GenImageText"]
 -- opaque GenImageText (width : Int32) (height : Int32) (text : String) : Image
--- /-- Create an image duplicate (useful for transformations) -/
--- @[extern "lean_raylib__ImageCopy"]
--- opaque ImageCopy (image : Image) : Image
--- /-- Create an image from another image piece -/
--- @[extern "lean_raylib__ImageFromImage"]
--- opaque ImageFromImage (image : Image) (rec : Rectangle) : Image
+/-- Create an image duplicate (useful for transformations) -/
+@[extern "lean_raylib__ImageCopy"]
+opaque ImageCopy (image : @& Image) : Image
+/-- Create an image from another image piece -/
+@[extern "lean_raylib__ImageFromImage"]
+opaque ImageFromImage (image : @& Image) (rec : @& Rectangle) : Image
 -- /-- Create an image from text (default font) -/
 -- @[extern "lean_raylib__ImageText"]
 -- opaque ImageText (text : String) (fontSize : Int32) (color : Color) : Image

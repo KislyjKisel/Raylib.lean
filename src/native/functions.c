@@ -1243,10 +1243,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__UnloadImage (b_lean_obj_arg _image) {
 //     return result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageColor (uint32_t width, uint32_t height, uint32_t color, lean_obj_arg world) {
-//     Image result_ = GenImageColor(width, height, lean_raylib_Color_from(color));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageColor (uint32_t width, uint32_t height, uint32_t color) {
+    LET_BOX(Image, image, GenImageColor(width, height, lean_raylib_Color_from(color)));
+    return lean_raylib_Image_to(image);
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientV (uint32_t width, uint32_t height, uint32_t top, uint32_t bottom, lean_obj_arg world) {
 //     Image result_ = GenImageGradientV(width, height, lean_raylib_Color_from(top), lean_raylib_Color_from(bottom));
@@ -1288,15 +1288,15 @@ LEAN_EXPORT lean_obj_res lean_raylib__UnloadImage (b_lean_obj_arg _image) {
 //     return lean_raylib_Image_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageCopy (lean_obj_arg image, lean_obj_arg world) {
-//     Image result_ = ImageCopy(lean_raylib_Image_from(image));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageCopy (b_lean_obj_arg image) {
+    LET_BOX(Image, image_copy, ImageCopy(*lean_raylib_Image_from(image)));
+    return lean_raylib_Image_to(image_copy);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageFromImage (lean_obj_arg image, lean_obj_arg rec, lean_obj_arg world) {
-//     Image result_ = ImageFromImage(lean_raylib_Image_from(image), lean_raylib_Rectangle_from(rec));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageFromImage (b_lean_obj_arg image, b_lean_obj_arg rec) {
+    LET_BOX(Image, image_copy, ImageFromImage(*lean_raylib_Image_from(image), *lean_raylib_Rectangle_from(rec)));
+    return lean_raylib_Image_to(image_copy);
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__ImageText (/* const char* */lean_obj_arg text, uint32_t fontSize, uint32_t color, lean_obj_arg world) {
 //     Image result_ = ImageText(lean_string_cstr(text), fontSize, lean_raylib_Color_from(color));
