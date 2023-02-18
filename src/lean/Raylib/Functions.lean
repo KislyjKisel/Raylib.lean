@@ -57,9 +57,12 @@ opaque MinimizeWindow : BaseIO Unit
 /-- Set window state: not minimized/maximized (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__RestoreWindow"]
 opaque RestoreWindow : BaseIO Unit
--- /-- Set icon for window (only PLATFORM_DESKTOP) -/
--- @[extern "lean_raylib__SetWindowIcon"]
--- opaque SetWindowIcon (image : Image) : Unit
+/--
+Set icon for window (only PLATFORM_DESKTOP).
+Does nothing if the image's format is not `PIXELFORMAT_UNCOMPRESSED_R8G8B8A8`.
+-/
+@[extern "lean_raylib__SetWindowIcon"]
+opaque SetWindowIcon (image : Image) : BaseIO Unit
 /-- Set title for window (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowTitle"]
 opaque SetWindowTitle (title : String) : BaseIO Unit
@@ -318,16 +321,10 @@ opaque TakeScreenshot (fileName : String) : BaseIO Unit
 /-- Setup init configuration flags (view FLAGS) -/
 @[extern "lean_raylib__SetConfigFlags"]
 opaque SetConfigFlags (flags : ConfigFlags) : BaseIO Unit
--- /-- Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...) -/
--- @[extern "lean_raylib__TraceLog"]
--- opaque TraceLog : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | logLevel : int
---   | text : const char *
---   | args : /*variadic*/ ...
--- -/
+-- todo: Variadic/formatted TraceLog (note: impossible to forward C variadic safely)
+/-- Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...) -/
+@[extern "lean_raylib__TraceLog_s"]
+opaque TraceLog' (logLevel : TraceLogLevel) (text : @& String) : BaseIO Unit
 /-- Set the current threshold (minimum) log level -/
 @[extern "lean_raylib__SetTraceLogLevel"]
 opaque SetTraceLogLevel (logLevel : TraceLogLevel) : BaseIO Unit
@@ -356,9 +353,9 @@ opaque SetTraceLogLevel (logLevel : TraceLogLevel) : BaseIO Unit
 --   params:
 --   | ptr : void *
 -- -/
--- /-- Open URL with default system browser (if available) -/
--- @[extern "lean_raylib__OpenURL"]
--- opaque OpenURL (url : String) : Unit
+/-- Open URL with default system browser (if available) -/
+@[extern "lean_raylib__OpenURL"]
+opaque OpenURL (url : @& String) : BaseIO Unit
 -- /-- Set custom trace log -/
 -- @[extern "lean_raylib__SetTraceLogCallback"]
 -- opaque SetTraceLogCallback : Unit -> Unit
@@ -399,83 +396,55 @@ opaque SetTraceLogLevel (logLevel : TraceLogLevel) : BaseIO Unit
 --   params:
 --   | callback : SaveFileTextCallback
 -- -/
--- /-- Load file data as byte array (read) -/
--- @[extern "lean_raylib__LoadFileData"]
--- opaque LoadFileData : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: unsigned char *
---   params:
---   | fileName : const char *
---   | bytesRead : unsigned int *
--- -/
--- /-- Unload file data allocated by LoadFileData() -/
--- @[extern "lean_raylib__UnloadFileData"]
--- opaque UnloadFileData : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | data : unsigned char *
--- -/
--- /-- Save data to file from byte array (write), returns true on success -/
--- @[extern "lean_raylib__SaveFileData"]
--- opaque SaveFileData : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: bool
---   params:
---   | fileName : const char *
---   | data : void *
---   | bytesToWrite : unsigned int
--- -/
--- /-- Export data to code (.h), returns true on success -/
--- @[extern "lean_raylib__ExportDataAsCode"]
--- opaque ExportDataAsCode : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: bool
---   params:
---   | data : const unsigned char *
---   | size : unsigned int
---   | fileName : const char *
--- -/
--- /-- Load text data from file (read), returns a '\0' terminated string -/
--- @[extern "lean_raylib__LoadFileText"]
--- opaque LoadFileText : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: char *
---   params:
---   | fileName : const char *
--- -/
--- /-- Unload file text data allocated by LoadFileText() -/
--- @[extern "lean_raylib__UnloadFileText"]
--- opaque UnloadFileText : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | text : char *
--- -/
--- /-- Save text data to file (write), string must be '\0' terminated, returns true on success -/
--- @[extern "lean_raylib__SaveFileText"]
--- opaque SaveFileText : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: bool
---   params:
---   | fileName : const char *
---   | text : char *
--- -/
--- /-- Check if file exists -/
--- @[extern "lean_raylib__FileExists"]
--- opaque FileExists (fileName : String) : Bool
--- /-- Check if a directory path exists -/
--- @[extern "lean_raylib__DirectoryExists"]
--- opaque DirectoryExists (dirPath : String) : Bool
--- /-- Check file extension (including point: .png, .wav) -/
--- @[extern "lean_raylib__IsFileExtension"]
--- opaque IsFileExtension (fileName : String) (ext : String) : Bool
--- /-- Get file length in bytes (NOTE: GetFileSize() conflicts with windows.h) -/
--- @[extern "lean_raylib__GetFileLength"]
--- opaque GetFileLength (fileName : String) : Int32
--- /-- Get pointer to extension for a filename string (includes dot: '.png') -/
--- @[extern "lean_raylib__GetFileExtension"]
--- opaque GetFileExtension (fileName : String) : String
+/-- Load file data as byte array (read) -/
+@[extern "lean_raylib__LoadFileData"]
+opaque LoadFileData (fileName : @& String) : BaseIO ByteArray
+/-- Unload file data allocated by LoadFileData() -/
+@[extern "lean_raylib__UnloadFileData", deprecated]
+opaque UnloadFileData (data : @& ByteArray) : Unit
+/-- Save data to file from byte array (write), returns true on success -/
+@[extern "lean_raylib__SaveFileData"]
+opaque SaveFileData (fileName : @& String) (data : @& ByteArray) (offset : USize := 0) (bytesToWrite : UInt32) : IO Bool
+/-- Export data to code (.h), returns true on success -/
+@[extern "lean_raylib__ExportDataAsCode"]
+opaque ExportDataAsCode (data : @& ByteArray) (offset : USize := 0) (size : UInt32) (fileName : @& String) : IO Bool
+/-- Load text data from file (read), returns a ~~'\0' terminated~~ string -/
+@[extern "lean_raylib__LoadFileText"]
+opaque LoadFileText (fileName : @& String) : BaseIO String
+/-- Unload file text data allocated by LoadFileText() -/
+@[extern "lean_raylib__UnloadFileText", deprecated]
+opaque UnloadFileText (text : @& String) : Unit
+/-- Save text data to file (write), ~~string must be '\0' terminated~~, returns true on success -/
+@[extern "lean_raylib__SaveFileText"]
+opaque SaveFileText (fileName : @& String) (text : @& String) : BaseIO Bool
+/-- Check if file exists -/
+@[extern "lean_raylib__FileExists"]
+opaque FileExists (fileName : @& String) : BaseIO Bool
+/-- Check if a directory path exists -/
+@[extern "lean_raylib__DirectoryExists"]
+opaque DirectoryExists (dirPath : @& String) : BaseIO Bool
+/--
+Check file extension (including point: .png, .wav)
+NOTE: Extensions checking is not case-sensitive.
+-/
+@[extern "lean_raylib__IsFileExtension"]
+opaque IsFileExtension (fileName : @& String) (ext : @& String) : Bool
+/--
+Get file length in bytes (NOTE: GetFileSize() conflicts with windows.h).
+Returns `0` on error (ex. file doesn't exist).
+-/
+@[extern "lean_raylib__GetFileLength"]
+opaque GetFileLength (fileName : @& String) : BaseIO UInt32
+
+-- !!!!!!!!!!!!!!!!!!!!!!!!
+-- # vvv return offsets instead of pointers? vvv
+-- # ^^^ what clones and what borrows?? vvv !!
+-- # vvv static string = no alloc & don't free?? vvv
+-- !!!!!!!!!!!!!!!!!!!!!!!!
+
+/-- Get pointer to extension for a filename string (includes dot: '.png') -/
+@[extern "lean_raylib__GetFileExtension"]
+opaque GetFileExtension (fileName : @& String) : Option USize
 -- /-- Get pointer to filename for a path string -/
 -- @[extern "lean_raylib__GetFileName"]
 -- opaque GetFileName (filePath : String) : String
@@ -494,12 +463,12 @@ opaque SetTraceLogLevel (logLevel : TraceLogLevel) : BaseIO Unit
 -- /-- Get the directory if the running application (uses static string) -/
 -- @[extern "lean_raylib__GetApplicationDirectory"]
 -- opaque GetApplicationDirectory (_ : Unit) : String
--- /-- Change working directory, return true on success -/
--- @[extern "lean_raylib__ChangeDirectory"]
--- opaque ChangeDirectory (dir : String) : Bool
--- /-- Check if a given path is a file or a directory -/
--- @[extern "lean_raylib__IsPathFile"]
--- opaque IsPathFile (path : String) : Bool
+/-- Change working directory, return true on success -/
+@[extern "lean_raylib__ChangeDirectory"]
+opaque ChangeDirectory (dir : @& String) : BaseIO Bool
+/-- Check if a given path is a file or a directory -/
+@[extern "lean_raylib__IsPathFile"]
+opaque IsPathFile (path : @& String) : BaseIO Bool
 -- /-- Load directory filepaths -/
 -- @[extern "lean_raylib__LoadDirectoryFiles"]
 -- opaque LoadDirectoryFiles (dirPath : String) : FilePathList
@@ -509,23 +478,21 @@ opaque SetTraceLogLevel (logLevel : TraceLogLevel) : BaseIO Unit
 -- /-- Unload filepaths -/
 -- @[extern "lean_raylib__UnloadDirectoryFiles"]
 -- opaque UnloadDirectoryFiles (files : FilePathList) : Unit
--- /-- Check if a file has been dropped into window -/
--- @[extern "lean_raylib__IsFileDropped"]
--- opaque IsFileDropped (_ : Unit) : Bool
+/-- Check if a file has been dropped into window -/
+@[extern "lean_raylib__IsFileDropped"]
+opaque IsFileDropped : BaseIO Bool
 -- /-- Load dropped filepaths -/
 -- @[extern "lean_raylib__LoadDroppedFiles"]
 -- opaque LoadDroppedFiles (_ : Unit) : FilePathList
 -- /-- Unload dropped filepaths -/
 -- @[extern "lean_raylib__UnloadDroppedFiles"]
 -- opaque UnloadDroppedFiles (files : FilePathList) : Unit
--- /-- Get file modification time (last write time) -/
--- @[extern "lean_raylib__GetFileModTime"]
--- opaque GetFileModTime : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: unknown_t
---   params:
---   | fileName : const char *
--- -/
+/--
+Get file modification time (last write time).
+Returns `0` on error (ex. file doesn't exist).
+-/
+@[extern "lean_raylib__GetFileModTime"]
+opaque GetFileModTime (fileName : @& String) : BaseIO UInt64
 -- /-- Compress data (DEFLATE algorithm), memory must be MemFree() -/
 -- @[extern "lean_raylib__CompressData"]
 -- opaque CompressData : Unit -> Unit

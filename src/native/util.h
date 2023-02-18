@@ -23,3 +23,13 @@ static inline lean_object* lean_mk_tuple2(lean_object* fst, lean_object* snd) {
     lean_ctor_set(result, 1, snd);
     return result;
 }
+
+static inline lean_object* lean_mk_option_none() {
+    return lean_box(0);
+}
+
+static inline lean_object* lean_mk_option_some(lean_object* value) {
+    lean_object* result = lean_alloc_ctor(0, 1, 0);
+    lean_ctor_set(result, 0, value);
+    return result;
+}

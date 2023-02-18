@@ -78,10 +78,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__RestoreWindow (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetWindowIcon (lean_obj_arg image, lean_obj_arg world) {
-//     SetWindowIcon(lean_raylib_Image_from(image));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowIcon (lean_obj_arg image, lean_obj_arg world) {
+    SetWindowIcon(*lean_raylib_Image_from(image)); // image data copied by glfw (glfwSetWindowIcon)
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetWindowTitle (lean_obj_arg title, lean_obj_arg world) {
     SetWindowTitle(lean_string_cstr(title));
@@ -178,10 +178,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetWindowScaleDPI (lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorName (uint32_t monitor, lean_obj_arg world) {
-    const char * monitorName = GetMonitorName(monitor);
-    return lean_io_result_mk_ok(
-        lean_mk_string_from_bytes(monitorName, lean_utf8_strlen(monitorName))
-    );
+    const char * monitorName = GetMonitorName(monitor); // freed by GLFW (glfwGetMonitorName)
+    return lean_io_result_mk_ok(lean_mk_string(monitorName));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetClipboardText (lean_obj_arg text, lean_obj_arg world) {
@@ -190,10 +188,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetClipboardText (lean_obj_arg text, lean_
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetClipboardText (lean_obj_arg world) {
-    const char * clipboardText = GetClipboardText();
-    return lean_io_result_mk_ok(
-        lean_mk_string_from_bytes(clipboardText, lean_utf8_strlen(clipboardText))
-    );
+    const char * clipboardText = GetClipboardText(); // freed by GLFW (glfwGetClipboardString)
+    return lean_io_result_mk_ok(lean_mk_string(clipboardText));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__EnableEventWaiting (lean_obj_arg world) {
@@ -465,10 +461,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetConfigFlags (uint32_t flags, lean_obj_a
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__TraceLog (uint32_t logLevel, /* const char* */lean_obj_arg text, /* variadic */ ... args, lean_obj_arg world) {
-//     TraceLog(logLevel, lean_string_cstr(text), /*todo: variadic*/args);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__TraceLog_s (uint32_t logLevel, b_lean_obj_arg text, lean_obj_arg world) {
+    TraceLog(logLevel, lean_string_cstr(text));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogLevel (uint32_t logLevel, lean_obj_arg world) {
     SetTraceLogLevel(logLevel);
@@ -490,10 +486,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogLevel (uint32_t logLevel, lean_
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__OpenURL (/* const char* */lean_obj_arg url, lean_obj_arg world) {
-//     OpenURL(lean_string_cstr(url));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__OpenURL (b_lean_obj_arg url, lean_obj_arg world) {
+    OpenURL(lean_string_cstr(url));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogCallback (lean_obj_arg callback, lean_obj_arg world) {
 //     SetTraceLogCallback(/*cast TraceLogCallback to_lean?false*/(callback));
@@ -520,105 +516,121 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogLevel (uint32_t logLevel, lean_
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__LoadFileData (/* const char* */lean_obj_arg fileName, /* unsigned int* */lean_obj_arg bytesRead) {
-//     unsigned char * result_ = LoadFileData(lean_string_cstr(fileName), /*todo: ptr?*/bytesRead);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFileData (b_lean_obj_arg fileName) {
+    unsigned int bytesReadSize;
+    unsigned char* bytesRead = LoadFileData(lean_string_cstr(fileName), &bytesReadSize);
+    lean_object* arr = lean_alloc_sarray(sizeof(uint8_t), bytesReadSize, bytesReadSize);
+    uint8_t* arrBytes = lean_sarray_cptr(arr);
+    memcpy(arrBytes, bytesRead, bytesReadSize); // todo: avoid copying
+    UnloadFileData(bytesRead);
+    return lean_io_result_mk_ok(arr);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileData (/* unsigned char* */lean_obj_arg data, lean_obj_arg world) {
-//     UnloadFileData(/*todo: ptr?*/data);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileData (b_lean_obj_arg data, lean_obj_arg world) {
+    return lean_box(0);
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__SaveFileData (/* const char* */lean_obj_arg fileName, /* void* */lean_obj_arg data, uint32_t bytesToWrite, lean_obj_arg world) {
-//     bool result_ = SaveFileData(lean_string_cstr(fileName), /*todo: ptr?*/data, bytesToWrite);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SaveFileData (b_lean_obj_arg fileName, b_lean_obj_arg data, size_t offset, uint32_t bytesToWrite, lean_obj_arg world) {
+    unsigned int size = lean_sarray_elem_size(data);
+    if(offset >= size || offset + bytesToWrite > size) {
+        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string("Saved data span out of ByteArray bounds.")));
+    }
+    return lean_io_result_mk_ok(lean_box(
+        SaveFileData(lean_string_cstr(fileName), lean_sarray_cptr(data) + offset, bytesToWrite)
+    ));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__ExportDataAsCode (/* const unsigned char* */lean_obj_arg data, uint32_t size, /* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     bool result_ = ExportDataAsCode(/*todo: ptr?*/data, size, lean_string_cstr(fileName));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__ExportDataAsCode (b_lean_obj_arg data, size_t offset, uint32_t exportSize, b_lean_obj_arg fileName, lean_obj_arg world) {
+    unsigned int arraySize = lean_sarray_elem_size(data);
+    if(offset >= arraySize || offset + exportSize > arraySize) {
+        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string("Exported data span out of ByteArray bounds.")));
+    }
+    return lean_io_result_mk_ok(lean_box(
+        ExportDataAsCode(lean_sarray_cptr(data) + offset, exportSize, lean_string_cstr(fileName))
+    ));
+}
 
-// LEAN_EXPORT /* char* */lean_obj_arg lean_raylib__LoadFileText (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     char * result_ = LoadFileText(lean_string_cstr(fileName));
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFileText (b_lean_obj_arg fileName, lean_obj_arg world) {
+    char* text = LoadFileText(lean_string_cstr(fileName));
+    lean_object* text_box = lean_mk_string(text);
+    UnloadFileText(text);
+    return lean_io_result_mk_ok(text_box);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileText (/* char* */lean_obj_arg text, lean_obj_arg world) {
-//     UnloadFileText(/*todo: ptr?*/text);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileText (b_lean_obj_arg text) {
+    return lean_box(0);
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__SaveFileText (/* const char* */lean_obj_arg fileName, /* char* */lean_obj_arg text, lean_obj_arg world) {
-//     bool result_ = SaveFileText(lean_string_cstr(fileName), /*todo: ptr?*/text);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SaveFileText (b_lean_obj_arg fileName, b_lean_obj_arg text, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(SaveFileText(
+        lean_string_cstr(fileName), lean_string_cstr(text))
+    ));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__FileExists (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     bool result_ = FileExists(lean_string_cstr(fileName));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__FileExists (b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(FileExists(lean_string_cstr(fileName))));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__DirectoryExists (/* const char* */lean_obj_arg dirPath, lean_obj_arg world) {
-//     bool result_ = DirectoryExists(lean_string_cstr(dirPath));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DirectoryExists (b_lean_obj_arg dirPath, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(DirectoryExists(lean_string_cstr(dirPath))));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsFileExtension (/* const char* */lean_obj_arg fileName, /* const char* */lean_obj_arg ext, lean_obj_arg world) {
-//     bool result_ = IsFileExtension(lean_string_cstr(fileName), lean_string_cstr(ext));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsFileExtension (b_lean_obj_arg fileName, b_lean_obj_arg ext) {
+    return IsFileExtension(lean_string_cstr(fileName), lean_string_cstr(ext));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetFileLength (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     int result_ = GetFileLength(lean_string_cstr(fileName));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetFileLength (b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box_uint32(
+        GetFileLength(lean_string_cstr(fileName))
+    ));
+}
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetFileExtension (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     const char * result_ = GetFileExtension(lean_string_cstr(fileName));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetFileExtension (b_lean_obj_arg fileName_box) {
+    const char * fileName = lean_string_cstr(fileName_box);
+    const char * extension = GetFileExtension(fileName);
+    if(extension == NULL) {
+        return lean_mk_option_none();
+    }
+    return lean_mk_option_some(lean_box_usize(extension - fileName));
+}
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetFileName (/* const char* */lean_obj_arg filePath, lean_obj_arg world) {
 //     const char * result_ = GetFileName(lean_string_cstr(filePath));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetFileNameWithoutExt (/* const char* */lean_obj_arg filePath, lean_obj_arg world) {
 //     const char * result_ = GetFileNameWithoutExt(lean_string_cstr(filePath));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetDirectoryPath (/* const char* */lean_obj_arg filePath, lean_obj_arg world) {
 //     const char * result_ = GetDirectoryPath(lean_string_cstr(filePath));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetPrevDirectoryPath (/* const char* */lean_obj_arg dirPath, lean_obj_arg world) {
 //     const char * result_ = GetPrevDirectoryPath(lean_string_cstr(dirPath));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetWorkingDirectory (lean_obj_arg world) {
 //     const char * result_ = GetWorkingDirectory();
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetApplicationDirectory (lean_obj_arg world) {
 //     const char * result_ = GetApplicationDirectory();
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
-// LEAN_EXPORT uint8_t lean_raylib__ChangeDirectory (/* const char* */lean_obj_arg dir, lean_obj_arg world) {
-//     bool result_ = ChangeDirectory(lean_string_cstr(dir));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ChangeDirectory (b_lean_obj_arg dir, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(ChangeDirectory(lean_string_cstr(dir))));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsPathFile (/* const char* */lean_obj_arg path, lean_obj_arg world) {
-//     bool result_ = IsPathFile(lean_string_cstr(path));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsPathFile (b_lean_obj_arg path, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(IsPathFile(lean_string_cstr(path))));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFiles (/* const char* */lean_obj_arg dirPath, lean_obj_arg world) {
 //     FilePathList result_ = LoadDirectoryFiles(lean_string_cstr(dirPath));
@@ -635,10 +647,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogLevel (uint32_t logLevel, lean_
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT uint8_t lean_raylib__IsFileDropped (lean_obj_arg world) {
-//     bool result_ = IsFileDropped();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsFileDropped (lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(IsFileDropped()));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadDroppedFiles (lean_obj_arg world) {
 //     FilePathList result_ = LoadDroppedFiles();
@@ -650,10 +661,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogLevel (uint32_t logLevel, lean_
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetFileModTime (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     unknown_t result_ = GetFileModTime(lean_string_cstr(fileName));
-//     return /*cast unknown_t to_lean?true*/(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetFileModTime (b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box_uint64(
+        GetFileModTime(lean_string_cstr(fileName))
+    ));
+}
 
 // LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__CompressData (/* const unsigned char* */lean_obj_arg data, uint32_t dataSize, /* int* */lean_obj_arg compDataSize, lean_obj_arg world) {
 //     unsigned char * result_ = CompressData(/*todo: ptr?*/data, dataSize, /*todo: ptr?*/compDataSize);
@@ -709,9 +721,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__IsGamepadAvailable (uint32_t gamepad) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetGamepadName (uint32_t gamepad) {
-    const char * result_ = GetGamepadName(gamepad);
+    const char * result_ = GetGamepadName(gamepad); // freed by GLFW (glfwGetGamepadName)
     return lean_io_result_mk_ok(
-        lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_))
+        lean_mk_string(result_)
     );
 }
 
@@ -1827,7 +1839,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawText (lean_obj_arg text, uint32_t posX
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__CodepointToUTF8 (uint32_t codepoint, /* int* */lean_obj_arg utf8Size, lean_obj_arg world) {
 //     const char * result_ = CodepointToUTF8(codepoint, /*todo: ptr?*/utf8Size);
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT uint32_t lean_raylib__TextCopy (/* char* */lean_obj_arg dst, /* const char* */lean_obj_arg src, lean_obj_arg world) {
@@ -1847,12 +1859,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawText (lean_obj_arg text, uint32_t posX
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__TextFormat (/* const char* */lean_obj_arg text, /* variadic */ ... args, lean_obj_arg world) {
 //     const char * result_ = TextFormat(lean_string_cstr(text), /*todo: variadic*/args);
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__TextSubtext (/* const char* */lean_obj_arg text, uint32_t position, uint32_t length, lean_obj_arg world) {
 //     const char * result_ = TextSubtext(lean_string_cstr(text), position, length);
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* char* */lean_obj_arg lean_raylib__TextReplace (/* char* */lean_obj_arg text, /* const char* */lean_obj_arg replace, /* const char* */lean_obj_arg by, lean_obj_arg world) {
@@ -1867,7 +1879,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawText (lean_obj_arg text, uint32_t posX
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__TextJoin (/* const char ** */lean_obj_arg textList, uint32_t count, /* const char* */lean_obj_arg delimiter, lean_obj_arg world) {
 //     const char * result_ = TextJoin(/*todo: ptr?*/textList, count, lean_string_cstr(delimiter));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char ** */lean_obj_arg lean_raylib__TextSplit (/* const char* */lean_obj_arg text, char delimiter, /* int* */lean_obj_arg count, lean_obj_arg world) {
@@ -1887,17 +1899,17 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawText (lean_obj_arg text, uint32_t posX
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__TextToUpper (/* const char* */lean_obj_arg text, lean_obj_arg world) {
 //     const char * result_ = TextToUpper(lean_string_cstr(text));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__TextToLower (/* const char* */lean_obj_arg text, lean_obj_arg world) {
 //     const char * result_ = TextToLower(lean_string_cstr(text));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__TextToPascal (/* const char* */lean_obj_arg text, lean_obj_arg world) {
 //     const char * result_ = TextToPascal(lean_string_cstr(text));
-//     return lean_mk_string_from_bytes(result_, lean_utf8_strlen(result_));
+//     return lean_mk_string(result_);
 // }
 
 // LEAN_EXPORT uint32_t lean_raylib__TextToInteger (/* const char* */lean_obj_arg text, lean_obj_arg world) {
