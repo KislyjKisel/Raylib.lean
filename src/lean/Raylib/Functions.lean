@@ -206,18 +206,18 @@ opaque EndMode3D : BaseIO Unit
 -- /-- End custom shader drawing (use default shader) -/
 -- @[extern "lean_raylib__EndShaderMode"]
 -- opaque EndShaderMode (_ : Unit) : Unit
--- /-- Begin blending mode (alpha, additive, multiplied, subtract, custom) -/
--- @[extern "lean_raylib__BeginBlendMode"]
--- opaque BeginBlendMode (mode : Int32) : Unit
--- /-- End blending mode (reset to default: alpha blending) -/
--- @[extern "lean_raylib__EndBlendMode"]
--- opaque EndBlendMode (_ : Unit) : Unit
--- /-- Begin scissor mode (define screen area for following drawing) -/
--- @[extern "lean_raylib__BeginScissorMode"]
--- opaque BeginScissorMode (x : Int32) (y : Int32) (width : Int32) (height : Int32) : Unit
--- /-- End scissor mode -/
--- @[extern "lean_raylib__EndScissorMode"]
--- opaque EndScissorMode (_ : Unit) : Unit
+/-- Begin blending mode (alpha, additive, multiplied, subtract, custom) -/
+@[extern "lean_raylib__BeginBlendMode"]
+opaque BeginBlendMode (mode : BlendMode) : BaseIO Unit
+/-- End blending mode (reset to default: alpha blending) -/
+@[extern "lean_raylib__EndBlendMode"]
+opaque EndBlendMode : BaseIO Unit
+/-- Begin scissor mode (define screen area for following drawing) -/
+@[extern "lean_raylib__BeginScissorMode"]
+opaque BeginScissorMode (x y width height : UInt32) : BaseIO Unit
+/-- End scissor mode -/
+@[extern "lean_raylib__EndScissorMode"]
+opaque EndScissorMode : BaseIO Unit
 -- /-- Begin stereo rendering (requires VR simulator) -/
 -- @[extern "lean_raylib__BeginVrStereoMode"]
 -- opaque BeginVrStereoMode (config : VrStereoConfig) : Unit
@@ -440,33 +440,42 @@ Returns `0` on error (ex. file doesn't exist).
 @[extern "lean_raylib__GetFileLength"]
 opaque GetFileLength (fileName : @& String) : BaseIO UInt32
 
--- !!!!!!!!!!!!!!!!!!!!!!!!
--- # vvv return offsets instead of pointers? vvv
--- # ^^^ what clones and what borrows?? vvv !!
--- # vvv static string = no alloc & don't free?? vvv
--- !!!!!!!!!!!!!!!!!!!!!!!!
-
 /-- Get pointer to extension for a filename string (includes dot: '.png') -/
 @[extern "lean_raylib__GetFileExtension"]
 opaque GetFileExtension (fileName : @& String) : Option USize
--- /-- Get pointer to filename for a path string -/
--- @[extern "lean_raylib__GetFileName"]
--- opaque GetFileName (filePath : String) : String
--- /-- Get filename string without extension (uses static string) -/
--- @[extern "lean_raylib__GetFileNameWithoutExt"]
--- opaque GetFileNameWithoutExt (filePath : String) : String
--- /-- Get full path for a given fileName with path (uses static string) -/
--- @[extern "lean_raylib__GetDirectoryPath"]
--- opaque GetDirectoryPath (filePath : String) : String
--- /-- Get previous directory path for a given path (uses static string) -/
--- @[extern "lean_raylib__GetPrevDirectoryPath"]
--- opaque GetPrevDirectoryPath (dirPath : String) : String
--- /-- Get current working directory (uses static string) -/
--- @[extern "lean_raylib__GetWorkingDirectory"]
--- opaque GetWorkingDirectory (_ : Unit) : String
--- /-- Get the directory if the running application (uses static string) -/
--- @[extern "lean_raylib__GetApplicationDirectory"]
--- opaque GetApplicationDirectory (_ : Unit) : String
+/-- Get pointer to filename for a path string -/
+@[extern "lean_raylib__GetFileName"]
+opaque GetFileName (filePath : @& String) : USize
+/--
+Get filename string without extension (uses static string).
+THREAD-UNSAFE: static local
+-/
+@[extern "lean_raylib__GetFileNameWithoutExt"]
+opaque GetFileNameWithoutExt (filePath : @& String) : String
+/--
+Get full path for a given fileName with path (uses static string).
+THREAD-UNSAFE: static local
+-/
+@[extern "lean_raylib__GetDirectoryPath"]
+opaque GetDirectoryPath (filePath : @& String) : String
+/--
+Get previous directory path for a given path (uses static string).
+THREAD-UNSAFE: static local
+-/
+@[extern "lean_raylib__GetPrevDirectoryPath"]
+opaque GetPrevDirectoryPath (dirPath : @& String) : String
+/--
+Get current working directory (uses static string)
+THREAD-UNSAFE: static local
+-/
+@[extern "lean_raylib__GetWorkingDirectory"]
+opaque GetWorkingDirectory : BaseIO String
+/--
+Get the directory if the running application (uses static string).
+THREAD-UNSAFE: static local
+-/
+@[extern "lean_raylib__GetApplicationDirectory"]
+opaque GetApplicationDirectory : BaseIO String
 /-- Change working directory, return true on success -/
 @[extern "lean_raylib__ChangeDirectory"]
 opaque ChangeDirectory (dir : @& String) : BaseIO Bool
@@ -497,45 +506,18 @@ Returns `0` on error (ex. file doesn't exist).
 -/
 @[extern "lean_raylib__GetFileModTime"]
 opaque GetFileModTime (fileName : @& String) : BaseIO UInt64
--- /-- Compress data (DEFLATE algorithm), memory must be MemFree() -/
--- @[extern "lean_raylib__CompressData"]
--- opaque CompressData : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: unsigned char *
---   params:
---   | data : const unsigned char *
---   | dataSize : int
---   | compDataSize : int *
--- -/
--- /-- Decompress data (DEFLATE algorithm), memory must be MemFree() -/
--- @[extern "lean_raylib__DecompressData"]
--- opaque DecompressData : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: unsigned char *
---   params:
---   | compData : const unsigned char *
---   | compDataSize : int
---   | dataSize : int *
--- -/
--- /-- Encode data to Base64 string, memory must be MemFree() -/
--- @[extern "lean_raylib__EncodeDataBase64"]
--- opaque EncodeDataBase64 : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: char *
---   params:
---   | data : const unsigned char *
---   | dataSize : int
---   | outputSize : int *
--- -/
--- /-- Decode Base64 string data, memory must be MemFree() -/
--- @[extern "lean_raylib__DecodeDataBase64"]
--- opaque DecodeDataBase64 : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: unsigned char *
---   params:
---   | data : const unsigned char *
---   | outputSize : int *
--- -/
+/-- Compress data (DEFLATE algorithm), ~~memory must be MemFree()~~ -/
+@[extern "lean_raylib__CompressData"]
+opaque CompressData (data : @& ByteArray) : ByteArray
+/-- Decompress data (DEFLATE algorithm), ~~memory must be MemFree()~~ -/
+@[extern "lean_raylib__DecompressData"]
+opaque DecompressData (compData : @& ByteArray) : ByteArray
+/-- Encode data to Base64 string, ~~memory must be MemFree()~~ -/
+@[extern "lean_raylib__EncodeDataBase64"]
+opaque EncodeDataBase64 (data : @& ByteArray) : String
+/-- Decode Base64 string data, ~~memory must be MemFree()~~ -/
+@[extern "lean_raylib__DecodeDataBase64"]
+opaque DecodeDataBase64 (code : @& String) : ByteArray
 /-- Check if a key has been pressed once -/
 @[extern "lean_raylib__IsKeyPressed"]
 opaque IsKeyPressed (key : KeyboardKey) : BaseIO Bool

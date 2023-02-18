@@ -971,6 +971,9 @@ def BLEND_CUSTOM : BlendMode := Subtype.mk 6 BlendMode.Is.BLEND_CUSTOM
 /-- Blend textures using custom rgb/alpha separate src/dst factors (use rlSetBlendFactorsSeparate()) -/
 def BLEND_CUSTOM_SEPARATE : BlendMode := Subtype.mk 7 BlendMode.Is.BLEND_CUSTOM_SEPARATE
 
+instance instInhabitedBlendMode : Inhabited BlendMode where
+  default := BLEND_ALPHA
+
 
 /-! # Gesture -/
 

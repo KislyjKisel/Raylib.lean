@@ -300,25 +300,25 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndMode3D (lean_obj_arg world) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BeginBlendMode (uint32_t mode, lean_obj_arg world) {
-//     BeginBlendMode(mode);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BeginBlendMode (uint32_t mode, lean_obj_arg world) {
+    BeginBlendMode(mode);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EndBlendMode (lean_obj_arg world) {
-//     EndBlendMode();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EndBlendMode (lean_obj_arg world) {
+    EndBlendMode();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BeginScissorMode (uint32_t x, uint32_t y, uint32_t width, uint32_t height, lean_obj_arg world) {
-//     BeginScissorMode(x, y, width, height);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BeginScissorMode (uint32_t x, uint32_t y, uint32_t width, uint32_t height, lean_obj_arg world) {
+    BeginScissorMode(x, y, width, height);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EndScissorMode (lean_obj_arg world) {
-//     EndScissorMode();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EndScissorMode (lean_obj_arg world) {
+    EndScissorMode();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__BeginVrStereoMode (lean_obj_arg config, lean_obj_arg world) {
 //     BeginVrStereoMode(lean_raylib_VrStereoConfig_from(config));
@@ -600,35 +600,36 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetFileExtension (b_lean_obj_arg fileName_
     return lean_mk_option_some(lean_box_usize(extension - fileName));
 }
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetFileName (/* const char* */lean_obj_arg filePath, lean_obj_arg world) {
-//     const char * result_ = GetFileName(lean_string_cstr(filePath));
-//     return lean_mk_string(result_);
-// }
+LEAN_EXPORT size_t lean_raylib__GetFileName (b_lean_obj_arg filePath) {
+    const char* filePathCStr = lean_string_cstr(filePath);
+    return GetFileName(filePathCStr) - filePathCStr;
+}
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetFileNameWithoutExt (/* const char* */lean_obj_arg filePath, lean_obj_arg world) {
-//     const char * result_ = GetFileNameWithoutExt(lean_string_cstr(filePath));
-//     return lean_mk_string(result_);
-// }
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetDirectoryPath (/* const char* */lean_obj_arg filePath, lean_obj_arg world) {
-//     const char * result_ = GetDirectoryPath(lean_string_cstr(filePath));
-//     return lean_mk_string(result_);
-// }
+// # SECTION STATIC: Uses static internal buffer, don't need to free.
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetPrevDirectoryPath (/* const char* */lean_obj_arg dirPath, lean_obj_arg world) {
-//     const char * result_ = GetPrevDirectoryPath(lean_string_cstr(dirPath));
-//     return lean_mk_string(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetFileNameWithoutExt (b_lean_obj_arg filePath) {
+    return lean_mk_string(GetFileNameWithoutExt(lean_string_cstr(filePath)));
+}
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetWorkingDirectory (lean_obj_arg world) {
-//     const char * result_ = GetWorkingDirectory();
-//     return lean_mk_string(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetDirectoryPath (b_lean_obj_arg filePath) {
+    return lean_mk_string(GetDirectoryPath(lean_string_cstr(filePath)));
+}
 
-// LEAN_EXPORT /* const char* */lean_obj_arg lean_raylib__GetApplicationDirectory (lean_obj_arg world) {
-//     const char * result_ = GetApplicationDirectory();
-//     return lean_mk_string(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetPrevDirectoryPath (b_lean_obj_arg dirPath) {
+    return lean_mk_string(GetPrevDirectoryPath(lean_string_cstr(dirPath)));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__GetWorkingDirectory (lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_mk_string(GetWorkingDirectory()));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__GetApplicationDirectory (lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_mk_string(GetApplicationDirectory()));
+}
+
+// # END STATIC
+
 
 LEAN_EXPORT lean_obj_res lean_raylib__ChangeDirectory (b_lean_obj_arg dir, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(ChangeDirectory(lean_string_cstr(dir))));
@@ -673,25 +674,40 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetFileModTime (b_lean_obj_arg fileName, l
     ));
 }
 
-// LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__CompressData (/* const unsigned char* */lean_obj_arg data, uint32_t dataSize, /* int* */lean_obj_arg compDataSize, lean_obj_arg world) {
-//     unsigned char * result_ = CompressData(/*todo: ptr?*/data, dataSize, /*todo: ptr?*/compDataSize);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__CompressData (b_lean_obj_arg data) {
+    int compressedDataSize;
+    unsigned char * compressedData = CompressData(lean_sarray_cptr(data), lean_sarray_byte_size(data), &compressedDataSize);
+    lean_object* compressedArray = lean_alloc_sarray(sizeof(uint8_t), compressedDataSize, compressedDataSize);
+    memcpy(lean_sarray_cptr(compressedArray), compressedData, compressedDataSize);
+    MemFree(compressedData);
+    return compressedArray;
+}
 
-// LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__DecompressData (/* const unsigned char* */lean_obj_arg compData, uint32_t compDataSize, /* int* */lean_obj_arg dataSize, lean_obj_arg world) {
-//     unsigned char * result_ = DecompressData(/*todo: ptr?*/compData, compDataSize, /*todo: ptr?*/dataSize);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DecompressData (b_lean_obj_arg compData) {
+    int decompressedDataSize;
+    unsigned char * decompressedData = DecompressData(lean_sarray_cptr(compData), lean_sarray_byte_size(compData), &decompressedDataSize);
+    lean_object* decompressedArray = lean_alloc_sarray(sizeof(uint8_t), decompressedDataSize, decompressedDataSize);
+    memcpy(lean_sarray_cptr(decompressedArray), decompressedData, decompressedDataSize);
+    MemFree(decompressedData);
+    return decompressedArray;
+}
 
-// LEAN_EXPORT /* char* */lean_obj_arg lean_raylib__EncodeDataBase64 (/* const unsigned char* */lean_obj_arg data, uint32_t dataSize, /* int* */lean_obj_arg outputSize, lean_obj_arg world) {
-//     char * result_ = EncodeDataBase64(/*todo: ptr?*/data, dataSize, /*todo: ptr?*/outputSize);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64 (b_lean_obj_arg data) {
+    int encodedDataSize;
+    char * encodedData = EncodeDataBase64(lean_sarray_cptr(data), lean_sarray_byte_size(data), &encodedDataSize);
+    lean_object* encodedDataLean = lean_mk_string_from_bytes(encodedData, encodedDataSize);
+    MemFree(encodedData);
+    return encodedDataLean;
+}
 
-// LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__DecodeDataBase64 (/* const unsigned char* */lean_obj_arg data, /* int* */lean_obj_arg outputSize, lean_obj_arg world) {
-//     unsigned char * result_ = DecodeDataBase64(/*todo: ptr?*/data, /*todo: ptr?*/outputSize);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DecodeDataBase64 (b_lean_obj_arg data) {
+    int decodedDataSize;
+    unsigned char * decodedData = DecodeDataBase64(lean_string_cstr(data), &decodedDataSize);
+    lean_object* decodedArray = lean_alloc_sarray(sizeof(uint8_t), decodedDataSize, decodedDataSize);
+    memcpy(lean_sarray_cptr(decodedArray), decodedData, decodedDataSize);
+    MemFree(decodedData);
+    return decodedArray;
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__IsKeyPressed (uint32_t key, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(IsKeyPressed(key)));
