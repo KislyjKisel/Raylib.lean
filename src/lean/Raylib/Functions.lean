@@ -1,6 +1,7 @@
 import Raylib.Util
 import Raylib.Enumerations
 import Raylib.Structures
+import Raylib.Aliases
 
 set_option autoImplicit false
 
@@ -8,7 +9,7 @@ namespace Raylib
 
 /-- Initialize window and OpenGL context -/
 @[extern "lean_raylib__InitWindow"]
-opaque InitWindow (width : Int32) (height : Int32) (title : String) : BaseIO Unit
+opaque InitWindow (width : UInt32) (height : UInt32) (title : String) : BaseIO Unit
 /-- Check if KEY_ESCAPE pressed or Close icon pressed -/
 @[extern "lean_raylib__WindowShouldClose"]
 opaque WindowShouldClose : BaseIO Bool
@@ -181,18 +182,18 @@ opaque BeginDrawing : BaseIO Unit
 /-- End canvas drawing and swap buffers (double buffering) -/
 @[extern "lean_raylib__EndDrawing"]
 opaque EndDrawing : BaseIO Unit
--- /-- Begin 2D mode with custom camera (2D) -/
--- @[extern "lean_raylib__BeginMode2D"]
--- opaque BeginMode2D (camera : Camera2D) : Unit
--- /-- Ends 2D mode with custom camera -/
--- @[extern "lean_raylib__EndMode2D"]
--- opaque EndMode2D (_ : Unit) : Unit
--- /-- Begin 3D mode with custom camera (3D) -/
--- @[extern "lean_raylib__BeginMode3D"]
--- opaque BeginMode3D (camera : Camera3D) : Unit
--- /-- Ends 3D mode and returns to default 2D orthographic mode -/
--- @[extern "lean_raylib__EndMode3D"]
--- opaque EndMode3D (_ : Unit) : Unit
+/-- Begin 2D mode with custom camera (2D) -/
+@[extern "lean_raylib__BeginMode2D"]
+opaque BeginMode2D (camera : @& Camera2D) : BaseIO Unit
+/-- Ends 2D mode with custom camera -/
+@[extern "lean_raylib__EndMode2D"]
+opaque EndMode2D : BaseIO Unit
+/-- Begin 3D mode with custom camera (3D) -/
+@[extern "lean_raylib__BeginMode3D"]
+opaque BeginMode3D (camera : @& Camera3D) : BaseIO Unit
+/-- Ends 3D mode and returns to default 2D orthographic mode -/
+@[extern "lean_raylib__EndMode3D"]
+opaque EndMode3D : BaseIO Unit
 -- /-- Begin drawing to render texture -/
 -- @[extern "lean_raylib__BeginTextureMode"]
 -- opaque BeginTextureMode (target : RenderTexture2D) : Unit
@@ -276,27 +277,30 @@ opaque EndDrawing : BaseIO Unit
 -- /-- Unload shader from GPU memory (VRAM) -/
 -- @[extern "lean_raylib__UnloadShader"]
 -- opaque UnloadShader (shader : Shader) : Unit
--- /-- Get a ray trace from mouse position -/
--- @[extern "lean_raylib__GetMouseRay"]
--- opaque GetMouseRay (mousePosition : Vector2) (camera : Camera) : Ray
--- /-- Get camera transform matrix (view matrix) -/
--- @[extern "lean_raylib__GetCameraMatrix"]
--- opaque GetCameraMatrix (camera : Camera) : Matrix
--- /-- Get camera 2d transform matrix -/
--- @[extern "lean_raylib__GetCameraMatrix2D"]
--- opaque GetCameraMatrix2D (camera : Camera2D) : Matrix
--- /-- Get the screen space position for a 3d world space position -/
--- @[extern "lean_raylib__GetWorldToScreen"]
--- opaque GetWorldToScreen (position : Vector3) (camera : Camera) : Vector2
--- /-- Get the world space position for a 2d camera screen space position -/
--- @[extern "lean_raylib__GetScreenToWorld2D"]
--- opaque GetScreenToWorld2D (position : Vector2) (camera : Camera2D) : Vector2
--- /-- Get size position for a 3d world space position -/
--- @[extern "lean_raylib__GetWorldToScreenEx"]
--- opaque GetWorldToScreenEx (position : Vector3) (camera : Camera) (width : Int32) (height : Int32) : Vector2
--- /-- Get the screen space position for a 2d camera world space position -/
--- @[extern "lean_raylib__GetWorldToScreen2D"]
--- opaque GetWorldToScreen2D (position : Vector2) (camera : Camera2D) : Vector2
+/-- Get a ray trace from mouse position -/
+-- IO: uses screen size
+@[extern "lean_raylib__GetMouseRay"]
+opaque GetMouseRay (mousePosition : @& Vector2) (camera : @& Camera) : BaseIO Ray
+/-- Get camera transform matrix (view matrix) -/
+@[extern "lean_raylib__GetCameraMatrix"]
+opaque GetCameraMatrix (camera : @& Camera) : Matrix
+/-- Get camera 2d transform matrix -/
+@[extern "lean_raylib__GetCameraMatrix2D"]
+opaque GetCameraMatrix2D (camera : @& Camera2D) : Matrix
+/-- Get the screen space position for a 3d world space position -/
+-- IO: uses screen size
+@[extern "lean_raylib__GetWorldToScreen"]
+opaque GetWorldToScreen (position : @& Vector3) (camera : @& Camera) : BaseIO Vector2
+/-- Get the world space position for a 2d camera screen space position -/
+@[extern "lean_raylib__GetScreenToWorld2D"]
+opaque GetScreenToWorld2D (position : @& Vector2) (camera : @& Camera2D) : Vector2
+/-- Get size position for a 3d world space position -/
+-- IO: uses screen size
+@[extern "lean_raylib__GetWorldToScreenEx"]
+opaque GetWorldToScreenEx (position : @& Vector3) (camera : @& Camera) (width : UInt32) (height : UInt32) : BaseIO Vector2
+/-- Get the screen space position for a 2d camera world space position -/
+@[extern "lean_raylib__GetWorldToScreen2D"]
+opaque GetWorldToScreen2D (position : @& Vector2) (camera : @& Camera2D) : Vector2
 /-- Set target FPS (maximum) -/
 @[extern "lean_raylib__SetTargetFPS"]
 opaque SetTargetFPS (fps : UInt32) : BaseIO Unit
@@ -664,29 +668,9 @@ opaque GetGesturePinchVector : BaseIO Vector2
 /-- Get gesture pinch angle -/
 @[extern "lean_raylib__GetGesturePinchAngle"]
 opaque GetGesturePinchAngle : BaseIO Float
--- /-- Set camera mode (multiple camera modes available) -/
--- @[extern "lean_raylib__SetCameraMode"]
--- opaque SetCameraMode (camera : Camera) (mode : Int32) : Unit
--- /-- Update camera position for selected mode -/
--- @[extern "lean_raylib__UpdateCamera"]
--- opaque UpdateCamera : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | camera : Camera *
--- -/
--- /-- Set camera pan key to combine with mouse movement (free camera) -/
--- @[extern "lean_raylib__SetCameraPanControl"]
--- opaque SetCameraPanControl (keyPan : Int32) : Unit
--- /-- Set camera alt key to combine with mouse movement (free camera) -/
--- @[extern "lean_raylib__SetCameraAltControl"]
--- opaque SetCameraAltControl (keyAlt : Int32) : Unit
--- /-- Set camera smooth zoom key to combine with mouse (free camera) -/
--- @[extern "lean_raylib__SetCameraSmoothZoomControl"]
--- opaque SetCameraSmoothZoomControl (keySmoothZoom : Int32) : Unit
--- /-- Set camera move controls (1st person and 3rd person cameras) -/
--- @[extern "lean_raylib__SetCameraMoveControls"]
--- opaque SetCameraMoveControls (keyFront : Int32) (keyBack : Int32) (keyRight : Int32) (keyLeft : Int32) (keyUp : Int32) (keyDown : Int32) : Unit
+/-- Update camera position for selected mode -/
+@[extern "lean_raylib__UpdateCamera"]
+opaque UpdateCamera (cam : Camera) (mode : CameraMode) : BaseIO Camera
 -- /-- Set texture and rectangle to be used on shapes drawing -/
 -- @[extern "lean_raylib__SetShapesTexture"]
 -- opaque SetShapesTexture (texture : Texture2D) (source : Rectangle) : Unit

@@ -4,12 +4,12 @@ open Raylib
 
 partial def loop : IO Unit := do
   BeginDrawing
-  ClearBackground RAYWHITE
+  do
+    ClearBackground RAYWHITE
+    DrawFPS 0 0
+    let mp ← GetMousePosition
+    DrawRectangleGradientEx (Rectangle.mk 100.0 100.0 mp.x mp.y) RED GREEN BLUE YELLOW
   EndDrawing
-  DrawFPS 0 0
-
-  let mp ← GetMousePosition
-  DrawRectangleGradientEx (Rectangle.mk 100.0 100.0 mp.x mp.y) RED GREEN BLUE YELLOW
 
   let exit ← WindowShouldClose
   if exit

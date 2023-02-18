@@ -183,29 +183,38 @@ static inline lean_object* lean_raylib_Image_to (Image const* obj) {
 //     return (Font const*) lean_get_external_data(obj);
 // }
 
-// static inline lean_object* lean_raylib_Camera3D_to (Camera3D const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
 
-// static inline Camera3D const* lean_raylib_Camera3D_from (b_lean_obj_arg obj) {
-//     return (Camera3D const*) lean_get_external_data(obj);
-// }
+// # Camera 3D
 
-// static inline lean_object* lean_raylib_Camera2D_to (Camera2D const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static inline lean_object* lean_raylib_Camera3D_to (Camera3D const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
 
-// static inline Camera2D const* lean_raylib_Camera2D_from (b_lean_obj_arg obj) {
-//     return (Camera2D const*) lean_get_external_data(obj);
-// }
+static inline Camera3D* lean_raylib_Camera3D_from (b_lean_obj_arg obj) {
+    return (Camera3D*) lean_get_external_data(obj);
+}
+
+
+// # Camera 2D
+
+static inline lean_object* lean_raylib_Camera2D_to (Camera2D const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline Camera2D* lean_raylib_Camera2D_from (b_lean_obj_arg obj) {
+    return (Camera2D*) lean_get_external_data(obj);
+}
+
+
+// # Mesh
 
 // static inline lean_object* lean_raylib_Mesh_to (Mesh const* obj) {
 //     static lean_external_class* class_ = NULL;
@@ -303,17 +312,23 @@ static inline lean_object* lean_raylib_Image_to (Image const* obj) {
 //     return (ModelAnimation const*) lean_get_external_data(obj);
 // }
 
-// static inline lean_object* lean_raylib_Ray_to (Ray const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
 
-// static inline Ray const* lean_raylib_Ray_from (b_lean_obj_arg obj) {
-//     return (Ray const*) lean_get_external_data(obj);
-// }
+// # Ray
+
+static inline lean_object* lean_raylib_Ray_to (Ray const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline Ray* lean_raylib_Ray_from (b_lean_obj_arg obj) {
+    return (Ray*) lean_get_external_data(obj);
+}
+
+
+// # Ray collision
 
 // static inline lean_object* lean_raylib_RayCollision_to (RayCollision const* obj) {
 //     static lean_external_class* class_ = NULL;

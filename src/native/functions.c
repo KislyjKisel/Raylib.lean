@@ -260,25 +260,25 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BeginMode2D (lean_obj_arg camera, lean_obj_arg world) {
-//     BeginMode2D(lean_raylib_Camera2D_from(camera));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BeginMode2D (b_lean_obj_arg camera, lean_obj_arg world) {
+    BeginMode2D(*lean_raylib_Camera2D_from(camera));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EndMode2D (lean_obj_arg world) {
-//     EndMode2D();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EndMode2D (lean_obj_arg world) {
+    EndMode2D();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BeginMode3D (lean_obj_arg camera, lean_obj_arg world) {
-//     BeginMode3D(lean_raylib_Camera3D_from(camera));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BeginMode3D (b_lean_obj_arg camera, lean_obj_arg world) {
+    BeginMode3D(*lean_raylib_Camera3D_from(camera));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EndMode3D (lean_obj_arg world) {
-//     EndMode3D();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EndMode3D (lean_obj_arg world) {
+    EndMode3D();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__BeginTextureMode (lean_obj_arg target, lean_obj_arg world) {
 //     BeginTextureMode(/*cast RenderTexture2D to_lean?false*/(target));
@@ -390,40 +390,46 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing (lean_obj_arg world) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetMouseRay (lean_obj_arg mousePosition, lean_obj_arg camera, lean_obj_arg world) {
-//     Ray result_ = GetMouseRay(lean_raylib_Vector2_from(mousePosition), /*cast Camera to_lean?false*/(camera));
-//     return lean_raylib_Ray_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMouseRay (b_lean_obj_arg mousePosition, b_lean_obj_arg camera, lean_obj_arg world) {
+    LET_BOX(Ray, ray, GetMouseRay(*lean_raylib_Vector2_from(mousePosition), *lean_raylib_Camera3D_from(camera)));
+    return lean_io_result_mk_ok(lean_raylib_Ray_to(ray));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix (lean_obj_arg camera, lean_obj_arg world) {
-//     Matrix result_ = GetCameraMatrix(/*cast Camera to_lean?false*/(camera));
-//     return lean_raylib_Matrix_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix (b_lean_obj_arg camera) {
+    LET_BOX(Matrix, matrix, GetCameraMatrix(*lean_raylib_Camera3D_from(camera)));
+    return lean_raylib_Matrix_to(matrix);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix2D (lean_obj_arg camera, lean_obj_arg world) {
-//     Matrix result_ = GetCameraMatrix2D(lean_raylib_Camera2D_from(camera));
-//     return lean_raylib_Matrix_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix2D (b_lean_obj_arg camera) {
+    LET_BOX(Matrix, matrix, GetCameraMatrix2D(*lean_raylib_Camera2D_from(camera)));
+    return lean_raylib_Matrix_to(matrix);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen (lean_obj_arg position, lean_obj_arg camera, lean_obj_arg world) {
-//     Vector2 result_ = GetWorldToScreen(lean_raylib_Vector3_from(position), /*cast Camera to_lean?false*/(camera));
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen (b_lean_obj_arg position, b_lean_obj_arg camera, lean_obj_arg world) {
+    LET_BOX(Vector2, positionScreen, GetWorldToScreen(*lean_raylib_Vector3_from(position), *lean_raylib_Camera3D_from(camera)));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(positionScreen));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetScreenToWorld2D (lean_obj_arg position, lean_obj_arg camera, lean_obj_arg world) {
-//     Vector2 result_ = GetScreenToWorld2D(lean_raylib_Vector2_from(position), lean_raylib_Camera2D_from(camera));
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetScreenToWorld2D (b_lean_obj_arg position, b_lean_obj_arg camera) {
+    LET_BOX(Vector2, positionWorld, GetScreenToWorld2D(*lean_raylib_Vector2_from(position), *lean_raylib_Camera2D_from(camera)));
+    return lean_raylib_Vector2_to(positionWorld);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreenEx (lean_obj_arg position, lean_obj_arg camera, uint32_t width, uint32_t height, lean_obj_arg world) {
-//     Vector2 result_ = GetWorldToScreenEx(lean_raylib_Vector3_from(position), /*cast Camera to_lean?false*/(camera), width, height);
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreenEx (
+    b_lean_obj_arg position, b_lean_obj_arg camera,
+    uint32_t width, uint32_t height, lean_obj_arg world
+) {
+    LET_BOX(Vector2, positionScreen, GetWorldToScreenEx(
+        *lean_raylib_Vector3_from(position), *lean_raylib_Camera3D_from(camera),
+        width, height
+    ));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(positionScreen));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen2D (lean_obj_arg position, lean_obj_arg camera, lean_obj_arg world) {
-//     Vector2 result_ = GetWorldToScreen2D(lean_raylib_Vector2_from(position), lean_raylib_Camera2D_from(camera));
-//     return lean_raylib_Vector2_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen2D (lean_obj_arg position, lean_obj_arg camera) {
+    LET_BOX(Vector2, positionScreen, GetWorldToScreen2D(*lean_raylib_Vector2_from(position), *lean_raylib_Camera2D_from(camera)));
+    return lean_raylib_Vector2_to(positionScreen);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetTargetFPS (uint32_t fps, lean_obj_arg world) {
     SetTargetFPS(fps);
@@ -878,15 +884,19 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetGesturePinchAngle (lean_obj_arg world) 
     return lean_io_result_mk_ok(lean_box_float(GetGesturePinchAngle()));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetCameraMode (lean_obj_arg camera, uint32_t mode, lean_obj_arg world) {
-//     SetCameraMode(/*cast Camera to_lean?false*/(camera), mode);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__UpdateCamera (/* Camera* */lean_obj_arg camera, lean_obj_arg world) {
-//     UpdateCamera(/*todo: ptr?*/camera);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateCamera (lean_obj_arg camera_old_box, uint32_t mode, lean_obj_arg world) {
+    lean_object* camera_res_box;
+    if(LEAN_LIKELY(lean_is_exclusive(camera_old_box))) {
+        camera_res_box = camera_old_box;
+    }
+    else {
+        LET_BOX(Camera, camera_res, *lean_raylib_Camera3D_from(camera_old_box));
+        lean_dec_ref(camera_old_box);
+        camera_res_box = lean_raylib_Camera3D_to(camera_res);
+    }
+    UpdateCamera(lean_raylib_Camera3D_from(camera_res_box), mode);
+    return lean_io_result_mk_ok(camera_res_box);
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__SetCameraPanControl (uint32_t keyPan, lean_obj_arg world) {
 //     SetCameraPanControl(keyPan);

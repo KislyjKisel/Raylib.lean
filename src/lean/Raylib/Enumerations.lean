@@ -486,7 +486,7 @@ def MOUSE_CURSOR_RESIZE_NS : MouseCursor := Subtype.mk 6 MouseCursor.Is.MOUSE_CU
 def MOUSE_CURSOR_RESIZE_NWSE : MouseCursor := Subtype.mk 7 MouseCursor.Is.MOUSE_CURSOR_RESIZE_NWSE
 /-- The top-right to bottom-left diagonal resize/move arrow shape -/
 def MOUSE_CURSOR_RESIZE_NESW : MouseCursor := Subtype.mk 8 MouseCursor.Is.MOUSE_CURSOR_RESIZE_NESW
-/-- The omni-directional resize/move cursor shape -/
+/-- The omnidirectional resize/move cursor shape -/
 def MOUSE_CURSOR_RESIZE_ALL : MouseCursor := Subtype.mk 9 MouseCursor.Is.MOUSE_CURSOR_RESIZE_ALL
 /-- The operation-not-allowed shape -/
 def MOUSE_CURSOR_NOT_ALLOWED : MouseCursor := Subtype.mk 10 MouseCursor.Is.MOUSE_CURSOR_NOT_ALLOWED
@@ -911,7 +911,7 @@ def CubemapLayout : Type := Subtype CubemapLayout.Is
 def CUBEMAP_LAYOUT_AUTO_DETECT : CubemapLayout := Subtype.mk 0 CubemapLayout.Is.CUBEMAP_LAYOUT_AUTO_DETECT
 /-- Layout is defined by a vertical line with faces -/
 def CUBEMAP_LAYOUT_LINE_VERTICAL : CubemapLayout := Subtype.mk 1 CubemapLayout.Is.CUBEMAP_LAYOUT_LINE_VERTICAL
-/-- Layout is defined by an horizontal line with faces -/
+/-- Layout is defined by a horizontal line with faces -/
 def CUBEMAP_LAYOUT_LINE_HORIZONTAL : CubemapLayout := Subtype.mk 2 CubemapLayout.Is.CUBEMAP_LAYOUT_LINE_HORIZONTAL
 /-- Layout is defined by a 3x4 cross with cubemap faces -/
 def CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR : CubemapLayout := Subtype.mk 3 CubemapLayout.Is.CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR
@@ -1034,6 +1034,9 @@ def CAMERA_FIRST_PERSON : CameraMode := Subtype.mk 3 CameraMode.Is.CAMERA_FIRST_
 /-- Third person camera -/
 def CAMERA_THIRD_PERSON : CameraMode := Subtype.mk 4 CameraMode.Is.CAMERA_THIRD_PERSON
 
+instance instInhabitedCameraMode : Inhabited CameraMode where
+  default := CAMERA_CUSTOM
+
 
 /-! # Camera projection -/
 
@@ -1048,6 +1051,9 @@ def CameraProjection : Type := Subtype CameraProjection.Is
 def CAMERA_PERSPECTIVE : CameraProjection := Subtype.mk 0 CameraProjection.Is.CAMERA_PERSPECTIVE
 /-- Orthographic projection -/
 def CAMERA_ORTHOGRAPHIC : CameraProjection := Subtype.mk 1 CameraProjection.Is.CAMERA_ORTHOGRAPHIC
+
+instance instInhabitedCameraProjection : Inhabited CameraProjection where
+  default := CAMERA_PERSPECTIVE
 
 
 /-! # NPatch layout -/

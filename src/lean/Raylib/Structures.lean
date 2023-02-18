@@ -115,7 +115,7 @@ opaque Vector4.set_w (w : Float) (self : @& Vector4) : Vector4
 /-! # Matrix -/
 
 opaque MatrixPointed : NonemptyType
-/-- Matrix, 4x4 components, column major, OpenGL style, right handed -/
+/-- Matrix, 4x4 components, column major, OpenGL style, right-handed -/
 def Matrix : Type := MatrixPointed.type
 instance : Nonempty Matrix := MatrixPointed.property
 
@@ -568,72 +568,91 @@ opaque Image.format (self : @& Image) : PixelFormat
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/
--- opaque Camera3DPointed : NonemptyType
--- /-- Camera, defines position/orientation in 3d space -/
--- def Camera3D : Type := Camera3DPointed.type
--- instance : Nonempty Camera3D := Camera3DPointed.property
--- @[extern "lean_raylib__Camera3D_mk"]
--- opaque Camera3D.mk (position : Vector3) (target : Vector3) (up : Vector3) (fovy : Float) (projection : Int32) : Camera3D
--- /-- Getter: Camera position -/
--- @[extern "lean_raylib__Camera3D_position"]
--- opaque Camera3D.position (self : @& Camera3D) : Vector3
--- /-- Setter: Camera position -/
--- @[extern "lean_raylib__Camera3D_position_set"]
--- opaque Camera3D.set_position (position : Vector3) (self : Camera3D) : Camera3D
--- /-- Getter: Camera target it looks-at -/
--- @[extern "lean_raylib__Camera3D_target"]
--- opaque Camera3D.target (self : @& Camera3D) : Vector3
--- /-- Setter: Camera target it looks-at -/
--- @[extern "lean_raylib__Camera3D_target_set"]
--- opaque Camera3D.set_target (target : Vector3) (self : Camera3D) : Camera3D
--- /-- Getter: Camera up vector (rotation over its axis) -/
--- @[extern "lean_raylib__Camera3D_up"]
--- opaque Camera3D.up (self : @& Camera3D) : Vector3
--- /-- Setter: Camera up vector (rotation over its axis) -/
--- @[extern "lean_raylib__Camera3D_up_set"]
--- opaque Camera3D.set_up (up : Vector3) (self : Camera3D) : Camera3D
--- /-- Getter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
--- @[extern "lean_raylib__Camera3D_fovy"]
--- opaque Camera3D.fovy (self : @& Camera3D) : Float
--- /-- Setter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
--- @[extern "lean_raylib__Camera3D_fovy_set"]
--- opaque Camera3D.set_fovy (fovy : Float) (self : Camera3D) : Camera3D
--- /-- Getter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
--- @[extern "lean_raylib__Camera3D_projection"]
--- opaque Camera3D.projection (self : @& Camera3D) : Int32
--- /-- Setter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
--- @[extern "lean_raylib__Camera3D_projection_set"]
--- opaque Camera3D.set_projection (projection : Int32) (self : Camera3D) : Camera3D
--- opaque Camera2DPointed : NonemptyType
--- /-- Camera2D, defines position/orientation in 2d space -/
--- def Camera2D : Type := Camera2DPointed.type
--- instance : Nonempty Camera2D := Camera2DPointed.property
--- @[extern "lean_raylib__Camera2D_mk"]
--- opaque Camera2D.mk (offset : Vector2) (target : Vector2) (rotation : Float) (zoom : Float) : Camera2D
--- /-- Getter: Camera offset (displacement from target) -/
--- @[extern "lean_raylib__Camera2D_offset"]
--- opaque Camera2D.offset (self : @& Camera2D) : Vector2
--- /-- Setter: Camera offset (displacement from target) -/
--- @[extern "lean_raylib__Camera2D_offset_set"]
--- opaque Camera2D.set_offset (offset : Vector2) (self : Camera2D) : Camera2D
--- /-- Getter: Camera target (rotation and zoom origin) -/
--- @[extern "lean_raylib__Camera2D_target"]
--- opaque Camera2D.target (self : @& Camera2D) : Vector2
--- /-- Setter: Camera target (rotation and zoom origin) -/
--- @[extern "lean_raylib__Camera2D_target_set"]
--- opaque Camera2D.set_target (target : Vector2) (self : Camera2D) : Camera2D
--- /-- Getter: Camera rotation in degrees -/
--- @[extern "lean_raylib__Camera2D_rotation"]
--- opaque Camera2D.rotation (self : @& Camera2D) : Float
--- /-- Setter: Camera rotation in degrees -/
--- @[extern "lean_raylib__Camera2D_rotation_set"]
--- opaque Camera2D.set_rotation (rotation : Float) (self : Camera2D) : Camera2D
--- /-- Getter: Camera zoom (scaling), should be 1.0f by default -/
--- @[extern "lean_raylib__Camera2D_zoom"]
--- opaque Camera2D.zoom (self : @& Camera2D) : Float
--- /-- Setter: Camera zoom (scaling), should be 1.0f by default -/
--- @[extern "lean_raylib__Camera2D_zoom_set"]
--- opaque Camera2D.set_zoom (zoom : Float) (self : Camera2D) : Camera2D
+
+
+/-! # Camera 3D -/
+
+opaque Camera3DPointed : NonemptyType
+/-- Camera, defines position/orientation in 3d space -/
+def Camera3D : Type := Camera3DPointed.type
+instance : Nonempty Camera3D := Camera3DPointed.property
+
+@[extern "lean_raylib__Camera3D_mk"]
+opaque Camera3D.mk
+  (position : @& Vector3) (target : @& Vector3) (up : @& Vector3)
+  (fovy : Float) (projection : CameraProjection)
+  : Camera3D
+
+/-- Getter: Camera position -/
+@[extern "lean_raylib__Camera3D_position"]
+opaque Camera3D.position (cam3d : @& Camera3D) : Vector3
+/-- Setter: Camera position -/
+@[extern "lean_raylib__Camera3D_position_set"]
+opaque Camera3D.set_position (position : @& Vector3) (cam3d : Camera3D) : Camera3D
+/-- Getter: Camera target it looks-at -/
+@[extern "lean_raylib__Camera3D_target"]
+opaque Camera3D.target (cam3d : @& Camera3D) : Vector3
+/-- Setter: Camera target it looks-at -/
+@[extern "lean_raylib__Camera3D_target_set"]
+opaque Camera3D.set_target (target : @& Vector3) (cam3d : Camera3D) : Camera3D
+/-- Getter: Camera up vector (rotation over its axis) -/
+@[extern "lean_raylib__Camera3D_up"]
+opaque Camera3D.up (cam3d : @& Camera3D) : Vector3
+/-- Setter: Camera up vector (rotation over its axis) -/
+@[extern "lean_raylib__Camera3D_up_set"]
+opaque Camera3D.set_up (up : @& Vector3) (cam3d : Camera3D) : Camera3D
+/-- Getter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
+@[extern "lean_raylib__Camera3D_fovy"]
+opaque Camera3D.fovy (cam3d : @& Camera3D) : Float
+/-- Setter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
+@[extern "lean_raylib__Camera3D_fovy_set"]
+opaque Camera3D.set_fovy (fovy : Float) (cam3d : Camera3D) : Camera3D
+/-- Getter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
+@[extern "lean_raylib__Camera3D_projection"]
+opaque Camera3D.projection (cam3d : @& Camera3D) : CameraProjection
+/-- Setter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
+@[extern "lean_raylib__Camera3D_projection_set"]
+opaque Camera3D.set_projection (projection : CameraProjection) (cam3d : Camera3D) : Camera3D
+
+
+/-! # Camera 2D -/
+
+opaque Camera2DPointed : NonemptyType
+/-- Camera2D, defines position/orientation in 2d space -/
+def Camera2D : Type := Camera2DPointed.type
+instance : Nonempty Camera2D := Camera2DPointed.property
+
+@[extern "lean_raylib__Camera2D_mk"]
+opaque Camera2D.mk (offset : @& Vector2) (target : @& Vector2) (rotation : Float) (zoom : Float) : Camera2D
+
+/-- Getter: Camera offset (displacement from target) -/
+@[extern "lean_raylib__Camera2D_offset"]
+opaque Camera2D.offset (cam2d : @& Camera2D) : Vector2
+/-- Setter: Camera offset (displacement from target) -/
+@[extern "lean_raylib__Camera2D_offset_set"]
+opaque Camera2D.set_offset (offset : @& Vector2) (cam2d : Camera2D) : Camera2D
+/-- Getter: Camera target (rotation and zoom origin) -/
+@[extern "lean_raylib__Camera2D_target"]
+opaque Camera2D.target (cam2d : @& Camera2D) : Vector2
+/-- Setter: Camera target (rotation and zoom origin) -/
+@[extern "lean_raylib__Camera2D_target_set"]
+opaque Camera2D.set_target (target : @& Vector2) (cam2d : Camera2D) : Camera2D
+/-- Getter: Camera rotation in degrees -/
+@[extern "lean_raylib__Camera2D_rotation"]
+opaque Camera2D.rotation (cam2d : @& Camera2D) : Float
+/-- Setter: Camera rotation in degrees -/
+@[extern "lean_raylib__Camera2D_rotation_set"]
+opaque Camera2D.set_rotation (rotation : Float) (cam2d : Camera2D) : Camera2D
+/-- Getter: Camera zoom (scaling), should be 1.0f by default -/
+@[extern "lean_raylib__Camera2D_zoom"]
+opaque Camera2D.zoom (cam2d : @& Camera2D) : Float
+/-- Setter: Camera zoom (scaling), should be 1.0f by default -/
+@[extern "lean_raylib__Camera2D_zoom_set"]
+opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
+
+
+/-! # Mesh -/
+
 -- opaque MeshPointed : NonemptyType
 -- /-- Mesh, vertex data and vao/vbo -/
 -- def Mesh : Type := MeshPointed.type
@@ -1143,24 +1162,34 @@ opaque Image.format (self : @& Image) : PixelFormat
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/
--- opaque RayPointed : NonemptyType
--- /-- Ray, ray for raycasting -/
--- def Ray : Type := RayPointed.type
--- instance : Nonempty Ray := RayPointed.property
--- @[extern "lean_raylib__Ray_mk"]
--- opaque Ray.mk (position : Vector3) (direction : Vector3) : Ray
--- /-- Getter: Ray position (origin) -/
--- @[extern "lean_raylib__Ray_position"]
--- opaque Ray.position (self : @& Ray) : Vector3
--- /-- Setter: Ray position (origin) -/
--- @[extern "lean_raylib__Ray_position_set"]
--- opaque Ray.set_position (position : Vector3) (self : Ray) : Ray
--- /-- Getter: Ray direction -/
--- @[extern "lean_raylib__Ray_direction"]
--- opaque Ray.direction (self : @& Ray) : Vector3
--- /-- Setter: Ray direction -/
--- @[extern "lean_raylib__Ray_direction_set"]
--- opaque Ray.set_direction (direction : Vector3) (self : Ray) : Ray
+
+
+/-! # Ray -/
+
+opaque RayPointed : NonemptyType
+/-- Ray, ray for raycasting -/
+def Ray : Type := RayPointed.type
+instance : Nonempty Ray := RayPointed.property
+
+@[extern "lean_raylib__Ray_mk"]
+opaque Ray.mk (position : @& Vector3) (direction : @& Vector3) : Ray
+
+/-- Getter: Ray position (origin) -/
+@[extern "lean_raylib__Ray_position"]
+opaque Ray.position (ray : @& Ray) : Vector3
+/-- Setter: Ray position (origin) -/
+@[extern "lean_raylib__Ray_position_set"]
+opaque Ray.set_position (position : @& Vector3) (ray : Ray) : Ray
+/-- Getter: Ray direction -/
+@[extern "lean_raylib__Ray_direction"]
+opaque Ray.direction (ray : @& Ray) : Vector3
+/-- Setter: Ray direction -/
+@[extern "lean_raylib__Ray_direction_set"]
+opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
+
+
+/-! # Ray collision -/
+
 -- opaque RayCollisionPointed : NonemptyType
 -- /-- RayCollision, ray hit information -/
 -- def RayCollision : Type := RayCollisionPointed.type
@@ -1173,16 +1202,16 @@ opaque Image.format (self : @& Image) : PixelFormat
 -- /-- Setter: Did the ray hit something? -/
 -- @[extern "lean_raylib__RayCollision_hit_set"]
 -- opaque RayCollision.set_hit (hit : Bool) (self : RayCollision) : RayCollision
--- /-- Getter: Distance to nearest hit -/
+-- /-- Getter: Distance to the nearest hit -/
 -- @[extern "lean_raylib__RayCollision_distance"]
 -- opaque RayCollision.distance (self : @& RayCollision) : Float
--- /-- Setter: Distance to nearest hit -/
+-- /-- Setter: Distance to the nearest hit -/
 -- @[extern "lean_raylib__RayCollision_distance_set"]
 -- opaque RayCollision.set_distance (distance : Float) (self : RayCollision) : RayCollision
--- /-- Getter: Point of nearest hit -/
+-- /-- Getter: Point of the nearest hit -/
 -- @[extern "lean_raylib__RayCollision_point"]
 -- opaque RayCollision.point (self : @& RayCollision) : Vector3
--- /-- Setter: Point of nearest hit -/
+-- /-- Setter: Point of the nearest hit -/
 -- @[extern "lean_raylib__RayCollision_point_set"]
 -- opaque RayCollision.set_point (point : Vector3) (self : RayCollision) : RayCollision
 -- /-- Getter: Surface normal of hit -/
