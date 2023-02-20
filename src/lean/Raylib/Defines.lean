@@ -2,10 +2,10 @@ import Raylib.Structures
 
 namespace Raylib
 
-notation "RAYLIB_VERSION_MAJOR" => 4
-notation "RAYLIB_VERSION_MINOR" => 5
-notation "RAYLIB_VERSION_PATCH" => 0
-notation "RAYLIB_VERSION" => "4.5-dev"
+def RAYLIB_VERSION_MAJOR := 4
+def RAYLIB_VERSION_MINOR := 5
+def RAYLIB_VERSION_PATCH := 0
+def RAYLIB_VERSION := "4.5-dev"
 
 def PI : Float := 3.141592653589793
 def DEG2RAD : Float := (./.) PI 180
