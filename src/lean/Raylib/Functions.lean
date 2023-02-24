@@ -1,7 +1,8 @@
-import Raylib.Util
+import Raylib.Aliases
+import Raylib.Callbacks
 import Raylib.Enumerations
 import Raylib.Structures
-import Raylib.Aliases
+import Raylib.Util
 
 set_option autoImplicit false
 
@@ -2226,55 +2227,54 @@ opaque GetMusicTimeLength (music : @& Music) : Float
 /-- Get current music time played (in seconds) -/
 @[extern "lean_raylib__GetMusicTimePlayed"]
 opaque GetMusicTimePlayed (music : @& Music) : BaseIO Float
--- /-- Load audio stream (to stream raw audio pcm data) -/
--- @[extern "lean_raylib__LoadAudioStream"]
--- opaque LoadAudioStream (sampleRate : UInt32) (sampleSize : UInt32) (channels : UInt32) : AudioStream
--- /-- Checks if an audio stream is ready -/
--- @[extern "lean_raylib__IsAudioStreamReady"]
--- opaque IsAudioStreamReady (stream : AudioStream) : Bool
--- /-- Unload audio stream and free memory -/
--- @[extern "lean_raylib__UnloadAudioStream"]
--- opaque UnloadAudioStream (stream : AudioStream) : Unit
--- /-- Update audio stream buffers with data -/
--- @[extern "lean_raylib__UpdateAudioStream"]
--- opaque UpdateAudioStream : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | stream : AudioStream
---   | data : const void *
---   | frameCount : int
--- -/
--- /-- Check if any audio stream buffers requires refill -/
--- @[extern "lean_raylib__IsAudioStreamProcessed"]
--- opaque IsAudioStreamProcessed (stream : AudioStream) : Bool
--- /-- Play audio stream -/
--- @[extern "lean_raylib__PlayAudioStream"]
--- opaque PlayAudioStream (stream : AudioStream) : Unit
--- /-- Pause audio stream -/
--- @[extern "lean_raylib__PauseAudioStream"]
--- opaque PauseAudioStream (stream : AudioStream) : Unit
--- /-- Resume audio stream -/
--- @[extern "lean_raylib__ResumeAudioStream"]
--- opaque ResumeAudioStream (stream : AudioStream) : Unit
--- /-- Check if audio stream is playing -/
--- @[extern "lean_raylib__IsAudioStreamPlaying"]
--- opaque IsAudioStreamPlaying (stream : AudioStream) : Bool
--- /-- Stop audio stream -/
--- @[extern "lean_raylib__StopAudioStream"]
--- opaque StopAudioStream (stream : AudioStream) : Unit
--- /-- Set volume for audio stream (1.0 is max level) -/
--- @[extern "lean_raylib__SetAudioStreamVolume"]
--- opaque SetAudioStreamVolume (stream : AudioStream) (volume : Float) : Unit
--- /-- Set pitch for audio stream (1.0 is base level) -/
--- @[extern "lean_raylib__SetAudioStreamPitch"]
--- opaque SetAudioStreamPitch (stream : AudioStream) (pitch : Float) : Unit
--- /-- Set pan for audio stream (0.5 is centered) -/
--- @[extern "lean_raylib__SetAudioStreamPan"]
--- opaque SetAudioStreamPan (stream : AudioStream) (pan : Float) : Unit
--- /-- Default size for new audio streams -/
--- @[extern "lean_raylib__SetAudioStreamBufferSizeDefault"]
--- opaque SetAudioStreamBufferSizeDefault (size : Int32) : Unit
+/-- Load audio stream (to stream raw audio pcm data) -/
+-- IO: TraceLog + tracking
+@[extern "lean_raylib__LoadAudioStream"]
+opaque LoadAudioStream (sampleRate : UInt32) (sampleSize : UInt32) (channels : UInt32) : BaseIO AudioStream
+/-- Checks if an audio stream is ready -/
+@[extern "lean_raylib__IsAudioStreamReady"]
+opaque IsAudioStreamReady (stream : @& AudioStream) : Bool
+/-- Unload audio stream and free memory -/
+@[extern "lean_raylib__UnloadAudioStream", deprecated]
+opaque UnloadAudioStream (stream : @& AudioStream) : Unit
+/-- Update audio stream buffers with data. -/
+@[extern "lean_raylib__UpdateAudioStream"]
+opaque UpdateAudioStream
+  (stream : @& AudioStream)
+  (data : ByteArray)
+  (frameCount : UInt32)
+  (data_size : data.size = frameCount.toNat * stream.channels.toNat * stream.sampleSize.toNat / 8)
+  : BaseIO Unit
+/-- Check if any audio stream buffers requires refill -/
+@[extern "lean_raylib__IsAudioStreamProcessed"]
+opaque IsAudioStreamProcessed (stream : @& AudioStream) : BaseIO Bool
+/-- Play audio stream -/
+@[extern "lean_raylib__PlayAudioStream"]
+opaque PlayAudioStream (stream : @& AudioStream) : BaseIO Unit
+/-- Pause audio stream -/
+@[extern "lean_raylib__PauseAudioStream"]
+opaque PauseAudioStream (stream : @& AudioStream) : BaseIO Unit
+/-- Resume audio stream -/
+@[extern "lean_raylib__ResumeAudioStream"]
+opaque ResumeAudioStream (stream : @& AudioStream) : BaseIO Unit
+/-- Check if audio stream is playing -/
+@[extern "lean_raylib__IsAudioStreamPlaying"]
+opaque IsAudioStreamPlaying (stream : @& AudioStream) : BaseIO Bool
+/-- Stop audio stream -/
+@[extern "lean_raylib__StopAudioStream"]
+opaque StopAudioStream (stream : @& AudioStream) : BaseIO Unit
+/-- Set volume for audio stream (1.0 is max level) -/
+@[extern "lean_raylib__SetAudioStreamVolume"]
+opaque SetAudioStreamVolume (stream : @& AudioStream) (volume : Float) : BaseIO Unit
+/-- Set pitch for audio stream (1.0 is base level) -/
+@[extern "lean_raylib__SetAudioStreamPitch"]
+opaque SetAudioStreamPitch (stream : @& AudioStream) (pitch : Float) : BaseIO Unit
+/-- Set pan for audio stream (0.5 is centered) -/
+@[extern "lean_raylib__SetAudioStreamPan"]
+opaque SetAudioStreamPan (stream : @& AudioStream) (pan : Float) : BaseIO Unit
+/-- Default size for new audio streams -/
+@[extern "lean_raylib__SetAudioStreamBufferSizeDefault"]
+opaque SetAudioStreamBufferSizeDefault (size : UInt32) : BaseIO Unit
 -- /-- Audio thread callback to request new data -/
 -- @[extern "lean_raylib__SetAudioStreamCallback"]
 -- opaque SetAudioStreamCallback : Unit -> Unit

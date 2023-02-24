@@ -532,7 +532,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFileData (b_lean_obj_arg fileName) {
     return lean_io_result_mk_ok(arr);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileData (b_lean_obj_arg data, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileData (b_lean_obj_arg data) {
     return lean_box(0);
 }
 
@@ -2487,8 +2487,8 @@ LEAN_EXPORT uint8_t lean_raylib__IsMusicReady (b_lean_obj_arg music) {
     return IsMusicReady(*lean_raylib_Music_from(music));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadMusicStream (lean_obj_arg music, lean_obj_arg world) {
-    return lean_io_result_mk_ok(lean_box(0));
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadMusicStream (lean_obj_arg music) {
+    return lean_box(0);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__PlayMusicStream (lean_obj_arg music, lean_obj_arg world) {
@@ -2552,75 +2552,75 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetMusicTimePlayed (b_lean_obj_arg music, 
     ));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (uint32_t sampleRate, uint32_t sampleSize, uint32_t channels, lean_obj_arg world) {
-//     AudioStream result_ = LoadAudioStream(sampleRate, sampleSize, channels);
-//     return lean_raylib_AudioStream_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (uint32_t sampleRate, uint32_t sampleSize, uint32_t channels, lean_obj_arg world) {
+    LET_BOX(AudioStream, stream, LoadAudioStream(sampleRate, sampleSize, channels));
+    return lean_io_result_mk_ok(lean_raylib_AudioStream_to(stream));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsAudioStreamReady (lean_obj_arg stream, lean_obj_arg world) {
-//     bool result_ = IsAudioStreamReady(lean_raylib_AudioStream_from(stream));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsAudioStreamReady (lean_obj_arg stream) {
+    return IsAudioStreamReady(*lean_raylib_AudioStream_from(stream));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadAudioStream (lean_obj_arg stream, lean_obj_arg world) {
-//     UnloadAudioStream(lean_raylib_AudioStream_from(stream));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadAudioStream (b_lean_obj_arg stream) {
+    return lean_box(0);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UpdateAudioStream (lean_obj_arg stream, /* const void* */lean_obj_arg data, uint32_t frameCount, lean_obj_arg world) {
-//     UpdateAudioStream(lean_raylib_AudioStream_from(stream), /*todo: ptr?*/data, frameCount);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateAudioStream (b_lean_obj_arg stream, b_lean_obj_arg data, uint32_t frameCount, lean_obj_arg world) {
+    UpdateAudioStream(*lean_raylib_AudioStream_from(stream), lean_sarray_cptr(data), frameCount);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsAudioStreamProcessed (lean_obj_arg stream, lean_obj_arg world) {
-//     bool result_ = IsAudioStreamProcessed(lean_raylib_AudioStream_from(stream));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsAudioStreamProcessed (b_lean_obj_arg stream, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(
+        IsAudioStreamProcessed(*lean_raylib_AudioStream_from(stream))
+    ));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__PlayAudioStream (lean_obj_arg stream, lean_obj_arg world) {
-//     PlayAudioStream(lean_raylib_AudioStream_from(stream));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__PlayAudioStream (b_lean_obj_arg stream, lean_obj_arg world) {
+    PlayAudioStream(*lean_raylib_AudioStream_from(stream));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__PauseAudioStream (lean_obj_arg stream, lean_obj_arg world) {
-//     PauseAudioStream(lean_raylib_AudioStream_from(stream));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__PauseAudioStream (b_lean_obj_arg stream, lean_obj_arg world) {
+    PauseAudioStream(*lean_raylib_AudioStream_from(stream));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ResumeAudioStream (lean_obj_arg stream, lean_obj_arg world) {
-//     ResumeAudioStream(lean_raylib_AudioStream_from(stream));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ResumeAudioStream (b_lean_obj_arg stream, lean_obj_arg world) {
+    ResumeAudioStream(*lean_raylib_AudioStream_from(stream));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsAudioStreamPlaying (lean_obj_arg stream, lean_obj_arg world) {
-//     bool result_ = IsAudioStreamPlaying(lean_raylib_AudioStream_from(stream));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsAudioStreamPlaying (b_lean_obj_arg stream, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(
+        IsAudioStreamPlaying(*lean_raylib_AudioStream_from(stream))
+    ));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__StopAudioStream (lean_obj_arg stream, lean_obj_arg world) {
-//     StopAudioStream(lean_raylib_AudioStream_from(stream));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__StopAudioStream (b_lean_obj_arg stream, lean_obj_arg world) {
+    StopAudioStream(*lean_raylib_AudioStream_from(stream));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamVolume (lean_obj_arg stream, double volume, lean_obj_arg world) {
-//     SetAudioStreamVolume(lean_raylib_AudioStream_from(stream), (float)volume);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamVolume (b_lean_obj_arg stream, double volume, lean_obj_arg world) {
+    SetAudioStreamVolume(*lean_raylib_AudioStream_from(stream), (float)volume);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamPitch (lean_obj_arg stream, double pitch, lean_obj_arg world) {
-//     SetAudioStreamPitch(lean_raylib_AudioStream_from(stream), (float)pitch);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamPitch (b_lean_obj_arg stream, double pitch, lean_obj_arg world) {
+    SetAudioStreamPitch(*lean_raylib_AudioStream_from(stream), (float)pitch);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamPan (lean_obj_arg stream, double pan, lean_obj_arg world) {
-//     SetAudioStreamPan(lean_raylib_AudioStream_from(stream), (float)pan);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamPan (b_lean_obj_arg stream, double pan, lean_obj_arg world) {
+    SetAudioStreamPan(*lean_raylib_AudioStream_from(stream), (float)pan);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamBufferSizeDefault (uint32_t size, lean_obj_arg world) {
-//     SetAudioStreamBufferSizeDefault(size);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamBufferSizeDefault (uint32_t size, lean_obj_arg world) {
+    SetAudioStreamBufferSizeDefault(size);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (lean_obj_arg stream, lean_obj_arg callback, lean_obj_arg world) {
 //     SetAudioStreamCallback(lean_raylib_AudioStream_from(stream), /*cast AudioCallback to_lean?false*/(callback));
