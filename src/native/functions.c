@@ -649,29 +649,29 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFiles (b_lean_obj_arg dirPath
     return lean_io_result_mk_ok(paths);
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFilesEx (/* const char* */lean_obj_arg basePath, /* const char* */lean_obj_arg filter, uint8_t scanSubdirs, lean_obj_arg world) {
-//     FilePathList result_ = LoadDirectoryFilesEx(lean_string_cstr(basePath), lean_string_cstr(filter), scanSubdirs);
-//     return lean_raylib_FilePathList_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadDirectoryFiles (lean_obj_arg files, lean_obj_arg world) {
-//     UnloadDirectoryFiles(lean_raylib_FilePathList_from(files));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFilesEx (b_lean_obj_arg basePath, b_lean_obj_arg filter, uint8_t scanSubdirs, lean_obj_arg world) {
+    FilePathList pathsRaw = LoadDirectoryFilesEx(lean_string_cstr(basePath), lean_string_cstr(filter), scanSubdirs);
+    lean_object* paths = lean_alloc_array(pathsRaw.count, pathsRaw.count);
+    for(size_t i = 0; i < pathsRaw.count; ++i) {
+        lean_array_set_core(paths, i, lean_mk_string(pathsRaw.paths[i]));
+    }
+    UnloadDirectoryFiles(pathsRaw);
+    return lean_io_result_mk_ok(paths);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__IsFileDropped (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(IsFileDropped()));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadDroppedFiles (lean_obj_arg world) {
-//     FilePathList result_ = LoadDroppedFiles();
-//     return lean_raylib_FilePathList_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadDroppedFiles (lean_obj_arg files, lean_obj_arg world) {
-//     UnloadDroppedFiles(lean_raylib_FilePathList_from(files));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadDroppedFiles (lean_obj_arg world) {
+    FilePathList pathsRaw = LoadDroppedFiles();
+    lean_object* paths = lean_alloc_array(pathsRaw.count, pathsRaw.count);
+    for(size_t i = 0; i < pathsRaw.count; ++i) {
+        lean_array_set_core(paths, i, lean_mk_string(pathsRaw.paths[i]));
+    }
+    UnloadDroppedFiles(pathsRaw);
+    return lean_io_result_mk_ok(paths);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetFileModTime (b_lean_obj_arg fileName, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box_uint64(

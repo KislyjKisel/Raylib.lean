@@ -485,21 +485,15 @@ opaque IsPathFile (path : @& String) : BaseIO Bool
 /-- Load directory filepaths -/
 @[extern "lean_raylib__LoadDirectoryFiles"]
 opaque LoadDirectoryFiles (dirPath : @& String) : BaseIO $ Array String
--- /-- Load directory filepaths with extension filtering and recursive directory scan -/
--- @[extern "lean_raylib__LoadDirectoryFilesEx"]
--- opaque LoadDirectoryFilesEx (basePath : String) (filter : String) (scanSubdirs : Bool) : FilePathList
--- /-- Unload filepaths -/
--- @[extern "lean_raylib__UnloadDirectoryFiles"]
--- opaque UnloadDirectoryFiles (files : FilePathList) : Unit
+/-- Load directory filepaths with extension filtering and recursive directory scan -/
+@[extern "lean_raylib__LoadDirectoryFilesEx"]
+opaque LoadDirectoryFilesEx (basePath : @& String) (filter : @& String) (scanSubdirs : Bool) : BaseIO $ Array String
 /-- Check if a file has been dropped into window -/
 @[extern "lean_raylib__IsFileDropped"]
 opaque IsFileDropped : BaseIO Bool
--- /-- Load dropped filepaths -/
--- @[extern "lean_raylib__LoadDroppedFiles"]
--- opaque LoadDroppedFiles (_ : Unit) : FilePathList
--- /-- Unload dropped filepaths -/
--- @[extern "lean_raylib__UnloadDroppedFiles"]
--- opaque UnloadDroppedFiles (files : FilePathList) : Unit
+/-- Load dropped filepaths -/
+@[extern "lean_raylib__LoadDroppedFiles"]
+opaque LoadDroppedFiles : BaseIO $ Array String
 /--
 Get file modification time (last write time).
 Returns `0` on error (ex. file doesn't exist).
