@@ -639,10 +639,15 @@ LEAN_EXPORT lean_obj_res lean_raylib__IsPathFile (b_lean_obj_arg path, lean_obj_
     return lean_io_result_mk_ok(lean_box(IsPathFile(lean_string_cstr(path))));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFiles (/* const char* */lean_obj_arg dirPath, lean_obj_arg world) {
-//     FilePathList result_ = LoadDirectoryFiles(lean_string_cstr(dirPath));
-//     return lean_raylib_FilePathList_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFiles (b_lean_obj_arg dirPath, lean_obj_arg world) {
+    FilePathList pathsRaw = LoadDirectoryFiles(lean_string_cstr(dirPath));
+    lean_object* paths = lean_alloc_array(pathsRaw.count, pathsRaw.count);
+    for(size_t i = 0; i < pathsRaw.count; ++i) {
+        lean_array_set_core(paths, i, lean_mk_string(pathsRaw.paths[i]));
+    }
+    UnloadDirectoryFiles(pathsRaw);
+    return lean_io_result_mk_ok(paths);
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadDirectoryFilesEx (/* const char* */lean_obj_arg basePath, /* const char* */lean_obj_arg filter, uint8_t scanSubdirs, lean_obj_arg world) {
 //     FilePathList result_ = LoadDirectoryFilesEx(lean_string_cstr(basePath), lean_string_cstr(filter), scanSubdirs);
@@ -1233,15 +1238,17 @@ LEAN_EXPORT lean_obj_res lean_raylib__UnloadImage (b_lean_obj_arg _image) {
     return lean_box(0);
 }
 
-// LEAN_EXPORT uint8_t lean_raylib__ExportImage (lean_obj_arg image, /* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     bool result_ = ExportImage(lean_raylib_Image_from(image), lean_string_cstr(fileName));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ExportImage (b_lean_obj_arg image, b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(
+        ExportImage(*lean_raylib_Image_from(image), lean_string_cstr(fileName))
+    ));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__ExportImageAsCode (lean_obj_arg image, /* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     bool result_ = ExportImageAsCode(lean_raylib_Image_from(image), lean_string_cstr(fileName));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ExportImageAsCode (b_lean_obj_arg image, b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(
+        ExportImageAsCode(*lean_raylib_Image_from(image), lean_string_cstr(fileName))
+    ));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__GenImageColor (uint32_t width, uint32_t height, uint32_t color) {
     LET_BOX(Image, image, GenImageColor(width, height, lean_raylib_Color_from(color)));
@@ -2308,25 +2315,24 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawText (lean_obj_arg text, uint32_t posX
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__InitAudioDevice (lean_obj_arg world) {
-//     InitAudioDevice();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__InitAudioDevice (lean_obj_arg world) {
+    InitAudioDevice();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__CloseAudioDevice (lean_obj_arg world) {
-//     CloseAudioDevice();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__CloseAudioDevice (lean_obj_arg world) {
+    CloseAudioDevice();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsAudioDeviceReady (lean_obj_arg world) {
-//     bool result_ = IsAudioDeviceReady();
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__IsAudioDeviceReady (lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(IsAudioDeviceReady()));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMasterVolume (double volume, lean_obj_arg world) {
-//     SetMasterVolume((float)volume);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetMasterVolume (double volume, lean_obj_arg world) {
+    SetMasterVolume((float)volume);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadWave (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
 //     Wave result_ = LoadWave(lean_string_cstr(fileName));
@@ -2463,85 +2469,88 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawText (lean_obj_arg text, uint32_t posX
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStream (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     Music result_ = LoadMusicStream(lean_string_cstr(fileName));
-//     return lean_raylib_Music_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStream (b_lean_obj_arg fileName, lean_obj_arg world) {
+    LET_BOX(Music, music, LoadMusicStream(lean_string_cstr(fileName)));
+    return lean_io_result_mk_ok(lean_raylib_Music_to(music));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStreamFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg data, uint32_t dataSize, lean_obj_arg world) {
-//     Music result_ = LoadMusicStreamFromMemory(lean_string_cstr(fileType), /*todo: ptr?*/data, dataSize);
-//     return lean_raylib_Music_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStreamFromMemory (b_lean_obj_arg fileType, b_lean_obj_arg data, lean_obj_arg world) {
+    LET_BOX(Music, music, LoadMusicStreamFromMemory(
+        lean_string_cstr(fileType),
+        lean_sarray_cptr(data),
+        lean_sarray_size(data)
+    ));
+    return lean_raylib_Music_to(music);
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsMusicReady (lean_obj_arg music, lean_obj_arg world) {
-//     bool result_ = IsMusicReady(lean_raylib_Music_from(music));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsMusicReady (b_lean_obj_arg music) {
+    return IsMusicReady(*lean_raylib_Music_from(music));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadMusicStream (lean_obj_arg music, lean_obj_arg world) {
-//     UnloadMusicStream(lean_raylib_Music_from(music));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadMusicStream (lean_obj_arg music, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__PlayMusicStream (lean_obj_arg music, lean_obj_arg world) {
-//     PlayMusicStream(lean_raylib_Music_from(music));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__PlayMusicStream (lean_obj_arg music, lean_obj_arg world) {
+    PlayMusicStream(*lean_raylib_Music_from(music));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsMusicStreamPlaying (lean_obj_arg music, lean_obj_arg world) {
-//     bool result_ = IsMusicStreamPlaying(lean_raylib_Music_from(music));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsMusicStreamPlaying (lean_obj_arg music, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(
+        IsMusicStreamPlaying(*lean_raylib_Music_from(music))
+    ));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UpdateMusicStream (lean_obj_arg music, lean_obj_arg world) {
-//     UpdateMusicStream(lean_raylib_Music_from(music));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateMusicStream (b_lean_obj_arg music, lean_obj_arg world) {
+    UpdateMusicStream(*lean_raylib_Music_from(music));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__StopMusicStream (lean_obj_arg music, lean_obj_arg world) {
-//     StopMusicStream(lean_raylib_Music_from(music));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__StopMusicStream (b_lean_obj_arg music, lean_obj_arg world) {
+    StopMusicStream(*lean_raylib_Music_from(music));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__PauseMusicStream (lean_obj_arg music, lean_obj_arg world) {
-//     PauseMusicStream(lean_raylib_Music_from(music));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__PauseMusicStream (b_lean_obj_arg music, lean_obj_arg world) {
+    PauseMusicStream(*lean_raylib_Music_from(music));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ResumeMusicStream (lean_obj_arg music, lean_obj_arg world) {
-//     ResumeMusicStream(lean_raylib_Music_from(music));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ResumeMusicStream (b_lean_obj_arg music, lean_obj_arg world) {
+    ResumeMusicStream(*lean_raylib_Music_from(music));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SeekMusicStream (lean_obj_arg music, double position, lean_obj_arg world) {
-//     SeekMusicStream(lean_raylib_Music_from(music), (float)position);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SeekMusicStream (b_lean_obj_arg music, double position, lean_obj_arg world) {
+    SeekMusicStream(*lean_raylib_Music_from(music), (float)position);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMusicVolume (lean_obj_arg music, double volume, lean_obj_arg world) {
-//     SetMusicVolume(lean_raylib_Music_from(music), (float)volume);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetMusicVolume (b_lean_obj_arg music, double volume, lean_obj_arg world) {
+    SetMusicVolume(*lean_raylib_Music_from(music), (float)volume);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMusicPitch (lean_obj_arg music, double pitch, lean_obj_arg world) {
-//     SetMusicPitch(lean_raylib_Music_from(music), (float)pitch);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetMusicPitch (b_lean_obj_arg music, double pitch, lean_obj_arg world) {
+    SetMusicPitch(*lean_raylib_Music_from(music), (float)pitch);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMusicPan (lean_obj_arg music, double pan, lean_obj_arg world) {
-//     SetMusicPan(lean_raylib_Music_from(music), (float)pan);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetMusicPan (b_lean_obj_arg music, double pan, lean_obj_arg world) {
+    SetMusicPan(*lean_raylib_Music_from(music), (float)pan);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT double lean_raylib__GetMusicTimeLength (lean_obj_arg music, lean_obj_arg world) {
-//     float result_ = GetMusicTimeLength(lean_raylib_Music_from(music));
-//     return (float)result_;
-// }
+LEAN_EXPORT double lean_raylib__GetMusicTimeLength (b_lean_obj_arg music) {
+    return (float)GetMusicTimeLength(*lean_raylib_Music_from(music));
+}
 
-// LEAN_EXPORT double lean_raylib__GetMusicTimePlayed (lean_obj_arg music, lean_obj_arg world) {
-//     float result_ = GetMusicTimePlayed(lean_raylib_Music_from(music));
-//     return (float)result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetMusicTimePlayed (b_lean_obj_arg music, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box_float(
+        GetMusicTimePlayed(*lean_raylib_Music_from(music))
+    ));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (uint32_t sampleRate, uint32_t sampleSize, uint32_t channels, lean_obj_arg world) {
 //     AudioStream result_ = LoadAudioStream(sampleRate, sampleSize, channels);

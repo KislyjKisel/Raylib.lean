@@ -5,3 +5,6 @@
   `lean_object { .., -> BoxedImage { ..header, ..data } }`
                                   data ptr = ^ = this + sizeof(Header)
   (benchmark!)
+
+* Binary data retrieval from images, audio etc
+  (opaque readonly buffer type? mb smth like a trait object)

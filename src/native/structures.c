@@ -8,37 +8,47 @@
 // ## Vector2
 
 LEAN_EXPORT lean_obj_res lean_raylib__Vector2_mk(double x, double y) {
-    LET_BOX_STRUCT(Vector2, result_,
+    LET_BOX_STRUCT(Vector2, vec,
         .x = (float)x,
         .y = (float)y
     );
-    return lean_raylib_Vector2_to(result_);
+    return lean_raylib_Vector2_to(vec);
 }
 
-LEAN_EXPORT double lean_raylib__Vector2_x(b_lean_obj_arg obj) {
-    return lean_raylib_Vector2_from(obj)->x;
+LEAN_EXPORT double lean_raylib__Vector2_x(b_lean_obj_arg vec) {
+    return lean_raylib_Vector2_from(vec)->x;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector2_x_set(double x, b_lean_obj_arg obj) {
-    Vector2 const* obj_c = lean_raylib_Vector2_from(obj);
-    LET_BOX_STRUCT(Vector2, result_,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector2_x_set(double x, lean_obj_arg vec_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector2_from(vec_box)->x = x;
+        return vec_box;
+    }
+    Vector2 const* vec = lean_raylib_Vector2_from(vec_box);
+    LET_BOX_STRUCT(Vector2, vec_new_box,
         .x = x,
-        .y = obj_c->y,
+        .y = vec->y,
     );
-    return lean_raylib_Vector2_to(result_);
+    lean_dec_ref(vec_box);
+    return lean_raylib_Vector2_to(vec_new_box);
 }
 
-LEAN_EXPORT double lean_raylib__Vector2_y(b_lean_obj_arg obj) {
-    return lean_raylib_Vector2_from(obj)->y;
+LEAN_EXPORT double lean_raylib__Vector2_y(b_lean_obj_arg vec) {
+    return lean_raylib_Vector2_from(vec)->y;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector2_y_set(double y, b_lean_obj_arg obj) {
-    Vector2 const* obj_c = lean_raylib_Vector2_from(obj);
-    LET_BOX_STRUCT(Vector2, result_,
-        .x = obj_c->x,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector2_y_set(double y, lean_obj_arg vec_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector2_from(vec_box)->y = y;
+        return vec_box;
+    }
+    Vector2 const* vec = lean_raylib_Vector2_from(vec_box);
+    LET_BOX_STRUCT(Vector2, vec_new_box,
+        .x = vec->x,
         .y = y,
     );
-    return lean_raylib_Vector2_to(result_);
+    lean_dec_ref(vec_box);
+    return lean_raylib_Vector2_to(vec_new_box);
 }
 
 
@@ -57,42 +67,57 @@ LEAN_EXPORT double lean_raylib__Vector3_x(b_lean_obj_arg obj) {
     return lean_raylib_Vector3_from(obj)->x;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector3_x_set(double x, b_lean_obj_arg obj) {
-    Vector3 const* obj_c = lean_raylib_Vector3_from(obj);
-    LET_BOX_STRUCT(Vector3, result_,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector3_x_set(double x, lean_obj_arg vec_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector3_from(vec_box)->x = x;
+        return vec_box;
+    }
+    Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
+    LET_BOX_STRUCT(Vector3, vec_new_box,
         .x = x,
-        .y = obj_c->y,
-        .z = obj_c->z,
+        .y = vec->y,
+        .z = vec->z,
     );
-    return lean_raylib_Vector3_to(result_);
+    lean_dec_ref(vec_box);
+    return lean_raylib_Vector3_to(vec_new_box);
 }
 
 LEAN_EXPORT double lean_raylib__Vector3_y(b_lean_obj_arg obj) {
     return lean_raylib_Vector3_from(obj)->y;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector3_y_set(double y, b_lean_obj_arg obj) {
-    Vector3 const* obj_c = lean_raylib_Vector3_from(obj);
-    LET_BOX_STRUCT(Vector3, result_,
-        .x = obj_c->x,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector3_y_set(double y, lean_obj_arg vec_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector3_from(vec_box)->y = y;
+        return vec_box;
+    }
+    Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
+    LET_BOX_STRUCT(Vector3, vec_new_box,
+        .x = vec->x,
         .y = y,
-        .z = obj_c->z,
+        .z = vec->z,
     );
-    return lean_raylib_Vector3_to(result_);
+    lean_dec_ref(vec_box);
+    return lean_raylib_Vector3_to(vec_new_box);
 }
 
 LEAN_EXPORT double lean_raylib__Vector3_z(b_lean_obj_arg obj) {
     return lean_raylib_Vector3_from(obj)->z;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector3_z_set(double z, b_lean_obj_arg obj) {
-    Vector3 const* obj_c = lean_raylib_Vector3_from(obj);
-    LET_BOX_STRUCT(Vector3, result_,
-        .x = obj_c->x,
-        .y = obj_c->y,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector3_z_set(double z, lean_obj_arg vec_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector3_from(vec_box)->z = z;
+        return vec_box;
+    }
+    Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
+    LET_BOX_STRUCT(Vector3, vec_new_box,
+        .x = vec->x,
+        .y = vec->y,
         .z = z,
     );
-    return lean_raylib_Vector3_to(result_);
+    lean_dec_ref(vec_box);
+    return lean_raylib_Vector3_to(vec_new_box);
 }
 
 
@@ -112,60 +137,80 @@ LEAN_EXPORT double lean_raylib__Vector4_x(b_lean_obj_arg obj) {
     return lean_raylib_Vector4_from(obj)->x;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_x_set(double x, b_lean_obj_arg obj) {
-    Vector4 const* obj_c = lean_raylib_Vector4_from(obj);
-    LET_BOX_STRUCT(Vector4, result_,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector4_x_set(double x, lean_obj_arg vec_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector4_from(vec_box)->x = x;
+        return vec_box;
+    }
+    Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
+    LET_BOX_STRUCT(Vector4, vec_new_box,
         .x = x,
-        .y = obj_c->y,
-        .z = obj_c->z,
-        .w = obj_c->w
+        .y = vec->y,
+        .z = vec->z,
+        .w = vec->w
     );
-    return lean_raylib_Vector4_to(result_);
+    lean_dec_ref(vec_box);
+    return lean_raylib_Vector4_to(vec_new_box);
 }
 
 LEAN_EXPORT double lean_raylib__Vector4_y(b_lean_obj_arg obj) {
     return lean_raylib_Vector4_from(obj)->y;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_y_set(double y, b_lean_obj_arg obj) {
-    Vector4 const* obj_c = lean_raylib_Vector4_from(obj);
-    LET_BOX_STRUCT(Vector4, result_,
-        .x = obj_c->x,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector4_y_set(double y, lean_obj_arg vec_box) {
+   if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector4_from(vec_box)->y = y;
+        return vec_box;
+    }
+    Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
+    LET_BOX_STRUCT(Vector4, vec_new_box,
+        .x = vec->x,
         .y = y,
-        .z = obj_c->z,
-        .w = obj_c->w,
+        .z = vec->z,
+        .w = vec->w,
     );
-    return lean_raylib_Vector4_to(result_);
+    lean_dec_ref(vec);
+    return lean_raylib_Vector4_to(vec_new_box);
 }
 
 LEAN_EXPORT double lean_raylib__Vector4_z(b_lean_obj_arg obj) {
     return lean_raylib_Vector4_from(obj)->z;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_z_set(double z, b_lean_obj_arg obj) {
-    Vector4 const* obj_c = lean_raylib_Vector4_from(obj);
-    LET_BOX_STRUCT(Vector4, result_,
-        .x = obj_c->x,
-        .y = obj_c->y,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector4_z_set(double z, lean_obj_arg vec_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector4_from(vec_box)->z = z;
+        return vec_box;
+    }
+    Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
+    LET_BOX_STRUCT(Vector4, vec_new_box,
+        .x = vec->x,
+        .y = vec->y,
         .z = z,
-        .w = obj_c->w,
+        .w = vec->w,
     );
-    return lean_raylib_Vector4_to(result_);
+    lean_dec_ref(vec_box);
+    return lean_raylib_Vector4_to(vec_new_box);
 }
 
 LEAN_EXPORT double lean_raylib__Vector4_w(b_lean_obj_arg obj) {
     return lean_raylib_Vector4_from(obj)->w;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_w_set(double w, b_lean_obj_arg obj) {
-    Vector4 const* obj_c = lean_raylib_Vector4_from(obj);
-    LET_BOX_STRUCT(Vector4, result_,
-        .x = obj_c->x,
-        .y = obj_c->y,
-        .z = obj_c->z,
+LEAN_EXPORT lean_obj_res lean_raylib__Vector4_w_set(double w, lean_obj_arg vec_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
+        lean_raylib_Vector4_from(vec_box)->w = w;
+        return vec_box;
+    }
+    Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
+    LET_BOX_STRUCT(Vector4, vec_new_box,
+        .x = vec->x,
+        .y = vec->y,
+        .z = vec->z,
         .w = w,
     );
-    return lean_raylib_Vector4_to(result_);
+    lean_dec_ref(vec_box);
+    return lean_raylib_Vector4_to(vec_new_box);
 }
 
 
@@ -1663,233 +1708,95 @@ LEAN_EXPORT lean_obj_res lean_raylib__Ray_direction_set(b_lean_obj_arg direction
 //     return lean_raylib_BoundingBox_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Wave_mk(uint32_t frameCount, uint32_t sampleRate, uint32_t sampleSize, uint32_t channels, /* void* */lean_obj_arg data) {
-//     LET_BOX_STRUCT(Wave, result_,
-//         .frameCount = frameCount,
-//         .sampleRate = sampleRate,
-//         .sampleSize = sampleSize,
-//         .channels = channels,
-//         .data = /*todo: ptr?*/data
-//     );
-//     return lean_raylib_Wave_to(result_);
-// }
 
-// LEAN_EXPORT uint32_t lean_raylib__Wave_frameCount(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Wave_from(obj)->frameCount;
-//     return result_;
-// }
+// # Wave
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Wave_frameCount_set(uint32_t frameCount, b_lean_obj_arg obj) {
-//     LET_BOX(Wave, result_, *lean_raylib_Wave_from(obj));
-//     result_->frameCount = frameCount;
-//     return lean_raylib_Wave_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Wave_frameCount(b_lean_obj_arg wave) {
+    return lean_raylib_Wave_from(wave)->frameCount;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Wave_sampleRate(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Wave_from(obj)->sampleRate;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Wave_sampleRate(b_lean_obj_arg wave) {
+    return lean_raylib_Wave_from(wave)->sampleRate;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Wave_sampleRate_set(uint32_t sampleRate, b_lean_obj_arg obj) {
-//     LET_BOX(Wave, result_, *lean_raylib_Wave_from(obj));
-//     result_->sampleRate = sampleRate;
-//     return lean_raylib_Wave_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Wave_sampleSize(b_lean_obj_arg wave) {
+    return lean_raylib_Wave_from(wave)->sampleSize;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Wave_sampleSize(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Wave_from(obj)->sampleSize;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Wave_channels(b_lean_obj_arg wave) {
+    return lean_raylib_Wave_from(wave)->channels;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Wave_sampleSize_set(uint32_t sampleSize, b_lean_obj_arg obj) {
-//     LET_BOX(Wave, result_, *lean_raylib_Wave_from(obj));
-//     result_->sampleSize = sampleSize;
-//     return lean_raylib_Wave_to(result_);
-// }
 
-// LEAN_EXPORT uint32_t lean_raylib__Wave_channels(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Wave_from(obj)->channels;
-//     return result_;
-// }
+// # Audio stream
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Wave_channels_set(uint32_t channels, b_lean_obj_arg obj) {
-//     LET_BOX(Wave, result_, *lean_raylib_Wave_from(obj));
-//     result_->channels = channels;
-//     return lean_raylib_Wave_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__AudioStream_sampleRate(b_lean_obj_arg audioStream) {
+    return lean_raylib_AudioStream_from(audioStream)->sampleRate;
+}
 
-// LEAN_EXPORT /* void* */lean_obj_arg lean_raylib__Wave_data(b_lean_obj_arg obj) {
-//     void * result_ = lean_raylib_Wave_from(obj)->data;
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__AudioStream_sampleSize(b_lean_obj_arg audioStream) {
+    return lean_raylib_AudioStream_from(audioStream)->sampleSize;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Wave_data_set(/* void* */lean_obj_arg data, b_lean_obj_arg obj) {
-//     LET_BOX(Wave, result_, *lean_raylib_Wave_from(obj));
-//     result_->data = /*todo: ptr?*/data;
-//     return lean_raylib_Wave_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__AudioStream_channels(b_lean_obj_arg audioStream) {
+    return lean_raylib_AudioStream_from(audioStream)->channels;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__AudioStream_mk(/* unknown_t* */lean_obj_arg buffer, /* unknown_t* */lean_obj_arg processor, uint32_t sampleRate, uint32_t sampleSize, uint32_t channels) {
-//     LET_BOX_STRUCT(AudioStream, result_,
-//         .buffer = /*todo: ptr?*/buffer,
-//         .processor = /*todo: ptr?*/processor,
-//         .sampleRate = sampleRate,
-//         .sampleSize = sampleSize,
-//         .channels = channels
-//     );
-//     return lean_raylib_AudioStream_to(result_);
-// }
 
-// LEAN_EXPORT /* unknown_t* */lean_obj_arg lean_raylib__AudioStream_buffer(b_lean_obj_arg obj) {
-//     unknown_t * result_ = lean_raylib_AudioStream_from(obj)->buffer;
-//     return /*todo: ptr?*/result_;
-// }
+// # Sound
 
-// LEAN_EXPORT lean_obj_res lean_raylib__AudioStream_buffer_set(/* unknown_t* */lean_obj_arg buffer, b_lean_obj_arg obj) {
-//     LET_BOX(AudioStream, result_, *lean_raylib_AudioStream_from(obj));
-//     result_->buffer = /*todo: ptr?*/buffer;
-//     return lean_raylib_AudioStream_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Sound_sampleRate(b_lean_obj_arg sound) {
+    return lean_raylib_Sound_from(sound)->stream.sampleRate;
+}
 
-// LEAN_EXPORT /* unknown_t* */lean_obj_arg lean_raylib__AudioStream_processor(b_lean_obj_arg obj) {
-//     unknown_t * result_ = lean_raylib_AudioStream_from(obj)->processor;
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Sound_sampleSize(b_lean_obj_arg sound) {
+    return lean_raylib_Sound_from(sound)->stream.sampleSize;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__AudioStream_processor_set(/* unknown_t* */lean_obj_arg processor, b_lean_obj_arg obj) {
-//     LET_BOX(AudioStream, result_, *lean_raylib_AudioStream_from(obj));
-//     result_->processor = /*todo: ptr?*/processor;
-//     return lean_raylib_AudioStream_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Sound_channels(b_lean_obj_arg sound) {
+    return lean_raylib_Sound_from(sound)->stream.channels;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__AudioStream_sampleRate(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_AudioStream_from(obj)->sampleRate;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Sound_frameCount(b_lean_obj_arg sound) {
+    return lean_raylib_Sound_from(sound)->frameCount;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__AudioStream_sampleRate_set(uint32_t sampleRate, b_lean_obj_arg obj) {
-//     LET_BOX(AudioStream, result_, *lean_raylib_AudioStream_from(obj));
-//     result_->sampleRate = sampleRate;
-//     return lean_raylib_AudioStream_to(result_);
-// }
 
-// LEAN_EXPORT uint32_t lean_raylib__AudioStream_sampleSize(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_AudioStream_from(obj)->sampleSize;
-//     return result_;
-// }
+// # Music
 
-// LEAN_EXPORT lean_obj_res lean_raylib__AudioStream_sampleSize_set(uint32_t sampleSize, b_lean_obj_arg obj) {
-//     LET_BOX(AudioStream, result_, *lean_raylib_AudioStream_from(obj));
-//     result_->sampleSize = sampleSize;
-//     return lean_raylib_AudioStream_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Music_sampleRate(b_lean_obj_arg music) {
+    return lean_raylib_Music_from(music)->stream.sampleRate;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__AudioStream_channels(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_AudioStream_from(obj)->channels;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Music_sampleSize(b_lean_obj_arg music) {
+    return lean_raylib_Music_from(music)->stream.sampleSize;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__AudioStream_channels_set(uint32_t channels, b_lean_obj_arg obj) {
-//     LET_BOX(AudioStream, result_, *lean_raylib_AudioStream_from(obj));
-//     result_->channels = channels;
-//     return lean_raylib_AudioStream_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Music_chanels(b_lean_obj_arg music) {
+    return lean_raylib_Music_from(music)->stream.channels;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Sound_mk(lean_obj_arg stream, uint32_t frameCount) {
-//     LET_BOX_STRUCT(Sound, result_,
-//         .stream = lean_raylib_AudioStream_from(stream),
-//         .frameCount = frameCount
-//     );
-//     return lean_raylib_Sound_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Music_frameCount(b_lean_obj_arg music) {
+    return lean_raylib_Music_from(music)->frameCount;
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__Sound_stream(b_lean_obj_arg obj) {
-//     AudioStream result_ = lean_raylib_Sound_from(obj)->stream;
-//     return lean_raylib_AudioStream_to(result_);
-// }
+LEAN_EXPORT uint8_t lean_raylib__Music_looping(b_lean_obj_arg music) {
+    return lean_raylib_Music_from(music)->looping;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Sound_stream_set(lean_obj_arg stream, b_lean_obj_arg obj) {
-//     LET_BOX(Sound, result_, *lean_raylib_Sound_from(obj));
-//     result_->stream = lean_raylib_AudioStream_from(stream);
-//     return lean_raylib_Sound_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Music_looping_set(uint8_t looping, lean_obj_arg music) {
+    if(LEAN_LIKELY(lean_is_exclusive(music))) {
+        lean_raylib_Music_from(music)->looping = looping;
+        return music;
+    }
+    LET_BOX(Music, music_new, *lean_raylib_Music_from(music));
+    lean_dec_ref(music);
+    music_new->looping = looping;
+    return lean_raylib_Music_to(music_new);
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Sound_frameCount(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Sound_from(obj)->frameCount;
-//     return result_;
-// }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Sound_frameCount_set(uint32_t frameCount, b_lean_obj_arg obj) {
-//     LET_BOX(Sound, result_, *lean_raylib_Sound_from(obj));
-//     result_->frameCount = frameCount;
-//     return lean_raylib_Sound_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Music_mk(lean_obj_arg stream, uint32_t frameCount, uint8_t looping, uint32_t ctxType, /* void* */lean_obj_arg ctxData) {
-//     LET_BOX_STRUCT(Music, result_,
-//         .stream = lean_raylib_AudioStream_from(stream),
-//         .frameCount = frameCount,
-//         .looping = looping,
-//         .ctxType = ctxType,
-//         .ctxData = /*todo: ptr?*/ctxData
-//     );
-//     return lean_raylib_Music_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_arg lean_raylib__Music_stream(b_lean_obj_arg obj) {
-//     AudioStream result_ = lean_raylib_Music_from(obj)->stream;
-//     return lean_raylib_AudioStream_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Music_stream_set(lean_obj_arg stream, b_lean_obj_arg obj) {
-//     LET_BOX(Music, result_, *lean_raylib_Music_from(obj));
-//     result_->stream = lean_raylib_AudioStream_from(stream);
-//     return lean_raylib_Music_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Music_frameCount(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Music_from(obj)->frameCount;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Music_frameCount_set(uint32_t frameCount, b_lean_obj_arg obj) {
-//     LET_BOX(Music, result_, *lean_raylib_Music_from(obj));
-//     result_->frameCount = frameCount;
-//     return lean_raylib_Music_to(result_);
-// }
-
-// LEAN_EXPORT uint8_t lean_raylib__Music_looping(b_lean_obj_arg obj) {
-//     bool result_ = lean_raylib_Music_from(obj)->looping;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Music_looping_set(uint8_t looping, b_lean_obj_arg obj) {
-//     LET_BOX(Music, result_, *lean_raylib_Music_from(obj));
-//     result_->looping = looping;
-//     return lean_raylib_Music_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Music_ctxType(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Music_from(obj)->ctxType;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Music_ctxType_set(uint32_t ctxType, b_lean_obj_arg obj) {
-//     LET_BOX(Music, result_, *lean_raylib_Music_from(obj));
-//     result_->ctxType = ctxType;
-//     return lean_raylib_Music_to(result_);
-// }
-
-// LEAN_EXPORT /* void* */lean_obj_arg lean_raylib__Music_ctxData(b_lean_obj_arg obj) {
-//     void * result_ = lean_raylib_Music_from(obj)->ctxData;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Music_ctxData_set(/* void* */lean_obj_arg ctxData, b_lean_obj_arg obj) {
-//     LET_BOX(Music, result_, *lean_raylib_Music_from(obj));
-//     result_->ctxData = /*todo: ptr?*/ctxData;
-//     return lean_raylib_Music_to(result_);
-// }
+// # Vr device info
 
 // LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_mk(uint32_t hResolution, uint32_t vResolution, double hScreenSize, double vScreenSize, double vScreenCenter, double eyeToScreenDistance, double lensSeparationDistance, double interpupillaryDistance, /*float[4]*/lean_obj_arg lensDistortionValues, /*float[4]*/lean_obj_arg chromaAbCorrection) {
 //     LET_BOX_STRUCT(VrDeviceInfo, result_,

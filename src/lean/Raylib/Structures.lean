@@ -22,7 +22,7 @@ opaque Vector2.x (self : @& Vector2) : Float
 
 /-- Setter: Vector x component -/
 @[extern "lean_raylib__Vector2_x_set"]
-opaque Vector2.set_x (x : Float) (self : @& Vector2) : Vector2
+opaque Vector2.set_x (x : Float) (self : Vector2) : Vector2
 
 /-- Getter: Vector y component -/
 @[extern "lean_raylib__Vector2_y"]
@@ -30,7 +30,7 @@ opaque Vector2.y (self : @& Vector2) : Float
 
 /-- Setter: Vector y component -/
 @[extern "lean_raylib__Vector2_y_set"]
-opaque Vector2.set_y (y : Float) (self : @& Vector2) : Vector2
+opaque Vector2.set_y (y : Float) (self : Vector2) : Vector2
 
 
 /-! ## Vector3 -/
@@ -49,7 +49,7 @@ opaque Vector3.x (self : @& Vector3) : Float
 
 /-- Setter: Vector x component -/
 @[extern "lean_raylib__Vector3_x_set"]
-opaque Vector3.set_x (x : Float) (self : @& Vector3) : Vector3
+opaque Vector3.set_x (x : Float) (self : Vector3) : Vector3
 
 /-- Getter: Vector y component -/
 @[extern "lean_raylib__Vector3_y"]
@@ -57,7 +57,7 @@ opaque Vector3.y (self : @& Vector3) : Float
 
 /-- Setter: Vector y component -/
 @[extern "lean_raylib__Vector3_y_set"]
-opaque Vector3.set_y (y : Float) (self : @& Vector3) : Vector3
+opaque Vector3.set_y (y : Float) (self : Vector3) : Vector3
 
 /-- Getter: Vector z component -/
 @[extern "lean_raylib__Vector3_z"]
@@ -65,7 +65,7 @@ opaque Vector3.z (self : @& Vector3) : Float
 
 /-- Setter: Vector z component -/
 @[extern "lean_raylib__Vector3_z_set"]
-opaque Vector3.set_z (z : Float) (self : @& Vector3) : Vector3
+opaque Vector3.set_z (z : Float) (self : Vector3) : Vector3
 
 
 /-! ## Vector4 -/
@@ -84,7 +84,7 @@ opaque Vector4.x (self : @& Vector4) : Float
 
 /-- Setter: Vector x component -/
 @[extern "lean_raylib__Vector4_x_set"]
-opaque Vector4.set_x (x : Float) (self : @& Vector4) : Vector4
+opaque Vector4.set_x (x : Float) (self : Vector4) : Vector4
 
 /-- Getter: Vector y component -/
 @[extern "lean_raylib__Vector4_y"]
@@ -92,7 +92,7 @@ opaque Vector4.y (self : @& Vector4) : Float
 
 /-- Setter: Vector y component -/
 @[extern "lean_raylib__Vector4_y_set"]
-opaque Vector4.set_y (y : Float) (self : @& Vector4) : Vector4
+opaque Vector4.set_y (y : Float) (self : Vector4) : Vector4
 
 /-- Getter: Vector z component -/
 @[extern "lean_raylib__Vector4_z"]
@@ -100,7 +100,7 @@ opaque Vector4.z (self : @& Vector4) : Float
 
 /-- Setter: Vector z component -/
 @[extern "lean_raylib__Vector4_z_set"]
-opaque Vector4.set_z (z : Float) (self : @& Vector4) : Vector4
+opaque Vector4.set_z (z : Float) (self : Vector4) : Vector4
 
 /-- Getter: Vector w component -/
 @[extern "lean_raylib__Vector4_w"]
@@ -108,7 +108,7 @@ opaque Vector4.w (self : @& Vector4) : Float
 
 /-- Setter: Vector w component -/
 @[extern "lean_raylib__Vector4_w_set"]
-opaque Vector4.set_w (w : Float) (self : @& Vector4) : Vector4
+opaque Vector4.set_w (w : Float) (self : Vector4) : Vector4
 
 
 
@@ -839,6 +839,10 @@ opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/
+
+
+/-! # Shader -/
+
 -- opaque ShaderPointed : NonemptyType
 -- /-- Shader -/
 -- def Shader : Type := ShaderPointed.type
@@ -868,6 +872,10 @@ opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/
+
+
+/-! # Material map -/
+
 -- opaque MaterialMapPointed : NonemptyType
 -- /-- MaterialMap -/
 -- def MaterialMap : Type := MaterialMapPointed.type
@@ -904,6 +912,10 @@ opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
 -- /-- Setter: Material map value -/
 -- @[extern "lean_raylib__MaterialMap_value_set"]
 -- opaque MaterialMap.set_value (value : Float) (self : MaterialMap) : MaterialMap
+
+
+/-! # Material -/
+
 -- opaque MaterialPointed : NonemptyType
 -- /-- Material, includes shader and maps -/
 -- def Material : Type := MaterialPointed.type
@@ -946,6 +958,10 @@ opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/
+
+
+/-! # Transform -/
+
 -- opaque TransformPointed : NonemptyType
 -- /-- Transform, vertex transformation data -/
 -- def Transform : Type := TransformPointed.type
@@ -982,6 +998,10 @@ opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
 -- /-- Setter: Scale -/
 -- @[extern "lean_raylib__Transform_scale_set"]
 -- opaque Transform.set_scale (scale : Vector3) (self : Transform) : Transform
+
+
+/-! # Bone info -/
+
 -- opaque BoneInfoPointed : NonemptyType
 -- /-- Bone, skeletal animation bone -/
 -- def BoneInfo : Type := BoneInfoPointed.type
@@ -1011,6 +1031,10 @@ opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
 -- /-- Setter: Bone parent -/
 -- @[extern "lean_raylib__BoneInfo_parent_set"]
 -- opaque BoneInfo.set_parent (parent : Int32) (self : BoneInfo) : BoneInfo
+
+
+/-! # Model -/
+
 -- opaque ModelPointed : NonemptyType
 -- /-- Model, meshes, materials and animation data -/
 -- def Model : Type := ModelPointed.type
@@ -1113,6 +1137,10 @@ opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/
+
+
+/-! # Model animation -/
+
 -- opaque ModelAnimationPointed : NonemptyType
 -- /-- ModelAnimation -/
 -- def ModelAnimation : Type := ModelAnimationPointed.type
@@ -1220,6 +1248,10 @@ opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
 -- /-- Setter: Surface normal of hit -/
 -- @[extern "lean_raylib__RayCollision_normal_set"]
 -- opaque RayCollision.set_normal (normal : Vector3) (self : RayCollision) : RayCollision
+
+
+/-! # Bounding box -/
+
 -- opaque BoundingBoxPointed : NonemptyType
 -- /-- BoundingBox -/
 -- def BoundingBox : Type := BoundingBoxPointed.type
@@ -1238,180 +1270,96 @@ opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
 -- /-- Setter: Maximum vertex box-corner -/
 -- @[extern "lean_raylib__BoundingBox_max_set"]
 -- opaque BoundingBox.set_max (max : Vector3) (self : BoundingBox) : BoundingBox
--- opaque WavePointed : NonemptyType
--- /-- Wave, audio wave data -/
--- def Wave : Type := WavePointed.type
--- instance : Nonempty Wave := WavePointed.property
--- @[extern "lean_raylib__Wave_mk"]
--- opaque Wave.mk : Wave
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | frameCount: unsigned int -- Total number of frames (considering channels)
---   | sampleRate: unsigned int -- Frequency (samples per second)
---   | sampleSize: unsigned int -- Bit depth (bits per sample): 8, 16, 32 (24 not supported)
---   | channels: unsigned int -- Number of channels (1-mono, 2-stereo, ...)
---   | data: void * -- Buffer data pointer
--- -/
--- /-- Getter: Total number of frames (considering channels) -/
--- @[extern "lean_raylib__Wave_frameCount"]
--- opaque Wave.frameCount (self : @& Wave) : UInt32
--- /-- Setter: Total number of frames (considering channels) -/
--- @[extern "lean_raylib__Wave_frameCount_set"]
--- opaque Wave.set_frameCount (frameCount : UInt32) (self : Wave) : Wave
--- /-- Getter: Frequency (samples per second) -/
--- @[extern "lean_raylib__Wave_sampleRate"]
--- opaque Wave.sampleRate (self : @& Wave) : UInt32
--- /-- Setter: Frequency (samples per second) -/
--- @[extern "lean_raylib__Wave_sampleRate_set"]
--- opaque Wave.set_sampleRate (sampleRate : UInt32) (self : Wave) : Wave
--- /-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
--- @[extern "lean_raylib__Wave_sampleSize"]
--- opaque Wave.sampleSize (self : @& Wave) : UInt32
--- /-- Setter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
--- @[extern "lean_raylib__Wave_sampleSize_set"]
--- opaque Wave.set_sampleSize (sampleSize : UInt32) (self : Wave) : Wave
--- /-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
--- @[extern "lean_raylib__Wave_channels"]
--- opaque Wave.channels (self : @& Wave) : UInt32
--- /-- Setter: Number of channels (1-mono, 2-stereo, ...) -/
--- @[extern "lean_raylib__Wave_channels_set"]
--- opaque Wave.set_channels (channels : UInt32) (self : Wave) : Wave
--- /-- Getter: Buffer data pointer -/
--- @[extern "lean_raylib__Wave_data"]
--- opaque Wave.data (self : @& Wave) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Buffer data pointer -/
--- @[extern "lean_raylib__Wave_data_set"]
--- opaque Wave.set_data (data : Unit) (self : Wave) : Wave
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- opaque AudioStreamPointed : NonemptyType
--- /-- AudioStream, custom audio stream -/
--- def AudioStream : Type := AudioStreamPointed.type
--- instance : Nonempty AudioStream := AudioStreamPointed.property
--- @[extern "lean_raylib__AudioStream_mk"]
--- opaque AudioStream.mk : AudioStream
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | buffer: unknown_t * -- Pointer to internal data used by the audio system
---   | processor: unknown_t * -- Pointer to internal data processor, useful for audio effects
---   | sampleRate: unsigned int -- Frequency (samples per second)
---   | sampleSize: unsigned int -- Bit depth (bits per sample): 8, 16, 32 (24 not supported)
---   | channels: unsigned int -- Number of channels (1-mono, 2-stereo, ...)
--- -/
--- /-- Getter: Pointer to internal data used by the audio system -/
--- @[extern "lean_raylib__AudioStream_buffer"]
--- opaque AudioStream.buffer (self : @& AudioStream) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Pointer to internal data used by the audio system -/
--- @[extern "lean_raylib__AudioStream_buffer_set"]
--- opaque AudioStream.set_buffer (buffer : Unit) (self : AudioStream) : AudioStream
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Pointer to internal data processor, useful for audio effects -/
--- @[extern "lean_raylib__AudioStream_processor"]
--- opaque AudioStream.processor (self : @& AudioStream) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Pointer to internal data processor, useful for audio effects -/
--- @[extern "lean_raylib__AudioStream_processor_set"]
--- opaque AudioStream.set_processor (processor : Unit) (self : AudioStream) : AudioStream
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Frequency (samples per second) -/
--- @[extern "lean_raylib__AudioStream_sampleRate"]
--- opaque AudioStream.sampleRate (self : @& AudioStream) : UInt32
--- /-- Setter: Frequency (samples per second) -/
--- @[extern "lean_raylib__AudioStream_sampleRate_set"]
--- opaque AudioStream.set_sampleRate (sampleRate : UInt32) (self : AudioStream) : AudioStream
--- /-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
--- @[extern "lean_raylib__AudioStream_sampleSize"]
--- opaque AudioStream.sampleSize (self : @& AudioStream) : UInt32
--- /-- Setter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
--- @[extern "lean_raylib__AudioStream_sampleSize_set"]
--- opaque AudioStream.set_sampleSize (sampleSize : UInt32) (self : AudioStream) : AudioStream
--- /-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
--- @[extern "lean_raylib__AudioStream_channels"]
--- opaque AudioStream.channels (self : @& AudioStream) : UInt32
--- /-- Setter: Number of channels (1-mono, 2-stereo, ...) -/
--- @[extern "lean_raylib__AudioStream_channels_set"]
--- opaque AudioStream.set_channels (channels : UInt32) (self : AudioStream) : AudioStream
--- opaque SoundPointed : NonemptyType
--- /-- Sound -/
--- def Sound : Type := SoundPointed.type
--- instance : Nonempty Sound := SoundPointed.property
--- @[extern "lean_raylib__Sound_mk"]
--- opaque Sound.mk (stream : AudioStream) (frameCount : UInt32) : Sound
--- /-- Getter: Audio stream -/
--- @[extern "lean_raylib__Sound_stream"]
--- opaque Sound.stream (self : @& Sound) : AudioStream
--- /-- Setter: Audio stream -/
--- @[extern "lean_raylib__Sound_stream_set"]
--- opaque Sound.set_stream (stream : AudioStream) (self : Sound) : Sound
--- /-- Getter: Total number of frames (considering channels) -/
--- @[extern "lean_raylib__Sound_frameCount"]
--- opaque Sound.frameCount (self : @& Sound) : UInt32
--- /-- Setter: Total number of frames (considering channels) -/
--- @[extern "lean_raylib__Sound_frameCount_set"]
--- opaque Sound.set_frameCount (frameCount : UInt32) (self : Sound) : Sound
--- opaque MusicPointed : NonemptyType
--- /-- Music, audio stream, anything longer than ~10 seconds should be streamed -/
--- def Music : Type := MusicPointed.type
--- instance : Nonempty Music := MusicPointed.property
--- @[extern "lean_raylib__Music_mk"]
--- opaque Music.mk : Music
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | stream: AudioStream -- Audio stream
---   | frameCount: unsigned int -- Total number of frames (considering channels)
---   | looping: bool -- Music looping enable
---   | ctxType: int -- Type of music context (audio filetype)
---   | ctxData: void * -- Audio context data, depends on type
--- -/
--- /-- Getter: Audio stream -/
--- @[extern "lean_raylib__Music_stream"]
--- opaque Music.stream (self : @& Music) : AudioStream
--- /-- Setter: Audio stream -/
--- @[extern "lean_raylib__Music_stream_set"]
--- opaque Music.set_stream (stream : AudioStream) (self : Music) : Music
--- /-- Getter: Total number of frames (considering channels) -/
--- @[extern "lean_raylib__Music_frameCount"]
--- opaque Music.frameCount (self : @& Music) : UInt32
--- /-- Setter: Total number of frames (considering channels) -/
--- @[extern "lean_raylib__Music_frameCount_set"]
--- opaque Music.set_frameCount (frameCount : UInt32) (self : Music) : Music
--- /-- Getter: Music looping enable -/
--- @[extern "lean_raylib__Music_looping"]
--- opaque Music.looping (self : @& Music) : Bool
--- /-- Setter: Music looping enable -/
--- @[extern "lean_raylib__Music_looping_set"]
--- opaque Music.set_looping (looping : Bool) (self : Music) : Music
--- /-- Getter: Type of music context (audio filetype) -/
--- @[extern "lean_raylib__Music_ctxType"]
--- opaque Music.ctxType (self : @& Music) : Int32
--- /-- Setter: Type of music context (audio filetype) -/
--- @[extern "lean_raylib__Music_ctxType_set"]
--- opaque Music.set_ctxType (ctxType : Int32) (self : Music) : Music
--- /-- Getter: Audio context data, depends on type -/
--- @[extern "lean_raylib__Music_ctxData"]
--- opaque Music.ctxData (self : @& Music) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Audio context data, depends on type -/
--- @[extern "lean_raylib__Music_ctxData_set"]
--- opaque Music.set_ctxData (ctxData : Unit) (self : Music) : Music
--- /-
--- todo: ^^ struct setter ^^
--- -/
+
+
+/-! # Wave -/
+
+opaque WavePointed : NonemptyType
+/-- Wave, audio wave data -/
+def Wave : Type := WavePointed.type
+instance : Nonempty Wave := WavePointed.property
+
+/-- Getter: Total number of frames (considering channels) -/
+@[extern "lean_raylib__Wave_frameCount"]
+opaque Wave.frameCount (wave : @& Wave) : UInt32
+/-- Getter: Frequency (samples per second) -/
+@[extern "lean_raylib__Wave_sampleRate"]
+opaque Wave.sampleRate (wave : @& Wave) : UInt32
+/-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
+@[extern "lean_raylib__Wave_sampleSize"]
+opaque Wave.sampleSize (wave : @& Wave) : UInt32
+/-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
+@[extern "lean_raylib__Wave_channels"]
+opaque Wave.channels (wave : @& Wave) : UInt32
+
+
+/-! # Audio stream -/
+
+opaque AudioStreamPointed : NonemptyType
+/-- AudioStream, custom audio stream -/
+def AudioStream : Type := AudioStreamPointed.type
+instance : Nonempty AudioStream := AudioStreamPointed.property
+
+/-- Getter: Frequency (samples per second) -/
+@[extern "lean_raylib__AudioStream_sampleRate"]
+opaque AudioStream.sampleRate (self : @& AudioStream) : UInt32
+/-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
+@[extern "lean_raylib__AudioStream_sampleSize"]
+opaque AudioStream.sampleSize (self : @& AudioStream) : UInt32
+/-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
+@[extern "lean_raylib__AudioStream_channels"]
+opaque AudioStream.channels (self : @& AudioStream) : UInt32
+
+
+/-! # Sound -/
+
+opaque SoundPointed : NonemptyType
+/-- Sound -/
+def Sound : Type := SoundPointed.type
+instance : Nonempty Sound := SoundPointed.property
+
+/-- Getter: Frequency (samples per second) -/
+@[extern "lean_raylib__Sound_sampleRate"]
+opaque Sound.sampleRate (sound : @& Sound) : UInt32
+/-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
+@[extern "lean_raylib__Sound_sampleSize"]
+opaque Sound.sampleSize (sound : @& Sound) : UInt32
+/-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
+@[extern "lean_raylib__Sound_channels"]
+opaque Sound.channels (sound : @& Sound) : UInt32
+/-- Getter: Total number of frames (considering channels) -/
+@[extern "lean_raylib__Sound_frameCount"]
+opaque Sound.frameCount (sound : @& Sound) : UInt32
+
+/-! # Music -/
+
+opaque MusicPointed : NonemptyType
+/-- Music, audio stream, anything longer than ~10 seconds should be streamed -/
+def Music : Type := MusicPointed.type
+instance : Nonempty Music := MusicPointed.property
+
+/-- Getter: Frequency (samples per second) -/
+@[extern "lean_raylib__Sound_sampleRate"]
+opaque Music.sampleRate (music : @& Music) : UInt32
+/-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
+@[extern "lean_raylib__Sound_sampleSize"]
+opaque Music.sampleSize (music : @& Music) : UInt32
+/-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
+@[extern "lean_raylib__Sound_channels"]
+opaque Music.channels (music : @& Music) : UInt32
+/-- Getter: Total number of frames (considering channels) -/
+@[extern "lean_raylib__Music_frameCount"]
+opaque Music.frameCount (music : @& Music) : UInt32
+/-- Getter: Music looping enable -/
+@[extern "lean_raylib__Music_looping"]
+opaque Music.looping (music : @& Music) : Bool
+/-- Setter: Music looping enable -/
+@[extern "lean_raylib__Music_looping_set"]
+opaque Music.set_looping (looping : Bool) (music : Music) : Music
+
+
+/-! # Vr device info -/
+
 -- opaque VrDeviceInfoPointed : NonemptyType
 -- /-- VrDeviceInfo, Head-Mounted-Display device parameters -/
 -- def VrDeviceInfo : Type := VrDeviceInfoPointed.type
@@ -1503,6 +1451,10 @@ opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/
+
+
+/-! # Vr stereo config -/
+
 -- opaque VrStereoConfigPointed : NonemptyType
 -- /-- VrStereoConfig, VR stereo rendering configuration for simulator -/
 -- def VrStereoConfig : Type := VrStereoConfigPointed.type
@@ -1613,42 +1565,6 @@ opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
 -- /-- Setter: VR distortion scale in -/
 -- @[extern "lean_raylib__VrStereoConfig_scaleIn_set"]
 -- opaque VrStereoConfig.set_scaleIn (scaleIn : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- opaque FilePathListPointed : NonemptyType
--- /-- File path list -/
--- def FilePathList : Type := FilePathListPointed.type
--- instance : Nonempty FilePathList := FilePathListPointed.property
--- @[extern "lean_raylib__FilePathList_mk"]
--- opaque FilePathList.mk : FilePathList
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | capacity: unsigned int -- Filepaths max entries
---   | count: unsigned int -- Filepaths entries count
---   | paths: char * * -- Filepaths entries
--- -/
--- /-- Getter: Filepaths max entries -/
--- @[extern "lean_raylib__FilePathList_capacity"]
--- opaque FilePathList.capacity (self : @& FilePathList) : UInt32
--- /-- Setter: Filepaths max entries -/
--- @[extern "lean_raylib__FilePathList_capacity_set"]
--- opaque FilePathList.set_capacity (capacity : UInt32) (self : FilePathList) : FilePathList
--- /-- Getter: Filepaths entries count -/
--- @[extern "lean_raylib__FilePathList_count"]
--- opaque FilePathList.count (self : @& FilePathList) : UInt32
--- /-- Setter: Filepaths entries count -/
--- @[extern "lean_raylib__FilePathList_count_set"]
--- opaque FilePathList.set_count (count : UInt32) (self : FilePathList) : FilePathList
--- /-- Getter: Filepaths entries -/
--- @[extern "lean_raylib__FilePathList_paths"]
--- opaque FilePathList.paths (self : @& FilePathList) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Filepaths entries -/
--- @[extern "lean_raylib__FilePathList_paths_set"]
--- opaque FilePathList.set_paths (paths : Unit) (self : FilePathList) : FilePathList
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/

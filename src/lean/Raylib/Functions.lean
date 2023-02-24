@@ -482,9 +482,9 @@ opaque ChangeDirectory (dir : @& String) : BaseIO Bool
 /-- Check if a given path is a file or a directory -/
 @[extern "lean_raylib__IsPathFile"]
 opaque IsPathFile (path : @& String) : BaseIO Bool
--- /-- Load directory filepaths -/
--- @[extern "lean_raylib__LoadDirectoryFiles"]
--- opaque LoadDirectoryFiles (dirPath : String) : FilePathList
+/-- Load directory filepaths -/
+@[extern "lean_raylib__LoadDirectoryFiles"]
+opaque LoadDirectoryFiles (dirPath : @& String) : BaseIO $ Array String
 -- /-- Load directory filepaths with extension filtering and recursive directory scan -/
 -- @[extern "lean_raylib__LoadDirectoryFilesEx"]
 -- opaque LoadDirectoryFilesEx (basePath : String) (filter : String) (scanSubdirs : Bool) : FilePathList
@@ -864,12 +864,12 @@ DEPRECATED: The image will be freed only when its RC becomes zero.
 -/
 @[extern "lean_raylib__UnloadImage", deprecated]
 opaque UnloadImage (image : @& Image) : Unit
--- /-- Export image data to file, returns true on success -/
--- @[extern "lean_raylib__ExportImage"]
--- opaque ExportImage (image : Image) (fileName : String) : Bool
--- /-- Export image as code file defining an array of bytes, returns true on success -/
--- @[extern "lean_raylib__ExportImageAsCode"]
--- opaque ExportImageAsCode (image : Image) (fileName : String) : Bool
+/-- Export image data to file, returns true on success -/
+@[extern "lean_raylib__ExportImage"]
+opaque ExportImage (image : @& Image) (fileName : @& String) : BaseIO Bool
+/-- Export image as code file defining an array of bytes, returns true on success -/
+@[extern "lean_raylib__ExportImageAsCode"]
+opaque ExportImageAsCode (image : @& Image) (fileName : @& String) : BaseIO Bool
 /-- Generate image: plain color -/
 @[extern "lean_raylib__GenImageColor"]
 opaque GenImageColor (width height : UInt32) (color : Color) : Image
@@ -2048,18 +2048,18 @@ opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32)
 -- /-- Get collision info between ray and quad -/
 -- @[extern "lean_raylib__GetRayCollisionQuad"]
 -- opaque GetRayCollisionQuad (ray : Ray) (p1 : Vector3) (p2 : Vector3) (p3 : Vector3) (p4 : Vector3) : RayCollision
--- /-- Initialize audio device and context -/
--- @[extern "lean_raylib__InitAudioDevice"]
--- opaque InitAudioDevice (_ : Unit) : Unit
--- /-- Close the audio device and context -/
--- @[extern "lean_raylib__CloseAudioDevice"]
--- opaque CloseAudioDevice (_ : Unit) : Unit
--- /-- Check if audio device has been initialized successfully -/
--- @[extern "lean_raylib__IsAudioDeviceReady"]
--- opaque IsAudioDeviceReady (_ : Unit) : Bool
--- /-- Set master volume (listener) -/
--- @[extern "lean_raylib__SetMasterVolume"]
--- opaque SetMasterVolume (volume : Float) : Unit
+/-- Initialize audio device and context -/
+@[extern "lean_raylib__InitAudioDevice"]
+opaque InitAudioDevice : BaseIO Unit
+/-- Close the audio device and context -/
+@[extern "lean_raylib__CloseAudioDevice"]
+opaque CloseAudioDevice : BaseIO Unit
+/-- Check if audio device has been initialized successfully -/
+@[extern "lean_raylib__IsAudioDeviceReady"]
+opaque IsAudioDeviceReady : BaseIO Bool
+/-- Set master volume (listener) -/
+@[extern "lean_raylib__SetMasterVolume"]
+opaque SetMasterVolume (volume : Float) : BaseIO Unit
 -- /-- Load wave data from file -/
 -- @[extern "lean_raylib__LoadWave"]
 -- opaque LoadWave (fileName : String) : Wave
@@ -2180,61 +2180,58 @@ opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32)
 --   params:
 --   | samples : float *
 -- -/
--- /-- Load music stream from file -/
--- @[extern "lean_raylib__LoadMusicStream"]
--- opaque LoadMusicStream (fileName : String) : Music
--- /-- Load music stream from data -/
--- @[extern "lean_raylib__LoadMusicStreamFromMemory"]
--- opaque LoadMusicStreamFromMemory : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Music
---   params:
---   | fileType : const char *
---   | data : const unsigned char *
---   | dataSize : int
--- -/
--- /-- Checks if a music stream is ready -/
--- @[extern "lean_raylib__IsMusicReady"]
--- opaque IsMusicReady (music : Music) : Bool
--- /-- Unload music stream -/
--- @[extern "lean_raylib__UnloadMusicStream"]
--- opaque UnloadMusicStream (music : Music) : Unit
--- /-- Start music playing -/
--- @[extern "lean_raylib__PlayMusicStream"]
--- opaque PlayMusicStream (music : Music) : Unit
--- /-- Check if music is playing -/
--- @[extern "lean_raylib__IsMusicStreamPlaying"]
--- opaque IsMusicStreamPlaying (music : Music) : Bool
--- /-- Updates buffers for music streaming -/
--- @[extern "lean_raylib__UpdateMusicStream"]
--- opaque UpdateMusicStream (music : Music) : Unit
--- /-- Stop music playing -/
--- @[extern "lean_raylib__StopMusicStream"]
--- opaque StopMusicStream (music : Music) : Unit
--- /-- Pause music playing -/
--- @[extern "lean_raylib__PauseMusicStream"]
--- opaque PauseMusicStream (music : Music) : Unit
--- /-- Resume playing paused music -/
--- @[extern "lean_raylib__ResumeMusicStream"]
--- opaque ResumeMusicStream (music : Music) : Unit
--- /-- Seek music to a position (in seconds) -/
--- @[extern "lean_raylib__SeekMusicStream"]
--- opaque SeekMusicStream (music : Music) (position : Float) : Unit
--- /-- Set volume for music (1.0 is max level) -/
--- @[extern "lean_raylib__SetMusicVolume"]
--- opaque SetMusicVolume (music : Music) (volume : Float) : Unit
--- /-- Set pitch for a music (1.0 is base level) -/
--- @[extern "lean_raylib__SetMusicPitch"]
--- opaque SetMusicPitch (music : Music) (pitch : Float) : Unit
--- /-- Set pan for a music (0.5 is center) -/
--- @[extern "lean_raylib__SetMusicPan"]
--- opaque SetMusicPan (music : Music) (pan : Float) : Unit
--- /-- Get music time length (in seconds) -/
--- @[extern "lean_raylib__GetMusicTimeLength"]
--- opaque GetMusicTimeLength (music : Music) : Float
--- /-- Get current music time played (in seconds) -/
--- @[extern "lean_raylib__GetMusicTimePlayed"]
--- opaque GetMusicTimePlayed (music : Music) : Float
+/-- Load music stream from file -/
+@[extern "lean_raylib__LoadMusicStream"]
+opaque LoadMusicStream (fileName : @& String) : BaseIO Music
+/-- Load music stream from data -/
+-- IO: calls TraceLog
+@[extern "lean_raylib__LoadMusicStreamFromMemory"]
+opaque LoadMusicStreamFromMemory (fileType : @& String) (data : @& ByteArray) : BaseIO Music
+/-- Checks if a music stream is ready -/
+@[extern "lean_raylib__IsMusicReady"]
+opaque IsMusicReady (music : @& Music) : Bool
+/--
+Unload music stream.
+DEPRECATED: Music will be unloaded only when its RC becomes zero.
+-/
+@[extern "lean_raylib__UnloadMusicStream", deprecated]
+opaque UnloadMusicStream (music : @& Music) : Unit
+/-- Start music playing -/
+@[extern "lean_raylib__PlayMusicStream"]
+opaque PlayMusicStream (music : @& Music) : BaseIO Unit
+/-- Check if music is playing -/
+@[extern "lean_raylib__IsMusicStreamPlaying"]
+opaque IsMusicStreamPlaying (music : @& Music) : BaseIO Bool
+/-- Updates buffers for music streaming -/
+@[extern "lean_raylib__UpdateMusicStream"]
+opaque UpdateMusicStream (music : @& Music) : BaseIO Unit
+/-- Stop music playing -/
+@[extern "lean_raylib__StopMusicStream"]
+opaque StopMusicStream (music : @& Music) : BaseIO Unit
+/-- Pause music playing -/
+@[extern "lean_raylib__PauseMusicStream"]
+opaque PauseMusicStream (music : @& Music) : BaseIO Unit
+/-- Resume playing paused music -/
+@[extern "lean_raylib__ResumeMusicStream"]
+opaque ResumeMusicStream (music : @& Music) : BaseIO Unit
+/-- Seek music to a position (in seconds) -/
+@[extern "lean_raylib__SeekMusicStream"]
+opaque SeekMusicStream (music : @& Music) (position : Float) : BaseIO Unit
+/-- Set volume for music (1.0 is max level) -/
+@[extern "lean_raylib__SetMusicVolume"]
+opaque SetMusicVolume (music : @& Music) (volume : Float) : BaseIO Unit
+/-- Set pitch for a music (1.0 is base level) -/
+@[extern "lean_raylib__SetMusicPitch"]
+opaque SetMusicPitch (music : @& Music) (pitch : Float) : BaseIO Unit
+/-- Set pan for a music (0.5 is center) -/
+@[extern "lean_raylib__SetMusicPan"]
+opaque SetMusicPan (music : @& Music) (pan : Float) : BaseIO Unit
+/-- Get music time length (in seconds) -/
+@[extern "lean_raylib__GetMusicTimeLength"]
+opaque GetMusicTimeLength (music : @& Music) : Float
+/-- Get current music time played (in seconds) -/
+@[extern "lean_raylib__GetMusicTimePlayed"]
+opaque GetMusicTimePlayed (music : @& Music) : BaseIO Float
 -- /-- Load audio stream (to stream raw audio pcm data) -/
 -- @[extern "lean_raylib__LoadAudioStream"]
 -- opaque LoadAudioStream (sampleRate : UInt32) (sampleSize : UInt32) (channels : UInt32) : AudioStream

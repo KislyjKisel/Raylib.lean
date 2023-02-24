@@ -13,8 +13,8 @@ static inline lean_object* lean_raylib_Vector2_to (Vector2 const* obj) {
     return lean_alloc_external(class_, (void*)obj);
 }
 
-static inline Vector2 const* lean_raylib_Vector2_from (b_lean_obj_arg obj) {
-    return (Vector2 const*) lean_get_external_data(obj);
+static inline Vector2* lean_raylib_Vector2_from (b_lean_obj_arg obj) {
+    return (Vector2*) lean_get_external_data(obj);
 }
 
 static inline lean_object* lean_raylib_Vector3_to (Vector3 const* obj) {
@@ -25,8 +25,8 @@ static inline lean_object* lean_raylib_Vector3_to (Vector3 const* obj) {
     return lean_alloc_external(class_, (void*)obj);
 }
 
-static inline Vector3 const* lean_raylib_Vector3_from (b_lean_obj_arg obj) {
-    return (Vector3 const*) lean_get_external_data(obj);
+static inline Vector3* lean_raylib_Vector3_from (b_lean_obj_arg obj) {
+    return (Vector3*) lean_get_external_data(obj);
 }
 
 static inline lean_object* lean_raylib_Vector4_to (Vector4 const* obj) {
@@ -37,8 +37,8 @@ static inline lean_object* lean_raylib_Vector4_to (Vector4 const* obj) {
     return lean_alloc_external(class_, (void*)obj);
 }
 
-static inline Vector4 const* lean_raylib_Vector4_from (b_lean_obj_arg obj) {
-    return (Vector4 const*) lean_get_external_data(obj);
+static inline Vector4* lean_raylib_Vector4_from (b_lean_obj_arg obj) {
+    return (Vector4*) lean_get_external_data(obj);
 }
 
 
@@ -100,6 +100,7 @@ static inline Image const* lean_raylib_Image_from (b_lean_obj_arg obj) {
 
 static void lean_raylib_Image_finalize(void* image) {
     UnloadImage(*(Image*)image);
+    free(image);
 }
 
 static inline lean_object* lean_raylib_Image_to (Image const* obj) {
@@ -354,53 +355,88 @@ static inline Ray* lean_raylib_Ray_from (b_lean_obj_arg obj) {
 //     return (BoundingBox const*) lean_get_external_data(obj);
 // }
 
-// static inline lean_object* lean_raylib_Wave_to (Wave const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
 
-// static inline Wave const* lean_raylib_Wave_from (b_lean_obj_arg obj) {
-//     return (Wave const*) lean_get_external_data(obj);
-// }
+// # Wave
 
-// static inline lean_object* lean_raylib_AudioStream_to (AudioStream const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static void lean_raylib_Wave_finalize(void* wave) {
+    UnloadWave(*(Wave*)wave);
+    free(wave);
+}
 
-// static inline AudioStream const* lean_raylib_AudioStream_from (b_lean_obj_arg obj) {
-//     return (AudioStream const*) lean_get_external_data(obj);
-// }
+static inline lean_object* lean_raylib_Wave_to (Wave const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Wave_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
 
-// static inline lean_object* lean_raylib_Sound_to (Sound const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static inline Wave const* lean_raylib_Wave_from (b_lean_obj_arg obj) {
+    return (Wave const*) lean_get_external_data(obj);
+}
 
-// static inline Sound const* lean_raylib_Sound_from (b_lean_obj_arg obj) {
-//     return (Sound const*) lean_get_external_data(obj);
-// }
 
-// static inline lean_object* lean_raylib_Music_to (Music const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+// # Audio stream
 
-// static inline Music const* lean_raylib_Music_from (b_lean_obj_arg obj) {
-//     return (Music const*) lean_get_external_data(obj);
-// }
+static void lean_raylib_AudioStream_finalize(void* audioStream) {
+    UnloadAudioStream(*(AudioStream*)audioStream);
+    free(audioStream);
+}
+
+static inline lean_object* lean_raylib_AudioStream_to (AudioStream const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_AudioStream_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline AudioStream const* lean_raylib_AudioStream_from (b_lean_obj_arg obj) {
+    return (AudioStream const*) lean_get_external_data(obj);
+}
+
+
+// # Sound
+
+static void lean_raylib_Sound_finalize(void* sound) {
+    UnloadSound(*(Sound*)sound);
+    free(sound);
+}
+
+static inline lean_object* lean_raylib_Sound_to (Sound const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Sound_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline Sound const* lean_raylib_Sound_from (b_lean_obj_arg obj) {
+    return (Sound const*) lean_get_external_data(obj);
+}
+
+
+// # Music
+
+static void lean_raylib_Music_finalize(void* music) {
+    UnloadMusicStream(*(Music*)music);
+    free(music);
+}
+
+static inline lean_object* lean_raylib_Music_to (Music const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Music_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline Music * lean_raylib_Music_from (b_lean_obj_arg obj) {
+    return (Music*) lean_get_external_data(obj);
+}
+
+
+// # Vr device info
 
 // static inline lean_object* lean_raylib_VrDeviceInfo_to (VrDeviceInfo const* obj) {
 //     static lean_external_class* class_ = NULL;
@@ -414,6 +450,9 @@ static inline Ray* lean_raylib_Ray_from (b_lean_obj_arg obj) {
 //     return (VrDeviceInfo const*) lean_get_external_data(obj);
 // }
 
+
+// # Vr stereo config
+
 // static inline lean_object* lean_raylib_VrStereoConfig_to (VrStereoConfig const* obj) {
 //     static lean_external_class* class_ = NULL;
 //     if (class_ == NULL) {
@@ -426,20 +465,22 @@ static inline Ray* lean_raylib_Ray_from (b_lean_obj_arg obj) {
 //     return (VrStereoConfig const*) lean_get_external_data(obj);
 // }
 
+
+// // # File path list
+
+// static void lean_raylib_FilePathList_finalize(void* filePathList) {
+//     UnloadDirectoryFiles(*(FilePathList*)filePathList);
+//     free(filePathList);
+// }
+
 // static inline lean_object* lean_raylib_FilePathList_to (FilePathList const* obj) {
 //     static lean_external_class* class_ = NULL;
 //     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+//         class_ = lean_register_external_class(lean_raylib_FilePathList_finalize, lean_raylib_default_foreach);
 //     }
 //     return lean_alloc_external(class_, (void*)obj);
 // }
 
 // static inline FilePathList const* lean_raylib_FilePathList_from (b_lean_obj_arg obj) {
 //     return (FilePathList const*) lean_get_external_data(obj);
-// }
-
-// LEAN_EXPORT lean_object* lean_raylib__FilePathList_paths_set(/* char ** */lean_obj_arg paths, b_lean_obj_arg obj) {
-//     LET_BOX(FilePathList, result_, *lean_raylib_FilePathList_from(obj));
-//     result_->paths = /*todo: ptr?*/paths;
-//     return lean_raylib_FilePathList_to(result_);
 // }
