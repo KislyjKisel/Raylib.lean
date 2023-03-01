@@ -223,185 +223,45 @@ LEAN_EXPORT lean_obj_res lean_raylib__Matrix_mk(
     double m3, double m7, double m11, double m15
 ) {
     LET_BOX_STRUCT(Matrix, result_,
-        .m0 = (float)m0,
-        .m4 = (float)m4,
-        .m8 = (float)m8,
-        .m12 = (float)m12,
-        .m1 = (float)m1,
-        .m5 = (float)m5,
-        .m9 = (float)m9,
-        .m13 = (float)m13,
-        .m2 = (float)m2,
-        .m6 = (float)m6,
-        .m10 = (float)m10,
-        .m14 = (float)m14,
-        .m3 = (float)m3,
-        .m7 = (float)m7,
-        .m11 = (float)m11,
-        .m15 = (float)m15
+        .m0 = (float)m0, .m4 = (float)m4, .m8 = (float)m8, .m12 = (float)m12,
+        .m1 = (float)m1, .m5 = (float)m5, .m9 = (float)m9, .m13 = (float)m13,
+        .m2 = (float)m2, .m6 = (float)m6, .m10 = (float)m10, .m14 = (float)m14,
+        .m3 = (float)m3, .m7 = (float)m7, .m11 = (float)m11, .m15 = (float)m15
     );
     return lean_raylib_Matrix_to(result_);
 }
 
-LEAN_EXPORT double lean_raylib__Matrix_m0(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m0;
-}
+#define MATRIX_ACCESSORS(N)\
+    LEAN_EXPORT double lean_raylib__Matrix_m##N(b_lean_obj_arg mat) {\
+        return (double)lean_raylib_Matrix_from(mat)->m##N;\
+    }\
+    LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m##N##_set(double m##N, lean_obj_arg mat_box) {\
+        if(LEAN_LIKELY(lean_is_exclusive(mat_box))) {\
+            lean_raylib_Matrix_from(mat_box)->m##N = m##N;\
+            return mat_box;\
+        }\
+        lean_dec_ref(mat_box);\
+        LET_BOX(Matrix, mat_new_box, *lean_raylib_Matrix_from(mat_box));\
+        mat_new_box->m##N = m##N;\
+        return lean_raylib_Matrix_to(mat_new_box);\
+    }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m0_set(double m0, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m0 = (float)m0;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m4(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m4;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m4_set(double m4, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m4 = (float)m4;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m8(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m8;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m8_set(double m8, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m8 = (float)m8;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m12(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m12;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m12_set(double m12, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m12 = (float)m12;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m1(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m1;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m1_set(double m1, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m1 = (float)m1;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m5(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m5;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m5_set(double m5, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m5 = (float)m5;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m9(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m9;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m9_set(double m9, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m9 = (float)m9;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m13(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m13;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m13_set(double m13, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m13 = (float)m13;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m2(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m2;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m2_set(double m2, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m2 = (float)m2;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m6(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m6;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m6_set(double m6, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m6 = (float)m6;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m10(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m10;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m10_set(double m10, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m10 = (float)m10;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m14(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m14;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m14_set(double m14, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m14 = (float)m14;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m3(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m3;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m3_set(double m3, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m3 = (float)m3;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m7(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m7;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m7_set(double m7, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m7 = (float)m7;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m11(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m11;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m11_set(double m11, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m11 = (float)m11;
-    return lean_raylib_Matrix_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Matrix_m15(b_lean_obj_arg obj) {
-    return (double)lean_raylib_Matrix_from(obj)->m15;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m15_set(double m15, b_lean_obj_arg obj) {
-    LET_BOX(Matrix, result_, *lean_raylib_Matrix_from(obj));
-    result_->m15 = (float)m15;
-    return lean_raylib_Matrix_to(result_);
-}
+MATRIX_ACCESSORS(0);
+MATRIX_ACCESSORS(1);
+MATRIX_ACCESSORS(2);
+MATRIX_ACCESSORS(3);
+MATRIX_ACCESSORS(4);
+MATRIX_ACCESSORS(5);
+MATRIX_ACCESSORS(6);
+MATRIX_ACCESSORS(7);
+MATRIX_ACCESSORS(8);
+MATRIX_ACCESSORS(9);
+MATRIX_ACCESSORS(10);
+MATRIX_ACCESSORS(11);
+MATRIX_ACCESSORS(12);
+MATRIX_ACCESSORS(13);
+MATRIX_ACCESSORS(14);
+MATRIX_ACCESSORS(15);
 
 
 // # Rectangle
@@ -420,60 +280,60 @@ LEAN_EXPORT double lean_raylib__Rectangle_x(b_lean_obj_arg obj) {
     return lean_raylib_Rectangle_from(obj)->x;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(double x, b_lean_obj_arg orig_box) {
-    Rectangle const* orig = lean_raylib_Rectangle_from(orig_box);
-    LET_BOX_STRUCT(Rectangle, modified,
-        .x = x,
-        .y = orig->y,
-        .width = orig->width,
-        .height = orig->height,
-    );
-    return lean_raylib_Rectangle_to(modified);
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(double x, lean_obj_arg rect_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
+        lean_raylib_Rectangle_from(rect_box)->x = x;
+        return rect_box;
+    }
+    lean_dec_ref(rect_box);
+    LET_BOX(Rectangle, rect_new_box, *lean_raylib_Rectangle_from(rect_box));
+    rect_new_box->x = x;
+    return lean_raylib_Rectangle_to(rect_new_box);
 }
 
 LEAN_EXPORT double lean_raylib__Rectangle_y(b_lean_obj_arg obj) {
     return lean_raylib_Rectangle_from(obj)->y;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(double y, b_lean_obj_arg orig_box) {
-    Rectangle const* orig = lean_raylib_Rectangle_from(orig_box);
-    LET_BOX_STRUCT(Rectangle, modified,
-        .x = orig->x,
-        .y = y,
-        .width = orig->width,
-        .height = orig->height,
-    );
-    return lean_raylib_Rectangle_to(modified);
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(double y, lean_obj_arg rect_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
+        lean_raylib_Rectangle_from(rect_box)->y = y;
+        return rect_box;
+    }
+    lean_dec_ref(rect_box);
+    LET_BOX(Rectangle, rect_new_box, *lean_raylib_Rectangle_from(rect_box));
+    rect_new_box->y = y;
+    return lean_raylib_Rectangle_to(rect_new_box);
 }
 
 LEAN_EXPORT double lean_raylib__Rectangle_width(b_lean_obj_arg obj) {
     return lean_raylib_Rectangle_from(obj)->width;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(double width, b_lean_obj_arg orig_box) {
-    Rectangle const* orig = lean_raylib_Rectangle_from(orig_box);
-    LET_BOX_STRUCT(Rectangle, modified,
-        .x = orig->x,
-        .y = orig->y,
-        .width = width,
-        .height = orig->height,
-    );
-    return lean_raylib_Rectangle_to(modified);
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(double width, lean_obj_arg rect_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
+        lean_raylib_Rectangle_from(rect_box)->width = width;
+        return rect_box;
+    }
+    lean_dec_ref(rect_box);
+    LET_BOX(Rectangle, rect_new_box, *lean_raylib_Rectangle_from(rect_box));
+    rect_new_box->width = width;
+    return lean_raylib_Rectangle_to(rect_new_box);
 }
 
 LEAN_EXPORT double lean_raylib__Rectangle_height(b_lean_obj_arg obj) {
     return lean_raylib_Rectangle_from(obj)->height;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_height_set(double height, b_lean_obj_arg orig_box) {
-    Rectangle const* orig = lean_raylib_Rectangle_from(orig_box);
-    LET_BOX_STRUCT(Rectangle, modified,
-        .x = orig->x,
-        .y = orig->y,
-        .width = orig->width,
-        .height = height,
-    );
-    return lean_raylib_Rectangle_to(modified);
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_height_set(double height, lean_obj_arg rect_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
+        lean_raylib_Rectangle_from(rect_box)->height = height;
+        return rect_box;
+    }
+    lean_dec_ref(rect_box);
+    LET_BOX(Rectangle, rect_new_box, *lean_raylib_Rectangle_from(rect_box));
+    rect_new_box->height = height;
+    return lean_raylib_Rectangle_to(rect_new_box);
 }
 
 

@@ -52,8 +52,8 @@ static inline lean_object* lean_raylib_Matrix_to (Matrix const* obj) {
     return lean_alloc_external(class_, (void*)obj);
 }
 
-static inline Matrix const* lean_raylib_Matrix_from (b_lean_obj_arg obj) {
-    return (Matrix const*) lean_get_external_data(obj);
+static inline Matrix* lean_raylib_Matrix_from (b_lean_obj_arg obj) {
+    return (Matrix*) lean_get_external_data(obj);
 }
 
 
@@ -87,8 +87,8 @@ static inline lean_object* lean_raylib_Rectangle_to (Rectangle const* obj) {
     return lean_alloc_external(class_, (void*)obj);
 }
 
-static inline Rectangle const* lean_raylib_Rectangle_from (b_lean_obj_arg obj) {
-    return (Rectangle const*) lean_get_external_data(obj);
+static inline Rectangle* lean_raylib_Rectangle_from (b_lean_obj_arg obj) {
+    return (Rectangle*) lean_get_external_data(obj);
 }
 
 

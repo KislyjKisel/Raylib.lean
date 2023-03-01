@@ -18,19 +18,19 @@ opaque Vector2.mk (x : Float) (y : Float) : Vector2
 
 /-- Getter: Vector x component -/
 @[extern "lean_raylib__Vector2_x"]
-opaque Vector2.x (self : @& Vector2) : Float
+opaque Vector2.x (vector : @& Vector2) : Float
 
 /-- Setter: Vector x component -/
 @[extern "lean_raylib__Vector2_x_set"]
-opaque Vector2.set_x (x : Float) (self : Vector2) : Vector2
+opaque Vector2.set_x (x : Float) (vector : Vector2) : Vector2
 
 /-- Getter: Vector y component -/
 @[extern "lean_raylib__Vector2_y"]
-opaque Vector2.y (self : @& Vector2) : Float
+opaque Vector2.y (vector : @& Vector2) : Float
 
 /-- Setter: Vector y component -/
 @[extern "lean_raylib__Vector2_y_set"]
-opaque Vector2.set_y (y : Float) (self : Vector2) : Vector2
+opaque Vector2.set_y (y : Float) (vector : Vector2) : Vector2
 
 
 /-! ## Vector3 -/
@@ -45,27 +45,27 @@ opaque Vector3.mk (x : Float) (y : Float) (z : Float) : Vector3
 
 /-- Getter: Vector x component -/
 @[extern "lean_raylib__Vector3_x"]
-opaque Vector3.x (self : @& Vector3) : Float
+opaque Vector3.x (vector : @& Vector3) : Float
 
 /-- Setter: Vector x component -/
 @[extern "lean_raylib__Vector3_x_set"]
-opaque Vector3.set_x (x : Float) (self : Vector3) : Vector3
+opaque Vector3.set_x (x : Float) (vector : Vector3) : Vector3
 
 /-- Getter: Vector y component -/
 @[extern "lean_raylib__Vector3_y"]
-opaque Vector3.y (self : @& Vector3) : Float
+opaque Vector3.y (vector : @& Vector3) : Float
 
 /-- Setter: Vector y component -/
 @[extern "lean_raylib__Vector3_y_set"]
-opaque Vector3.set_y (y : Float) (self : Vector3) : Vector3
+opaque Vector3.set_y (y : Float) (vector : Vector3) : Vector3
 
 /-- Getter: Vector z component -/
 @[extern "lean_raylib__Vector3_z"]
-opaque Vector3.z (self : @& Vector3) : Float
+opaque Vector3.z (vector : @& Vector3) : Float
 
 /-- Setter: Vector z component -/
 @[extern "lean_raylib__Vector3_z_set"]
-opaque Vector3.set_z (z : Float) (self : Vector3) : Vector3
+opaque Vector3.set_z (z : Float) (vector : Vector3) : Vector3
 
 
 /-! ## Vector4 -/
@@ -80,35 +80,35 @@ opaque Vector4.mk (x : Float) (y : Float) (z : Float) (w : Float) : Vector4
 
 /-- Getter: Vector x component -/
 @[extern "lean_raylib__Vector4_x"]
-opaque Vector4.x (self : @& Vector4) : Float
+opaque Vector4.x (vector : @& Vector4) : Float
 
 /-- Setter: Vector x component -/
 @[extern "lean_raylib__Vector4_x_set"]
-opaque Vector4.set_x (x : Float) (self : Vector4) : Vector4
+opaque Vector4.set_x (x : Float) (vector : Vector4) : Vector4
 
 /-- Getter: Vector y component -/
 @[extern "lean_raylib__Vector4_y"]
-opaque Vector4.y (self : @& Vector4) : Float
+opaque Vector4.y (vector : @& Vector4) : Float
 
 /-- Setter: Vector y component -/
 @[extern "lean_raylib__Vector4_y_set"]
-opaque Vector4.set_y (y : Float) (self : Vector4) : Vector4
+opaque Vector4.set_y (y : Float) (vector : Vector4) : Vector4
 
 /-- Getter: Vector z component -/
 @[extern "lean_raylib__Vector4_z"]
-opaque Vector4.z (self : @& Vector4) : Float
+opaque Vector4.z (vector : @& Vector4) : Float
 
 /-- Setter: Vector z component -/
 @[extern "lean_raylib__Vector4_z_set"]
-opaque Vector4.set_z (z : Float) (self : Vector4) : Vector4
+opaque Vector4.set_z (z : Float) (vector : Vector4) : Vector4
 
 /-- Getter: Vector w component -/
 @[extern "lean_raylib__Vector4_w"]
-opaque Vector4.w (self : @& Vector4) : Float
+opaque Vector4.w (vector : @& Vector4) : Float
 
 /-- Setter: Vector w component -/
 @[extern "lean_raylib__Vector4_w_set"]
-opaque Vector4.set_w (w : Float) (self : Vector4) : Vector4
+opaque Vector4.set_w (w : Float) (vector : Vector4) : Vector4
 
 
 
@@ -133,7 +133,7 @@ opaque Matrix.m0 (self : @& Matrix) : Float
 
 /-- Setter: Matrix first row (4 components) -/
 @[extern "lean_raylib__Matrix_m0_set"]
-opaque Matrix.set_m0 (m0 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m0 (m0 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix first row (4 components) -/
 @[extern "lean_raylib__Matrix_m4"]
@@ -141,7 +141,7 @@ opaque Matrix.m4 (self : @& Matrix) : Float
 
 /-- Setter: Matrix first row (4 components) -/
 @[extern "lean_raylib__Matrix_m4_set"]
-opaque Matrix.set_m4 (m4 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m4 (m4 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix first row (4 components) -/
 @[extern "lean_raylib__Matrix_m8"]
@@ -149,7 +149,7 @@ opaque Matrix.m8 (self : @& Matrix) : Float
 
 /-- Setter: Matrix first row (4 components) -/
 @[extern "lean_raylib__Matrix_m8_set"]
-opaque Matrix.set_m8 (m8 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m8 (m8 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix first row (4 components) -/
 @[extern "lean_raylib__Matrix_m12"]
@@ -157,7 +157,7 @@ opaque Matrix.m12 (self : @& Matrix) : Float
 
 /-- Setter: Matrix first row (4 components) -/
 @[extern "lean_raylib__Matrix_m12_set"]
-opaque Matrix.set_m12 (m12 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m12 (m12 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix second row (4 components) -/
 @[extern "lean_raylib__Matrix_m1"]
@@ -165,7 +165,7 @@ opaque Matrix.m1 (self : @& Matrix) : Float
 
 /-- Setter: Matrix second row (4 components) -/
 @[extern "lean_raylib__Matrix_m1_set"]
-opaque Matrix.set_m1 (m1 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m1 (m1 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix second row (4 components) -/
 @[extern "lean_raylib__Matrix_m5"]
@@ -173,7 +173,7 @@ opaque Matrix.m5 (self : @& Matrix) : Float
 
 /-- Setter: Matrix second row (4 components) -/
 @[extern "lean_raylib__Matrix_m5_set"]
-opaque Matrix.set_m5 (m5 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m5 (m5 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix second row (4 components) -/
 @[extern "lean_raylib__Matrix_m9"]
@@ -181,7 +181,7 @@ opaque Matrix.m9 (self : @& Matrix) : Float
 
 /-- Setter: Matrix second row (4 components) -/
 @[extern "lean_raylib__Matrix_m9_set"]
-opaque Matrix.set_m9 (m9 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m9 (m9 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix second row (4 components) -/
 @[extern "lean_raylib__Matrix_m13"]
@@ -189,7 +189,7 @@ opaque Matrix.m13 (self : @& Matrix) : Float
 
 /-- Setter: Matrix second row (4 components) -/
 @[extern "lean_raylib__Matrix_m13_set"]
-opaque Matrix.set_m13 (m13 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m13 (m13 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix third row (4 components) -/
 @[extern "lean_raylib__Matrix_m2"]
@@ -197,7 +197,7 @@ opaque Matrix.m2 (self : @& Matrix) : Float
 
 /-- Setter: Matrix third row (4 components) -/
 @[extern "lean_raylib__Matrix_m2_set"]
-opaque Matrix.set_m2 (m2 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m2 (m2 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix third row (4 components) -/
 @[extern "lean_raylib__Matrix_m6"]
@@ -205,7 +205,7 @@ opaque Matrix.m6 (self : @& Matrix) : Float
 
 /-- Setter: Matrix third row (4 components) -/
 @[extern "lean_raylib__Matrix_m6_set"]
-opaque Matrix.set_m6 (m6 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m6 (m6 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix third row (4 components) -/
 @[extern "lean_raylib__Matrix_m10"]
@@ -213,7 +213,7 @@ opaque Matrix.m10 (self : @& Matrix) : Float
 
 /-- Setter: Matrix third row (4 components) -/
 @[extern "lean_raylib__Matrix_m10_set"]
-opaque Matrix.set_m10 (m10 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m10 (m10 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix third row (4 components) -/
 @[extern "lean_raylib__Matrix_m14"]
@@ -221,7 +221,7 @@ opaque Matrix.m14 (self : @& Matrix) : Float
 
 /-- Setter: Matrix third row (4 components) -/
 @[extern "lean_raylib__Matrix_m14_set"]
-opaque Matrix.set_m14 (m14 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m14 (m14 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix fourth row (4 components) -/
 @[extern "lean_raylib__Matrix_m3"]
@@ -229,7 +229,7 @@ opaque Matrix.m3 (self : @& Matrix) : Float
 
 /-- Setter: Matrix fourth row (4 components) -/
 @[extern "lean_raylib__Matrix_m3_set"]
-opaque Matrix.set_m3 (m3 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m3 (m3 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix fourth row (4 components) -/
 @[extern "lean_raylib__Matrix_m7"]
@@ -237,7 +237,7 @@ opaque Matrix.m7 (self : @& Matrix) : Float
 
 /-- Setter: Matrix fourth row (4 components) -/
 @[extern "lean_raylib__Matrix_m7_set"]
-opaque Matrix.set_m7 (m7 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m7 (m7 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix fourth row (4 components) -/
 @[extern "lean_raylib__Matrix_m11"]
@@ -245,7 +245,7 @@ opaque Matrix.m11 (self : @& Matrix) : Float
 
 /-- Setter: Matrix fourth row (4 components) -/
 @[extern "lean_raylib__Matrix_m11_set"]
-opaque Matrix.set_m11 (m11 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m11 (m11 : Float) (matrix : Matrix) : Matrix
 
 /-- Getter: Matrix fourth row (4 components) -/
 @[extern "lean_raylib__Matrix_m15"]
@@ -253,7 +253,7 @@ opaque Matrix.m15 (self : @& Matrix) : Float
 
 /-- Setter: Matrix fourth row (4 components) -/
 @[extern "lean_raylib__Matrix_m15_set"]
-opaque Matrix.set_m15 (m15 : Float) (self : @& Matrix) : Matrix
+opaque Matrix.set_m15 (m15 : Float) (matrix : Matrix) : Matrix
 
 
 
@@ -300,7 +300,7 @@ opaque Rectangle.x (self : @& Rectangle) : Float
 
 /-- Setter: Rectangle top-left corner position x -/
 @[extern "lean_raylib__Rectangle_x_set"]
-opaque Rectangle.set_x (x : Float) (self : @& Rectangle) : Rectangle
+opaque Rectangle.set_x (x : Float) (rectangle : Rectangle) : Rectangle
 
 /-- Getter: Rectangle top-left corner position y -/
 @[extern "lean_raylib__Rectangle_y"]
@@ -308,7 +308,7 @@ opaque Rectangle.y (self : @& Rectangle) : Float
 
 /-- Setter: Rectangle top-left corner position y -/
 @[extern "lean_raylib__Rectangle_y_set"]
-opaque Rectangle.set_y (y : Float) (self : @& Rectangle) : Rectangle
+opaque Rectangle.set_y (y : Float) (rectangle : Rectangle) : Rectangle
 
 /-- Getter: Rectangle width -/
 @[extern "lean_raylib__Rectangle_width"]
@@ -316,7 +316,7 @@ opaque Rectangle.width (self : @& Rectangle) : Float
 
 /-- Setter: Rectangle width -/
 @[extern "lean_raylib__Rectangle_width_set"]
-opaque Rectangle.set_width (width : Float) (self : @& Rectangle) : Rectangle
+opaque Rectangle.set_width (width : Float) (rectangle : Rectangle) : Rectangle
 
 /-- Getter: Rectangle height -/
 @[extern "lean_raylib__Rectangle_height"]
@@ -324,7 +324,7 @@ opaque Rectangle.height (self : @& Rectangle) : Float
 
 /-- Setter: Rectangle height -/
 @[extern "lean_raylib__Rectangle_height_set"]
-opaque Rectangle.set_height (height : Float) (self : @& Rectangle) : Rectangle
+opaque Rectangle.set_height (height : Float) (rectangle : Rectangle) : Rectangle
 
 
 /-! # Image -/
