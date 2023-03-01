@@ -1416,9 +1416,9 @@ opaque DrawTextureRec (texture : @& Texture2DRef) (source : @& Rectangle) (posit
 /-- Draw a part of a texture defined by a rectangle with 'pro' parameters -/
 @[extern "lean_raylib__DrawTexturePro"]
 opaque DrawTexturePro (texture : @& Texture2DRef) (source : @& Rectangle) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float) (tint : Color) : BaseIO Unit
--- /-- Draws a texture (or part of it) that stretches or shrinks nicely -/
--- @[extern "lean_raylib__DrawTextureNPatch"]
--- opaque DrawTextureNPatch (texture : @& Texture2D) (nPatchInfo : NPatchInfo) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float) (tint : Color) : Unit
+/-- Draws a texture (or part of it) that stretches or shrinks nicely -/
+@[extern "lean_raylib__DrawTextureNPatch"]
+opaque DrawTextureNPatch (texture : @& Texture2D) (nPatchInfo : @& NPatchInfo) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float) (tint : Color) : BaseIO Unit
 /-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
 @[extern "lean_raylib__Fade"]
 opaque Fade (color : Color) (alpha : Float) : Color

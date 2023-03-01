@@ -1632,10 +1632,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTexturePro (b_lean_obj_arg textureRef,
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureNPatch (lean_obj_arg texture, lean_obj_arg nPatchInfo, lean_obj_arg dest, lean_obj_arg origin, double rotation, uint32_t tint, lean_obj_arg world) {
-//     DrawTextureNPatch(*lean_raylib_Texture_from(texture), lean_raylib_NPatchInfo_from(nPatchInfo), lean_raylib_Rectangle_from(dest), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureNPatch (b_lean_obj_arg texture, b_lean_obj_arg nPatchInfo, b_lean_obj_arg dest, b_lean_obj_arg origin, double rotation, uint32_t tint, lean_obj_arg world) {
+    DrawTextureNPatch(*lean_raylib_Texture_from(texture), *lean_raylib_NPatchInfo_from(nPatchInfo), *lean_raylib_Rectangle_from(dest), *lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT uint32_t lean_raylib__Fade (uint32_t color, double alpha) {
     return lean_raylib_Color_to(Fade(lean_raylib_Color_from(color), alpha));
