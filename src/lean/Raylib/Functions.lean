@@ -1352,21 +1352,22 @@ opaque LoadTextureFromImage (image : @& Image) : Texture2D
 /-- Load cubemap from image, multiple image cubemap layouts supported -/
 @[extern "lean_raylib__LoadTextureCubemap"]
 opaque LoadTextureCubemap (image : @& Image) (layout : CubemapLayout) : TextureCubemap
--- /-- Load texture for rendering (framebuffer) -/
--- @[extern "lean_raylib__LoadRenderTexture"]
--- opaque LoadRenderTexture (width : Int32) (height : Int32) : RenderTexture2D
+/-- Load texture for rendering (framebuffer) -/
+-- IO: TraceLog
+@[extern "lean_raylib__LoadRenderTexture"]
+opaque LoadRenderTexture (width : UInt32) (height : UInt32) : BaseIO RenderTexture2D
 /-- Check if a texture is ready -/
 @[extern "lean_raylib__IsTextureReady"]
 opaque IsTextureReady (texture : @& Texture2DRef) : Bool
 /-- Unload texture from GPU memory (VRAM) -/
 @[extern "lean_raylib__UnloadTexture", deprecated]
 opaque UnloadTexture (texture : @& Texture2D) : Unit
--- /-- Check if a render texture is ready -/
--- @[extern "lean_raylib__IsRenderTextureReady"]
--- opaque IsRenderTextureReady (target : RenderTexture2D) : Bool
--- /-- Unload render texture from GPU memory (VRAM) -/
--- @[extern "lean_raylib__UnloadRenderTexture"]
--- opaque UnloadRenderTexture (target : RenderTexture2D) : Unit
+/-- Check if a render texture is ready -/
+@[extern "lean_raylib__IsRenderTextureReady"]
+opaque IsRenderTextureReady (target : @& RenderTexture2D) : Bool
+/-- Unload render texture from GPU memory (VRAM) -/
+@[extern "lean_raylib__UnloadRenderTexture", deprecated]
+opaque UnloadRenderTexture (target : @& RenderTexture2D) : Unit
 -- /-- Update GPU texture with new data -/
 -- @[extern "lean_raylib__UpdateTexture"]
 -- opaque UpdateTexture : Unit -> Unit

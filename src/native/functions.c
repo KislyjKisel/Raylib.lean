@@ -1561,10 +1561,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureCubemap (b_lean_obj_arg image, 
     return lean_raylib_Texture_to(texture);
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadRenderTexture (uint32_t width, uint32_t height, lean_obj_arg world) {
-//     RenderTexture2D result_ = LoadRenderTexture(width, height);
-//     return /*cast RenderTexture2D to_lean?true*/(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadRenderTexture (uint32_t width, uint32_t height, lean_obj_arg world) {
+    LET_BOX(RenderTexture2D, rt, LoadRenderTexture(width, height));
+    return lean_io_result_mk_ok(lean_raylib_RenderTexture_to(rt));
+}
 
 LEAN_EXPORT uint8_t lean_raylib__IsTextureReady (b_lean_obj_arg textureRef) {
     return IsTextureReady(lean_raylib_TextureRef_from(textureRef)->texture);
@@ -1574,15 +1574,13 @@ LEAN_EXPORT lean_obj_res lean_raylib__UnloadTexture (b_lean_obj_arg texture) {
     return lean_box(0);
 }
 
-// LEAN_EXPORT uint8_t lean_raylib__IsRenderTextureReady (lean_obj_arg target, lean_obj_arg world) {
-//     bool result_ = IsRenderTextureReady(/*cast RenderTexture2D to_lean?false*/(target));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsRenderTextureReady (b_lean_obj_arg target) {
+    return IsRenderTextureReady(*lean_raylib_RenderTexture_from(target));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadRenderTexture (lean_obj_arg target, lean_obj_arg world) {
-//     UnloadRenderTexture(/*cast RenderTexture2D to_lean?false*/(target));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadRenderTexture (b_lean_obj_arg target) {
+    return lean_box(0);
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__UpdateTexture (lean_obj_arg texture, /* const void* */lean_obj_arg pixels, lean_obj_arg world) {
 //     UpdateTexture(/*cast Texture2D to_lean?false*/(texture), /*todo: ptr?*/pixels);
