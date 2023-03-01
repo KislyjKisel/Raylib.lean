@@ -124,41 +124,90 @@ static inline lean_object* lean_raylib_Image_to (Image const* obj) {
 
 // # Texture
 
-// static inline lean_object* lean_raylib_Texture_to (Texture const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+typedef struct {
+    lean_object* owner;
+    Texture texture;
+} lean_raylib_TextureRef;
 
-// static inline Texture const* lean_raylib_Texture_from (b_lean_obj_arg obj) {
-//     return (Texture const*) lean_get_external_data(obj);
-// }
+static void lean_raylib_TextureRef_foreach(void* textureRef, b_lean_obj_arg f) {
+    lean_apply_1(f, ((lean_raylib_TextureRef*)textureRef)->owner);
+}
 
-// static inline lean_object* lean_raylib_RenderTexture_to (RenderTexture const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static void lean_raylib_TextureRef_finalize(void* textureRef) {
+    lean_dec(((lean_raylib_TextureRef*)textureRef)->owner);
+    free(textureRef);
+}
 
-// static inline RenderTexture const* lean_raylib_RenderTexture_from (b_lean_obj_arg obj) {
-//     return (RenderTexture const*) lean_get_external_data(obj);
-// }
+static inline lean_object* lean_raylib_TextureRef_alloc (Texture2D texture, lean_obj_arg owner) {
+    LET_BOX_STRUCT(lean_raylib_TextureRef, textureRef,
+        .texture = texture,
+        .owner = owner,
+    );
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_TextureRef_finalize, lean_raylib_TextureRef_foreach);
+    }
+    return lean_alloc_external(class_, textureRef);
+}
 
-// static inline lean_object* lean_raylib_NPatchInfo_to (NPatchInfo const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static inline lean_raylib_TextureRef const* lean_raylib_TextureRef_from (b_lean_obj_arg obj) {
+    return (lean_raylib_TextureRef const*) lean_get_external_data(obj);
+}
 
-// static inline NPatchInfo const* lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
-//     return (NPatchInfo const*) lean_get_external_data(obj);
-// }
+static void lean_raylib_Texture_finalize(void* texture) {
+    UnloadTexture(*(Texture*)texture);
+    free(texture);
+}
+
+static inline lean_object* lean_raylib_Texture_to (Texture const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Texture_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline Texture const* lean_raylib_Texture_from (b_lean_obj_arg obj) {
+    return (Texture const*) lean_get_external_data(obj);
+}
+
+
+// # Render texture
+
+static void lean_raylib_RenderTexture_finalize(void* texture) {
+    UnloadRenderTexture(*(RenderTexture*)texture);
+    free(texture);
+}
+
+static inline lean_object* lean_raylib_RenderTexture_to (RenderTexture const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_RenderTexture_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline RenderTexture const* lean_raylib_RenderTexture_from (b_lean_obj_arg obj) {
+    return (RenderTexture const*) lean_get_external_data(obj);
+}
+
+
+// # NPatch info
+
+static inline lean_object* lean_raylib_NPatchInfo_to (NPatchInfo const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline NPatchInfo* lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
+    return (NPatchInfo*) lean_get_external_data(obj);
+}
+
+
+// # Glyph info
 
 // static inline lean_object* lean_raylib_GlyphInfo_to (GlyphInfo const* obj) {
 //     static lean_external_class* class_ = NULL;

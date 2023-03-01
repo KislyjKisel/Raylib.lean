@@ -361,108 +361,112 @@ opaque Image.format (self : @& Image) : PixelFormat
 
 /-! # Texture -/
 
--- opaque TexturePointed : NonemptyType
--- /-- Texture, tex data stored in GPU memory (VRAM) -/
--- def Texture : Type := TexturePointed.type
--- instance : Nonempty Texture := TexturePointed.property
--- @[extern "lean_raylib__Texture_mk"]
--- opaque Texture.mk (id : UInt32) (width : Int32) (height : Int32) (mipmaps : Int32) (format : Int32) : Texture
--- /-- Getter: OpenGL texture id -/
--- @[extern "lean_raylib__Texture_id"]
--- opaque Texture.id (self : @& Texture) : UInt32
--- /-- Setter: OpenGL texture id -/
--- @[extern "lean_raylib__Texture_id_set"]
--- opaque Texture.set_id (id : UInt32) (self : Texture) : Texture
--- /-- Getter: Texture base width -/
--- @[extern "lean_raylib__Texture_width"]
--- opaque Texture.width (self : @& Texture) : Int32
--- /-- Setter: Texture base width -/
--- @[extern "lean_raylib__Texture_width_set"]
--- opaque Texture.set_width (width : Int32) (self : Texture) : Texture
--- /-- Getter: Texture base height -/
--- @[extern "lean_raylib__Texture_height"]
--- opaque Texture.height (self : @& Texture) : Int32
--- /-- Setter: Texture base height -/
--- @[extern "lean_raylib__Texture_height_set"]
--- opaque Texture.set_height (height : Int32) (self : Texture) : Texture
--- /-- Getter: Mipmap levels, 1 by default -/
--- @[extern "lean_raylib__Texture_mipmaps"]
--- opaque Texture.mipmaps (self : @& Texture) : Int32
--- /-- Setter: Mipmap levels, 1 by default -/
--- @[extern "lean_raylib__Texture_mipmaps_set"]
--- opaque Texture.set_mipmaps (mipmaps : Int32) (self : Texture) : Texture
--- /-- Getter: Data format (PixelFormat type) -/
--- @[extern "lean_raylib__Texture_format"]
--- opaque Texture.format (self : @& Texture) : Int32
--- /-- Setter: Data format (PixelFormat type) -/
--- @[extern "lean_raylib__Texture_format_set"]
--- opaque Texture.set_format (format : Int32) (self : Texture) : Texture
--- opaque RenderTexturePointed : NonemptyType
--- /-- RenderTexture, fbo for texture rendering -/
--- def RenderTexture : Type := RenderTexturePointed.type
--- instance : Nonempty RenderTexture := RenderTexturePointed.property
--- @[extern "lean_raylib__RenderTexture_mk"]
--- opaque RenderTexture.mk (id : UInt32) (texture : Texture) (depth : Texture) : RenderTexture
--- /-- Getter: OpenGL framebuffer object id -/
--- @[extern "lean_raylib__RenderTexture_id"]
--- opaque RenderTexture.id (self : @& RenderTexture) : UInt32
--- /-- Setter: OpenGL framebuffer object id -/
--- @[extern "lean_raylib__RenderTexture_id_set"]
--- opaque RenderTexture.set_id (id : UInt32) (self : RenderTexture) : RenderTexture
--- /-- Getter: Color buffer attachment texture -/
--- @[extern "lean_raylib__RenderTexture_texture"]
--- opaque RenderTexture.texture (self : @& RenderTexture) : Texture
--- /-- Setter: Color buffer attachment texture -/
--- @[extern "lean_raylib__RenderTexture_texture_set"]
--- opaque RenderTexture.set_texture (texture : Texture) (self : RenderTexture) : RenderTexture
--- /-- Getter: Depth buffer attachment texture -/
--- @[extern "lean_raylib__RenderTexture_depth"]
--- opaque RenderTexture.depth (self : @& RenderTexture) : Texture
--- /-- Setter: Depth buffer attachment texture -/
--- @[extern "lean_raylib__RenderTexture_depth_set"]
--- opaque RenderTexture.set_depth (depth : Texture) (self : RenderTexture) : RenderTexture
--- opaque NPatchInfoPointed : NonemptyType
--- /-- NPatchInfo, n-patch layout info -/
--- def NPatchInfo : Type := NPatchInfoPointed.type
--- instance : Nonempty NPatchInfo := NPatchInfoPointed.property
--- @[extern "lean_raylib__NPatchInfo_mk"]
--- opaque NPatchInfo.mk (source : Rectangle) (left : Int32) (top : Int32) (right : Int32) (bottom : Int32) (layout : Int32) : NPatchInfo
--- /-- Getter: Texture source rectangle -/
--- @[extern "lean_raylib__NPatchInfo_source"]
--- opaque NPatchInfo.source (self : @& NPatchInfo) : Rectangle
--- /-- Setter: Texture source rectangle -/
--- @[extern "lean_raylib__NPatchInfo_source_set"]
--- opaque NPatchInfo.set_source (source : Rectangle) (self : NPatchInfo) : NPatchInfo
--- /-- Getter: Left border offset -/
--- @[extern "lean_raylib__NPatchInfo_left"]
--- opaque NPatchInfo.left (self : @& NPatchInfo) : Int32
--- /-- Setter: Left border offset -/
--- @[extern "lean_raylib__NPatchInfo_left_set"]
--- opaque NPatchInfo.set_left (left : Int32) (self : NPatchInfo) : NPatchInfo
--- /-- Getter: Top border offset -/
--- @[extern "lean_raylib__NPatchInfo_top"]
--- opaque NPatchInfo.top (self : @& NPatchInfo) : Int32
--- /-- Setter: Top border offset -/
--- @[extern "lean_raylib__NPatchInfo_top_set"]
--- opaque NPatchInfo.set_top (top : Int32) (self : NPatchInfo) : NPatchInfo
--- /-- Getter: Right border offset -/
--- @[extern "lean_raylib__NPatchInfo_right"]
--- opaque NPatchInfo.right (self : @& NPatchInfo) : Int32
--- /-- Setter: Right border offset -/
--- @[extern "lean_raylib__NPatchInfo_right_set"]
--- opaque NPatchInfo.set_right (right : Int32) (self : NPatchInfo) : NPatchInfo
--- /-- Getter: Bottom border offset -/
--- @[extern "lean_raylib__NPatchInfo_bottom"]
--- opaque NPatchInfo.bottom (self : @& NPatchInfo) : Int32
--- /-- Setter: Bottom border offset -/
--- @[extern "lean_raylib__NPatchInfo_bottom_set"]
--- opaque NPatchInfo.set_bottom (bottom : Int32) (self : NPatchInfo) : NPatchInfo
--- /-- Getter: Layout of the n-patch: 3x3, 1x3 or 3x1 -/
--- @[extern "lean_raylib__NPatchInfo_layout"]
--- opaque NPatchInfo.layout (self : @& NPatchInfo) : Int32
--- /-- Setter: Layout of the n-patch: 3x3, 1x3 or 3x1 -/
--- @[extern "lean_raylib__NPatchInfo_layout_set"]
--- opaque NPatchInfo.set_layout (layout : Int32) (self : NPatchInfo) : NPatchInfo
+opaque TextureRefPointed : NonemptyType
+/--
+Reference to `Texture`,
+may be a `Texture` or a part of a bigger object like `RenderTexture`.
+-/
+def TextureRef : Type := TextureRefPointed.type
+instance : Nonempty TextureRef := TextureRefPointed.property
+
+opaque TexturePointed : NonemptyType
+/-- Texture, tex data stored in GPU memory (VRAM) -/
+def Texture : Type := TexturePointed.type
+instance : Nonempty Texture := TexturePointed.property
+
+@[extern "lean_raylib__Texture_ref"]
+opaque Texture.ref (texture : Texture) : TextureRef
+
+@[extern "lean_raylib__TextureRef_id"]
+opaque TextureRef.id (texture : @& TextureRef) : UInt32
+
+/-- Texture base width -/
+@[extern "lean_raylib__TextureRef_width"]
+opaque TextureRef.width (texture : @& TextureRef) : UInt32
+
+/-- Texture base height -/
+@[extern "lean_raylib__TextureRef_height"]
+opaque TextureRef.height (texture : @& TextureRef) : UInt32
+
+/-- Mipmap levels, 1 by default -/
+@[extern "lean_raylib__TextureRef_mipmaps"]
+opaque TextureRef.mipmaps (texture : @& TextureRef) : UInt32
+
+/-- Data format -/
+@[extern "lean_raylib__TextureRef_format"]
+opaque TextureRef.format (texture : @& TextureRef) : PixelFormat
+
+
+/-! # Render texture -/
+
+opaque RenderTexturePointed : NonemptyType
+/-- RenderTexture, fbo for texture rendering -/
+def RenderTexture : Type := RenderTexturePointed.type
+instance : Nonempty RenderTexture := RenderTexturePointed.property
+
+@[extern "lean_raylib__RenderTexture_id"]
+opaque RenderTexture.id (texture : @& RenderTexture) : UInt32
+
+/-- Color buffer attachment texture -/
+@[extern "lean_raylib__RenderTexture_texture"]
+opaque RenderTexture.texture (rt : RenderTexture) : TextureRef
+
+/-- Depth buffer attachment texture -/
+@[extern "lean_raylib__RenderTexture_depth"]
+opaque RenderTexture.depth (rt : RenderTexture) : TextureRef
+
+
+/-! # NPatch info -/
+
+opaque NPatchInfoPointed : NonemptyType
+/-- NPatchInfo, n-patch layout info -/
+def NPatchInfo : Type := NPatchInfoPointed.type
+instance : Nonempty NPatchInfo := NPatchInfoPointed.property
+
+@[extern "lean_raylib__NPatchInfo_mk"]
+opaque NPatchInfo.mk (source : @& Rectangle) (left : UInt32) (top : UInt32)
+  (right : UInt32) (bottom : UInt32) (layout : NPatchLayout) : NPatchInfo
+
+/-- Getter: Texture source rectangle -/
+@[extern "lean_raylib__NPatchInfo_source"]
+opaque NPatchInfo.source (npatchInfo : @& NPatchInfo) : Rectangle
+/-- Setter: Texture source rectangle -/
+@[extern "lean_raylib__NPatchInfo_source_set"]
+opaque NPatchInfo.set_source (source : Rectangle) (npatchInfo : NPatchInfo) : NPatchInfo
+/-- Getter: Left border offset -/
+@[extern "lean_raylib__NPatchInfo_left"]
+opaque NPatchInfo.left (npatchInfo : @& NPatchInfo) : UInt32
+/-- Setter: Left border offset -/
+@[extern "lean_raylib__NPatchInfo_left_set"]
+opaque NPatchInfo.set_left (left : UInt32) (npatchInfo : NPatchInfo) : NPatchInfo
+/-- Getter: Top border offset -/
+@[extern "lean_raylib__NPatchInfo_top"]
+opaque NPatchInfo.top (npatchInfo : @& NPatchInfo) : UInt32
+/-- Setter: Top border offset -/
+@[extern "lean_raylib__NPatchInfo_top_set"]
+opaque NPatchInfo.set_top (top : UInt32) (npatchInfo : NPatchInfo) : NPatchInfo
+/-- Getter: Right border offset -/
+@[extern "lean_raylib__NPatchInfo_right"]
+opaque NPatchInfo.right (npatchInfo : @& NPatchInfo) : UInt32
+/-- Setter: Right border offset -/
+@[extern "lean_raylib__NPatchInfo_right_set"]
+opaque NPatchInfo.set_right (right : UInt32) (npatchInfo : NPatchInfo) : NPatchInfo
+/-- Getter: Bottom border offset -/
+@[extern "lean_raylib__NPatchInfo_bottom"]
+opaque NPatchInfo.bottom (npatchInfo : @& NPatchInfo) : UInt32
+/-- Setter: Bottom border offset -/
+@[extern "lean_raylib__NPatchInfo_bottom_set"]
+opaque NPatchInfo.set_bottom (bottom : UInt32) (npatchInfo : NPatchInfo) : NPatchInfo
+/-- Getter: Layout of the n-patch: 3x3, 1x3 or 3x1 -/
+@[extern "lean_raylib__NPatchInfo_layout"]
+opaque NPatchInfo.layout (npatchInfo : @& NPatchInfo) : NPatchLayout
+/-- Setter: Layout of the n-patch: 3x3, 1x3 or 3x1 -/
+@[extern "lean_raylib__NPatchInfo_layout_set"]
+opaque NPatchInfo.set_layout (layout : NPatchLayout) (npatchInfo : NPatchInfo) : NPatchInfo
+
+
+/-! # Glyph info -/
+
 -- opaque GlyphInfoPointed : NonemptyType
 -- /-- GlyphInfo, font characters glyphs info -/
 -- def GlyphInfo : Type := GlyphInfoPointed.type

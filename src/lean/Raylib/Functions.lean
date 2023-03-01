@@ -195,12 +195,12 @@ opaque BeginMode3D (camera : @& Camera3D) : BaseIO Unit
 /-- Ends 3D mode and returns to default 2D orthographic mode -/
 @[extern "lean_raylib__EndMode3D"]
 opaque EndMode3D : BaseIO Unit
--- /-- Begin drawing to render texture -/
--- @[extern "lean_raylib__BeginTextureMode"]
--- opaque BeginTextureMode (target : RenderTexture2D) : Unit
--- /-- Ends drawing to render texture -/
--- @[extern "lean_raylib__EndTextureMode"]
--- opaque EndTextureMode (_ : Unit) : Unit
+/-- Begin drawing to render texture -/
+@[extern "lean_raylib__BeginTextureMode"]
+opaque BeginTextureMode (target : @& RenderTexture2D) : BaseIO Unit
+/-- Ends drawing to render texture -/
+@[extern "lean_raylib__EndTextureMode"]
+opaque EndTextureMode : BaseIO Unit
 -- /-- Begin custom shader drawing -/
 -- @[extern "lean_raylib__BeginShaderMode"]
 -- opaque BeginShaderMode (shader : Shader) : Unit
@@ -648,9 +648,9 @@ opaque GetGesturePinchAngle : BaseIO Float
 /-- Update camera position for selected mode -/
 @[extern "lean_raylib__UpdateCamera"]
 opaque UpdateCamera (cam : Camera) (mode : CameraMode) : BaseIO Camera
--- /-- Set texture and rectangle to be used on shapes drawing -/
--- @[extern "lean_raylib__SetShapesTexture"]
--- opaque SetShapesTexture (texture : Texture2D) (source : Rectangle) : Unit
+/-- Set texture and rectangle to be used on shapes drawing -/
+@[extern "lean_raylib__SetShapesTexture"]
+opaque SetShapesTexture (texture : Texture2DRef) (source : @& Rectangle) : BaseIO Unit
 /-- Draw a pixel -/
 @[extern "lean_raylib__DrawPixel"]
 opaque DrawPixel (posX : Int32) (posY : Int32) (color : Color) : BaseIO Unit
@@ -844,9 +844,12 @@ opaque LoadImageAnim (fileName : @& String) : BaseIO (Image × UInt32)
 /-- Load image from memory buffer, fileType refers to extension: i.e. '.png' -/
 @[extern "lean_raylib__LoadImageFromMemory"]
 opaque LoadImageFromMemory (fileType : @& String) (fileData : @& ByteArray) : BaseIO Image
--- /-- Load image from GPU texture data -/
--- @[extern "lean_raylib__LoadImageFromTexture"]
--- opaque LoadImageFromTexture (texture : Texture2D) : Image
+/--
+Load image from GPU texture data.
+NOTE: Compressed texture formats not supported.
+-/
+@[extern "lean_raylib__LoadImageFromTexture"]
+opaque LoadImageFromTexture (texture : @& Texture2DRef) : BaseIO Image
 /-- Load image from screen buffer and (screenshot) -/
 @[extern "lean_raylib__LoadImageFromScreen"]
 opaque LoadImageFromScreen : BaseIO Image
@@ -868,30 +871,32 @@ opaque ExportImageAsCode (image : @& Image) (fileName : @& String) : BaseIO Bool
 /-- Generate image: plain color -/
 @[extern "lean_raylib__GenImageColor"]
 opaque GenImageColor (width height : UInt32) (color : Color) : Image
--- /-- Generate image: vertical gradient -/
--- @[extern "lean_raylib__GenImageGradientV"]
--- opaque GenImageGradientV (width : Int32) (height : Int32) (top : Color) (bottom : Color) : Image
--- /-- Generate image: horizontal gradient -/
--- @[extern "lean_raylib__GenImageGradientH"]
--- opaque GenImageGradientH (width : Int32) (height : Int32) (left : Color) (right : Color) : Image
--- /-- Generate image: radial gradient -/
--- @[extern "lean_raylib__GenImageGradientRadial"]
--- opaque GenImageGradientRadial (width : Int32) (height : Int32) (density : Float) (inner : Color) (outer : Color) : Image
--- /-- Generate image: checked -/
--- @[extern "lean_raylib__GenImageChecked"]
--- opaque GenImageChecked (width : Int32) (height : Int32) (checksX : Int32) (checksY : Int32) (col1 : Color) (col2 : Color) : Image
--- /-- Generate image: white noise -/
--- @[extern "lean_raylib__GenImageWhiteNoise"]
--- opaque GenImageWhiteNoise (width : Int32) (height : Int32) (factor : Float) : Image
--- /-- Generate image: perlin noise -/
--- @[extern "lean_raylib__GenImagePerlinNoise"]
--- opaque GenImagePerlinNoise (width : Int32) (height : Int32) (offsetX : Int32) (offsetY : Int32) (scale : Float) : Image
--- /-- Generate image: cellular algorithm, bigger tileSize means bigger cells -/
--- @[extern "lean_raylib__GenImageCellular"]
--- opaque GenImageCellular (width : Int32) (height : Int32) (tileSize : Int32) : Image
--- /-- Generate image: grayscale image from text data -/
--- @[extern "lean_raylib__GenImageText"]
--- opaque GenImageText (width : Int32) (height : Int32) (text : String) : Image
+/-- Generate image: vertical gradient -/
+@[extern "lean_raylib__GenImageGradientV"]
+opaque GenImageGradientV (width : UInt32) (height : UInt32) (top : Color) (bottom : Color) : Image
+/-- Generate image: horizontal gradient -/
+@[extern "lean_raylib__GenImageGradientH"]
+opaque GenImageGradientH (width : UInt32) (height : UInt32) (left : Color) (right : Color) : Image
+/-- Generate image: radial gradient -/
+@[extern "lean_raylib__GenImageGradientRadial"]
+opaque GenImageGradientRadial (width : UInt32) (height : UInt32) (density : Float) (inner : Color) (outer : Color) : Image
+/-- Generate image: checked -/
+@[extern "lean_raylib__GenImageChecked"]
+opaque GenImageChecked (width : UInt32) (height : UInt32) (checksX : Int32) (checksY : Int32) (col1 : Color) (col2 : Color) : Image
+/-- Generate image: white noise -/
+-- IO: Random
+@[extern "lean_raylib__GenImageWhiteNoise"]
+opaque GenImageWhiteNoise (width : UInt32) (height : UInt32) (factor : Float) : BaseIO Image
+/-- Generate image: perlin noise -/
+@[extern "lean_raylib__GenImagePerlinNoise"]
+opaque GenImagePerlinNoise (width : UInt32) (height : UInt32) (offsetX : Int32) (offsetY : Int32) (scale : Float) : Image
+/-- Generate image: cellular algorithm, bigger tileSize means bigger cells -/
+-- IO: Random
+@[extern "lean_raylib__GenImageCellular"]
+opaque GenImageCellular (width : UInt32) (height : UInt32) (tileSize : UInt32) : BaseIO Image
+/-- Generate image: grayscale image from text data -/
+@[extern "lean_raylib__GenImageText"]
+opaque GenImageText (width : UInt32) (height : UInt32) (text : @& String) : Image
 /-- Create an image duplicate (useful for transformations) -/
 @[extern "lean_raylib__ImageCopy"]
 opaque ImageCopy (image : @& Image) : Image
@@ -1338,24 +1343,24 @@ opaque ImageFromImage (image : @& Image) (rec : @& Rectangle) : Image
 --   | spacing : float
 --   | tint : Color
 -- -/
--- /-- Load texture from file into GPU memory (VRAM) -/
--- @[extern "lean_raylib__LoadTexture"]
--- opaque LoadTexture (fileName : String) : Texture2D
--- /-- Load texture from image data -/
--- @[extern "lean_raylib__LoadTextureFromImage"]
--- opaque LoadTextureFromImage (image : Image) : Texture2D
--- /-- Load cubemap from image, multiple image cubemap layouts supported -/
--- @[extern "lean_raylib__LoadTextureCubemap"]
--- opaque LoadTextureCubemap (image : Image) (layout : Int32) : TextureCubemap
+/-- Load texture from file into GPU memory (VRAM) -/
+@[extern "lean_raylib__LoadTexture"]
+opaque LoadTexture (fileName : @& String) : BaseIO Texture2D
+/-- Load texture from image data -/
+@[extern "lean_raylib__LoadTextureFromImage"]
+opaque LoadTextureFromImage (image : @& Image) : Texture2D
+/-- Load cubemap from image, multiple image cubemap layouts supported -/
+@[extern "lean_raylib__LoadTextureCubemap"]
+opaque LoadTextureCubemap (image : @& Image) (layout : CubemapLayout) : TextureCubemap
 -- /-- Load texture for rendering (framebuffer) -/
 -- @[extern "lean_raylib__LoadRenderTexture"]
 -- opaque LoadRenderTexture (width : Int32) (height : Int32) : RenderTexture2D
--- /-- Check if a texture is ready -/
--- @[extern "lean_raylib__IsTextureReady"]
--- opaque IsTextureReady (texture : Texture2D) : Bool
--- /-- Unload texture from GPU memory (VRAM) -/
--- @[extern "lean_raylib__UnloadTexture"]
--- opaque UnloadTexture (texture : Texture2D) : Unit
+/-- Check if a texture is ready -/
+@[extern "lean_raylib__IsTextureReady"]
+opaque IsTextureReady (texture : @& Texture2DRef) : Bool
+/-- Unload texture from GPU memory (VRAM) -/
+@[extern "lean_raylib__UnloadTexture", deprecated]
+opaque UnloadTexture (texture : @& Texture2D) : Unit
 -- /-- Check if a render texture is ready -/
 -- @[extern "lean_raylib__IsRenderTextureReady"]
 -- opaque IsRenderTextureReady (target : RenderTexture2D) : Bool
@@ -1389,30 +1394,30 @@ opaque ImageFromImage (image : @& Image) (rec : @& Rectangle) : Image
 --   params:
 --   | texture : Texture2D *
 -- -/
--- /-- Set texture scaling filter mode -/
--- @[extern "lean_raylib__SetTextureFilter"]
--- opaque SetTextureFilter (texture : Texture2D) (filter : Int32) : Unit
--- /-- Set texture wrapping mode -/
--- @[extern "lean_raylib__SetTextureWrap"]
--- opaque SetTextureWrap (texture : Texture2D) (wrap : Int32) : Unit
--- /-- Draw a Texture2D -/
--- @[extern "lean_raylib__DrawTexture"]
--- opaque DrawTexture (texture : Texture2D) (posX : Int32) (posY : Int32) (tint : Color) : Unit
--- /-- Draw a Texture2D with position defined as Vector2 -/
--- @[extern "lean_raylib__DrawTextureV"]
--- opaque DrawTextureV (texture : Texture2D) (position : Vector2) (tint : Color) : Unit
--- /-- Draw a Texture2D with extended parameters -/
--- @[extern "lean_raylib__DrawTextureEx"]
--- opaque DrawTextureEx (texture : Texture2D) (position : Vector2) (rotation : Float) (scale : Float) (tint : Color) : Unit
--- /-- Draw a part of a texture defined by a rectangle -/
--- @[extern "lean_raylib__DrawTextureRec"]
--- opaque DrawTextureRec (texture : Texture2D) (source : Rectangle) (position : Vector2) (tint : Color) : Unit
--- /-- Draw a part of a texture defined by a rectangle with 'pro' parameters -/
--- @[extern "lean_raylib__DrawTexturePro"]
--- opaque DrawTexturePro (texture : Texture2D) (source : Rectangle) (dest : Rectangle) (origin : Vector2) (rotation : Float) (tint : Color) : Unit
+/-- Set texture scaling filter mode -/
+@[extern "lean_raylib__SetTextureFilter"]
+opaque SetTextureFilter (texture : @& Texture2DRef) (filter : TextureFilter) : BaseIO Unit
+/-- Set texture wrapping mode -/
+@[extern "lean_raylib__SetTextureWrap"]
+opaque SetTextureWrap (texture : @& Texture2DRef) (wrap : TextureWrap) : BaseIO Unit
+/-- Draw a Texture2D -/
+@[extern "lean_raylib__DrawTexture"]
+opaque DrawTexture (texture : @& Texture2DRef) (posX : Int32) (posY : Int32) (tint : Color) : BaseIO Unit
+/-- Draw a Texture2D with position defined as Vector2 -/
+@[extern "lean_raylib__DrawTextureV"]
+opaque DrawTextureV (texture : @& Texture2DRef) (position : @& Vector2) (tint : Color) : BaseIO Unit
+/-- Draw a Texture2D with extended parameters -/
+@[extern "lean_raylib__DrawTextureEx"]
+opaque DrawTextureEx (texture : @& Texture2DRef) (position : @& Vector2) (rotation : Float) (scale : Float) (tint : Color) : BaseIO Unit
+/-- Draw a part of a texture defined by a rectangle -/
+@[extern "lean_raylib__DrawTextureRec"]
+opaque DrawTextureRec (texture : @& Texture2DRef) (source : @& Rectangle) (position : @& Vector2) (tint : Color) : BaseIO Unit
+/-- Draw a part of a texture defined by a rectangle with 'pro' parameters -/
+@[extern "lean_raylib__DrawTexturePro"]
+opaque DrawTexturePro (texture : @& Texture2DRef) (source : @& Rectangle) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float) (tint : Color) : BaseIO Unit
 -- /-- Draws a texture (or part of it) that stretches or shrinks nicely -/
 -- @[extern "lean_raylib__DrawTextureNPatch"]
--- opaque DrawTextureNPatch (texture : Texture2D) (nPatchInfo : NPatchInfo) (dest : Rectangle) (origin : Vector2) (rotation : Float) (tint : Color) : Unit
+-- opaque DrawTextureNPatch (texture : @& Texture2D) (nPatchInfo : NPatchInfo) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float) (tint : Color) : Unit
 /-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
 @[extern "lean_raylib__Fade"]
 opaque Fade (color : Color) (alpha : Float) : Color

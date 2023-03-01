@@ -535,191 +535,171 @@ LEAN_EXPORT uint32_t lean_raylib__Image_format(b_lean_obj_arg obj) {
     return lean_raylib_Image_from(obj)->format;
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Texture_mk(uint32_t id, uint32_t width, uint32_t height, uint32_t mipmaps, uint32_t format) {
-//     LET_BOX_STRUCT(Texture, result_,
-//         .id = id,
-//         .width = width,
-//         .height = height,
-//         .mipmaps = mipmaps,
-//         .format = format
-//     );
-//     return lean_raylib_Texture_to(result_);
-// }
 
-// LEAN_EXPORT uint32_t lean_raylib__Texture_id(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Texture_from(obj)->id;
-//     return result_;
-// }
+// # Texture
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Texture_id_set(uint32_t id, b_lean_obj_arg obj) {
-//     LET_BOX(Texture, result_, *lean_raylib_Texture_from(obj));
-//     result_->id = id;
-//     return lean_raylib_Texture_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Texture_ref(lean_obj_arg texture) {
+    return lean_raylib_TextureRef_alloc(
+        *lean_raylib_Texture_from(texture),
+        texture
+    );
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Texture_width(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Texture_from(obj)->width;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__TextureRef_id(b_lean_obj_arg obj) {
+    return lean_raylib_TextureRef_from(obj)->texture.id;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Texture_width_set(uint32_t width, b_lean_obj_arg obj) {
-//     LET_BOX(Texture, result_, *lean_raylib_Texture_from(obj));
-//     result_->width = width;
-//     return lean_raylib_Texture_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__TextureRef_width(b_lean_obj_arg obj) {
+    return lean_raylib_TextureRef_from(obj)->texture.width;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Texture_height(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Texture_from(obj)->height;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__TextureRef_height(b_lean_obj_arg obj) {
+    return lean_raylib_TextureRef_from(obj)->texture.height;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Texture_height_set(uint32_t height, b_lean_obj_arg obj) {
-//     LET_BOX(Texture, result_, *lean_raylib_Texture_from(obj));
-//     result_->height = height;
-//     return lean_raylib_Texture_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__TextureRef_mipmaps(b_lean_obj_arg obj) {
+    return lean_raylib_TextureRef_from(obj)->texture.mipmaps;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Texture_mipmaps(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Texture_from(obj)->mipmaps;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__TextureRef_format(b_lean_obj_arg obj) {
+    return lean_raylib_TextureRef_from(obj)->texture.format;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Texture_mipmaps_set(uint32_t mipmaps, b_lean_obj_arg obj) {
-//     LET_BOX(Texture, result_, *lean_raylib_Texture_from(obj));
-//     result_->mipmaps = mipmaps;
-//     return lean_raylib_Texture_to(result_);
-// }
 
-// LEAN_EXPORT uint32_t lean_raylib__Texture_format(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Texture_from(obj)->format;
-//     return result_;
-// }
+// # Render texture
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Texture_format_set(uint32_t format, b_lean_obj_arg obj) {
-//     LET_BOX(Texture, result_, *lean_raylib_Texture_from(obj));
-//     result_->format = format;
-//     return lean_raylib_Texture_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__RenderTexture_id(b_lean_obj_arg obj) {
+    return lean_raylib_RenderTexture_from(obj)->id;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__RenderTexture_mk(uint32_t id, lean_obj_arg texture, lean_obj_arg depth) {
-//     LET_BOX_STRUCT(RenderTexture, result_,
-//         .id = id,
-//         .texture = lean_raylib_Texture_from(texture),
-//         .depth = lean_raylib_Texture_from(depth)
-//     );
-//     return lean_raylib_RenderTexture_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__RenderTexture_texture(lean_obj_arg rt_box) {
+    return lean_raylib_TextureRef_alloc(
+        lean_raylib_RenderTexture_from(rt_box)->texture,
+        rt_box
+    );
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__RenderTexture_id(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_RenderTexture_from(obj)->id;
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__RenderTexture_depth(lean_obj_arg rt_box) {
+    return lean_raylib_TextureRef_alloc(
+        lean_raylib_RenderTexture_from(rt_box)->depth,
+        rt_box
+    );
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__RenderTexture_id_set(uint32_t id, b_lean_obj_arg obj) {
-//     LET_BOX(RenderTexture, result_, *lean_raylib_RenderTexture_from(obj));
-//     result_->id = id;
-//     return lean_raylib_RenderTexture_to(result_);
-// }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__RenderTexture_texture(b_lean_obj_arg obj) {
-//     Texture result_ = lean_raylib_RenderTexture_from(obj)->texture;
-//     return lean_raylib_Texture_to(result_);
-// }
+// # NPatch info
 
-// LEAN_EXPORT lean_obj_res lean_raylib__RenderTexture_texture_set(lean_obj_arg texture, b_lean_obj_arg obj) {
-//     LET_BOX(RenderTexture, result_, *lean_raylib_RenderTexture_from(obj));
-//     result_->texture = lean_raylib_Texture_from(texture);
-//     return lean_raylib_RenderTexture_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_mk(
+    b_lean_obj_arg source, uint32_t left, uint32_t top,
+    uint32_t right, uint32_t bottom, uint32_t layout
+) {
+    LET_BOX_STRUCT(NPatchInfo, npatchInfo,
+        .source = *lean_raylib_Rectangle_from(source),
+        .left = left,
+        .top = top,
+        .right = right,
+        .bottom = bottom,
+        .layout = layout
+    );
+    return lean_raylib_NPatchInfo_to(npatchInfo);
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__RenderTexture_depth(b_lean_obj_arg obj) {
-//     Texture result_ = lean_raylib_RenderTexture_from(obj)->depth;
-//     return lean_raylib_Texture_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_source(b_lean_obj_arg npatchInfo) {
+    LET_BOX(Rectangle, source, lean_raylib_NPatchInfo_from(npatchInfo)->source);
+    return lean_raylib_Rectangle_to(source);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__RenderTexture_depth_set(lean_obj_arg depth, b_lean_obj_arg obj) {
-//     LET_BOX(RenderTexture, result_, *lean_raylib_RenderTexture_from(obj));
-//     result_->depth = lean_raylib_Texture_from(depth);
-//     return lean_raylib_RenderTexture_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_source_set(b_lean_obj_arg source_box, lean_obj_arg npatchInfo_box) {
+    Rectangle source = *lean_raylib_Rectangle_from(source_box);
+    if(LEAN_LIKELY(lean_is_exclusive(npatchInfo_box))) {
+        lean_raylib_NPatchInfo_from(npatchInfo_box)->source = source;
+        return npatchInfo_box;
+    }
+    lean_dec_ref(npatchInfo_box);
+    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new_box->source = source;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_mk(lean_obj_arg source, uint32_t left, uint32_t top, uint32_t right, uint32_t bottom, uint32_t layout) {
-//     LET_BOX_STRUCT(NPatchInfo, result_,
-//         .source = lean_raylib_Rectangle_from(source),
-//         .left = left,
-//         .top = top,
-//         .right = right,
-//         .bottom = bottom,
-//         .layout = layout
-//     );
-//     return lean_raylib_NPatchInfo_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_left(b_lean_obj_arg npatchInfo) {
+    return lean_raylib_NPatchInfo_from(npatchInfo)->left;
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__NPatchInfo_source(b_lean_obj_arg obj) {
-//     Rectangle result_ = lean_raylib_NPatchInfo_from(obj)->source;
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_left_set(uint32_t left, lean_obj_arg npatchInfo_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(npatchInfo_box))) {
+        lean_raylib_NPatchInfo_from(npatchInfo_box)->left = left;
+        return npatchInfo_box;
+    }
+    lean_dec_ref(npatchInfo_box);
+    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new_box->left = left;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_source_set(lean_obj_arg source, b_lean_obj_arg obj) {
-//     LET_BOX(NPatchInfo, result_, *lean_raylib_NPatchInfo_from(obj));
-//     result_->source = lean_raylib_Rectangle_from(source);
-//     return lean_raylib_NPatchInfo_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_top(b_lean_obj_arg npatchInfo) {
+    return lean_raylib_NPatchInfo_from(npatchInfo)->top;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_left(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_NPatchInfo_from(obj)->left;
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_top_set(uint32_t top, lean_obj_arg npatchInfo_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(npatchInfo_box))) {
+        lean_raylib_NPatchInfo_from(npatchInfo_box)->top = top;
+        return npatchInfo_box;
+    }
+    lean_dec_ref(npatchInfo_box);
+    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new_box->top = top;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_left_set(uint32_t left, b_lean_obj_arg obj) {
-//     LET_BOX(NPatchInfo, result_, *lean_raylib_NPatchInfo_from(obj));
-//     result_->left = left;
-//     return lean_raylib_NPatchInfo_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_right(b_lean_obj_arg npatchInfo) {
+    return lean_raylib_NPatchInfo_from(npatchInfo)->right;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_top(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_NPatchInfo_from(obj)->top;
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_right_set(uint32_t right, lean_obj_arg npatchInfo_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(npatchInfo_box))) {
+        lean_raylib_NPatchInfo_from(npatchInfo_box)->right = right;
+        return npatchInfo_box;
+    }
+    lean_dec_ref(npatchInfo_box);
+    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new_box->right = right;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
 
-// LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_top_set(uint32_t top, b_lean_obj_arg obj) {
-//     LET_BOX(NPatchInfo, result_, *lean_raylib_NPatchInfo_from(obj));
-//     result_->top = top;
-//     return lean_raylib_NPatchInfo_to(result_);
-// }
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_right(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_NPatchInfo_from(obj)->right;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_bottom(b_lean_obj_arg npatchInfo) {
+    return lean_raylib_NPatchInfo_from(npatchInfo)->bottom;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_right_set(uint32_t right, b_lean_obj_arg obj) {
-//     LET_BOX(NPatchInfo, result_, *lean_raylib_NPatchInfo_from(obj));
-//     result_->right = right;
-//     return lean_raylib_NPatchInfo_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_bottom_set(uint32_t bottom, lean_obj_arg npatchInfo_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(npatchInfo_box))) {
+        lean_raylib_NPatchInfo_from(npatchInfo_box)->bottom = bottom;
+        return npatchInfo_box;
+    }
+    lean_dec_ref(npatchInfo_box);
+    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new_box->bottom = bottom;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
 
-// LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_bottom(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_NPatchInfo_from(obj)->bottom;
-//     return result_;
-// }
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_bottom_set(uint32_t bottom, b_lean_obj_arg obj) {
-//     LET_BOX(NPatchInfo, result_, *lean_raylib_NPatchInfo_from(obj));
-//     result_->bottom = bottom;
-//     return lean_raylib_NPatchInfo_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_layout(b_lean_obj_arg npatchInfo) {
+    return lean_raylib_NPatchInfo_from(npatchInfo)->layout;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_layout(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_NPatchInfo_from(obj)->layout;
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_layout_set(uint32_t layout, lean_obj_arg npatchInfo_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(npatchInfo_box))) {
+        lean_raylib_NPatchInfo_from(npatchInfo_box)->layout = layout;
+        return npatchInfo_box;
+    }
+    lean_dec_ref(npatchInfo_box);
+    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new_box->layout = layout;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_layout_set(uint32_t layout, b_lean_obj_arg obj) {
-//     LET_BOX(NPatchInfo, result_, *lean_raylib_NPatchInfo_from(obj));
-//     result_->layout = layout;
-//     return lean_raylib_NPatchInfo_to(result_);
-// }
+
+// # Glyph info
 
 // LEAN_EXPORT lean_obj_res lean_raylib__GlyphInfo_mk(uint32_t value, uint32_t offsetX, uint32_t offsetY, uint32_t advanceX, lean_obj_arg image) {
 //     LET_BOX_STRUCT(GlyphInfo, result_,

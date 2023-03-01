@@ -280,15 +280,15 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndMode3D (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BeginTextureMode (lean_obj_arg target, lean_obj_arg world) {
-//     BeginTextureMode(/*cast RenderTexture2D to_lean?false*/(target));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BeginTextureMode (b_lean_obj_arg target, lean_obj_arg world) {
+    BeginTextureMode(*lean_raylib_RenderTexture_from(target));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EndTextureMode (lean_obj_arg world) {
-//     EndTextureMode();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EndTextureMode (lean_obj_arg world) {
+    EndTextureMode();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__BeginShaderMode (lean_obj_arg shader, lean_obj_arg world) {
 //     BeginShaderMode(lean_raylib_Shader_from(shader));
@@ -939,10 +939,16 @@ LEAN_EXPORT lean_obj_res lean_raylib__UpdateCamera (lean_obj_arg camera_old_box,
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetShapesTexture (lean_obj_arg texture, lean_obj_arg source, lean_obj_arg world) {
-//     SetShapesTexture(/*cast Texture2D to_lean?false*/(texture), lean_raylib_Rectangle_from(source));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetShapesTexture (lean_obj_arg textureRef_box, b_lean_obj_arg source, lean_obj_arg world) {
+    static lean_object* current = NULL;
+    lean_raylib_TextureRef const* textureRef = lean_raylib_TextureRef_from(textureRef_box);
+    if(current != NULL) {
+        lean_dec(current);
+    }
+    current = textureRef->owner;
+    SetShapesTexture(textureRef->texture, *lean_raylib_Rectangle_from(source));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawPixel (uint32_t posX, uint32_t posY, uint32_t color, lean_obj_arg world) {
     DrawPixel(posX, posY, lean_raylib_Color_from(color));
@@ -1220,10 +1226,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromMemory (
     return lean_io_result_mk_ok(lean_raylib_Image_to(image));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromTexture (lean_obj_arg texture, lean_obj_arg world) {
-//     Image result_ = LoadImageFromTexture(/*cast Texture2D to_lean?false*/(texture));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromTexture (b_lean_obj_arg textureRef, lean_obj_arg world) {
+    LET_BOX(Image, image, LoadImageFromTexture(lean_raylib_TextureRef_from(textureRef)->texture));
+    return lean_io_result_mk_ok(lean_raylib_Image_to(image));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromScreen (lean_obj_arg world) {
     LET_BOX(Image, image, LoadImageFromScreen());
@@ -1255,45 +1261,45 @@ LEAN_EXPORT lean_obj_res lean_raylib__GenImageColor (uint32_t width, uint32_t he
     return lean_raylib_Image_to(image);
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientV (uint32_t width, uint32_t height, uint32_t top, uint32_t bottom, lean_obj_arg world) {
-//     Image result_ = GenImageGradientV(width, height, lean_raylib_Color_from(top), lean_raylib_Color_from(bottom));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientV (uint32_t width, uint32_t height, uint32_t top, uint32_t bottom) {
+    LET_BOX(Image, image, GenImageGradientV(width, height, lean_raylib_Color_from(top), lean_raylib_Color_from(bottom)));
+    return lean_raylib_Image_to(image);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientH (uint32_t width, uint32_t height, uint32_t left, uint32_t right, lean_obj_arg world) {
-//     Image result_ = GenImageGradientH(width, height, lean_raylib_Color_from(left), lean_raylib_Color_from(right));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientH (uint32_t width, uint32_t height, uint32_t left, uint32_t right) {
+    LET_BOX(Image, image, GenImageGradientH(width, height, lean_raylib_Color_from(left), lean_raylib_Color_from(right)));
+    return lean_raylib_Image_to(image);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientRadial (uint32_t width, uint32_t height, double density, uint32_t inner, uint32_t outer, lean_obj_arg world) {
-//     Image result_ = GenImageGradientRadial(width, height, (float)density, lean_raylib_Color_from(inner), lean_raylib_Color_from(outer));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageGradientRadial (uint32_t width, uint32_t height, double density, uint32_t inner, uint32_t outer) {
+    LET_BOX(Image, image, GenImageGradientRadial(width, height, (float)density, lean_raylib_Color_from(inner), lean_raylib_Color_from(outer)));
+    return lean_raylib_Image_to(image);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageChecked (uint32_t width, uint32_t height, uint32_t checksX, uint32_t checksY, uint32_t col1, uint32_t col2, lean_obj_arg world) {
-//     Image result_ = GenImageChecked(width, height, checksX, checksY, lean_raylib_Color_from(col1), lean_raylib_Color_from(col2));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageChecked (uint32_t width, uint32_t height, uint32_t checksX, uint32_t checksY, uint32_t col1, uint32_t col2) {
+    LET_BOX(Image, image, GenImageChecked(width, height, checksX, checksY, lean_raylib_Color_from(col1), lean_raylib_Color_from(col2)));
+    return lean_raylib_Image_to(image);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageWhiteNoise (uint32_t width, uint32_t height, double factor, lean_obj_arg world) {
-//     Image result_ = GenImageWhiteNoise(width, height, (float)factor);
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageWhiteNoise (uint32_t width, uint32_t height, double factor, lean_obj_arg world) {
+    LET_BOX(Image, image, GenImageWhiteNoise(width, height, (float)factor));
+    return lean_io_result_mk_ok(lean_raylib_Image_to(image));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImagePerlinNoise (uint32_t width, uint32_t height, uint32_t offsetX, uint32_t offsetY, double scale, lean_obj_arg world) {
-//     Image result_ = GenImagePerlinNoise(width, height, offsetX, offsetY, (float)scale);
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImagePerlinNoise (uint32_t width, uint32_t height, uint32_t offsetX, uint32_t offsetY, double scale) {
+    LET_BOX(Image, image, GenImagePerlinNoise(width, height, offsetX, offsetY, (float)scale));
+    return lean_raylib_Image_to(image);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageCellular (uint32_t width, uint32_t height, uint32_t tileSize, lean_obj_arg world) {
-//     Image result_ = GenImageCellular(width, height, tileSize);
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageCellular (uint32_t width, uint32_t height, uint32_t tileSize, lean_obj_arg world) {
+    LET_BOX(Image, image, GenImageCellular(width, height, tileSize));
+    return lean_io_result_mk_ok(lean_raylib_Image_to(image));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageText (uint32_t width, uint32_t height, /* const char* */lean_obj_arg text, lean_obj_arg world) {
-//     Image result_ = GenImageText(width, height, lean_string_cstr(text));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageText (uint32_t width, uint32_t height, b_lean_obj_arg text) {
+    LET_BOX(Image, image, GenImageText(width, height, lean_string_cstr(text)));
+    return lean_raylib_Image_to(image);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__ImageCopy (b_lean_obj_arg image) {
     LET_BOX(Image, image_copy, ImageCopy(*lean_raylib_Image_from(image)));
@@ -1540,35 +1546,33 @@ LEAN_EXPORT lean_obj_res lean_raylib__ImageFromImage (b_lean_obj_arg image, b_le
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadTexture (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     Texture2D result_ = LoadTexture(lean_string_cstr(fileName));
-//     return /*cast Texture2D to_lean?true*/(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadTexture (b_lean_obj_arg fileName, lean_obj_arg world) {
+    LET_BOX(Texture2D, texture, LoadTexture(lean_string_cstr(fileName)));
+    return lean_io_result_mk_ok(lean_raylib_Texture_to(texture));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureFromImage (lean_obj_arg image, lean_obj_arg world) {
-//     Texture2D result_ = LoadTextureFromImage(lean_raylib_Image_from(image));
-//     return /*cast Texture2D to_lean?true*/(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureFromImage (b_lean_obj_arg image) {
+    LET_BOX(Texture2D, texture, LoadTextureFromImage(*lean_raylib_Image_from(image)));
+    return lean_raylib_Texture_to(texture);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureCubemap (lean_obj_arg image, uint32_t layout, lean_obj_arg world) {
-//     TextureCubemap result_ = LoadTextureCubemap(lean_raylib_Image_from(image), layout);
-//     return /*cast TextureCubemap to_lean?true*/(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureCubemap (b_lean_obj_arg image, uint32_t layout) {
+    LET_BOX(TextureCubemap, texture, LoadTextureCubemap(*lean_raylib_Image_from(image), layout));
+    return lean_raylib_Texture_to(texture);
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadRenderTexture (uint32_t width, uint32_t height, lean_obj_arg world) {
 //     RenderTexture2D result_ = LoadRenderTexture(width, height);
 //     return /*cast RenderTexture2D to_lean?true*/(result_);
 // }
 
-// LEAN_EXPORT uint8_t lean_raylib__IsTextureReady (lean_obj_arg texture, lean_obj_arg world) {
-//     bool result_ = IsTextureReady(/*cast Texture2D to_lean?false*/(texture));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsTextureReady (b_lean_obj_arg textureRef) {
+    return IsTextureReady(lean_raylib_TextureRef_from(textureRef)->texture);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadTexture (lean_obj_arg texture, lean_obj_arg world) {
-//     UnloadTexture(/*cast Texture2D to_lean?false*/(texture));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadTexture (b_lean_obj_arg texture) {
+    return lean_box(0);
+}
 
 // LEAN_EXPORT uint8_t lean_raylib__IsRenderTextureReady (lean_obj_arg target, lean_obj_arg world) {
 //     bool result_ = IsRenderTextureReady(/*cast RenderTexture2D to_lean?false*/(target));
@@ -1595,43 +1599,43 @@ LEAN_EXPORT lean_obj_res lean_raylib__ImageFromImage (b_lean_obj_arg image, b_le
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetTextureFilter (lean_obj_arg texture, uint32_t filter, lean_obj_arg world) {
-//     SetTextureFilter(/*cast Texture2D to_lean?false*/(texture), filter);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetTextureFilter (b_lean_obj_arg textureRef, uint32_t filter, lean_obj_arg world) {
+    SetTextureFilter(lean_raylib_TextureRef_from(textureRef)->texture, filter);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetTextureWrap (lean_obj_arg texture, uint32_t wrap, lean_obj_arg world) {
-//     SetTextureWrap(/*cast Texture2D to_lean?false*/(texture), wrap);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetTextureWrap (b_lean_obj_arg textureRef, uint32_t wrap, lean_obj_arg world) {
+    SetTextureWrap(lean_raylib_TextureRef_from(textureRef)->texture, wrap);
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTexture (lean_obj_arg texture, uint32_t posX, uint32_t posY, uint32_t tint, lean_obj_arg world) {
-//     DrawTexture(/*cast Texture2D to_lean?false*/(texture), posX, posY, lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTexture (b_lean_obj_arg textureRef, uint32_t posX, uint32_t posY, uint32_t tint, lean_obj_arg world) {
+    DrawTexture(lean_raylib_TextureRef_from(textureRef)->texture, posX, posY, lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureV (lean_obj_arg texture, lean_obj_arg position, uint32_t tint, lean_obj_arg world) {
-//     DrawTextureV(/*cast Texture2D to_lean?false*/(texture), lean_raylib_Vector2_from(position), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureV (b_lean_obj_arg textureRef, b_lean_obj_arg position, uint32_t tint, lean_obj_arg world) {
+    DrawTextureV(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Vector2_from(position), lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureEx (lean_obj_arg texture, lean_obj_arg position, double rotation, double scale, uint32_t tint, lean_obj_arg world) {
-//     DrawTextureEx(/*cast Texture2D to_lean?false*/(texture), lean_raylib_Vector2_from(position), (float)rotation, (float)scale, lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureEx (b_lean_obj_arg textureRef, b_lean_obj_arg position, double rotation, double scale, uint32_t tint, lean_obj_arg world) {
+    DrawTextureEx(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Vector2_from(position), (float)rotation, (float)scale, lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureRec (lean_obj_arg texture, lean_obj_arg source, lean_obj_arg position, uint32_t tint, lean_obj_arg world) {
-//     DrawTextureRec(/*cast Texture2D to_lean?false*/(texture), lean_raylib_Rectangle_from(source), lean_raylib_Vector2_from(position), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureRec (b_lean_obj_arg textureRef, b_lean_obj_arg source, b_lean_obj_arg position, uint32_t tint, lean_obj_arg world) {
+    DrawTextureRec(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Vector2_from(position), lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTexturePro (lean_obj_arg texture, lean_obj_arg source, lean_obj_arg dest, lean_obj_arg origin, double rotation, uint32_t tint, lean_obj_arg world) {
-//     DrawTexturePro(/*cast Texture2D to_lean?false*/(texture), lean_raylib_Rectangle_from(source), lean_raylib_Rectangle_from(dest), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTexturePro (b_lean_obj_arg textureRef, b_lean_obj_arg source, b_lean_obj_arg dest, b_lean_obj_arg origin, double rotation, uint32_t tint, lean_obj_arg world) {
+    DrawTexturePro(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Rectangle_from(dest), *lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureNPatch (lean_obj_arg texture, lean_obj_arg nPatchInfo, lean_obj_arg dest, lean_obj_arg origin, double rotation, uint32_t tint, lean_obj_arg world) {
-//     DrawTextureNPatch(/*cast Texture2D to_lean?false*/(texture), lean_raylib_NPatchInfo_from(nPatchInfo), lean_raylib_Rectangle_from(dest), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
+//     DrawTextureNPatch(*lean_raylib_Texture_from(texture), lean_raylib_NPatchInfo_from(nPatchInfo), lean_raylib_Rectangle_from(dest), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 

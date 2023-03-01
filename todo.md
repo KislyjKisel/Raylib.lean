@@ -8,3 +8,5 @@
 
 * Binary data retrieval from images, audio etc
   (opaque readonly buffer type? mb smth like a trait object)
+
+* Optional usage of lean's alloc

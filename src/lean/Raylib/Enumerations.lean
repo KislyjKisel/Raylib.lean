@@ -1076,4 +1076,7 @@ def NPATCH_THREE_PATCH_VERTICAL : NPatchLayout := Subtype.mk 1 NPatchLayout.Is.N
 /-- Npatch layout: 3x1 tiles -/
 def NPATCH_THREE_PATCH_HORIZONTAL : NPatchLayout := Subtype.mk 2 NPatchLayout.Is.NPATCH_THREE_PATCH_HORIZONTAL
 
+instance instInhabitedNPatchLayout : Inhabited NPatchLayout where
+  default := NPATCH_NINE_PATCH
+
 end Raylib
