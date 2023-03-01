@@ -411,10 +411,6 @@ opaque RenderTexture.id (texture : @& RenderTexture) : UInt32
 @[extern "lean_raylib__RenderTexture_texture"]
 opaque RenderTexture.texture (rt : RenderTexture) : TextureRef
 
-/-- Depth buffer attachment texture -/
-@[extern "lean_raylib__RenderTexture_depth"]
-opaque RenderTexture.depth (rt : RenderTexture) : TextureRef
-
 
 /-! # NPatch info -/
 

@@ -439,13 +439,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__RenderTexture_texture(lean_obj_arg rt_box)
     );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__RenderTexture_depth(lean_obj_arg rt_box) {
-    return lean_raylib_TextureRef_alloc(
-        lean_raylib_RenderTexture_from(rt_box)->depth,
-        rt_box
-    );
-}
-
 
 // # NPatch info
 
