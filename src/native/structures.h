@@ -420,8 +420,8 @@ static inline lean_object* lean_raylib_Wave_to (Wave const* obj) {
     return lean_alloc_external(class_, (void*)obj);
 }
 
-static inline Wave const* lean_raylib_Wave_from (b_lean_obj_arg obj) {
-    return (Wave const*) lean_get_external_data(obj);
+static inline Wave* lean_raylib_Wave_from (b_lean_obj_arg obj) {
+    return (Wave*) lean_get_external_data(obj);
 }
 
 

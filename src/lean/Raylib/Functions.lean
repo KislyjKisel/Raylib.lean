@@ -2061,31 +2061,26 @@ opaque IsAudioDeviceReady : BaseIO Bool
 /-- Set master volume (listener) -/
 @[extern "lean_raylib__SetMasterVolume"]
 opaque SetMasterVolume (volume : Float) : BaseIO Unit
--- /-- Load wave data from file -/
--- @[extern "lean_raylib__LoadWave"]
--- opaque LoadWave (fileName : String) : Wave
--- /-- Load wave from memory buffer, fileType refers to extension: i.e. '.wav' -/
--- @[extern "lean_raylib__LoadWaveFromMemory"]
--- opaque LoadWaveFromMemory : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Wave
---   params:
---   | fileType : const char *
---   | fileData : const unsigned char *
---   | dataSize : int
--- -/
--- /-- Checks if wave data is ready -/
--- @[extern "lean_raylib__IsWaveReady"]
--- opaque IsWaveReady (wave : Wave) : Bool
--- /-- Load sound from file -/
--- @[extern "lean_raylib__LoadSound"]
--- opaque LoadSound (fileName : String) : Sound
--- /-- Load sound from wave data -/
--- @[extern "lean_raylib__LoadSoundFromWave"]
--- opaque LoadSoundFromWave (wave : Wave) : Sound
--- /-- Checks if a sound is ready -/
--- @[extern "lean_raylib__IsSoundReady"]
--- opaque IsSoundReady (sound : Sound) : Bool
+/-- Load wave data from file -/
+@[extern "lean_raylib__LoadWave"]
+opaque LoadWave (fileName : @& String) : BaseIO Wave
+/-- Load wave from memory buffer, fileType refers to extension: i.e. '.wav' -/
+-- IO: TraceLog
+@[extern "lean_raylib__LoadWaveFromMemory"]
+opaque LoadWaveFromMemory (fileType : @& String) (fileData : @& ByteArray) : BaseIO Wave
+/-- Checks if wave data is ready -/
+@[extern "lean_raylib__IsWaveReady"]
+opaque IsWaveReady (wave : @& Wave) : Bool
+/-- Load sound from file -/
+@[extern "lean_raylib__LoadSound"]
+opaque LoadSound (fileName : @& String) : BaseIO Sound
+/-- Load sound from wave data -/
+-- IO: TraceLog
+@[extern "lean_raylib__LoadSoundFromWave"]
+opaque LoadSoundFromWave (wave : @& Wave) : BaseIO Sound
+/-- Checks if a sound is ready -/
+@[extern "lean_raylib__IsSoundReady"]
+opaque IsSoundReady (sound : @& Sound) : Bool
 -- /-- Update sound buffer with new data -/
 -- @[extern "lean_raylib__UpdateSound"]
 -- opaque UpdateSound : Unit -> Unit
@@ -2096,75 +2091,62 @@ opaque SetMasterVolume (volume : Float) : BaseIO Unit
 --   | data : const void *
 --   | sampleCount : int
 -- -/
--- /-- Unload wave data -/
--- @[extern "lean_raylib__UnloadWave"]
--- opaque UnloadWave (wave : Wave) : Unit
--- /-- Unload sound -/
--- @[extern "lean_raylib__UnloadSound"]
--- opaque UnloadSound (sound : Sound) : Unit
--- /-- Export wave data to file, returns true on success -/
--- @[extern "lean_raylib__ExportWave"]
--- opaque ExportWave (wave : Wave) (fileName : String) : Bool
--- /-- Export wave sample data to code (.h), returns true on success -/
--- @[extern "lean_raylib__ExportWaveAsCode"]
--- opaque ExportWaveAsCode (wave : Wave) (fileName : String) : Bool
--- /-- Play a sound -/
--- @[extern "lean_raylib__PlaySound"]
--- opaque PlaySound (sound : Sound) : Unit
--- /-- Stop playing a sound -/
--- @[extern "lean_raylib__StopSound"]
--- opaque StopSound (sound : Sound) : Unit
--- /-- Pause a sound -/
--- @[extern "lean_raylib__PauseSound"]
--- opaque PauseSound (sound : Sound) : Unit
--- /-- Resume a paused sound -/
--- @[extern "lean_raylib__ResumeSound"]
--- opaque ResumeSound (sound : Sound) : Unit
--- /-- Play a sound (using multichannel buffer pool) -/
--- @[extern "lean_raylib__PlaySoundMulti"]
--- opaque PlaySoundMulti (sound : Sound) : Unit
--- /-- Stop any sound playing (using multichannel buffer pool) -/
--- @[extern "lean_raylib__StopSoundMulti"]
--- opaque StopSoundMulti (_ : Unit) : Unit
--- /-- Get number of sounds playing in the multichannel -/
--- @[extern "lean_raylib__GetSoundsPlaying"]
--- opaque GetSoundsPlaying (_ : Unit) : Int32
--- /-- Check if a sound is currently playing -/
--- @[extern "lean_raylib__IsSoundPlaying"]
--- opaque IsSoundPlaying (sound : Sound) : Bool
--- /-- Set volume for a sound (1.0 is max level) -/
--- @[extern "lean_raylib__SetSoundVolume"]
--- opaque SetSoundVolume (sound : Sound) (volume : Float) : Unit
--- /-- Set pitch for a sound (1.0 is base level) -/
--- @[extern "lean_raylib__SetSoundPitch"]
--- opaque SetSoundPitch (sound : Sound) (pitch : Float) : Unit
--- /-- Set pan for a sound (0.5 is center) -/
--- @[extern "lean_raylib__SetSoundPan"]
--- opaque SetSoundPan (sound : Sound) (pan : Float) : Unit
--- /-- Copy a wave to a new wave -/
--- @[extern "lean_raylib__WaveCopy"]
--- opaque WaveCopy (wave : Wave) : Wave
--- /-- Crop a wave to defined samples range -/
--- @[extern "lean_raylib__WaveCrop"]
--- opaque WaveCrop : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | wave : Wave *
---   | initSample : int
---   | finalSample : int
--- -/
--- /-- Convert wave data to desired format -/
--- @[extern "lean_raylib__WaveFormat"]
--- opaque WaveFormat : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | wave : Wave *
---   | sampleRate : int
---   | sampleSize : int
---   | channels : int
--- -/
+/-- Unload wave data -/
+@[extern "lean_raylib__UnloadWave"]
+opaque UnloadWave (wave : @& Wave) : Unit
+/-- Unload sound -/
+@[extern "lean_raylib__UnloadSound"]
+opaque UnloadSound (sound : @& Sound) : Unit
+/-- Export wave data to file, returns true on success -/
+@[extern "lean_raylib__ExportWave"]
+opaque ExportWave (wave : @& Wave) (fileName : @& String) : BaseIO Bool
+/-- Export wave sample data to code (.h), returns true on success -/
+@[extern "lean_raylib__ExportWaveAsCode"]
+opaque ExportWaveAsCode (wave : @& Wave) (fileName : @& String) : BaseIO Bool
+/-- Play a sound -/
+@[extern "lean_raylib__PlaySound"]
+opaque PlaySound (sound : @& Sound) : BaseIO Unit
+/-- Stop playing a sound -/
+@[extern "lean_raylib__StopSound"]
+opaque StopSound (sound : @& Sound) : BaseIO Unit
+/-- Pause a sound -/
+@[extern "lean_raylib__PauseSound"]
+opaque PauseSound (sound : @& Sound) : BaseIO Unit
+/-- Resume a paused sound -/
+@[extern "lean_raylib__ResumeSound"]
+opaque ResumeSound (sound : @& Sound) : BaseIO Unit
+/-- Play a sound (using multichannel buffer pool) -/
+@[extern "lean_raylib__PlaySoundMulti"]
+opaque PlaySoundMulti (sound : @& Sound) : BaseIO Unit
+/-- Stop any sound playing (using multichannel buffer pool) -/
+@[extern "lean_raylib__StopSoundMulti"]
+opaque StopSoundMulti : BaseIO Unit
+/-- Get number of sounds playing in the multichannel -/
+@[extern "lean_raylib__GetSoundsPlaying"]
+opaque GetSoundsPlaying : BaseIO UInt32
+/-- Check if a sound is currently playing -/
+@[extern "lean_raylib__IsSoundPlaying"]
+opaque IsSoundPlaying (sound : @& Sound) : BaseIO Bool
+/-- Set volume for a sound (1.0 is max level) -/
+@[extern "lean_raylib__SetSoundVolume"]
+opaque SetSoundVolume (sound : @& Sound) (volume : Float) : BaseIO Unit
+/-- Set pitch for a sound (1.0 is base level) -/
+@[extern "lean_raylib__SetSoundPitch"]
+opaque SetSoundPitch (sound : @& Sound) (pitch : Float) : BaseIO Unit
+/-- Set pan for a sound (0.5 is center) -/
+@[extern "lean_raylib__SetSoundPan"]
+opaque SetSoundPan (sound : @& Sound) (pan : Float) : BaseIO Unit
+/-- Copy a wave to a new wave -/
+@[extern "lean_raylib__WaveCopy"]
+opaque WaveCopy (wave : @& Wave) : Wave
+/-- Crop a wave to defined samples range -/
+-- IO: TraceLog
+@[extern "lean_raylib__WaveCrop"]
+opaque WaveCrop (wave : Wave) (initSample : UInt32) (finalSample : UInt32) : BaseIO Wave
+/-- Convert wave data to desired format -/
+-- IO: TraceLog
+@[extern "lean_raylib__WaveFormat"]
+opaque WaveFormat (wave : Wave) (sampleRate : UInt32) (sampleSize : UInt32) (channels : UInt32) : BaseIO Wave
 -- /-- Load samples data from wave as a 32bit float data array -/
 -- @[extern "lean_raylib__LoadWaveSamples"]
 -- opaque LoadWaveSamples : Unit -> Unit
