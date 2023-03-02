@@ -1763,76 +1763,69 @@ opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32)
 -- /-- Get integer value from text (negative values not supported) -/
 -- @[extern "lean_raylib__TextToInteger"]
 -- opaque TextToInteger (text : String) : Int32
--- /-- Draw a line in 3D world space -/
--- @[extern "lean_raylib__DrawLine3D"]
--- opaque DrawLine3D (startPos : Vector3) (endPos : Vector3) (color : Color) : Unit
--- /-- Draw a point in 3D space, actually a small line -/
--- @[extern "lean_raylib__DrawPoint3D"]
--- opaque DrawPoint3D (position : Vector3) (color : Color) : Unit
--- /-- Draw a circle in 3D world space -/
--- @[extern "lean_raylib__DrawCircle3D"]
--- opaque DrawCircle3D (center : Vector3) (radius : Float) (rotationAxis : Vector3) (rotationAngle : Float) (color : Color) : Unit
--- /-- Draw a color-filled triangle (vertex in counter-clockwise order!) -/
--- @[extern "lean_raylib__DrawTriangle3D"]
--- opaque DrawTriangle3D (v1 : Vector3) (v2 : Vector3) (v3 : Vector3) (color : Color) : Unit
--- /-- Draw a triangle strip defined by points -/
--- @[extern "lean_raylib__DrawTriangleStrip3D"]
--- opaque DrawTriangleStrip3D : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | points : Vector3 *
---   | pointCount : int
---   | color : Color
--- -/
--- /-- Draw cube -/
--- @[extern "lean_raylib__DrawCube"]
--- opaque DrawCube (position : Vector3) (width : Float) (height : Float) (length : Float) (color : Color) : Unit
--- /-- Draw cube (Vector version) -/
--- @[extern "lean_raylib__DrawCubeV"]
--- opaque DrawCubeV (position : Vector3) (size : Vector3) (color : Color) : Unit
--- /-- Draw cube wires -/
--- @[extern "lean_raylib__DrawCubeWires"]
--- opaque DrawCubeWires (position : Vector3) (width : Float) (height : Float) (length : Float) (color : Color) : Unit
--- /-- Draw cube wires (Vector version) -/
--- @[extern "lean_raylib__DrawCubeWiresV"]
--- opaque DrawCubeWiresV (position : Vector3) (size : Vector3) (color : Color) : Unit
--- /-- Draw sphere -/
--- @[extern "lean_raylib__DrawSphere"]
--- opaque DrawSphere (centerPos : Vector3) (radius : Float) (color : Color) : Unit
--- /-- Draw sphere with extended parameters -/
--- @[extern "lean_raylib__DrawSphereEx"]
--- opaque DrawSphereEx (centerPos : Vector3) (radius : Float) (rings : Int32) (slices : Int32) (color : Color) : Unit
--- /-- Draw sphere wires -/
--- @[extern "lean_raylib__DrawSphereWires"]
--- opaque DrawSphereWires (centerPos : Vector3) (radius : Float) (rings : Int32) (slices : Int32) (color : Color) : Unit
--- /-- Draw a cylinder/cone -/
--- @[extern "lean_raylib__DrawCylinder"]
--- opaque DrawCylinder (position : Vector3) (radiusTop : Float) (radiusBottom : Float) (height : Float) (slices : Int32) (color : Color) : Unit
--- /-- Draw a cylinder with base at startPos and top at endPos -/
--- @[extern "lean_raylib__DrawCylinderEx"]
--- opaque DrawCylinderEx (startPos : Vector3) (endPos : Vector3) (startRadius : Float) (endRadius : Float) (sides : Int32) (color : Color) : Unit
--- /-- Draw a cylinder/cone wires -/
--- @[extern "lean_raylib__DrawCylinderWires"]
--- opaque DrawCylinderWires (position : Vector3) (radiusTop : Float) (radiusBottom : Float) (height : Float) (slices : Int32) (color : Color) : Unit
--- /-- Draw a cylinder wires with base at startPos and top at endPos -/
--- @[extern "lean_raylib__DrawCylinderWiresEx"]
--- opaque DrawCylinderWiresEx (startPos : Vector3) (endPos : Vector3) (startRadius : Float) (endRadius : Float) (sides : Int32) (color : Color) : Unit
--- /-- Draw a capsule with the center of its sphere caps at startPos and endPos -/
--- @[extern "lean_raylib__DrawCapsule"]
--- opaque DrawCapsule (startPos : Vector3) (endPos : Vector3) (radius : Float) (slices : Int32) (rings : Int32) (color : Color) : Unit
--- /-- Draw capsule wireframe with the center of its sphere caps at startPos and endPos -/
--- @[extern "lean_raylib__DrawCapsuleWires"]
--- opaque DrawCapsuleWires (startPos : Vector3) (endPos : Vector3) (radius : Float) (slices : Int32) (rings : Int32) (color : Color) : Unit
--- /-- Draw a plane XZ -/
--- @[extern "lean_raylib__DrawPlane"]
--- opaque DrawPlane (centerPos : Vector3) (size : Vector2) (color : Color) : Unit
--- /-- Draw a ray line -/
--- @[extern "lean_raylib__DrawRay"]
--- opaque DrawRay (ray : Ray) (color : Color) : Unit
--- /-- Draw a grid (centered at (0, 0, 0)) -/
--- @[extern "lean_raylib__DrawGrid"]
--- opaque DrawGrid (slices : Int32) (spacing : Float) : Unit
+/-- Draw a line in 3D world space -/
+@[extern "lean_raylib__DrawLine3D"]
+opaque DrawLine3D (startPos : @& Vector3) (endPos : @& Vector3) (color : Color) : BaseIO Unit
+/-- Draw a point in 3D space, actually a small line -/
+@[extern "lean_raylib__DrawPoint3D"]
+opaque DrawPoint3D (position : @& Vector3) (color : Color) : BaseIO Unit
+/-- Draw a circle in 3D world space -/
+@[extern "lean_raylib__DrawCircle3D"]
+opaque DrawCircle3D (center : @& Vector3) (radius : Float) (rotationAxis : @& Vector3) (rotationAngle : Float) (color : Color) : BaseIO Unit
+/-- Draw a color-filled triangle (vertex in counter-clockwise order!) -/
+@[extern "lean_raylib__DrawTriangle3D"]
+opaque DrawTriangle3D (v1 : @& Vector3) (v2 : @& Vector3) (v3 : @& Vector3) (color : Color) : BaseIO Unit
+/-- Draw a triangle strip defined by points -/
+@[extern "lean_raylib__DrawTriangleStrip3D"]
+opaque DrawTriangleStrip3D (points : @& Array Vector3) (color : Color) : BaseIO Unit
+/-- Draw cube -/
+@[extern "lean_raylib__DrawCube"]
+opaque DrawCube (position : @& Vector3) (width : Float) (height : Float) (length : Float) (color : Color) : BaseIO Unit
+/-- Draw cube (Vector version) -/
+@[extern "lean_raylib__DrawCubeV"]
+opaque DrawCubeV (position : @& Vector3) (size : @& Vector3) (color : Color) : BaseIO Unit
+/-- Draw cube wires -/
+@[extern "lean_raylib__DrawCubeWires"]
+opaque DrawCubeWires (position : @& Vector3) (width : Float) (height : Float) (length : Float) (color : Color) : BaseIO Unit
+/-- Draw cube wires (Vector version) -/
+@[extern "lean_raylib__DrawCubeWiresV"]
+opaque DrawCubeWiresV (position : @& Vector3) (size : @& Vector3) (color : Color) : BaseIO Unit
+/-- Draw sphere -/
+@[extern "lean_raylib__DrawSphere"]
+opaque DrawSphere (centerPos : @& Vector3) (radius : Float) (color : Color) : BaseIO Unit
+/-- Draw sphere with extended parameters -/
+@[extern "lean_raylib__DrawSphereEx"]
+opaque DrawSphereEx (centerPos : @& Vector3) (radius : Float) (rings : UInt32) (slices : UInt32) (color : Color) : BaseIO Unit
+/-- Draw sphere wires -/
+@[extern "lean_raylib__DrawSphereWires"]
+opaque DrawSphereWires (centerPos : @& Vector3) (radius : Float) (rings : UInt32) (slices : UInt32) (color : Color) : BaseIO Unit
+/-- Draw a cylinder/cone -/
+@[extern "lean_raylib__DrawCylinder"]
+opaque DrawCylinder (position : @& Vector3) (radiusTop : Float) (radiusBottom : Float) (height : Float) (slices : UInt32) (color : Color) : BaseIO Unit
+/-- Draw a cylinder with base at startPos and top at endPos -/
+@[extern "lean_raylib__DrawCylinderEx"]
+opaque DrawCylinderEx (startPos : @& Vector3) (endPos : @& Vector3) (startRadius : Float) (endRadius : Float) (sides : UInt32) (color : Color) : BaseIO Unit
+/-- Draw a cylinder/cone wires -/
+@[extern "lean_raylib__DrawCylinderWires"]
+opaque DrawCylinderWires (position : @& Vector3) (radiusTop : Float) (radiusBottom : Float) (height : Float) (slices : UInt32) (color : Color) : BaseIO Unit
+/-- Draw a cylinder wires with base at startPos and top at endPos -/
+@[extern "lean_raylib__DrawCylinderWiresEx"]
+opaque DrawCylinderWiresEx (startPos : @& Vector3) (endPos : @& Vector3) (startRadius : Float) (endRadius : Float) (sides : UInt32) (color : Color) : BaseIO Unit
+/-- Draw a capsule with the center of its sphere caps at startPos and endPos -/
+@[extern "lean_raylib__DrawCapsule"]
+opaque DrawCapsule (startPos : @& Vector3) (endPos : @& Vector3) (radius : Float) (slices : UInt32) (rings : UInt32) (color : Color) : BaseIO Unit
+/-- Draw capsule wireframe with the center of its sphere caps at startPos and endPos -/
+@[extern "lean_raylib__DrawCapsuleWires"]
+opaque DrawCapsuleWires (startPos : @& Vector3) (endPos : @& Vector3) (radius : Float) (slices : UInt32) (rings : UInt32) (color : Color) : BaseIO Unit
+/-- Draw a plane XZ -/
+@[extern "lean_raylib__DrawPlane"]
+opaque DrawPlane (centerPos : @& Vector3) (size : @& Vector2) (color : Color) : BaseIO Unit
+/-- Draw a ray line -/
+@[extern "lean_raylib__DrawRay"]
+opaque DrawRay (ray : @& Ray) (color : Color) : BaseIO Unit
+/-- Draw a grid (centered at (0, 0, 0)) -/
+@[extern "lean_raylib__DrawGrid"]
+opaque DrawGrid (slices : UInt32) (spacing : Float) : BaseIO Unit
 -- /-- Load model from files (meshes and materials) -/
 -- @[extern "lean_raylib__LoadModel"]
 -- opaque LoadModel (fileName : String) : Model
@@ -1863,18 +1856,18 @@ opaque DrawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32)
 -- /-- Draw a model wires (with texture if set) with extended parameters -/
 -- @[extern "lean_raylib__DrawModelWiresEx"]
 -- opaque DrawModelWiresEx (model : Model) (position : Vector3) (rotationAxis : Vector3) (rotationAngle : Float) (scale : Vector3) (tint : Color) : Unit
--- /-- Draw bounding box (wires) -/
--- @[extern "lean_raylib__DrawBoundingBox"]
--- opaque DrawBoundingBox (box : BoundingBox) (color : Color) : Unit
--- /-- Draw a billboard texture -/
--- @[extern "lean_raylib__DrawBillboard"]
--- opaque DrawBillboard (camera : Camera) (texture : Texture2D) (position : Vector3) (size : Float) (tint : Color) : Unit
--- /-- Draw a billboard texture defined by source -/
--- @[extern "lean_raylib__DrawBillboardRec"]
--- opaque DrawBillboardRec (camera : Camera) (texture : Texture2D) (source : Rectangle) (position : Vector3) (size : Vector2) (tint : Color) : Unit
--- /-- Draw a billboard texture defined by source and rotation -/
--- @[extern "lean_raylib__DrawBillboardPro"]
--- opaque DrawBillboardPro (camera : Camera) (texture : Texture2D) (source : Rectangle) (position : Vector3) (up : Vector3) (size : Vector2) (origin : Vector2) (rotation : Float) (tint : Color) : Unit
+/-- Draw bounding box (wires) -/
+@[extern "lean_raylib__DrawBoundingBox"]
+opaque DrawBoundingBox (box : @& BoundingBox) (color : Color) : BaseIO Unit
+/-- Draw a billboard texture -/
+@[extern "lean_raylib__DrawBillboard"]
+opaque DrawBillboard (camera : @& Camera) (texture : @& Texture2DRef) (position : @& Vector3) (size : Float) (tint : Color) : BaseIO Unit
+/-- Draw a billboard texture defined by source -/
+@[extern "lean_raylib__DrawBillboardRec"]
+opaque DrawBillboardRec (camera : @& Camera) (texture : @& Texture2DRef) (source : @& Rectangle) (position : @& Vector3) (size : @& Vector2) (tint : Color) : BaseIO Unit
+/-- Draw a billboard texture defined by source and rotation -/
+@[extern "lean_raylib__DrawBillboardPro"]
+opaque DrawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source : @& Rectangle) (position : @& Vector3) (up : @& Vector3) (size : @& Vector2) (origin : @& Vector2) (rotation : Float) (tint : Color) : BaseIO Unit
 -- /-- Upload mesh vertex data in GPU and provide VAO/VBO ids -/
 -- @[extern "lean_raylib__UploadMesh"]
 -- opaque UploadMesh : Unit -> Unit
