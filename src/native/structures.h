@@ -392,17 +392,20 @@ static inline Ray* lean_raylib_Ray_from (b_lean_obj_arg obj) {
 //     return (RayCollision const*) lean_get_external_data(obj);
 // }
 
-// static inline lean_object* lean_raylib_BoundingBox_to (BoundingBox const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
 
-// static inline BoundingBox const* lean_raylib_BoundingBox_from (b_lean_obj_arg obj) {
-//     return (BoundingBox const*) lean_get_external_data(obj);
-// }
+// # Bounding box
+
+static inline lean_object* lean_raylib_BoundingBox_to (BoundingBox const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline BoundingBox* lean_raylib_BoundingBox_from (b_lean_obj_arg obj) {
+    return (BoundingBox*) lean_get_external_data(obj);
+}
 
 
 // # Wave

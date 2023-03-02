@@ -1252,24 +1252,26 @@ opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
 
 /-! # Bounding box -/
 
--- opaque BoundingBoxPointed : NonemptyType
--- /-- BoundingBox -/
--- def BoundingBox : Type := BoundingBoxPointed.type
--- instance : Nonempty BoundingBox := BoundingBoxPointed.property
--- @[extern "lean_raylib__BoundingBox_mk"]
--- opaque BoundingBox.mk (min : Vector3) (max : Vector3) : BoundingBox
--- /-- Getter: Minimum vertex box-corner -/
--- @[extern "lean_raylib__BoundingBox_min"]
--- opaque BoundingBox.min (self : @& BoundingBox) : Vector3
--- /-- Setter: Minimum vertex box-corner -/
--- @[extern "lean_raylib__BoundingBox_min_set"]
--- opaque BoundingBox.set_min (min : Vector3) (self : BoundingBox) : BoundingBox
--- /-- Getter: Maximum vertex box-corner -/
--- @[extern "lean_raylib__BoundingBox_max"]
--- opaque BoundingBox.max (self : @& BoundingBox) : Vector3
--- /-- Setter: Maximum vertex box-corner -/
--- @[extern "lean_raylib__BoundingBox_max_set"]
--- opaque BoundingBox.set_max (max : Vector3) (self : BoundingBox) : BoundingBox
+opaque BoundingBoxPointed : NonemptyType
+/-- BoundingBox -/
+def BoundingBox : Type := BoundingBoxPointed.type
+instance : Nonempty BoundingBox := BoundingBoxPointed.property
+
+@[extern "lean_raylib__BoundingBox_mk"]
+opaque BoundingBox.mk (min : @& Vector3) (max : @& Vector3) : BoundingBox
+
+/-- Getter: Minimum vertex box-corner -/
+@[extern "lean_raylib__BoundingBox_min"]
+opaque BoundingBox.min (bbox : @& BoundingBox) : Vector3
+/-- Setter: Minimum vertex box-corner -/
+@[extern "lean_raylib__BoundingBox_min_set"]
+opaque BoundingBox.set_min (min : @& Vector3) (bbox : BoundingBox) : BoundingBox
+/-- Getter: Maximum vertex box-corner -/
+@[extern "lean_raylib__BoundingBox_max"]
+opaque BoundingBox.max (bbox : @& BoundingBox) : Vector3
+/-- Setter: Maximum vertex box-corner -/
+@[extern "lean_raylib__BoundingBox_max_set"]
+opaque BoundingBox.set_max (max : @& Vector3) (bbox : BoundingBox) : BoundingBox
 
 
 /-! # Wave -/

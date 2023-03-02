@@ -1511,35 +1511,48 @@ LEAN_EXPORT lean_obj_res lean_raylib__Ray_direction_set(b_lean_obj_arg direction
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_mk(lean_obj_arg min, lean_obj_arg max) {
-//     LET_BOX_STRUCT(BoundingBox, result_,
-//         .min = lean_raylib_Vector3_from(min),
-//         .max = lean_raylib_Vector3_from(max)
-//     );
-//     return lean_raylib_BoundingBox_to(result_);
-// }
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__BoundingBox_min(b_lean_obj_arg obj) {
-//     Vector3 result_ = lean_raylib_BoundingBox_from(obj)->min;
-//     return lean_raylib_Vector3_to(result_);
-// }
+// # Bounding box
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_min_set(lean_obj_arg min, b_lean_obj_arg obj) {
-//     LET_BOX(BoundingBox, result_, *lean_raylib_BoundingBox_from(obj));
-//     result_->min = lean_raylib_Vector3_from(min);
-//     return lean_raylib_BoundingBox_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_mk(b_lean_obj_arg min, b_lean_obj_arg max) {
+    LET_BOX_STRUCT(BoundingBox, result_,
+        .min = *lean_raylib_Vector3_from(min),
+        .max = *lean_raylib_Vector3_from(max)
+    );
+    return lean_raylib_BoundingBox_to(result_);
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__BoundingBox_max(b_lean_obj_arg obj) {
-//     Vector3 result_ = lean_raylib_BoundingBox_from(obj)->max;
-//     return lean_raylib_Vector3_to(result_);
-// }
+LEAN_EXPORT lean_obj_arg lean_raylib__BoundingBox_min(b_lean_obj_arg bbox) {
+    LET_BOX(Vector3, min, lean_raylib_BoundingBox_from(bbox)->min);
+    return lean_raylib_Vector3_to(min);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_max_set(lean_obj_arg max, b_lean_obj_arg obj) {
-//     LET_BOX(BoundingBox, result_, *lean_raylib_BoundingBox_from(obj));
-//     result_->max = lean_raylib_Vector3_from(max);
-//     return lean_raylib_BoundingBox_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_min_set(lean_obj_arg min, lean_obj_arg bbox_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(bbox_box))) {
+        lean_raylib_BoundingBox_from(bbox_box)->min = *lean_raylib_Vector3_from(min);
+        return bbox_box;
+    }
+    LET_BOX(BoundingBox, bbox_new, *lean_raylib_BoundingBox_from(bbox_box));
+    bbox_new->min = *lean_raylib_Vector3_from(min);
+    lean_dec_ref(bbox_box);
+    return lean_raylib_BoundingBox_to(bbox_new);
+}
+
+LEAN_EXPORT lean_obj_arg lean_raylib__BoundingBox_max(b_lean_obj_arg bbox) {
+    LET_BOX(Vector3, max, lean_raylib_BoundingBox_from(bbox)->max);
+    return lean_raylib_Vector3_to(max);
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_max_set(lean_obj_arg max, lean_obj_arg bbox_box) {
+    if(LEAN_LIKELY(lean_is_exclusive(bbox_box))) {
+        lean_raylib_BoundingBox_from(bbox_box)->max = *lean_raylib_Vector3_from(max);
+        return bbox_box;
+    }
+    LET_BOX(BoundingBox, bbox_new, *lean_raylib_BoundingBox_from(bbox_box));
+    bbox_new->max = *lean_raylib_Vector3_from(max);
+    lean_dec_ref(bbox_box);
+    return lean_raylib_BoundingBox_to(bbox_new);
+}
 
 
 // # Wave
