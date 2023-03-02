@@ -25,12 +25,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector2_x_set(double x, lean_obj_arg vec_b
         return vec_box;
     }
     Vector2 const* vec = lean_raylib_Vector2_from(vec_box);
-    LET_BOX_STRUCT(Vector2, vec_new_box,
+    LET_BOX_STRUCT(Vector2, vec_new,
         .x = x,
         .y = vec->y,
     );
     lean_dec_ref(vec_box);
-    return lean_raylib_Vector2_to(vec_new_box);
+    return lean_raylib_Vector2_to(vec_new);
 }
 
 LEAN_EXPORT double lean_raylib__Vector2_y(b_lean_obj_arg vec) {
@@ -43,12 +43,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector2_y_set(double y, lean_obj_arg vec_b
         return vec_box;
     }
     Vector2 const* vec = lean_raylib_Vector2_from(vec_box);
-    LET_BOX_STRUCT(Vector2, vec_new_box,
+    LET_BOX_STRUCT(Vector2, vec_new,
         .x = vec->x,
         .y = y,
     );
     lean_dec_ref(vec_box);
-    return lean_raylib_Vector2_to(vec_new_box);
+    return lean_raylib_Vector2_to(vec_new);
 }
 
 
@@ -73,13 +73,13 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector3_x_set(double x, lean_obj_arg vec_b
         return vec_box;
     }
     Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
-    LET_BOX_STRUCT(Vector3, vec_new_box,
+    LET_BOX_STRUCT(Vector3, vec_new,
         .x = x,
         .y = vec->y,
         .z = vec->z,
     );
     lean_dec_ref(vec_box);
-    return lean_raylib_Vector3_to(vec_new_box);
+    return lean_raylib_Vector3_to(vec_new);
 }
 
 LEAN_EXPORT double lean_raylib__Vector3_y(b_lean_obj_arg obj) {
@@ -92,13 +92,13 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector3_y_set(double y, lean_obj_arg vec_b
         return vec_box;
     }
     Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
-    LET_BOX_STRUCT(Vector3, vec_new_box,
+    LET_BOX_STRUCT(Vector3, vec_new,
         .x = vec->x,
         .y = y,
         .z = vec->z,
     );
     lean_dec_ref(vec_box);
-    return lean_raylib_Vector3_to(vec_new_box);
+    return lean_raylib_Vector3_to(vec_new);
 }
 
 LEAN_EXPORT double lean_raylib__Vector3_z(b_lean_obj_arg obj) {
@@ -111,13 +111,13 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector3_z_set(double z, lean_obj_arg vec_b
         return vec_box;
     }
     Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
-    LET_BOX_STRUCT(Vector3, vec_new_box,
+    LET_BOX_STRUCT(Vector3, vec_new,
         .x = vec->x,
         .y = vec->y,
         .z = z,
     );
     lean_dec_ref(vec_box);
-    return lean_raylib_Vector3_to(vec_new_box);
+    return lean_raylib_Vector3_to(vec_new);
 }
 
 
@@ -143,14 +143,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector4_x_set(double x, lean_obj_arg vec_b
         return vec_box;
     }
     Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
-    LET_BOX_STRUCT(Vector4, vec_new_box,
+    LET_BOX_STRUCT(Vector4, vec_new,
         .x = x,
         .y = vec->y,
         .z = vec->z,
         .w = vec->w
     );
     lean_dec_ref(vec_box);
-    return lean_raylib_Vector4_to(vec_new_box);
+    return lean_raylib_Vector4_to(vec_new);
 }
 
 LEAN_EXPORT double lean_raylib__Vector4_y(b_lean_obj_arg obj) {
@@ -163,14 +163,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector4_y_set(double y, lean_obj_arg vec_b
         return vec_box;
     }
     Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
-    LET_BOX_STRUCT(Vector4, vec_new_box,
+    LET_BOX_STRUCT(Vector4, vec_new,
         .x = vec->x,
         .y = y,
         .z = vec->z,
         .w = vec->w,
     );
     lean_dec_ref(vec);
-    return lean_raylib_Vector4_to(vec_new_box);
+    return lean_raylib_Vector4_to(vec_new);
 }
 
 LEAN_EXPORT double lean_raylib__Vector4_z(b_lean_obj_arg obj) {
@@ -183,14 +183,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector4_z_set(double z, lean_obj_arg vec_b
         return vec_box;
     }
     Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
-    LET_BOX_STRUCT(Vector4, vec_new_box,
+    LET_BOX_STRUCT(Vector4, vec_new,
         .x = vec->x,
         .y = vec->y,
         .z = z,
         .w = vec->w,
     );
     lean_dec_ref(vec_box);
-    return lean_raylib_Vector4_to(vec_new_box);
+    return lean_raylib_Vector4_to(vec_new);
 }
 
 LEAN_EXPORT double lean_raylib__Vector4_w(b_lean_obj_arg obj) {
@@ -203,14 +203,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector4_w_set(double w, lean_obj_arg vec_b
         return vec_box;
     }
     Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
-    LET_BOX_STRUCT(Vector4, vec_new_box,
+    LET_BOX_STRUCT(Vector4, vec_new,
         .x = vec->x,
         .y = vec->y,
         .z = vec->z,
         .w = w,
     );
     lean_dec_ref(vec_box);
-    return lean_raylib_Vector4_to(vec_new_box);
+    return lean_raylib_Vector4_to(vec_new);
 }
 
 
@@ -241,9 +241,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__Matrix_mk(
             return mat_box;\
         }\
         lean_dec_ref(mat_box);\
-        LET_BOX(Matrix, mat_new_box, *lean_raylib_Matrix_from(mat_box));\
-        mat_new_box->m##N = m##N;\
-        return lean_raylib_Matrix_to(mat_new_box);\
+        LET_BOX(Matrix, mat_new, *lean_raylib_Matrix_from(mat_box));\
+        mat_new->m##N = m##N;\
+        return lean_raylib_Matrix_to(mat_new);\
     }
 
 MATRIX_ACCESSORS(0);
@@ -286,9 +286,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(double x, lean_obj_arg rec
         return rect_box;
     }
     lean_dec_ref(rect_box);
-    LET_BOX(Rectangle, rect_new_box, *lean_raylib_Rectangle_from(rect_box));
-    rect_new_box->x = x;
-    return lean_raylib_Rectangle_to(rect_new_box);
+    LET_BOX(Rectangle, rect_new, *lean_raylib_Rectangle_from(rect_box));
+    rect_new->x = x;
+    return lean_raylib_Rectangle_to(rect_new);
 }
 
 LEAN_EXPORT double lean_raylib__Rectangle_y(b_lean_obj_arg obj) {
@@ -301,9 +301,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(double y, lean_obj_arg rec
         return rect_box;
     }
     lean_dec_ref(rect_box);
-    LET_BOX(Rectangle, rect_new_box, *lean_raylib_Rectangle_from(rect_box));
-    rect_new_box->y = y;
-    return lean_raylib_Rectangle_to(rect_new_box);
+    LET_BOX(Rectangle, rect_new, *lean_raylib_Rectangle_from(rect_box));
+    rect_new->y = y;
+    return lean_raylib_Rectangle_to(rect_new);
 }
 
 LEAN_EXPORT double lean_raylib__Rectangle_width(b_lean_obj_arg obj) {
@@ -316,9 +316,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(double width, lean_obj
         return rect_box;
     }
     lean_dec_ref(rect_box);
-    LET_BOX(Rectangle, rect_new_box, *lean_raylib_Rectangle_from(rect_box));
-    rect_new_box->width = width;
-    return lean_raylib_Rectangle_to(rect_new_box);
+    LET_BOX(Rectangle, rect_new, *lean_raylib_Rectangle_from(rect_box));
+    rect_new->width = width;
+    return lean_raylib_Rectangle_to(rect_new);
 }
 
 LEAN_EXPORT double lean_raylib__Rectangle_height(b_lean_obj_arg obj) {
@@ -331,9 +331,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_height_set(double height, lean_o
         return rect_box;
     }
     lean_dec_ref(rect_box);
-    LET_BOX(Rectangle, rect_new_box, *lean_raylib_Rectangle_from(rect_box));
-    rect_new_box->height = height;
-    return lean_raylib_Rectangle_to(rect_new_box);
+    LET_BOX(Rectangle, rect_new, *lean_raylib_Rectangle_from(rect_box));
+    rect_new->height = height;
+    return lean_raylib_Rectangle_to(rect_new);
 }
 
 
@@ -469,9 +469,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_source_set(b_lean_obj_arg sourc
         return npatchInfo_box;
     }
     lean_dec_ref(npatchInfo_box);
-    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
-    npatchInfo_new_box->source = source;
-    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+    LET_BOX(NPatchInfo, npatchInfo_new, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new->source = source;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new);
 }
 
 LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_left(b_lean_obj_arg npatchInfo) {
@@ -484,9 +484,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_left_set(uint32_t left, lean_ob
         return npatchInfo_box;
     }
     lean_dec_ref(npatchInfo_box);
-    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
-    npatchInfo_new_box->left = left;
-    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+    LET_BOX(NPatchInfo, npatchInfo_new, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new->left = left;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new);
 }
 
 LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_top(b_lean_obj_arg npatchInfo) {
@@ -499,9 +499,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_top_set(uint32_t top, lean_obj_
         return npatchInfo_box;
     }
     lean_dec_ref(npatchInfo_box);
-    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
-    npatchInfo_new_box->top = top;
-    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+    LET_BOX(NPatchInfo, npatchInfo_new, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new->top = top;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new);
 }
 
 LEAN_EXPORT uint32_t lean_raylib__NPatchInfo_right(b_lean_obj_arg npatchInfo) {
@@ -514,9 +514,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_right_set(uint32_t right, lean_
         return npatchInfo_box;
     }
     lean_dec_ref(npatchInfo_box);
-    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
-    npatchInfo_new_box->right = right;
-    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+    LET_BOX(NPatchInfo, npatchInfo_new, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new->right = right;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new);
 
 }
 
@@ -530,9 +530,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_bottom_set(uint32_t bottom, lea
         return npatchInfo_box;
     }
     lean_dec_ref(npatchInfo_box);
-    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
-    npatchInfo_new_box->bottom = bottom;
-    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+    LET_BOX(NPatchInfo, npatchInfo_new, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new->bottom = bottom;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new);
 
 }
 
@@ -546,9 +546,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_layout_set(uint32_t layout, lea
         return npatchInfo_box;
     }
     lean_dec_ref(npatchInfo_box);
-    LET_BOX(NPatchInfo, npatchInfo_new_box, *lean_raylib_NPatchInfo_from(npatchInfo_box));
-    npatchInfo_new_box->layout = layout;
-    return lean_raylib_NPatchInfo_to(npatchInfo_new_box);
+    LET_BOX(NPatchInfo, npatchInfo_new, *lean_raylib_NPatchInfo_from(npatchInfo_box));
+    npatchInfo_new->layout = layout;
+    return lean_raylib_NPatchInfo_to(npatchInfo_new);
 }
 
 
