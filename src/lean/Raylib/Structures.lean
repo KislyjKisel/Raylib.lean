@@ -8,29 +8,35 @@ namespace Raylib
 
 /-! ## Vector2 -/
 
-opaque Vector2Pointed : NonemptyType
-/-- Vector2, 2 components -/
-def Vector2 : Type := Vector2Pointed.type
-instance : Nonempty Vector2 := Vector2Pointed.property
+structure Vector2 where
+  mk ::
+  x : Float
+  y : Float
+deriving Inhabited
 
-@[extern "lean_raylib__Vector2_mk"]
-opaque Vector2.mk (x : Float) (y : Float) : Vector2
+attribute [extern "lean_raylib__Vector2_mk"] Vector2.mk
+attribute [extern "lean_raylib__Vector2_x"] Vector2.x
+attribute [extern "lean_raylib__Vector2_y"] Vector2.y
 
-/-- Getter: Vector x component -/
-@[extern "lean_raylib__Vector2_x"]
-opaque Vector2.x (vector : @& Vector2) : Float
+-- deriving is broken
+instance : Repr Vector2 where
+  reprPrec x _ :=
+      Std.Format.bracket "{ "
+        (Std.Format.nil ++ Std.Format.text "x" ++ Std.Format.text " := " ++ Std.Format.group (Std.Format.nest 5 (repr x.x)) ++
+          Std.Format.text "," ++
+              Std.Format.line ++
+              Std.Format.text "y" ++
+            Std.Format.text " := " ++
+          Std.Format.group (Std.Format.nest 5 (repr x.y)))
+      " }"
 
 /-- Setter: Vector x component -/
 @[extern "lean_raylib__Vector2_x_set"]
-opaque Vector2.set_x (x : Float) (vector : Vector2) : Vector2
-
-/-- Getter: Vector y component -/
-@[extern "lean_raylib__Vector2_y"]
-opaque Vector2.y (vector : @& Vector2) : Float
+abbrev Vector2.set_x (x : Float) (vector : Vector2) : Vector2 := { vector with x }
 
 /-- Setter: Vector y component -/
 @[extern "lean_raylib__Vector2_y_set"]
-opaque Vector2.set_y (y : Float) (vector : Vector2) : Vector2
+abbrev Vector2.set_y (y : Float) (vector : Vector2) : Vector2 := { vector with y }
 
 
 /-! ## Vector3 -/
