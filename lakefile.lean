@@ -23,17 +23,64 @@ def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : Inde
   let srcJob ← inputFile <| pkg.dir / "src" / "native" / (stem ++ ".c")
   buildO (stem ++ ".c") oFile srcJob flags "cc"
 
+def tryRunProcess (sa : IO.Process.SpawnArgs) : IndexBuildM String := do
+  let output ← IO.Process.output sa
+  if output.exitCode ≠ 0 then
+    error s!"'{sa.cmd}' returned {output.exitCode}: {output.stderr}"
+  else
+    return output.stdout
+
+def tryRunProcess_ (sa : IO.Process.SpawnArgs) :=
+  Functor.discard $ tryRunProcess sa
+
 extern_lib «raylib-lean» (pkg : Package) := do
   let name := nameToStaticLib "raylib-lean"
-  let raylib_inc := (← IO.Process.output {
-    cmd := "pkg-config"
-    args := #["--cflags", "raylib"]
-    cwd := pkg.dir
-  }).stdout
-  let mut flags := #[raylib_inc, "-I", (← getLeanIncludeDir).toString, "-fPIC"]
+  let mut flags := #["-I", (← getLeanIncludeDir).toString, "-fPIC"]
+
+  let raylib_src := (get_config? raylib).getD "system"
+  match raylib_src with
+    | "system" =>
+      flags := flags.push $ ← tryRunProcess {
+        cmd := "pkg-config"
+        args := #["--cflags", "raylib"]
+      }
+
+    | "submodule" => do
+      IO.println $ ← tryRunProcess {
+        cmd := "git"
+        args := #["submodule", "update", "--init", "--force", "--recursive"]
+        cwd := pkg.dir
+      }
+      IO.println $ ← tryRunProcess {
+        cmd := "mkdir"
+        args := #["-p", "raylib/build"]
+        cwd := pkg.dir
+      }
+      IO.println $ ← tryRunProcess {
+        cmd := "cmake"
+        args := #["-DCUSTOMIZE_BUILD=ON", "-DBUILD_EXAMPLES=OFF", ".."]
+        cwd := pkg.dir / "raylib" / "build"
+      }
+      IO.println $ ← tryRunProcess {
+        cmd := "cmake"
+        args := #["--build", "."]
+        cwd := pkg.dir / "raylib" / "build"
+      }
+      flags := flags.append #[
+        "-I",
+        (pkg.dir / "raylib" / "build" / "raylib" / "include").toString,
+        "-L",
+        (pkg.dir / "raylib" / "build" / "raylib").toString,
+        "-lraylib"
+      ]
+
+    | unknown =>
+      error s!"Unknown 'raylib' source: {unknown}"
+
   if get_config? unsafe_opts = some "" then {
     flags := flags.push "-DRAYLIB_LEAN_UNSAFE_OPTS"
   }
+
   let bindingsEnumerationsOFile ← buildBindingsO pkg flags "enumerations"
   let bindingsStructuresOFile ← buildBindingsO pkg flags "structures"
   let bindingsFunctionsOFile ← buildBindingsO pkg flags "functions"
