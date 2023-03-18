@@ -10,3 +10,7 @@
   (opaque readonly buffer type? mb smth like a trait object)
 
 * Optional usage of lean's alloc
+
+* Define PODs in Lean instead of using "external" objects
+
+* Debug configuration options

@@ -1,11 +1,6 @@
 import Lake
 open Lake DSL
 
-/- CONFIGURATION
-* unsafe_opts("") -- enable some optimizations that may be erroneous.
--- TODO: Type assertions (ex. lean_obj_arg tag check) for ffi api testing
--/
-
 package raylib {
   srcDir := "src/lean"
 }
@@ -77,7 +72,7 @@ extern_lib «raylib-lean» (pkg : Package) := do
     | unknown =>
       error s!"Unknown 'raylib' source: {unknown}"
 
-  if get_config? unsafe_opts = some "" then {
+  if (get_config? unsafe_opts).isSome then {
     flags := flags.push "-DRAYLIB_LEAN_UNSAFE_OPTS"
   }
 
