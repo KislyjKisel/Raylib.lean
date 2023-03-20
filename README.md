@@ -27,6 +27,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 
 * `raylib`: `"system"` by default, use `"submodule"` to compile from source using git submodules.
 * `unsafe_opts`: if present, enables some optimizations that use assumptions I am unsure about.
+* `cc`: c compiler invoked to compile ffi; `"cc"` by default.
 
 ## Example
 

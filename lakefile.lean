@@ -16,7 +16,7 @@ lean_exe test {
 def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
   let oFile := pkg.irDir / "native" / (stem ++ ".o")
   let srcJob ← inputFile <| pkg.dir / "src" / "native" / (stem ++ ".c")
-  buildO (stem ++ ".c") oFile srcJob flags "cc"
+  buildO (stem ++ ".c") oFile srcJob flags ((get_config? cc).getD "cc")
 
 def tryRunProcess (sa : IO.Process.SpawnArgs) : IndexBuildM String := do
   let output ← IO.Process.output sa
