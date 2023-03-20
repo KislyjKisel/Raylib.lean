@@ -25,9 +25,11 @@ Then run `lake update`.
 
 Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`) to the `require` statement
 
-* `raylib`: `"system"` by default, use `"submodule"` to compile from source using git submodules.
+* `raylib`: `"system"` by default. `"submodule"` to compile from source using git submodules. `"custom"` to not pass library or header directories to the compiler.
 * `unsafe_opts`: if present, enables some optimizations that use assumptions I am unsure about.
 * `cc`: c compiler invoked to compile ffi; `"cc"` by default.
+* `cflags`: additional flags passed to `cc`.
+* `lflags`: additional flags used to link test executable.
 
 ## Example
 

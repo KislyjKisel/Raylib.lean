@@ -7,10 +7,29 @@ package raylib {
 
 lean_lib Raylib
 
+inductive RaylibSrc
+  | System
+  | Submodule
+  | Custom
+  | Unknown (name : String)
+
+def raylibSrc : RaylibSrc := match get_config? raylib with
+  | none => .System
+  | some "system" => .System
+  | some "submodule" => .Submodule
+  | some "custom" => .Custom
+  | some name => .Unknown name
+
 @[default_target]
 lean_exe test {
   root := `Main
-  moreLinkArgs := #["-L/usr/local/lib", "-lraylib"]
+  moreLinkArgs := (
+    match raylibSrc with
+      | .System => #["-L/usr/local/lib", "-lraylib"]
+      | .Submodule => #["-Lraylib/build/raylib", "-lraylib"]
+      | .Custom => #[]
+      | .Unknown _ => #[]
+  ).append $ Array.mk $ ((get_config? lflags).getD "").splitOn
 }
 
 def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
@@ -30,17 +49,18 @@ def tryRunProcess_ (sa : IO.Process.SpawnArgs) :=
 
 extern_lib «raylib-lean» (pkg : Package) := do
   let name := nameToStaticLib "raylib-lean"
-  let mut flags := #["-I", (← getLeanIncludeDir).toString, "-fPIC"]
+  let mut flags :=
+    #["-I", (← getLeanIncludeDir).toString, "-fPIC"].append $
+      Array.mk $ ((get_config? cflags).getD "").splitOn
 
-  let raylib_src := (get_config? raylib).getD "system"
-  match raylib_src with
-    | "system" =>
+  match raylibSrc with
+    | .System =>
       flags := flags.push $ ← tryRunProcess {
         cmd := "pkg-config"
         args := #["--cflags", "raylib"]
       }
 
-    | "submodule" => do
+    | .Submodule => do
       IO.println $ ← tryRunProcess {
         cmd := "git"
         args := #["submodule", "update", "--init", "--force", "--recursive"]
@@ -69,8 +89,10 @@ extern_lib «raylib-lean» (pkg : Package) := do
         "-lraylib"
       ]
 
-    | unknown =>
-      error s!"Unknown 'raylib' source: {unknown}"
+    | .Custom => pure ()
+
+    | .Unknown name =>
+      error s!"Unknown 'raylib' source: {name}"
 
   if (get_config? unsafe_opts).isSome then {
     flags := flags.push "-DRAYLIB_LEAN_UNSAFE_OPTS"
