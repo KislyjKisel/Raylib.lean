@@ -546,7 +546,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__SaveFileData (b_lean_obj_arg fileName, b_l
     ));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__ExportDataAsCode (b_lean_obj_arg data, size_t offset, uint32_t exportSize, b_lean_obj_arg fileName, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__ExportDataAsCode (b_lean_obj_arg data, size_t offset, uint32_t exportSize, b_lean_obj_arg fileName, lean_obj_arg world) {
     unsigned int arraySize = lean_sarray_elem_size(data);
     if(offset >= arraySize || offset + exportSize > arraySize) {
         return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string("Exported data span out of ByteArray bounds.")));
@@ -569,7 +569,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileText (b_lean_obj_arg text) {
 
 LEAN_EXPORT lean_obj_res lean_raylib__SaveFileText (b_lean_obj_arg fileName, b_lean_obj_arg text, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(SaveFileText(
-        lean_string_cstr(fileName), lean_string_cstr(text))
+        lean_string_cstr(fileName), (char*)lean_string_cstr(text))
     ));
 }
 
@@ -2513,7 +2513,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__PlayMusicStream (lean_obj_arg music, lean_
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsMusicStreamPlaying (lean_obj_arg music, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__IsMusicStreamPlaying (lean_obj_arg music, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(
         IsMusicStreamPlaying(*lean_raylib_Music_from(music))
     ));

@@ -15,7 +15,7 @@
 
 #define LET_BOX_STRUCT(T, n, ...) LET_BOX(T, n, ((T){__VA_ARGS__}));
 
-LEAN_EXPORT static void lean_raylib_default_foreach(void* a, b_lean_obj_arg b) {}
+static void lean_raylib_default_foreach(void* a, b_lean_obj_arg b) {}
 
 static inline lean_object* lean_mk_tuple2(lean_object* fst, lean_object* snd) {
     lean_object* result = lean_alloc_ctor(0, 2, 0);

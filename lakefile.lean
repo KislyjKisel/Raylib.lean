@@ -51,7 +51,7 @@ extern_lib «raylib-lean» (pkg : Package) := do
   let name := nameToStaticLib "raylib-lean"
   let mut flags :=
     #["-I", (← getLeanIncludeDir).toString, "-fPIC"].append $
-      Array.mk $ ((get_config? cflags).getD "").splitOn
+      Array.mk $ ((get_config? cflags).getD "").splitOn.filter $ not ∘ String.isEmpty
 
   match raylibSrc with
     | .System =>
@@ -73,7 +73,7 @@ extern_lib «raylib-lean» (pkg : Package) := do
       }
       IO.println $ ← tryRunProcess {
         cmd := "cmake"
-        args := #["-DCUSTOMIZE_BUILD=ON", "-DBUILD_EXAMPLES=OFF", ".."]
+        args := #["-DCUSTOMIZE_BUILD=ON", "-DBUILD_EXAMPLES=OFF", "-DWITH_PIC=ON", ".."]
         cwd := pkg.dir / "raylib" / "build"
       }
       IO.println $ ← tryRunProcess {
@@ -83,10 +83,7 @@ extern_lib «raylib-lean» (pkg : Package) := do
       }
       flags := flags.append #[
         "-I",
-        (pkg.dir / "raylib" / "build" / "raylib" / "include").toString,
-        "-L",
-        (pkg.dir / "raylib" / "build" / "raylib").toString,
-        "-lraylib"
+        (pkg.dir / "raylib" / "build" / "raylib" / "include").toString
       ]
 
     | .Custom => pure ()

@@ -169,7 +169,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Vector4_y_set(double y, lean_obj_arg vec_b
         .z = vec->z,
         .w = vec->w,
     );
-    lean_dec_ref(vec);
+    lean_dec_ref(vec_box);
     return lean_raylib_Vector4_to(vec_new);
 }
 
