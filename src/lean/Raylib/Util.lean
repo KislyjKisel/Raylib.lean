@@ -12,7 +12,7 @@ instance {n} [n' : OfNat UInt32 n] : OfNat Int32 n := OfNat.mk (Int32.mk n'.ofNa
 
 /-! # Logic -/
 
-instance instNonemptyProd {α} {β} [h1 : Nonempty α] [h2 : Nonempty β] : Nonempty (α × β) :=
+instance {α} {β} [h1 : Nonempty α] [h2 : Nonempty β] : Nonempty (α × β) :=
   Nonempty.intro (Classical.choice h1, Classical.choice h2)
 
 

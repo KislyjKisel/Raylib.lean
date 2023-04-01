@@ -416,7 +416,7 @@ def KEY_VOLUME_UP : KeyboardKey := Subtype.mk 24 KeyboardKey.Is.KEY_VOLUME_UP
 /-- Key: Android volume down button -/
 def KEY_VOLUME_DOWN : KeyboardKey := Subtype.mk 25 KeyboardKey.Is.KEY_VOLUME_DOWN
 
-instance instInhabitedKeyboardKey : Inhabited KeyboardKey where
+instance : Inhabited KeyboardKey where
   default := KEY_NULL
 
 
@@ -554,7 +554,7 @@ def GAMEPAD_BUTTON_LEFT_THUMB : GamepadButton := Subtype.mk 16 GamepadButton.Is.
 /-- Gamepad joystick pressed button right -/
 def GAMEPAD_BUTTON_RIGHT_THUMB : GamepadButton := Subtype.mk 17 GamepadButton.Is.GAMEPAD_BUTTON_RIGHT_THUMB
 
-instance instInhabitedGamepadButton : Inhabited GamepadButton where
+instance : Inhabited GamepadButton where
   default := GAMEPAD_BUTTON_UNKNOWN
 
 
@@ -842,7 +842,7 @@ def PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA : PixelFormat := Subtype.mk 20 PixelFor
 /-- 2 bpp -/
 def PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA : PixelFormat := Subtype.mk 21 PixelFormat.Is.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
 
-instance instInhabitedPixelFormat : Inhabited PixelFormat where
+instance : Inhabited PixelFormat where
   default := PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
 
 
@@ -971,7 +971,7 @@ def BLEND_CUSTOM : BlendMode := Subtype.mk 6 BlendMode.Is.BLEND_CUSTOM
 /-- Blend textures using custom rgb/alpha separate src/dst factors (use rlSetBlendFactorsSeparate()) -/
 def BLEND_CUSTOM_SEPARATE : BlendMode := Subtype.mk 7 BlendMode.Is.BLEND_CUSTOM_SEPARATE
 
-instance instInhabitedBlendMode : Inhabited BlendMode where
+instance : Inhabited BlendMode where
   default := BLEND_ALPHA
 
 
@@ -1037,7 +1037,7 @@ def CAMERA_FIRST_PERSON : CameraMode := Subtype.mk 3 CameraMode.Is.CAMERA_FIRST_
 /-- Third person camera -/
 def CAMERA_THIRD_PERSON : CameraMode := Subtype.mk 4 CameraMode.Is.CAMERA_THIRD_PERSON
 
-instance instInhabitedCameraMode : Inhabited CameraMode where
+instance : Inhabited CameraMode where
   default := CAMERA_CUSTOM
 
 
@@ -1055,7 +1055,7 @@ def CAMERA_PERSPECTIVE : CameraProjection := Subtype.mk 0 CameraProjection.Is.CA
 /-- Orthographic projection -/
 def CAMERA_ORTHOGRAPHIC : CameraProjection := Subtype.mk 1 CameraProjection.Is.CAMERA_ORTHOGRAPHIC
 
-instance instInhabitedCameraProjection : Inhabited CameraProjection where
+instance : Inhabited CameraProjection where
   default := CAMERA_PERSPECTIVE
 
 
@@ -1076,7 +1076,7 @@ def NPATCH_THREE_PATCH_VERTICAL : NPatchLayout := Subtype.mk 1 NPatchLayout.Is.N
 /-- Npatch layout: 3x1 tiles -/
 def NPATCH_THREE_PATCH_HORIZONTAL : NPatchLayout := Subtype.mk 2 NPatchLayout.Is.NPATCH_THREE_PATCH_HORIZONTAL
 
-instance instInhabitedNPatchLayout : Inhabited NPatchLayout where
+instance : Inhabited NPatchLayout where
   default := NPATCH_NINE_PATCH
 
 end Raylib
