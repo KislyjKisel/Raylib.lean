@@ -14,7 +14,7 @@ inductive RaylibSrc
   | Unknown (name : String)
 
 def raylibSrc : RaylibSrc := match get_config? raylib with
-  | none => .System
+  | none => .Submodule
   | some "system" => .System
   | some "submodule" => .Submodule
   | some "custom" => .Custom
@@ -53,6 +53,8 @@ extern_lib «raylib-lean» (pkg : Package) := do
     #["-I", (← getLeanIncludeDir).toString, "-fPIC"].append $
       Array.mk $ ((get_config? cflags).getD "").splitOn.filter $ not ∘ String.isEmpty
 
+  let printCmdOutput := (get_config? cmdout).isSome
+
   match raylibSrc with
     | .System =>
       flags := flags.push $ ← tryRunProcess {
@@ -61,26 +63,34 @@ extern_lib «raylib-lean» (pkg : Package) := do
       }
 
     | .Submodule => do
-      IO.println $ ← tryRunProcess {
+      let gitOutput ← tryRunProcess {
         cmd := "git"
         args := #["submodule", "update", "--init", "--force", "--recursive"]
         cwd := pkg.dir
       }
-      IO.println $ ← tryRunProcess {
+      if printCmdOutput then IO.println gitOutput
+
+      let mkdirOutput ← tryRunProcess {
         cmd := "mkdir"
         args := #["-p", "raylib/build"]
         cwd := pkg.dir
       }
-      IO.println $ ← tryRunProcess {
+      if printCmdOutput then IO.println mkdirOutput
+
+      let cmakeOutput ← tryRunProcess {
         cmd := "cmake"
         args := #["-DCUSTOMIZE_BUILD=ON", "-DBUILD_EXAMPLES=OFF", "-DWITH_PIC=ON", ".."]
         cwd := pkg.dir / "raylib" / "build"
       }
-      IO.println $ ← tryRunProcess {
+      if printCmdOutput then IO.println cmakeOutput
+
+      let cmakeBuildOutput ← tryRunProcess {
         cmd := "cmake"
         args := #["--build", "."]
         cwd := pkg.dir / "raylib" / "build"
       }
+      if printCmdOutput then IO.println cmakeBuildOutput
+
       flags := flags.append #[
         "-I",
         (pkg.dir / "raylib" / "build" / "raylib" / "include").toString

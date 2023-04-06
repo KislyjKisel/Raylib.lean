@@ -30,6 +30,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 * `cc`: c compiler invoked to compile ffi; `"cc"` by default.
 * `cflags`: additional flags passed to `cc`.
 * `lflags`: additional flags used to link test executable.
+* `cmdout`: if present, print output of commands used when building submodule.
 
 ## Example
 
