@@ -40,15 +40,41 @@ def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : Inde
   let srcJob ← inputFile <| pkg.dir / "src" / "native" / (stem ++ ".c")
   buildO (stem ++ ".c") oFile srcJob flags ((get_config? cc).getD "cc")
 
-def tryRunProcess (sa : IO.Process.SpawnArgs) : IndexBuildM String := do
+def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m String := do
   let output ← IO.Process.output sa
   if output.exitCode ≠ 0 then
     error s!"'{sa.cmd}' returned {output.exitCode}: {output.stderr}"
   else
     return output.stdout
 
-def tryRunProcess_ (sa : IO.Process.SpawnArgs) :=
-  Functor.discard $ tryRunProcess sa
+def buildRaylibSubmodule (pkgDir : FilePath) (printCmdOutput : Bool) : IO Unit := do
+  let gitOutput ← tryRunProcess {
+    cmd := "git"
+    args := #["submodule", "update", "--init", "--force", "--recursive"]
+    cwd := pkgDir
+  }
+  if printCmdOutput then IO.println gitOutput
+
+  let mkdirOutput ← tryRunProcess {
+    cmd := "mkdir"
+    args := #["-p", "raylib/build"]
+    cwd := pkgDir
+  }
+  if printCmdOutput then IO.println mkdirOutput
+
+  let cmakeOutput ← tryRunProcess {
+    cmd := "cmake"
+    args := #["-DCUSTOMIZE_BUILD=ON", "-DBUILD_EXAMPLES=OFF", "-DWITH_PIC=ON", ".."]
+    cwd := pkgDir / "raylib" / "build"
+  }
+  if printCmdOutput then IO.println cmakeOutput
+
+  let cmakeBuildOutput ← tryRunProcess {
+    cmd := "cmake"
+    args := #["--build", "."]
+    cwd := pkgDir / "raylib" / "build"
+  }
+  if printCmdOutput then IO.println cmakeBuildOutput
 
 extern_lib «raylib-lean» (pkg : Package) := do
   let name := nameToStaticLib "raylib-lean"
@@ -74,34 +100,7 @@ extern_lib «raylib-lean» (pkg : Package) := do
       }
 
     | .Submodule => do
-      let gitOutput ← tryRunProcess {
-        cmd := "git"
-        args := #["submodule", "update", "--init", "--force", "--recursive"]
-        cwd := pkg.dir
-      }
-      if printCmdOutput then IO.println gitOutput
-
-      let mkdirOutput ← tryRunProcess {
-        cmd := "mkdir"
-        args := #["-p", "raylib/build"]
-        cwd := pkg.dir
-      }
-      if printCmdOutput then IO.println mkdirOutput
-
-      let cmakeOutput ← tryRunProcess {
-        cmd := "cmake"
-        args := #["-DCUSTOMIZE_BUILD=ON", "-DBUILD_EXAMPLES=OFF", "-DWITH_PIC=ON", ".."]
-        cwd := pkg.dir / "raylib" / "build"
-      }
-      if printCmdOutput then IO.println cmakeOutput
-
-      let cmakeBuildOutput ← tryRunProcess {
-        cmd := "cmake"
-        args := #["--build", "."]
-        cwd := pkg.dir / "raylib" / "build"
-      }
-      if printCmdOutput then IO.println cmakeBuildOutput
-
+      buildRaylibSubmodule pkg.dir printCmdOutput
       flags := flags.append #[
         "-I",
         (pkg.dir / "raylib" / "build" / "raylib" / "include").toString
@@ -124,3 +123,7 @@ extern_lib «raylib-lean» (pkg : Package) := do
     bindingsStructuresOFile,
     bindingsFunctionsOFile
   ]
+
+script buildRL do
+  buildRaylibSubmodule ⟨"."⟩ true
+  return 0
