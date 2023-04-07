@@ -3,8 +3,7 @@ import Raylib.Structures
 namespace Raylib
 
 /-! # Aliases -/
-/-- Quaternion, 4 components (Vector4 alias) -/
-abbrev Quaternion : Type := Vector4
+
 /-- Texture2D, same as Texture -/
 abbrev Texture2D : Type := Texture
 abbrev Texture2DRef : Type := TextureRef

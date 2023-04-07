@@ -7,10 +7,6 @@ def RAYLIB_VERSION_MINOR := 5
 def RAYLIB_VERSION_PATCH := 0
 def RAYLIB_VERSION := "4.5-dev"
 
-def PI : Float := 3.141592653589793
-def DEG2RAD : Float := (./.) PI 180
-def RAD2DEG : Float := (./.) 180 PI
-
 /-- Light Gray -/
 def LIGHTGRAY : Color := Color.fromRgba 200 200 200 255
 /-- Gray -/

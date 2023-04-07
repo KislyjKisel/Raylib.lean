@@ -1,20 +1,27 @@
 #pragma once
 
+#include <lean_pod.h>
 #include "util.h"
 
 
 // # Vectors
 
-static inline lean_object* lean_raylib_Vector2_to (Vector2 const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+static inline void lean_raylib_Vector2_set (b_lean_obj_arg obj, Vector2 v) {
+    lean_ctor_set(obj, 0, lean_box_uint32(lean_pod_Float32_toBits(v.x)));
+    lean_ctor_set(obj, 1, lean_box_uint32(lean_pod_Float32_toBits(v.y)));
 }
 
-static inline Vector2* lean_raylib_Vector2_from (b_lean_obj_arg obj) {
-    return (Vector2*) lean_get_external_data(obj);
+static inline lean_object* lean_raylib_Vector2_to (Vector2 v) {
+    lean_object* obj = lean_alloc_ctor(0, 2, 0);
+    lean_raylib_Vector2_set(obj, v);
+    return obj;
+}
+
+static inline Vector2 lean_raylib_Vector2_from (b_lean_obj_arg obj) {
+    Vector2 v;
+    v.x = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 0)));
+    v.y = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 1)));
+    return v;
 }
 
 static inline lean_object* lean_raylib_Vector3_to (Vector3 const* obj) {

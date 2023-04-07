@@ -1,37 +1,13 @@
+import Raymath
 import Raylib.Enumerations
 
 set_option autoImplicit false
 
+open Raymath (Vector2)
+
 namespace Raylib
 
 /-! # Vectors -/
-
-/-! ## Vector2 -/
-
-opaque Vector2Pointed : NonemptyType
-/-- Vector2, 2 components -/
-def Vector2 : Type := Vector2Pointed.type
-instance : Nonempty Vector2 := Vector2Pointed.property
-
-@[extern "lean_raylib__Vector2_mk"]
-opaque Vector2.mk (x : Float) (y : Float) : Vector2
-
-/-- Getter: Vector x component -/
-@[extern "lean_raylib__Vector2_x"]
-opaque Vector2.x (vector : @& Vector2) : Float
-
-/-- Setter: Vector x component -/
-@[extern "lean_raylib__Vector2_x_set"]
-opaque Vector2.set_x (x : Float) (vector : Vector2) : Vector2
-
-/-- Getter: Vector y component -/
-@[extern "lean_raylib__Vector2_y"]
-opaque Vector2.y (vector : @& Vector2) : Float
-
-/-- Setter: Vector y component -/
-@[extern "lean_raylib__Vector2_y_set"]
-opaque Vector2.set_y (y : Float) (vector : Vector2) : Vector2
-
 
 /-! ## Vector3 -/
 

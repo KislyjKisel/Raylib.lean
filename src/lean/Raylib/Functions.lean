@@ -1,3 +1,4 @@
+import Raymath
 import Raylib.Aliases
 import Raylib.Callbacks
 import Raylib.Enumerations
@@ -5,6 +6,8 @@ import Raylib.Structures
 import Raylib.Util
 
 set_option autoImplicit false
+
+open Raymath (Vector2)
 
 namespace Raylib
 

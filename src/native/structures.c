@@ -5,53 +5,6 @@
 
 // # Vectors
 
-// ## Vector2
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector2_mk(double x, double y) {
-    LET_BOX_STRUCT(Vector2, vec,
-        .x = (float)x,
-        .y = (float)y
-    );
-    return lean_raylib_Vector2_to(vec);
-}
-
-LEAN_EXPORT double lean_raylib__Vector2_x(b_lean_obj_arg vec) {
-    return lean_raylib_Vector2_from(vec)->x;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector2_x_set(double x, lean_obj_arg vec_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector2_from(vec_box)->x = x;
-        return vec_box;
-    }
-    Vector2 const* vec = lean_raylib_Vector2_from(vec_box);
-    LET_BOX_STRUCT(Vector2, vec_new,
-        .x = x,
-        .y = vec->y,
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector2_to(vec_new);
-}
-
-LEAN_EXPORT double lean_raylib__Vector2_y(b_lean_obj_arg vec) {
-    return lean_raylib_Vector2_from(vec)->y;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector2_y_set(double y, lean_obj_arg vec_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector2_from(vec_box)->y = y;
-        return vec_box;
-    }
-    Vector2 const* vec = lean_raylib_Vector2_from(vec_box);
-    LET_BOX_STRUCT(Vector2, vec_new,
-        .x = vec->x,
-        .y = y,
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector2_to(vec_new);
-}
-
-
 // ## Vector3
 
 LEAN_EXPORT lean_obj_res lean_raylib__Vector3_mk(double x, double y, double z) {
@@ -798,8 +751,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_projection_set(uint32_t projectio
 
 LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_mk(b_lean_obj_arg offset, b_lean_obj_arg target, double rotation, double zoom) {
     LET_BOX_STRUCT(Camera2D, cam2d,
-        .offset = *lean_raylib_Vector2_from(offset),
-        .target = *lean_raylib_Vector2_from(target),
+        .offset = lean_raylib_Vector2_from(offset),
+        .target = lean_raylib_Vector2_from(target),
         .rotation = (float)rotation,
         .zoom = (float)zoom
     );
@@ -807,34 +760,32 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_mk(b_lean_obj_arg offset, b_lean_
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__Camera2D_offset(b_lean_obj_arg cam2d) {
-    LET_BOX(Vector2, offset, lean_raylib_Camera2D_from(cam2d)->offset);
-    return lean_raylib_Vector2_to(offset);
+    return lean_raylib_Vector2_to(lean_raylib_Camera2D_from(cam2d)->offset);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_offset_set(b_lean_obj_arg offset, lean_obj_arg cam2d) {
     if(LEAN_LIKELY(lean_is_exclusive(cam2d))) {
-        lean_raylib_Camera2D_from(cam2d)->offset = *lean_raylib_Vector2_from(offset);
+        lean_raylib_Camera2D_from(cam2d)->offset = lean_raylib_Vector2_from(offset);
         return cam2d;
     }
     LET_BOX(Camera2D, cam2d_new, *lean_raylib_Camera2D_from(cam2d));
     lean_dec_ref(cam2d);
-    cam2d_new->offset = *lean_raylib_Vector2_from(offset);
+    cam2d_new->offset = lean_raylib_Vector2_from(offset);
     return lean_raylib_Camera2D_to(cam2d_new);
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__Camera2D_target(b_lean_obj_arg cam2d) {
-    LET_BOX(Vector2, target, lean_raylib_Camera2D_from(cam2d)->target);
-    return lean_raylib_Vector2_to(target);
+    return lean_raylib_Vector2_to(lean_raylib_Camera2D_from(cam2d)->target);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_target_set(b_lean_obj_arg target, lean_obj_arg cam2d) {
     if(LEAN_LIKELY(lean_is_exclusive(cam2d))) {
-        lean_raylib_Camera2D_from(cam2d)->target = *lean_raylib_Vector2_from(target);
+        lean_raylib_Camera2D_from(cam2d)->target = lean_raylib_Vector2_from(target);
         return cam2d;
     }
     LET_BOX(Camera2D, cam2d_new, *lean_raylib_Camera2D_from(cam2d));
     lean_dec_ref(cam2d);
-    cam2d_new->target = *lean_raylib_Vector2_from(target);
+    cam2d_new->target = lean_raylib_Vector2_from(target);
     return lean_raylib_Camera2D_to(cam2d_new);
 }
 

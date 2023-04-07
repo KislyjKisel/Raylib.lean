@@ -37,8 +37,8 @@ def main : IO Unit := do
     let mp ← GetMousePosition
 
     cam3d := cam3d.set_position $ Vector3.mk
-      ((mp.x - (windowWidth / 2).toUInt64.toFloat) * mouseSensitivity)
-      ((mp.y - (windowHeight / 2).toUInt64.toFloat) * mouseSensitivity)
+      ((mp.x.toFloat - (windowWidth / 2).toUInt64.toFloat) * mouseSensitivity)
+      ((mp.y.toFloat - (windowHeight / 2).toUInt64.toFloat) * mouseSensitivity)
       0
 
     let camPos := cam3d.position

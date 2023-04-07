@@ -143,8 +143,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetCurrentMonitor (lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorPosition (uint32_t monitor, lean_obj_arg world) {
-    LET_BOX(Vector2, monitorPos, GetMonitorPosition(monitor));
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(monitorPos));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetMonitorPosition(monitor)));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorWidth (uint32_t monitor, lean_obj_arg world) {
@@ -168,13 +167,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorRefreshRate (uint32_t monitor, l
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetWindowPosition (lean_obj_arg world) {
-    LET_BOX(Vector2, windowPos, GetWindowPosition());
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(windowPos));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetWindowPosition()));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetWindowScaleDPI (lean_obj_arg world) {
-    LET_BOX(Vector2, windowScaleDpi, GetWindowScaleDPI());
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(windowScaleDpi));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetWindowScaleDPI()));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorName (uint32_t monitor, lean_obj_arg world) {
@@ -391,7 +388,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndScissorMode (lean_obj_arg world) {
 // }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMouseRay (b_lean_obj_arg mousePosition, b_lean_obj_arg camera, lean_obj_arg world) {
-    LET_BOX(Ray, ray, GetMouseRay(*lean_raylib_Vector2_from(mousePosition), *lean_raylib_Camera3D_from(camera)));
+    LET_BOX(Ray, ray, GetMouseRay(lean_raylib_Vector2_from(mousePosition), *lean_raylib_Camera3D_from(camera)));
     return lean_io_result_mk_ok(lean_raylib_Ray_to(ray));
 }
 
@@ -406,29 +403,36 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix2D (b_lean_obj_arg camera) 
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen (b_lean_obj_arg position, b_lean_obj_arg camera, lean_obj_arg world) {
-    LET_BOX(Vector2, positionScreen, GetWorldToScreen(*lean_raylib_Vector3_from(position), *lean_raylib_Camera3D_from(camera)));
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(positionScreen));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetWorldToScreen(
+        *lean_raylib_Vector3_from(position),
+        *lean_raylib_Camera3D_from(camera)
+    )));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetScreenToWorld2D (b_lean_obj_arg position, b_lean_obj_arg camera) {
-    LET_BOX(Vector2, positionWorld, GetScreenToWorld2D(*lean_raylib_Vector2_from(position), *lean_raylib_Camera2D_from(camera)));
-    return lean_raylib_Vector2_to(positionWorld);
+    return lean_raylib_Vector2_to(GetScreenToWorld2D(
+        lean_raylib_Vector2_from(position),
+        *lean_raylib_Camera2D_from(camera)
+    ));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreenEx (
     b_lean_obj_arg position, b_lean_obj_arg camera,
     uint32_t width, uint32_t height, lean_obj_arg world
 ) {
-    LET_BOX(Vector2, positionScreen, GetWorldToScreenEx(
-        *lean_raylib_Vector3_from(position), *lean_raylib_Camera3D_from(camera),
-        width, height
-    ));
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(positionScreen));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetWorldToScreenEx(
+        *lean_raylib_Vector3_from(position),
+        *lean_raylib_Camera3D_from(camera),
+        width,
+        height
+    )));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen2D (lean_obj_arg position, lean_obj_arg camera) {
-    LET_BOX(Vector2, positionScreen, GetWorldToScreen2D(*lean_raylib_Vector2_from(position), *lean_raylib_Camera2D_from(camera)));
-    return lean_raylib_Vector2_to(positionScreen);
+    return lean_raylib_Vector2_to(GetWorldToScreen2D(
+        lean_raylib_Vector2_from(position),
+        *lean_raylib_Camera2D_from(camera)
+    ));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetTargetFPS (uint32_t fps, lean_obj_arg world) {
@@ -811,13 +815,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetMouseY (lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMousePosition (lean_obj_arg world) {
-    LET_BOX(Vector2, mousePos, GetMousePosition());
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(mousePos));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetMousePosition()));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMouseDelta (lean_obj_arg world) {
-    LET_BOX(Vector2, mouseDelta, GetMouseDelta());
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(mouseDelta));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetMouseDelta()));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetMousePosition (uint32_t x, uint32_t y, lean_obj_arg world) {
@@ -840,8 +842,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetMouseWheelMove (lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMouseWheelMoveV (lean_obj_arg world) {
-    LET_BOX(Vector2, mouseWheelMove, GetMouseWheelMoveV());
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(mouseWheelMove));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetMouseWheelMoveV()));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetMouseCursor (uint32_t cursor, lean_obj_arg world) {
@@ -858,8 +859,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetTouchY (lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetTouchPosition (uint32_t index, lean_obj_arg world) {
-    LET_BOX(Vector2, touchPos, GetTouchPosition(index));
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(touchPos));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetTouchPosition(index)));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetTouchPointId (uint32_t index, lean_obj_arg world) {
@@ -888,8 +888,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetGestureHoldDuration (lean_obj_arg world
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetGestureDragVector (lean_obj_arg world) {
-    LET_BOX(Vector2, gestureDrag, GetGestureDragVector());
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(gestureDrag));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetGestureDragVector()));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetGestureDragAngle (lean_obj_arg world) {
@@ -897,8 +896,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetGestureDragAngle (lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetGesturePinchVector (lean_obj_arg world) {
-    LET_BOX(Vector2, gesturePinch, GetGesturePinchVector());
-    return lean_io_result_mk_ok(lean_raylib_Vector2_to(gesturePinch));
+    return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetGesturePinchVector()));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetGesturePinchAngle (lean_obj_arg world) {
@@ -956,7 +954,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawPixel (uint32_t posX, uint32_t posY, u
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawPixelV (lean_obj_arg position, uint32_t color, lean_obj_arg world) {
-    DrawPixelV(*lean_raylib_Vector2_from(position), lean_raylib_Color_from(color));
+    DrawPixelV(lean_raylib_Vector2_from(position), lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -966,27 +964,27 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLine (uint32_t startPosX, uint32_t sta
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawLineV (lean_obj_arg startPos, lean_obj_arg endPos, uint32_t color, lean_obj_arg world) {
-    DrawLineV(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), lean_raylib_Color_from(color));
+    DrawLineV(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawLineEx (lean_obj_arg startPos, lean_obj_arg endPos, double thick, uint32_t color, lean_obj_arg world) {
-    DrawLineEx(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), (float)thick, lean_raylib_Color_from(color));
+    DrawLineEx(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), (float)thick, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezier (lean_obj_arg startPos, lean_obj_arg endPos, double thick, uint32_t color, lean_obj_arg world) {
-    DrawLineBezier(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), (float)thick, lean_raylib_Color_from(color));
+    DrawLineBezier(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), (float)thick, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierQuad (lean_obj_arg startPos, lean_obj_arg endPos, lean_obj_arg controlPos, double thick, uint32_t color, lean_obj_arg world) {
-    DrawLineBezierQuad(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), *lean_raylib_Vector2_from(controlPos), (float)thick, lean_raylib_Color_from(color));
+    DrawLineBezierQuad(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), lean_raylib_Vector2_from(controlPos), (float)thick, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawLineBezierCubic (lean_obj_arg startPos, lean_obj_arg endPos, lean_obj_arg startControlPos, lean_obj_arg endControlPos, double thick, uint32_t color, lean_obj_arg world) {
-    DrawLineBezierCubic(*lean_raylib_Vector2_from(startPos), *lean_raylib_Vector2_from(endPos), *lean_raylib_Vector2_from(startControlPos), *lean_raylib_Vector2_from(endControlPos), (float)thick, lean_raylib_Color_from(color));
+    DrawLineBezierCubic(lean_raylib_Vector2_from(startPos), lean_raylib_Vector2_from(endPos), lean_raylib_Vector2_from(startControlPos), lean_raylib_Vector2_from(endControlPos), (float)thick, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -1001,12 +999,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawCircle (int32_t centerX, int32_t cente
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleSector (b_lean_obj_arg center, double radius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
-    DrawCircleSector(*lean_raylib_Vector2_from(center), (float)radius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
+    DrawCircleSector(lean_raylib_Vector2_from(center), (float)radius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleSectorLines (b_lean_obj_arg center, double radius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
-    DrawCircleSectorLines(*lean_raylib_Vector2_from(center), (float)radius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
+    DrawCircleSectorLines(lean_raylib_Vector2_from(center), (float)radius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -1016,7 +1014,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleGradient (int32_t centerX, int32
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawCircleV (b_lean_obj_arg center, double radius, uint32_t color, lean_obj_arg world) {
-    DrawCircleV(*lean_raylib_Vector2_from(center), (float)radius, lean_raylib_Color_from(color));
+    DrawCircleV(lean_raylib_Vector2_from(center), (float)radius, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -1036,12 +1034,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawEllipseLines (int32_t centerX, int32_t
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawRing (b_lean_obj_arg center, double innerRadius, double outerRadius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
-    DrawRing(*lean_raylib_Vector2_from(center), (float)innerRadius, (float)outerRadius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
+    DrawRing(lean_raylib_Vector2_from(center), (float)innerRadius, (float)outerRadius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawRingLines (b_lean_obj_arg center, double innerRadius, double outerRadius, double startAngle, double endAngle, uint32_t segments, uint32_t color, lean_obj_arg world) {
-    DrawRingLines(*lean_raylib_Vector2_from(center), (float)innerRadius, (float)outerRadius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
+    DrawRingLines(lean_raylib_Vector2_from(center), (float)innerRadius, (float)outerRadius, (float)startAngle, (float)endAngle, segments, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -1051,7 +1049,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangle (int32_t posX, int32_t posY,
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleV (b_lean_obj_arg position, b_lean_obj_arg size, uint32_t color, lean_obj_arg world) {
-    DrawRectangleV(*lean_raylib_Vector2_from(position), *lean_raylib_Vector2_from(size), lean_raylib_Color_from(color));
+    DrawRectangleV(lean_raylib_Vector2_from(position), lean_raylib_Vector2_from(size), lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -1061,7 +1059,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleRec (b_lean_obj_arg rec, uint
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawRectanglePro (b_lean_obj_arg rec, b_lean_obj_arg origin, double rotation, uint32_t color, lean_obj_arg world) {
-    DrawRectanglePro(*lean_raylib_Rectangle_from(rec), *lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(color));
+    DrawRectanglePro(*lean_raylib_Rectangle_from(rec), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -1101,12 +1099,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawRectangleRoundedLines (b_lean_obj_arg 
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangle (b_lean_obj_arg v1, b_lean_obj_arg v2, b_lean_obj_arg v3, uint32_t color, lean_obj_arg world) {
-    DrawTriangle(*lean_raylib_Vector2_from(v1), *lean_raylib_Vector2_from(v2), *lean_raylib_Vector2_from(v3), lean_raylib_Color_from(color));
+    DrawTriangle(lean_raylib_Vector2_from(v1), lean_raylib_Vector2_from(v2), lean_raylib_Vector2_from(v3), lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangleLines (b_lean_obj_arg v1, b_lean_obj_arg v2, b_lean_obj_arg v3, uint32_t color, lean_obj_arg world) {
-    DrawTriangleLines(*lean_raylib_Vector2_from(v1), *lean_raylib_Vector2_from(v2), *lean_raylib_Vector2_from(v3), lean_raylib_Color_from(color));
+    DrawTriangleLines(lean_raylib_Vector2_from(v1), lean_raylib_Vector2_from(v2), lean_raylib_Vector2_from(v3), lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -1613,27 +1611,27 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTexture (b_lean_obj_arg textureRef, ui
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureV (b_lean_obj_arg textureRef, b_lean_obj_arg position, uint32_t tint, lean_obj_arg world) {
-    DrawTextureV(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Vector2_from(position), lean_raylib_Color_from(tint));
+    DrawTextureV(lean_raylib_TextureRef_from(textureRef)->texture, lean_raylib_Vector2_from(position), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureEx (b_lean_obj_arg textureRef, b_lean_obj_arg position, double rotation, double scale, uint32_t tint, lean_obj_arg world) {
-    DrawTextureEx(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Vector2_from(position), (float)rotation, (float)scale, lean_raylib_Color_from(tint));
+    DrawTextureEx(lean_raylib_TextureRef_from(textureRef)->texture, lean_raylib_Vector2_from(position), (float)rotation, (float)scale, lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureRec (b_lean_obj_arg textureRef, b_lean_obj_arg source, b_lean_obj_arg position, uint32_t tint, lean_obj_arg world) {
-    DrawTextureRec(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Vector2_from(position), lean_raylib_Color_from(tint));
+    DrawTextureRec(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), lean_raylib_Vector2_from(position), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTexturePro (b_lean_obj_arg textureRef, b_lean_obj_arg source, b_lean_obj_arg dest, b_lean_obj_arg origin, double rotation, uint32_t tint, lean_obj_arg world) {
-    DrawTexturePro(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Rectangle_from(dest), *lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
+    DrawTexturePro(lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Rectangle_from(dest), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureNPatch (b_lean_obj_arg texture, b_lean_obj_arg nPatchInfo, b_lean_obj_arg dest, b_lean_obj_arg origin, double rotation, uint32_t tint, lean_obj_arg world) {
-    DrawTextureNPatch(*lean_raylib_Texture_from(texture), *lean_raylib_NPatchInfo_from(nPatchInfo), *lean_raylib_Rectangle_from(dest), *lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
+    DrawTextureNPatch(*lean_raylib_Texture_from(texture), *lean_raylib_NPatchInfo_from(nPatchInfo), *lean_raylib_Rectangle_from(dest), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -2049,7 +2047,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawCapsuleWires (b_lean_obj_arg startPos,
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawPlane (b_lean_obj_arg centerPos, b_lean_obj_arg size, uint32_t color, lean_obj_arg world) {
-    DrawPlane(*lean_raylib_Vector3_from(centerPos), *lean_raylib_Vector2_from(size), lean_raylib_Color_from(color));
+    DrawPlane(*lean_raylib_Vector3_from(centerPos), lean_raylib_Vector2_from(size), lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -2124,12 +2122,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawBillboard (b_lean_obj_arg camera, b_le
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawBillboardRec (b_lean_obj_arg camera, b_lean_obj_arg textureRef, b_lean_obj_arg source, b_lean_obj_arg position, b_lean_obj_arg size, uint32_t tint, lean_obj_arg world) {
-    DrawBillboardRec(*lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Vector3_from(position), *lean_raylib_Vector2_from(size), lean_raylib_Color_from(tint));
+    DrawBillboardRec(*lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Vector3_from(position), lean_raylib_Vector2_from(size), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawBillboardPro (b_lean_obj_arg camera, b_lean_obj_arg textureRef, b_lean_obj_arg source, b_lean_obj_arg position, b_lean_obj_arg up, b_lean_obj_arg size, b_lean_obj_arg origin, double rotation, uint32_t tint, lean_obj_arg world) {
-    DrawBillboardPro(*lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Vector3_from(position), *lean_raylib_Vector3_from(up), *lean_raylib_Vector2_from(size), *lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
+    DrawBillboardPro(*lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, *lean_raylib_Rectangle_from(source), *lean_raylib_Vector3_from(position), *lean_raylib_Vector3_from(up), lean_raylib_Vector2_from(size), lean_raylib_Vector2_from(origin), (float)rotation, lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
