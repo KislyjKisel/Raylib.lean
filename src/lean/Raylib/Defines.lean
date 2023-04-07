@@ -5,7 +5,7 @@ namespace Raylib
 def RAYLIB_VERSION_MAJOR := 4
 def RAYLIB_VERSION_MINOR := 5
 def RAYLIB_VERSION_PATCH := 0
-def RAYLIB_VERSION := "4.5-dev"
+def RAYLIB_VERSION := "4.5"
 
 /-- Light Gray -/
 def LIGHTGRAY : Color := Color.fromRgba 200 200 200 255

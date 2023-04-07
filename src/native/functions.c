@@ -78,8 +78,19 @@ LEAN_EXPORT lean_obj_res lean_raylib__RestoreWindow (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__SetWindowIcon (lean_obj_arg image, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowIcon (b_lean_obj_arg image, lean_obj_arg world) {
     SetWindowIcon(*lean_raylib_Image_from(image)); // image data copied by glfw (glfwSetWindowIcon)
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowIcons (b_lean_obj_arg images_box, lean_obj_arg world) {
+    size_t count = lean_array_size(images_box);
+    Image* images_c = malloc(count * sizeof(Image));
+    for(size_t i = 0; i < count; ++i) {
+        images_c[i] = *lean_raylib_Image_from(lean_array_uget(images_box, i));
+    }
+    SetWindowIcons(images_c, count);
+    free(images_c);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -917,25 +928,24 @@ LEAN_EXPORT lean_obj_res lean_raylib__UpdateCamera (lean_obj_arg camera_old_box,
     return lean_io_result_mk_ok(camera_res_box);
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetCameraPanControl (uint32_t keyPan, lean_obj_arg world) {
-//     SetCameraPanControl(keyPan);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetCameraAltControl (uint32_t keyAlt, lean_obj_arg world) {
-//     SetCameraAltControl(keyAlt);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetCameraSmoothZoomControl (uint32_t keySmoothZoom, lean_obj_arg world) {
-//     SetCameraSmoothZoomControl(keySmoothZoom);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetCameraMoveControls (uint32_t keyFront, uint32_t keyBack, uint32_t keyRight, uint32_t keyLeft, uint32_t keyUp, uint32_t keyDown, lean_obj_arg world) {
-//     SetCameraMoveControls(keyFront, keyBack, keyRight, keyLeft, keyUp, keyDown);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateCameraPro (lean_obj_arg camera_old_box, b_lean_obj_arg movement, b_lean_obj_arg rotation, double zoom) {
+    lean_object* camera_res_box;
+    if(LEAN_LIKELY(lean_is_exclusive(camera_old_box))) {
+        camera_res_box = camera_old_box;
+    }
+    else {
+        LET_BOX(Camera, camera_res, *lean_raylib_Camera3D_from(camera_old_box));
+        lean_dec_ref(camera_old_box);
+        camera_res_box = lean_raylib_Camera3D_to(camera_res);
+    }
+    UpdateCameraPro(
+        lean_raylib_Camera3D_from(camera_res_box),
+        *lean_raylib_Vector3_from(movement),
+        *lean_raylib_Vector3_from(rotation),
+        (float)zoom
+    );
+    return lean_io_result_mk_ok(camera_res_box);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetShapesTexture (lean_obj_arg textureRef_box, b_lean_obj_arg source, lean_obj_arg world) {
     static lean_object* current = NULL;
@@ -2081,11 +2091,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawGrid (uint32_t slices, double spacing,
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadModelKeepMeshes (lean_obj_arg model, lean_obj_arg world) {
-//     UnloadModelKeepMeshes(lean_raylib_Model_from(model));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
 // LEAN_EXPORT lean_obj_res lean_raylib__GetModelBoundingBox (lean_obj_arg model, lean_obj_arg world) {
 //     BoundingBox result_ = GetModelBoundingBox(lean_raylib_Model_from(model));
 //     return lean_raylib_BoundingBox_to(result_);
@@ -2411,20 +2416,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__PauseSound (b_lean_obj_arg sound, lean_obj
 LEAN_EXPORT lean_obj_res lean_raylib__ResumeSound (b_lean_obj_arg sound, lean_obj_arg world) {
     ResumeSound(*lean_raylib_Sound_from(sound));
     return lean_io_result_mk_ok(lean_box(0));
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__PlaySoundMulti (b_lean_obj_arg sound, lean_obj_arg world) {
-    PlaySoundMulti(*lean_raylib_Sound_from(sound));
-    return lean_io_result_mk_ok(lean_box(0));
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__StopSoundMulti (lean_obj_arg world) {
-    StopSoundMulti();
-    return lean_io_result_mk_ok(lean_box(0));
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__GetSoundsPlaying (lean_obj_arg world) {
-    return lean_io_result_mk_ok(lean_box_uint32(GetSoundsPlaying()));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__IsSoundPlaying (b_lean_obj_arg sound, lean_obj_arg world) {

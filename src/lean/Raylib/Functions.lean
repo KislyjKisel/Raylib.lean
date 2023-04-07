@@ -62,12 +62,12 @@ opaque MinimizeWindow : BaseIO Unit
 /-- Set window state: not minimized/maximized (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__RestoreWindow"]
 opaque RestoreWindow : BaseIO Unit
-/--
-Set icon for window (only PLATFORM_DESKTOP).
-Does nothing if the image's format is not `PIXELFORMAT_UNCOMPRESSED_R8G8B8A8`.
--/
+/-- Set icon for window (single image, RGBA 32bit, only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowIcon"]
-opaque SetWindowIcon (image : Image) : BaseIO Unit
+opaque SetWindowIcon (image : @& Image) : BaseIO Unit
+/-- Set icon for window (multiple images, RGBA 32bit, only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__SetWindowIcons"]
+opaque SetWindowIcons (images : @& Array Image) : BaseIO Unit
 /-- Set title for window (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowTitle"]
 opaque SetWindowTitle (title : String) : BaseIO Unit
@@ -651,6 +651,9 @@ opaque GetGesturePinchAngle : BaseIO Float
 /-- Update camera position for selected mode -/
 @[extern "lean_raylib__UpdateCamera"]
 opaque UpdateCamera (cam : Camera) (mode : CameraMode) : BaseIO Camera
+/-- Update camera movement/rotation -/
+@[extern "lean_raylib__UpdateCameraPro"]
+opaque UpdateCameraPro (cam : Camera) (movement rotation : @& Vector3) (zoom : Float) : BaseIO Camera
 /-- Set texture and rectangle to be used on shapes drawing -/
 @[extern "lean_raylib__SetShapesTexture"]
 opaque SetShapesTexture (texture : Texture2DRef) (source : @& Rectangle) : BaseIO Unit
@@ -1841,9 +1844,6 @@ opaque DrawGrid (slices : UInt32) (spacing : Float) : BaseIO Unit
 -- /-- Unload model (including meshes) from memory (RAM and/or VRAM) -/
 -- @[extern "lean_raylib__UnloadModel"]
 -- opaque UnloadModel (model : Model) : Unit
--- /-- Unload model (but not meshes) from memory (RAM and/or VRAM) -/
--- @[extern "lean_raylib__UnloadModelKeepMeshes"]
--- opaque UnloadModelKeepMeshes (model : Model) : Unit
 -- /-- Compute model bounding box limits (considers all meshes) -/
 -- @[extern "lean_raylib__GetModelBoundingBox"]
 -- opaque GetModelBoundingBox (model : Model) : BoundingBox
@@ -2111,15 +2111,6 @@ opaque PauseSound (sound : @& Sound) : BaseIO Unit
 /-- Resume a paused sound -/
 @[extern "lean_raylib__ResumeSound"]
 opaque ResumeSound (sound : @& Sound) : BaseIO Unit
-/-- Play a sound (using multichannel buffer pool) -/
-@[extern "lean_raylib__PlaySoundMulti"]
-opaque PlaySoundMulti (sound : @& Sound) : BaseIO Unit
-/-- Stop any sound playing (using multichannel buffer pool) -/
-@[extern "lean_raylib__StopSoundMulti"]
-opaque StopSoundMulti : BaseIO Unit
-/-- Get number of sounds playing in the multichannel -/
-@[extern "lean_raylib__GetSoundsPlaying"]
-opaque GetSoundsPlaying : BaseIO UInt32
 /-- Check if a sound is currently playing -/
 @[extern "lean_raylib__IsSoundPlaying"]
 opaque IsSoundPlaying (sound : @& Sound) : BaseIO Bool
@@ -2286,5 +2277,11 @@ opaque SetAudioStreamBufferSizeDefault (size : UInt32) : BaseIO Unit
 --   | stream : AudioStream
 --   | processor : AudioCallback
 -- -/
+-- /-- Attach audio stream processor to the entire audio pipeline -/
+-- @[extern "lean_raylib__AttachAudioMixedProcessor"]
+-- opaque AttachAudioMixedProcessor (processor : AudioCallback) : BaseIO Unit
+-- /-- Detach audio stream processor from the entire audio pipeline -/
+-- @[extern "lean_raylib__DetachAudioMixedProcessor"]
+-- opaque DetachAudioMixedProcessor (processor : AudioCallback) : BaseIO Unit
 
 end Raylib

@@ -27,7 +27,7 @@
     {
       "name": "RAYLIB_VERSION",
       "type": "STRING",
-      "value": "4.5-dev",
+      "value": "4.5",
       "description": ""
     },
     {
@@ -3167,12 +3167,27 @@
     },
     {
       "name": "SetWindowIcon",
-      "description": "Set icon for window (only PLATFORM_DESKTOP)",
+      "description": "Set icon for window (single image, RGBA 32bit, only PLATFORM_DESKTOP)",
       "returnType": "void",
       "params": [
         {
           "type": "Image",
           "name": "image"
+        }
+      ]
+    },
+    {
+      "name": "SetWindowIcons",
+      "description": "Set icon for window (multiple images, RGBA 32bit, only PLATFORM_DESKTOP)",
+      "returnType": "void",
+      "params": [
+        {
+          "type": "Image *",
+          "name": "images"
+        },
+        {
+          "type": "int",
+          "name": "count"
         }
       ]
     },
@@ -4903,6 +4918,29 @@
         {
           "type": "int",
           "name": "mode"
+        }
+      ]
+    },
+    {
+      "name": "UpdateCameraPro",
+      "description": "Update camera movement/rotation",
+      "returnType": "void",
+      "params": [
+        {
+          "type": "Camera *",
+          "name": "camera"
+        },
+        {
+          "type": "Vector3",
+          "name": "movement"
+        },
+        {
+          "type": "Vector3",
+          "name": "rotation"
+        },
+        {
+          "type": "float",
+          "name": "zoom"
         }
       ]
     },
@@ -9206,17 +9244,6 @@
       ]
     },
     {
-      "name": "UnloadModelKeepMeshes",
-      "description": "Unload model (but not meshes) from memory (RAM and/or VRAM)",
-      "returnType": "void",
-      "params": [
-        {
-          "type": "Model",
-          "name": "model"
-        }
-      ]
-    },
-    {
       "name": "GetModelBoundingBox",
       "description": "Compute model bounding box limits (considers all meshes)",
       "returnType": "BoundingBox",
@@ -10323,27 +10350,6 @@
       ]
     },
     {
-      "name": "PlaySoundMulti",
-      "description": "Play a sound (using multichannel buffer pool)",
-      "returnType": "void",
-      "params": [
-        {
-          "type": "Sound",
-          "name": "sound"
-        }
-      ]
-    },
-    {
-      "name": "StopSoundMulti",
-      "description": "Stop any sound playing (using multichannel buffer pool)",
-      "returnType": "void"
-    },
-    {
-      "name": "GetSoundsPlaying",
-      "description": "Get number of sounds playing in the multichannel",
-      "returnType": "int"
-    },
-    {
       "name": "IsSoundPlaying",
       "description": "Check if a sound is currently playing",
       "returnType": "bool",
@@ -10895,6 +10901,28 @@
           "type": "AudioStream",
           "name": "stream"
         },
+        {
+          "type": "AudioCallback",
+          "name": "processor"
+        }
+      ]
+    },
+    {
+      "name": "AttachAudioMixedProcessor",
+      "description": "Attach audio stream processor to the entire audio pipeline",
+      "returnType": "void",
+      "params": [
+        {
+          "type": "AudioCallback",
+          "name": "processor"
+        }
+      ]
+    },
+    {
+      "name": "DetachAudioMixedProcessor",
+      "description": "Detach audio stream processor from the entire audio pipeline",
+      "returnType": "void",
+      "params": [
         {
           "type": "AudioCallback",
           "name": "processor"
