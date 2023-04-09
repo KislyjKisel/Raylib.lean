@@ -15,22 +15,40 @@ structure Color where
   rgba : UInt32
 deriving Inhabited, Repr
 
-def Color.fromRgba (r g b a : UInt8) : Color :=
+namespace Color
+
+def fromRgba (r g b a : UInt8) : Color :=
   Color.mk $
     r.toUInt32 <<< 24 |||
     g.toUInt32 <<< 16 |||
     b.toUInt32 <<< 8 |||
     a.toUInt32 
 
-def Color.r (color : Color) : UInt8 := (Color.rgba color >>> 24).toUInt8
-def Color.g (color : Color) : UInt8 := (Color.rgba color >>> 16).toUInt8
-def Color.b (color : Color) : UInt8 := (Color.rgba color >>> 8).toUInt8
-def Color.a (color : Color) : UInt8 := (Color.rgba color).toUInt8
+def r (color : Color) : UInt8 := (Color.rgba color >>> 24).toUInt8
+def g (color : Color) : UInt8 := (Color.rgba color >>> 16).toUInt8
+def b (color : Color) : UInt8 := (Color.rgba color >>> 8).toUInt8
+def a (color : Color) : UInt8 := (Color.rgba color).toUInt8
 
-def Color.setR (r : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0x00FFFFFF, by simp⟩ ||| (r.toUInt32 <<< 24)⟩
-def Color.setG (g : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFF00FFFF, by simp⟩ ||| (g.toUInt32 <<< 16)⟩
-def Color.setB (b : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFF00FF, by simp⟩ ||| (b.toUInt32 <<< 8)⟩
-def Color.setA (a : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFFFF00, by simp⟩ ||| a.toUInt32⟩
+def set_r (r : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0x00FFFFFF, by simp⟩ ||| (r.toUInt32 <<< 24)⟩
+def set_g (g : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFF00FFFF, by simp⟩ ||| (g.toUInt32 <<< 16)⟩
+def set_b (b : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFF00FF, by simp⟩ ||| (b.toUInt32 <<< 8)⟩
+def set_a (a : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFFFF00, by simp⟩ ||| a.toUInt32⟩
+
+def toVector4 (color : Color) : Vector4 :=
+  Vector4.mk color.r.toFloat32 color.g.toFloat32 color.b.toFloat32 color.a.toFloat32
+
+/--
+Clamps vector components between 0 and 255 and convers them to `UInt8` producing a `Color`.
+Maps `XYZW` to `RGBA`.
+-/
+def _root_.Raymath.Vector4.toColor (v : Vector4) : Color :=
+  Color.fromRgba
+    (v.x.clamp 0 255).toUInt8
+    (v.y.clamp 0 255).toUInt8
+    (v.z.clamp 0 255).toUInt8
+    (v.w.clamp 0 255).toUInt8
+
+end Color
 
 
 /-! # Rectangle -/
