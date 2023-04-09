@@ -69,7 +69,7 @@ end Raymath
 
 /-! ## Utils math -/
 
-namespace Pod.Float32
+namespace Float32
 
 /-- Clamp Float32 value -/
 def clamp (value min max : Float32) : Float32 :=
@@ -96,7 +96,7 @@ def wrap (value min max : Float32) : Float32 :=
 def equals (x y : Float32) : Bool :=
   (x - y).abs <= Raymath.epsilon * Float32.one.max (x.abs.max y.abs)
 
-end Pod.Float32
+end Float32
 
 
 /-! ## Vector2 math -/
