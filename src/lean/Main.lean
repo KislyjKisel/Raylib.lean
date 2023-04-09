@@ -1,11 +1,13 @@
+import Raymath
 import Raylib
 
+open Raymath
 open Raylib
 
 def windowWidth : UInt32 := 800
 def windowHeight : UInt32 := 600
-def mouseSensitivity : Float := 1 / 100
-def moveSpeed : Float := 0.1
+def mouseSensitivity : Float32 := 1 / 100
+def moveSpeed : Float32 := 0.1
 
 def main : IO Unit := do
   setConfigFlags .vsyncHint
@@ -37,8 +39,8 @@ def main : IO Unit := do
     let mp ← getMousePosition
 
     cam3d := cam3d.set_position $ Vector3.mk
-      ((mp.x.toFloat - (windowWidth / 2).toUInt64.toFloat) * mouseSensitivity)
-      ((mp.y.toFloat - (windowHeight / 2).toUInt64.toFloat) * mouseSensitivity)
+      ((mp.x - (windowWidth / 2).toUInt64.toFloat32) * mouseSensitivity)
+      ((mp.y - (windowHeight / 2).toUInt64.toFloat32) * mouseSensitivity)
       0
 
     let camPos := cam3d.position

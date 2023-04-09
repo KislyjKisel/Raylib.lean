@@ -2,221 +2,6 @@
 #include "util.h"
 #include "structures.h"
 
-
-// # Vectors
-
-// ## Vector3
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector3_mk(double x, double y, double z) {
-    LET_BOX_STRUCT(Vector3, result_,
-        .x = (float)x,
-        .y = (float)y,
-        .z = (float)z
-    );
-    return lean_raylib_Vector3_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Vector3_x(b_lean_obj_arg obj) {
-    return lean_raylib_Vector3_from(obj)->x;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector3_x_set(double x, lean_obj_arg vec_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector3_from(vec_box)->x = x;
-        return vec_box;
-    }
-    Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
-    LET_BOX_STRUCT(Vector3, vec_new,
-        .x = x,
-        .y = vec->y,
-        .z = vec->z,
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector3_to(vec_new);
-}
-
-LEAN_EXPORT double lean_raylib__Vector3_y(b_lean_obj_arg obj) {
-    return lean_raylib_Vector3_from(obj)->y;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector3_y_set(double y, lean_obj_arg vec_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector3_from(vec_box)->y = y;
-        return vec_box;
-    }
-    Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
-    LET_BOX_STRUCT(Vector3, vec_new,
-        .x = vec->x,
-        .y = y,
-        .z = vec->z,
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector3_to(vec_new);
-}
-
-LEAN_EXPORT double lean_raylib__Vector3_z(b_lean_obj_arg obj) {
-    return lean_raylib_Vector3_from(obj)->z;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector3_z_set(double z, lean_obj_arg vec_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector3_from(vec_box)->z = z;
-        return vec_box;
-    }
-    Vector3 const* vec = lean_raylib_Vector3_from(vec_box);
-    LET_BOX_STRUCT(Vector3, vec_new,
-        .x = vec->x,
-        .y = vec->y,
-        .z = z,
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector3_to(vec_new);
-}
-
-
-// ## Vector4
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_mk(double x, double y, double z, double w) {
-    LET_BOX_STRUCT(Vector4, result_,
-        .x = (float)x,
-        .y = (float)y,
-        .z = (float)z,
-        .w = (float)w
-    );
-    return lean_raylib_Vector4_to(result_);
-}
-
-LEAN_EXPORT double lean_raylib__Vector4_x(b_lean_obj_arg obj) {
-    return lean_raylib_Vector4_from(obj)->x;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_x_set(double x, lean_obj_arg vec_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector4_from(vec_box)->x = x;
-        return vec_box;
-    }
-    Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
-    LET_BOX_STRUCT(Vector4, vec_new,
-        .x = x,
-        .y = vec->y,
-        .z = vec->z,
-        .w = vec->w
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector4_to(vec_new);
-}
-
-LEAN_EXPORT double lean_raylib__Vector4_y(b_lean_obj_arg obj) {
-    return lean_raylib_Vector4_from(obj)->y;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_y_set(double y, lean_obj_arg vec_box) {
-   if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector4_from(vec_box)->y = y;
-        return vec_box;
-    }
-    Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
-    LET_BOX_STRUCT(Vector4, vec_new,
-        .x = vec->x,
-        .y = y,
-        .z = vec->z,
-        .w = vec->w,
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector4_to(vec_new);
-}
-
-LEAN_EXPORT double lean_raylib__Vector4_z(b_lean_obj_arg obj) {
-    return lean_raylib_Vector4_from(obj)->z;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_z_set(double z, lean_obj_arg vec_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector4_from(vec_box)->z = z;
-        return vec_box;
-    }
-    Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
-    LET_BOX_STRUCT(Vector4, vec_new,
-        .x = vec->x,
-        .y = vec->y,
-        .z = z,
-        .w = vec->w,
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector4_to(vec_new);
-}
-
-LEAN_EXPORT double lean_raylib__Vector4_w(b_lean_obj_arg obj) {
-    return lean_raylib_Vector4_from(obj)->w;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Vector4_w_set(double w, lean_obj_arg vec_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(vec_box))) {
-        lean_raylib_Vector4_from(vec_box)->w = w;
-        return vec_box;
-    }
-    Vector4 const* vec = lean_raylib_Vector4_from(vec_box);
-    LET_BOX_STRUCT(Vector4, vec_new,
-        .x = vec->x,
-        .y = vec->y,
-        .z = vec->z,
-        .w = w,
-    );
-    lean_dec_ref(vec_box);
-    return lean_raylib_Vector4_to(vec_new);
-}
-
-
-// # Matrix
-
-LEAN_EXPORT lean_obj_res lean_raylib__Matrix_mk(
-    double m0, double m4, double m8,  double m12,
-    double m1, double m5, double m9,  double m13,
-    double m2, double m6, double m10, double m14,
-    double m3, double m7, double m11, double m15
-) {
-    LET_BOX_STRUCT(Matrix, result_,
-        .m0 = (float)m0, .m4 = (float)m4, .m8 = (float)m8, .m12 = (float)m12,
-        .m1 = (float)m1, .m5 = (float)m5, .m9 = (float)m9, .m13 = (float)m13,
-        .m2 = (float)m2, .m6 = (float)m6, .m10 = (float)m10, .m14 = (float)m14,
-        .m3 = (float)m3, .m7 = (float)m7, .m11 = (float)m11, .m15 = (float)m15
-    );
-    return lean_raylib_Matrix_to(result_);
-}
-
-#define MATRIX_ACCESSORS(N)\
-    LEAN_EXPORT double lean_raylib__Matrix_m##N(b_lean_obj_arg mat) {\
-        return (double)lean_raylib_Matrix_from(mat)->m##N;\
-    }\
-    LEAN_EXPORT lean_obj_res lean_raylib__Matrix_m##N##_set(double m##N, lean_obj_arg mat_box) {\
-        if(LEAN_LIKELY(lean_is_exclusive(mat_box))) {\
-            lean_raylib_Matrix_from(mat_box)->m##N = m##N;\
-            return mat_box;\
-        }\
-        lean_dec_ref(mat_box);\
-        LET_BOX(Matrix, mat_new, *lean_raylib_Matrix_from(mat_box));\
-        mat_new->m##N = m##N;\
-        return lean_raylib_Matrix_to(mat_new);\
-    }
-
-MATRIX_ACCESSORS(0);
-MATRIX_ACCESSORS(1);
-MATRIX_ACCESSORS(2);
-MATRIX_ACCESSORS(3);
-MATRIX_ACCESSORS(4);
-MATRIX_ACCESSORS(5);
-MATRIX_ACCESSORS(6);
-MATRIX_ACCESSORS(7);
-MATRIX_ACCESSORS(8);
-MATRIX_ACCESSORS(9);
-MATRIX_ACCESSORS(10);
-MATRIX_ACCESSORS(11);
-MATRIX_ACCESSORS(12);
-MATRIX_ACCESSORS(13);
-MATRIX_ACCESSORS(14);
-MATRIX_ACCESSORS(15);
-
-
 // # Rectangle
 
 LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_mk(double x, double y, double width, double height) {
@@ -659,9 +444,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_mk(
     double fovy, uint32_t projection
 ) {
     LET_BOX_STRUCT(Camera3D, cam3d,
-        .position = *lean_raylib_Vector3_from(position),
-        .target = *lean_raylib_Vector3_from(target),
-        .up = *lean_raylib_Vector3_from(up),
+        .position = lean_raylib_Vector3_from(position),
+        .target = lean_raylib_Vector3_from(target),
+        .up = lean_raylib_Vector3_from(up),
         .fovy = (float)fovy,
         .projection = projection
     );
@@ -669,50 +454,47 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_mk(
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__Camera3D_position(b_lean_obj_arg cam3d) {
-    LET_BOX(Vector3, position, lean_raylib_Camera3D_from(cam3d)->position);
-    return lean_raylib_Vector3_to(position);
+    return lean_raylib_Vector3_to(lean_raylib_Camera3D_from(cam3d)->position);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_position_set(lean_obj_arg position, lean_obj_arg cam3d) {
     if(LEAN_LIKELY(lean_is_exclusive(cam3d))) {
-        lean_raylib_Camera3D_from(cam3d)->position = *lean_raylib_Vector3_from(position);
+        lean_raylib_Camera3D_from(cam3d)->position = lean_raylib_Vector3_from(position);
         return cam3d;
     }
     LET_BOX(Camera3D, cam3d_new, *lean_raylib_Camera3D_from(cam3d));
     lean_dec_ref(cam3d);
-    cam3d_new->position = *lean_raylib_Vector3_from(position);
+    cam3d_new->position = lean_raylib_Vector3_from(position);
     return lean_raylib_Camera3D_to(cam3d_new);
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__Camera3D_target(b_lean_obj_arg cam3d) {
-    LET_BOX(Vector3, target, lean_raylib_Camera3D_from(cam3d)->target);
-    return lean_raylib_Vector3_to(target);
+    return lean_raylib_Vector3_to(lean_raylib_Camera3D_from(cam3d)->target);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_target_set(lean_obj_arg target, lean_obj_arg cam3d) {
     if(LEAN_LIKELY(lean_is_exclusive(cam3d))) {
-        lean_raylib_Camera3D_from(cam3d)->target = *lean_raylib_Vector3_from(target);
+        lean_raylib_Camera3D_from(cam3d)->target = lean_raylib_Vector3_from(target);
         return cam3d;
     }
     LET_BOX(Camera3D, cam3d_new, *lean_raylib_Camera3D_from(cam3d));
     lean_dec_ref(cam3d);
-    cam3d_new->target = *lean_raylib_Vector3_from(target);
+    cam3d_new->target = lean_raylib_Vector3_from(target);
     return lean_raylib_Camera3D_to(cam3d_new);
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__Camera3D_up(b_lean_obj_arg cam3d) {
-    LET_BOX(Vector3, up, lean_raylib_Camera3D_from(cam3d)->up);
-    return lean_raylib_Vector3_to(up);
+    return lean_raylib_Vector3_to(lean_raylib_Camera3D_from(cam3d)->up);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_up_set(lean_obj_arg up, lean_obj_arg cam3d) {
     if(LEAN_LIKELY(lean_is_exclusive(cam3d))) {
-        lean_raylib_Camera3D_from(cam3d)->up = *lean_raylib_Vector3_from(up);
+        lean_raylib_Camera3D_from(cam3d)->up = lean_raylib_Vector3_from(up);
         return cam3d;
     }
     LET_BOX(Camera3D, cam3d_new, *lean_raylib_Camera3D_from(cam3d));
     lean_dec_ref(cam3d);
-    cam3d_new->up = *lean_raylib_Vector3_from(up);
+    cam3d_new->up = lean_raylib_Vector3_from(up);
     return lean_raylib_Camera3D_to(cam3d_new);
 }
 
@@ -1367,41 +1149,39 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_zoom_set(double zoom, lean_obj_ar
 
 LEAN_EXPORT lean_obj_res lean_raylib__Ray_mk(b_lean_obj_arg position, b_lean_obj_arg direction) {
     LET_BOX_STRUCT(Ray, ray,
-        .position = *lean_raylib_Vector3_from(position),
-        .direction = *lean_raylib_Vector3_from(direction)
+        .position = lean_raylib_Vector3_from(position),
+        .direction = lean_raylib_Vector3_from(direction)
     );
     return lean_raylib_Ray_to(ray);
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__Ray_position(b_lean_obj_arg ray) {
-    LET_BOX(Vector3, position, lean_raylib_Ray_from(ray)->position);
-    return lean_raylib_Vector3_to(position);
+    return lean_raylib_Vector3_to(lean_raylib_Ray_from(ray)->position);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Ray_position_set(b_lean_obj_arg position, lean_obj_arg ray) {
     if(LEAN_LIKELY(lean_is_exclusive(ray))) {
-        lean_raylib_Ray_from(ray)->position = *lean_raylib_Vector3_from(position);
+        lean_raylib_Ray_from(ray)->position = lean_raylib_Vector3_from(position);
         return ray;
     }
     LET_BOX(Ray, ray_new, *lean_raylib_Ray_from(ray));
     lean_dec_ref(ray);
-    ray_new->position = *lean_raylib_Vector3_from(position);
+    ray_new->position = lean_raylib_Vector3_from(position);
     return lean_raylib_Ray_to(ray_new);
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__Ray_direction(b_lean_obj_arg ray) {
-    LET_BOX(Vector3, direction, lean_raylib_Ray_from(ray)->direction);
-    return lean_raylib_Vector3_to(direction);
+    return lean_raylib_Vector3_to(lean_raylib_Ray_from(ray)->direction);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Ray_direction_set(b_lean_obj_arg direction, lean_obj_arg ray) {
     if(LEAN_LIKELY(lean_is_exclusive(ray))) {
-        lean_raylib_Ray_from(ray)->direction = *lean_raylib_Vector3_from(direction);
+        lean_raylib_Ray_from(ray)->direction = lean_raylib_Vector3_from(direction);
         return ray;
     }
     LET_BOX(Ray, ray_new, *lean_raylib_Ray_from(ray));
     lean_dec_ref(ray);
-    ray_new->direction = *lean_raylib_Vector3_from(direction);
+    ray_new->direction = lean_raylib_Vector3_from(direction);
     return lean_raylib_Ray_to(ray_new);
 }
 
@@ -1467,40 +1247,38 @@ LEAN_EXPORT lean_obj_res lean_raylib__Ray_direction_set(b_lean_obj_arg direction
 
 LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_mk(b_lean_obj_arg min, b_lean_obj_arg max) {
     LET_BOX_STRUCT(BoundingBox, result_,
-        .min = *lean_raylib_Vector3_from(min),
-        .max = *lean_raylib_Vector3_from(max)
+        .min = lean_raylib_Vector3_from(min),
+        .max = lean_raylib_Vector3_from(max)
     );
     return lean_raylib_BoundingBox_to(result_);
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__BoundingBox_min(b_lean_obj_arg bbox) {
-    LET_BOX(Vector3, min, lean_raylib_BoundingBox_from(bbox)->min);
-    return lean_raylib_Vector3_to(min);
+    return lean_raylib_Vector3_to(lean_raylib_BoundingBox_from(bbox)->min);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_min_set(lean_obj_arg min, lean_obj_arg bbox_box) {
     if(LEAN_LIKELY(lean_is_exclusive(bbox_box))) {
-        lean_raylib_BoundingBox_from(bbox_box)->min = *lean_raylib_Vector3_from(min);
+        lean_raylib_BoundingBox_from(bbox_box)->min = lean_raylib_Vector3_from(min);
         return bbox_box;
     }
     LET_BOX(BoundingBox, bbox_new, *lean_raylib_BoundingBox_from(bbox_box));
-    bbox_new->min = *lean_raylib_Vector3_from(min);
+    bbox_new->min = lean_raylib_Vector3_from(min);
     lean_dec_ref(bbox_box);
     return lean_raylib_BoundingBox_to(bbox_new);
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__BoundingBox_max(b_lean_obj_arg bbox) {
-    LET_BOX(Vector3, max, lean_raylib_BoundingBox_from(bbox)->max);
-    return lean_raylib_Vector3_to(max);
+    return lean_raylib_Vector3_to(lean_raylib_BoundingBox_from(bbox)->max);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__BoundingBox_max_set(lean_obj_arg max, lean_obj_arg bbox_box) {
     if(LEAN_LIKELY(lean_is_exclusive(bbox_box))) {
-        lean_raylib_BoundingBox_from(bbox_box)->max = *lean_raylib_Vector3_from(max);
+        lean_raylib_BoundingBox_from(bbox_box)->max = lean_raylib_Vector3_from(max);
         return bbox_box;
     }
     LET_BOX(BoundingBox, bbox_new, *lean_raylib_BoundingBox_from(bbox_box));
-    bbox_new->max = *lean_raylib_Vector3_from(max);
+    bbox_new->max = lean_raylib_Vector3_from(max);
     lean_dec_ref(bbox_box);
     return lean_raylib_BoundingBox_to(bbox_new);
 }

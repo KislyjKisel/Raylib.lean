@@ -7,7 +7,7 @@ import Raylib.Util
 
 set_option autoImplicit false
 
-open Raymath (Vector2)
+open Raymath (Vector2 Vector3 Vector4 Matrix)
 
 namespace Raylib
 
