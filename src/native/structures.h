@@ -68,19 +68,16 @@ static inline Matrix* lean_raylib_Matrix_from (b_lean_obj_arg obj) {
 
 static inline Color lean_raylib_Color_from(uint32_t color) {
     Color res = {
-        .r = (uint8_t)(color & 0xFF),
-        .g = (uint8_t)((color >> 8) & 0xFF),
-        .b = (uint8_t)((color >> 16) & 0xFF),
-        .a = (uint8_t)((color >> 24) & 0xFF),
+        .r = (uint8_t)((color >> 24) & 0xFF),
+        .g = (uint8_t)((color >> 16) & 0xFF),
+        .b = (uint8_t)((color >> 8) & 0xFF),
+        .a = (uint8_t)(color & 0xFF),
     };
     return res;
 }
 
 static inline uint32_t lean_raylib_Color_to(Color color) {
-    return color.r
-        | (color.g << 8)
-        | (color.b << 16)
-        | (color.a << 24);
+    return (color.r << 24) | (color.g << 16) | (color.b << 8) | color.a;
 }
 
 

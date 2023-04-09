@@ -242,20 +242,20 @@ deriving Inhabited, Repr
 
 def Color.fromRgba (r g b a : UInt8) : Color :=
   Color.mk $
-    r.toUInt32 |||
-    g.toUInt32 <<< 8 |||
-    b.toUInt32 <<< 16 |||
-    a.toUInt32 <<< 24
+    r.toUInt32 <<< 24 |||
+    g.toUInt32 <<< 16 |||
+    b.toUInt32 <<< 8 |||
+    a.toUInt32 
 
-def Color.r (color : Color) : UInt8 := (Color.rgba color).toUInt8
-def Color.g (color : Color) : UInt8 := (Color.rgba color >>> 8).toUInt8
-def Color.b (color : Color) : UInt8 := (Color.rgba color >>> 16).toUInt8
-def Color.a (color : Color) : UInt8 := (Color.rgba color >>> 24).toUInt8
+def Color.r (color : Color) : UInt8 := (Color.rgba color >>> 24).toUInt8
+def Color.g (color : Color) : UInt8 := (Color.rgba color >>> 16).toUInt8
+def Color.b (color : Color) : UInt8 := (Color.rgba color >>> 8).toUInt8
+def Color.a (color : Color) : UInt8 := (Color.rgba color).toUInt8
 
-def Color.setR (r : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFFFF00, by simp⟩ ||| r.toUInt32⟩
-def Color.setG (g : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFF00FF, by simp⟩ ||| (g.toUInt32 <<< 8)⟩
-def Color.setB (b : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFF00FFFF, by simp⟩ ||| (b.toUInt32 <<< 16)⟩
-def Color.setA (a : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0x00FFFFFF, by simp⟩ ||| (a.toUInt32 <<< 24)⟩
+def Color.setR (r : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0x00FFFFFF, by simp⟩ ||| (r.toUInt32 <<< 24)⟩
+def Color.setG (g : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFF00FFFF, by simp⟩ ||| (g.toUInt32 <<< 16)⟩
+def Color.setB (b : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFF00FF, by simp⟩ ||| (b.toUInt32 <<< 8)⟩
+def Color.setA (a : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFFFF00, by simp⟩ ||| a.toUInt32⟩
 
 
 -- # Rectangle
