@@ -8,33 +8,33 @@ def mouseSensitivity : Float := 1 / 100
 def moveSpeed : Float := 0.1
 
 def main : IO Unit := do
-  SetConfigFlags FLAG_VSYNC_HINT
-  InitWindow windowWidth windowHeight "Hello, Raylib-Lean"
-  InitAudioDevice
-  SetExitKey KEY_NULL
+  setConfigFlags .vsyncHint
+  initWindow windowWidth windowHeight "Hello, Raylib-Lean"
+  initAudioDevice
+  setExitKey .null
 
   let mut cam3d := Camera3D.mk
     (Vector3.mk 0 0 0)
     (Vector3.mk 0 0 10)
     (Vector3.mk 0 1 0)
     90
-    CAMERA_PERSPECTIVE
+    .perspective
 
   repeat do
-    BeginDrawing
-    ClearBackground RAYWHITE
-    DrawFPS 0 0
-    BeginMode3D cam3d
+    beginDrawing
+    clearBackground .raywhite
+    drawFPS 0 0
+    beginMode3D cam3d
 
-    DrawCube
+    drawCube
       (Vector3.mk 0 0 5)
       3 3 3
-      RED
+      .red
 
-    EndMode3D
-    EndDrawing
+    endMode3D
+    endDrawing
 
-    let mp ← GetMousePosition
+    let mp ← getMousePosition
 
     cam3d := cam3d.set_position $ Vector3.mk
       ((mp.x.toFloat - (windowWidth / 2).toUInt64.toFloat) * mouseSensitivity)
@@ -42,15 +42,15 @@ def main : IO Unit := do
       0
 
     let camPos := cam3d.position
-    if (← IsKeyDown KEY_W)
+    if (← isKeyDown .w)
       then cam3d := cam3d.set_position $ Vector3.mk camPos.x camPos.y (camPos.z + moveSpeed)
-    if (← IsKeyDown KEY_S)
+    if (← isKeyDown .s)
       then cam3d := cam3d.set_position $ Vector3.mk camPos.x camPos.y (camPos.z - moveSpeed)
 
-    if (← IsKeyDown KEY_LEFT_ALT) && (← IsKeyPressed KEY_ENTER)
-      then ToggleFullscreen
+    if (← isKeyDown .leftAlt) && (← isKeyPressed .enter)
+      then toggleFullscreen
 
-    if (← WindowShouldClose) then break
+    if (← windowShouldClose) then break
 
-  CloseAudioDevice
-  CloseWindow
+  closeAudioDevice
+  closeWindow

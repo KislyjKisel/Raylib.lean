@@ -8,8 +8,8 @@ namespace Raymath
 
 def pi : Float32 := 3.141592653589793
 def epsilon : Float32 := 0.000001
-def deg2rad : Float32 := pi / 180
-def rad2deg : Float32 := 180 / pi
+def deg2Rad : Float32 := pi / 180
+def rad2Deg : Float32 := 180 / pi
 
 end Raymath
 

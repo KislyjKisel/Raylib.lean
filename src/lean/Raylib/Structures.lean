@@ -232,32 +232,30 @@ opaque Matrix.m15 (self : @& Matrix) : Float
 opaque Matrix.set_m15 (m15 : Float) (matrix : Matrix) : Matrix
 
 
-
 /-! # Color -/
 
-/-- Color, 4 components, R8G8B8A8 (32bit) -/
+/-- Color, 4 components, 8 bits per component -/
 structure Color where
-  /-- Color components encoded in a single `UInt32`, little endian. -/
+  /-- R8G8B8A8 -/
   rgba : UInt32
 deriving Inhabited, Repr
 
-def Color.fromRgba (r : UInt8) (g : UInt8) (b : UInt8) (a : UInt8) : Color := Color.mk ((.|||.) r.toUInt32 ((.|||.) ((.<<<.) g.toUInt32 8) ((.|||.) ((.<<<.) b.toUInt32 16) ((.<<<.) a.toUInt32 24))))
-/-- Returns the red component of the color -/
+def Color.fromRgba (r g b a : UInt8) : Color :=
+  Color.mk $
+    r.toUInt32 |||
+    g.toUInt32 <<< 8 |||
+    b.toUInt32 <<< 16 |||
+    a.toUInt32 <<< 24
+
 def Color.r (color : Color) : UInt8 := (Color.rgba color).toUInt8
-/-- Returns the red component of the color -/
 def Color.g (color : Color) : UInt8 := (Color.rgba color >>> 8).toUInt8
-/-- Returns the red component of the color -/
 def Color.b (color : Color) : UInt8 := (Color.rgba color >>> 16).toUInt8
-/-- Returns the red component of the color -/
 def Color.a (color : Color) : UInt8 := (Color.rgba color >>> 24).toUInt8
-/-- Return the color with the red component replaced by the passed value -/
-def Color.setR (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& ⟨0xFFFFFF00, by simp⟩) ||| x.toUInt32)
-/-- Return the color with the red component replaced by the passed value -/
-def Color.setG (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& ⟨0xFFFF00FF, by simp⟩) ||| (x.toUInt32 <<< 8))
-/-- Return the color with the red component replaced by the passed value -/
-def Color.setB (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& ⟨0xFF00FFFF, by simp⟩) ||| (x.toUInt32 <<< 16))
-/-- Return the color with the red component replaced by the passed value -/
-def Color.setA (x : UInt8) (color : Color) : Color := Color.mk ((color.rgba &&& ⟨0x00FFFFFF, by simp⟩) ||| (x.toUInt32 <<< 24))
+
+def Color.setR (r : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFFFF00, by simp⟩ ||| r.toUInt32⟩
+def Color.setG (g : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFF00FF, by simp⟩ ||| (g.toUInt32 <<< 8)⟩
+def Color.setB (b : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFF00FFFF, by simp⟩ ||| (b.toUInt32 <<< 16)⟩
+def Color.setA (a : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0x00FFFFFF, by simp⟩ ||| (a.toUInt32 <<< 24)⟩
 
 
 -- # Rectangle
@@ -338,10 +336,7 @@ opaque Image.format (self : @& Image) : PixelFormat
 /-! # Texture -/
 
 opaque TextureRefPointed : NonemptyType
-/--
-Reference to `Texture`,
-may be a `Texture` or a part of a bigger object like `RenderTexture`.
--/
+/-- Points to a native texture object while holding a reference to its managed owner -/
 def TextureRef : Type := TextureRefPointed.type
 instance : Nonempty TextureRef := TextureRefPointed.property
 
