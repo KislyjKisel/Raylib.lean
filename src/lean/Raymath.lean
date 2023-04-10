@@ -249,7 +249,7 @@ def equals (p q : Vector2) : Bool :=
   (p.x - q.x).abs <= Raymath.epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
   (p.y - q.y).abs <= Raymath.epsilon * Float32.one.max (p.y.abs.max q.y.abs)
 
-end Vector2
+end Raymath.Vector2
 
 
 /-! ## Vector3 math -/

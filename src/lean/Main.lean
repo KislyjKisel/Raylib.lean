@@ -1,7 +1,7 @@
 import Raymath
 import Raylib
 
-open Pod Float32
+open Pod (Float32)
 open Raymath
 open Raylib
 
