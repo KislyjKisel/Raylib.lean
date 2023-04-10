@@ -4,16 +4,29 @@ open Pod (Float32)
 
 set_option autoImplicit false
 
-/-! # Constants -/
 
 namespace Raymath
+
+/-! # Constants -/
 
 def pi : Float32 := 3.141592653589793
 def epsilon : Float32 := 0.000001
 def deg2Rad : Float32 := pi / 180
 def rad2Deg : Float32 := 180 / pi
 
+/-! # Lemmas -/
+
+def usize_size_ge_2_pow_32 : USize.size ≥ 2 ^ 32 :=
+  match usize_size_eq with
+    | Or.inl p => Nat.le_of_eq p.symm
+    | Or.inr p => Nat.le_of_lt $ Nat.lt_of_lt_of_eq (by decide) p.symm
+
+def «2uz=2» : (2 % USize.size) = 2 := Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le (by decide) usize_size_ge_2_pow_32)
+def «3uz=3» : (3 % USize.size) = 3 := Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le (by decide) usize_size_ge_2_pow_32)
+def «4uz=4» : (4 % USize.size) = 4 := Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le (by decide) usize_size_ge_2_pow_32)
+
 end Raymath
+
 
 /-! # Types and Structures Definition -/
 
@@ -253,6 +266,9 @@ def equals (p q : Vector2) : Bool :=
 def beq (v1 v2 : Vector2) : Bool :=
   v1.x == v2.x && v1.y == v2.y
 
+@[extern "lean_raymath_Vector_get"]
+def get (v : @& Vector2) (i : USize) (h : i < 2) : Float32 := ite (i = 0) v.x v.y
+
 end Raymath.Vector2
 
 instance : Add Raymath.Vector2 := ⟨Raymath.Vector2.add⟩
@@ -263,6 +279,11 @@ instance : BEq Raymath.Vector2 := ⟨Raymath.Vector2.beq⟩
 instance : Neg Raymath.Vector2 := ⟨Raymath.Vector2.neg⟩
 instance : Min Raymath.Vector2 := ⟨Raymath.Vector2.min⟩
 instance : Max Raymath.Vector2 := ⟨Raymath.Vector2.max⟩
+instance : GetElem Raymath.Vector2 USize Float32 (λ _ i ↦ i < 2) := ⟨Raymath.Vector2.get⟩
+instance : GetElem Raymath.Vector2 (Fin 2) Float32 (λ _ _ ↦ True) where
+  getElem v i _ := v.get
+    ⟨i.val, Nat.lt_trans i.isLt $ Nat.lt_of_lt_of_le (by decide) Raymath.usize_size_ge_2_pow_32⟩ $
+    Nat.lt_of_lt_of_eq i.isLt Raymath.«2uz=2».symm
 
 
 /-! ## Vector3 math -/
@@ -518,6 +539,16 @@ def refract (v n : Vector3) (r : Float32) : Vector3 :=
         (r * v.z - (r * dot + d) * n.z)
     else Vector3.zero
 
+@[extern "lean_raymath_Vector_get"]
+def get (v : @& Vector3) (i : USize) («i<3uz» : i < 3) : Float32 :=
+  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» «3uz=3»
+  match i, «↑i<3» with
+    | ⟨0, _⟩, _ => v.x
+    | ⟨1, _⟩, _ => v.y
+    | ⟨2, _⟩, _ => v.z
+    | ⟨n+3, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 3 n
+
+
 end Raymath.Vector3
 
 instance : Add Raymath.Vector3 := ⟨Raymath.Vector3.add⟩
@@ -528,3 +559,29 @@ instance : BEq Raymath.Vector3 := ⟨Raymath.Vector3.beq⟩
 instance : Neg Raymath.Vector3 := ⟨Raymath.Vector3.neg⟩
 instance : Min Raymath.Vector3 := ⟨Raymath.Vector3.min⟩
 instance : Max Raymath.Vector3 := ⟨Raymath.Vector3.max⟩
+instance : GetElem Raymath.Vector3 USize Float32 (λ _ i ↦ i < 3) := ⟨Raymath.Vector3.get⟩
+instance : GetElem Raymath.Vector3 (Fin 3) Float32 (λ _ _ ↦ True) where
+  getElem v i _ := v.get
+    ⟨i.val, Nat.lt_trans i.isLt $ Nat.lt_of_lt_of_le (by decide) Raymath.usize_size_ge_2_pow_32⟩ $
+    Nat.lt_of_lt_of_eq i.isLt Raymath.«3uz=3».symm
+
+
+namespace Raymath.Vector4
+
+@[extern "lean_raymath_Vector_get"]
+def get (v : @& Vector4) (i : USize) («i<4uz» : i < 4) : Float32 :=
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» «4uz=4»
+  match i, «↑i<4» with
+    | ⟨0, _⟩, _ => v.x
+    | ⟨1, _⟩, _ => v.y
+    | ⟨2, _⟩, _ => v.z
+    | ⟨3, _⟩, _ => v.w
+    | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
+
+end Raymath.Vector4
+
+instance : GetElem Raymath.Vector4 USize Float32 (λ _ i ↦ i < 4) := ⟨Raymath.Vector4.get⟩
+instance : GetElem Raymath.Vector4 (Fin 4) Float32 (λ _ _ ↦ True) where
+  getElem v i _ := v.get
+    ⟨i.val, Nat.lt_trans i.isLt $ Nat.lt_of_lt_of_le (by decide) Raymath.usize_size_ge_2_pow_32⟩ $
+    Nat.lt_of_lt_of_eq i.isLt Raymath.«4uz=4».symm
