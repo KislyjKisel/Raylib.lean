@@ -249,7 +249,20 @@ def equals (p q : Vector2) : Bool :=
   (p.x - q.x).abs <= Raymath.epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
   (p.y - q.y).abs <= Raymath.epsilon * Float32.one.max (p.y.abs.max q.y.abs)
 
+
+def beq (v1 v2 : Vector2) : Bool :=
+  v1.x == v2.x && v1.y == v2.y
+
 end Raymath.Vector2
+
+instance : Add Raymath.Vector2 := ⟨Raymath.Vector2.add⟩
+instance : Sub Raymath.Vector2 := ⟨Raymath.Vector2.sub⟩
+instance : Mul Raymath.Vector2 := ⟨Raymath.Vector2.mul⟩
+instance : Div Raymath.Vector2 := ⟨Raymath.Vector2.div⟩
+instance : BEq Raymath.Vector2 := ⟨Raymath.Vector2.beq⟩
+instance : Neg Raymath.Vector2 := ⟨Raymath.Vector2.neg⟩
+instance : Min Raymath.Vector2 := ⟨Raymath.Vector2.min⟩
+instance : Max Raymath.Vector2 := ⟨Raymath.Vector2.max⟩
 
 
 /-! ## Vector3 math -/
@@ -482,6 +495,9 @@ def equals (p q : Vector3) : Bool :=
   (p.y - q.y).abs <= Raymath.epsilon * Float32.one.max (p.y.abs.max q.y.abs) &&
   (p.z - q.z).abs <= Raymath.epsilon * Float32.one.max (p.z.abs.max q.z.abs)
 
+def beq (v1 v2 : Vector3) : Bool :=
+  v1.x == v2.x && v1.y == v2.y && v1.z == v2.z
+
 /--
 Compute the direction of a refracted ray where `v` specifies the
 normalized direction of the incoming ray, `n` specifies the
@@ -503,3 +519,12 @@ def refract (v n : Vector3) (r : Float32) : Vector3 :=
     else Vector3.zero
 
 end Raymath.Vector3
+
+instance : Add Raymath.Vector3 := ⟨Raymath.Vector3.add⟩
+instance : Sub Raymath.Vector3 := ⟨Raymath.Vector3.sub⟩
+instance : Mul Raymath.Vector3 := ⟨Raymath.Vector3.mul⟩
+instance : Div Raymath.Vector3 := ⟨Raymath.Vector3.div⟩
+instance : BEq Raymath.Vector3 := ⟨Raymath.Vector3.beq⟩
+instance : Neg Raymath.Vector3 := ⟨Raymath.Vector3.neg⟩
+instance : Min Raymath.Vector3 := ⟨Raymath.Vector3.min⟩
+instance : Max Raymath.Vector3 := ⟨Raymath.Vector3.max⟩
