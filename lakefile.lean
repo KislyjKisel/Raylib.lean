@@ -8,7 +8,11 @@ package raylib {
 }
 
 lean_lib Raylib
-lean_lib Raymath
+lean_lib Raymath {
+  precompileModules := true
+}
+
+def x := LeanLibConfig
 
 inductive RaylibSrc
   | System
