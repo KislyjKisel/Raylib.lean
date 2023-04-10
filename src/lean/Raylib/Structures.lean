@@ -30,10 +30,10 @@ def g (color : Color) : UInt8 := (Color.rgba color >>> 16).toUInt8
 def b (color : Color) : UInt8 := (Color.rgba color >>> 8).toUInt8
 def a (color : Color) : UInt8 := (Color.rgba color).toUInt8
 
-def set_r (r : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0x00FFFFFF, by simp⟩ ||| (r.toUInt32 <<< 24)⟩
-def set_g (g : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFF00FFFF, by simp⟩ ||| (g.toUInt32 <<< 16)⟩
-def set_b (b : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFF00FF, by simp⟩ ||| (b.toUInt32 <<< 8)⟩
-def set_a (a : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFFFF00, by simp⟩ ||| a.toUInt32⟩
+def set_r (r : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0x00FFFFFF, by decide⟩ ||| (r.toUInt32 <<< 24)⟩
+def set_g (g : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFF00FFFF, by decide⟩ ||| (g.toUInt32 <<< 16)⟩
+def set_b (b : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFF00FF, by decide⟩ ||| (b.toUInt32 <<< 8)⟩
+def set_a (a : UInt8) (color : Color) : Color := ⟨color.rgba &&& ⟨0xFFFFFF00, by decide⟩ ||| a.toUInt32⟩
 
 def toVector4 (color : Color) : Vector4 :=
   Vector4.mk color.r.toFloat32 color.g.toFloat32 color.b.toFloat32 color.a.toFloat32
