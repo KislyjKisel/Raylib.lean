@@ -3,6 +3,7 @@ import Raylib.Enumerations
 
 set_option autoImplicit false
 
+open Pod (Float32)
 open Raymath (Vector2 Vector3 Vector4)
 
 namespace Raylib
@@ -59,39 +60,39 @@ def Rectangle : Type := RectanglePointed.type
 instance : Nonempty Rectangle := RectanglePointed.property
 
 @[extern "lean_raylib__Rectangle_mk"]
-opaque Rectangle.mk (x : Float) (y : Float) (width : Float) (height : Float) : Rectangle
+opaque Rectangle.mk (x : Float32) (y : Float32) (width : Float32) (height : Float32) : Rectangle
 
 /-- Getter: Rectangle top-left corner position x -/
 @[extern "lean_raylib__Rectangle_x"]
-opaque Rectangle.x (self : @& Rectangle) : Float
+opaque Rectangle.x (self : @& Rectangle) : Float32
 
 /-- Setter: Rectangle top-left corner position x -/
 @[extern "lean_raylib__Rectangle_x_set"]
-opaque Rectangle.set_x (x : Float) (rectangle : Rectangle) : Rectangle
+opaque Rectangle.set_x (x : Float32) (rectangle : Rectangle) : Rectangle
 
 /-- Getter: Rectangle top-left corner position y -/
 @[extern "lean_raylib__Rectangle_y"]
-opaque Rectangle.y (self : @& Rectangle) : Float
+opaque Rectangle.y (self : @& Rectangle) : Float32
 
 /-- Setter: Rectangle top-left corner position y -/
 @[extern "lean_raylib__Rectangle_y_set"]
-opaque Rectangle.set_y (y : Float) (rectangle : Rectangle) : Rectangle
+opaque Rectangle.set_y (y : Float32) (rectangle : Rectangle) : Rectangle
 
 /-- Getter: Rectangle width -/
 @[extern "lean_raylib__Rectangle_width"]
-opaque Rectangle.width (self : @& Rectangle) : Float
+opaque Rectangle.width (self : @& Rectangle) : Float32
 
 /-- Setter: Rectangle width -/
 @[extern "lean_raylib__Rectangle_width_set"]
-opaque Rectangle.set_width (width : Float) (rectangle : Rectangle) : Rectangle
+opaque Rectangle.set_width (width : Float32) (rectangle : Rectangle) : Rectangle
 
 /-- Getter: Rectangle height -/
 @[extern "lean_raylib__Rectangle_height"]
-opaque Rectangle.height (self : @& Rectangle) : Float
+opaque Rectangle.height (self : @& Rectangle) : Float32
 
 /-- Setter: Rectangle height -/
 @[extern "lean_raylib__Rectangle_height_set"]
-opaque Rectangle.set_height (height : Float) (rectangle : Rectangle) : Rectangle
+opaque Rectangle.set_height (height : Float32) (rectangle : Rectangle) : Rectangle
 
 
 /-! # Image -/
@@ -344,7 +345,7 @@ instance : Nonempty Camera3D := Camera3DPointed.property
 @[extern "lean_raylib__Camera3D_mk"]
 opaque Camera3D.mk
   (position : @& Vector3) (target : @& Vector3) (up : @& Vector3)
-  (fovy : Float) (projection : CameraProjection)
+  (fovy : Float32) (projection : CameraProjection)
   : Camera3D
 
 /-- Getter: Camera position -/
@@ -367,10 +368,10 @@ opaque Camera3D.up (cam3d : @& Camera3D) : Vector3
 opaque Camera3D.set_up (up : @& Vector3) (cam3d : Camera3D) : Camera3D
 /-- Getter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
 @[extern "lean_raylib__Camera3D_fovy"]
-opaque Camera3D.fovy (cam3d : @& Camera3D) : Float
+opaque Camera3D.fovy (cam3d : @& Camera3D) : Float32
 /-- Setter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
 @[extern "lean_raylib__Camera3D_fovy_set"]
-opaque Camera3D.set_fovy (fovy : Float) (cam3d : Camera3D) : Camera3D
+opaque Camera3D.set_fovy (fovy : Float32) (cam3d : Camera3D) : Camera3D
 /-- Getter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
 @[extern "lean_raylib__Camera3D_projection"]
 opaque Camera3D.projection (cam3d : @& Camera3D) : CameraProjection
@@ -387,7 +388,7 @@ def Camera2D : Type := Camera2DPointed.type
 instance : Nonempty Camera2D := Camera2DPointed.property
 
 @[extern "lean_raylib__Camera2D_mk"]
-opaque Camera2D.mk (offset : @& Vector2) (target : @& Vector2) (rotation : Float) (zoom : Float) : Camera2D
+opaque Camera2D.mk (offset : @& Vector2) (target : @& Vector2) (rotation : Float32) (zoom : Float32) : Camera2D
 
 /-- Getter: Camera offset (displacement from target) -/
 @[extern "lean_raylib__Camera2D_offset"]
@@ -403,16 +404,16 @@ opaque Camera2D.target (cam2d : @& Camera2D) : Vector2
 opaque Camera2D.set_target (target : @& Vector2) (cam2d : Camera2D) : Camera2D
 /-- Getter: Camera rotation in degrees -/
 @[extern "lean_raylib__Camera2D_rotation"]
-opaque Camera2D.rotation (cam2d : @& Camera2D) : Float
+opaque Camera2D.rotation (cam2d : @& Camera2D) : Float32
 /-- Setter: Camera rotation in degrees -/
 @[extern "lean_raylib__Camera2D_rotation_set"]
-opaque Camera2D.set_rotation (rotation : Float) (cam2d : Camera2D) : Camera2D
+opaque Camera2D.set_rotation (rotation : Float32) (cam2d : Camera2D) : Camera2D
 /-- Getter: Camera zoom (scaling), should be 1.0f by default -/
 @[extern "lean_raylib__Camera2D_zoom"]
-opaque Camera2D.zoom (cam2d : @& Camera2D) : Float
+opaque Camera2D.zoom (cam2d : @& Camera2D) : Float32
 /-- Setter: Camera zoom (scaling), should be 1.0f by default -/
 @[extern "lean_raylib__Camera2D_zoom_set"]
-opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
+opaque Camera2D.set_zoom (zoom : Float32) (cam2d : Camera2D) : Camera2D
 
 
 /-! # Mesh -/
@@ -672,10 +673,10 @@ opaque Camera2D.set_zoom (zoom : Float) (cam2d : Camera2D) : Camera2D
 -- opaque MaterialMap.set_color (color : Color) (self : MaterialMap) : MaterialMap
 -- /-- Getter: Material map value -/
 -- @[extern "lean_raylib__MaterialMap_value"]
--- opaque MaterialMap.value (self : @& MaterialMap) : Float
+-- opaque MaterialMap.value (self : @& MaterialMap) : Float32
 -- /-- Setter: Material map value -/
 -- @[extern "lean_raylib__MaterialMap_value_set"]
--- opaque MaterialMap.set_value (value : Float) (self : MaterialMap) : MaterialMap
+-- opaque MaterialMap.set_value (value : Float32) (self : MaterialMap) : MaterialMap
 
 
 /-! # Material -/
@@ -987,7 +988,7 @@ opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
 -- def RayCollision : Type := RayCollisionPointed.type
 -- instance : Nonempty RayCollision := RayCollisionPointed.property
 -- @[extern "lean_raylib__RayCollision_mk"]
--- opaque RayCollision.mk (hit : Bool) (distance : Float) (point : Vector3) (normal : Vector3) : RayCollision
+-- opaque RayCollision.mk (hit : Bool) (distance : Float32) (point : Vector3) (normal : Vector3) : RayCollision
 -- /-- Getter: Did the ray hit something? -/
 -- @[extern "lean_raylib__RayCollision_hit"]
 -- opaque RayCollision.hit (self : @& RayCollision) : Bool
@@ -996,10 +997,10 @@ opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
 -- opaque RayCollision.set_hit (hit : Bool) (self : RayCollision) : RayCollision
 -- /-- Getter: Distance to the nearest hit -/
 -- @[extern "lean_raylib__RayCollision_distance"]
--- opaque RayCollision.distance (self : @& RayCollision) : Float
+-- opaque RayCollision.distance (self : @& RayCollision) : Float32
 -- /-- Setter: Distance to the nearest hit -/
 -- @[extern "lean_raylib__RayCollision_distance_set"]
--- opaque RayCollision.set_distance (distance : Float) (self : RayCollision) : RayCollision
+-- opaque RayCollision.set_distance (distance : Float32) (self : RayCollision) : RayCollision
 -- /-- Getter: Point of the nearest hit -/
 -- @[extern "lean_raylib__RayCollision_point"]
 -- opaque RayCollision.point (self : @& RayCollision) : Vector3
@@ -1159,40 +1160,40 @@ opaque Music.set_looping (looping : Bool) (music : Music) : Music
 -- opaque VrDeviceInfo.set_vResolution (vResolution : Int32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Horizontal size in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_hScreenSize"]
--- opaque VrDeviceInfo.hScreenSize (self : @& VrDeviceInfo) : Float
+-- opaque VrDeviceInfo.hScreenSize (self : @& VrDeviceInfo) : Float32
 -- /-- Setter: Horizontal size in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_hScreenSize_set"]
--- opaque VrDeviceInfo.set_hScreenSize (hScreenSize : Float) (self : VrDeviceInfo) : VrDeviceInfo
+-- opaque VrDeviceInfo.set_hScreenSize (hScreenSize : Float32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Vertical size in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_vScreenSize"]
--- opaque VrDeviceInfo.vScreenSize (self : @& VrDeviceInfo) : Float
+-- opaque VrDeviceInfo.vScreenSize (self : @& VrDeviceInfo) : Float32
 -- /-- Setter: Vertical size in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_vScreenSize_set"]
--- opaque VrDeviceInfo.set_vScreenSize (vScreenSize : Float) (self : VrDeviceInfo) : VrDeviceInfo
+-- opaque VrDeviceInfo.set_vScreenSize (vScreenSize : Float32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Screen center in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_vScreenCenter"]
--- opaque VrDeviceInfo.vScreenCenter (self : @& VrDeviceInfo) : Float
+-- opaque VrDeviceInfo.vScreenCenter (self : @& VrDeviceInfo) : Float32
 -- /-- Setter: Screen center in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_vScreenCenter_set"]
--- opaque VrDeviceInfo.set_vScreenCenter (vScreenCenter : Float) (self : VrDeviceInfo) : VrDeviceInfo
+-- opaque VrDeviceInfo.set_vScreenCenter (vScreenCenter : Float32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Distance between eye and display in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_eyeToScreenDistance"]
--- opaque VrDeviceInfo.eyeToScreenDistance (self : @& VrDeviceInfo) : Float
+-- opaque VrDeviceInfo.eyeToScreenDistance (self : @& VrDeviceInfo) : Float32
 -- /-- Setter: Distance between eye and display in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_eyeToScreenDistance_set"]
--- opaque VrDeviceInfo.set_eyeToScreenDistance (eyeToScreenDistance : Float) (self : VrDeviceInfo) : VrDeviceInfo
+-- opaque VrDeviceInfo.set_eyeToScreenDistance (eyeToScreenDistance : Float32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Lens separation distance in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_lensSeparationDistance"]
--- opaque VrDeviceInfo.lensSeparationDistance (self : @& VrDeviceInfo) : Float
+-- opaque VrDeviceInfo.lensSeparationDistance (self : @& VrDeviceInfo) : Float32
 -- /-- Setter: Lens separation distance in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_lensSeparationDistance_set"]
--- opaque VrDeviceInfo.set_lensSeparationDistance (lensSeparationDistance : Float) (self : VrDeviceInfo) : VrDeviceInfo
+-- opaque VrDeviceInfo.set_lensSeparationDistance (lensSeparationDistance : Float32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: IPD (distance between pupils) in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_interpupillaryDistance"]
--- opaque VrDeviceInfo.interpupillaryDistance (self : @& VrDeviceInfo) : Float
+-- opaque VrDeviceInfo.interpupillaryDistance (self : @& VrDeviceInfo) : Float32
 -- /-- Setter: IPD (distance between pupils) in meters -/
 -- @[extern "lean_raylib__VrDeviceInfo_interpupillaryDistance_set"]
--- opaque VrDeviceInfo.set_interpupillaryDistance (interpupillaryDistance : Float) (self : VrDeviceInfo) : VrDeviceInfo
+-- opaque VrDeviceInfo.set_interpupillaryDistance (interpupillaryDistance : Float32) (self : VrDeviceInfo) : VrDeviceInfo
 -- /-- Getter: Lens distortion constant parameters -/
 -- @[extern "lean_raylib__VrDeviceInfo_lensDistortionValues"]
 -- opaque VrDeviceInfo.lensDistortionValues (self : @& VrDeviceInfo) : Unit
@@ -1334,5 +1335,9 @@ opaque Music.set_looping (looping : Bool) (music : Music) : Music
 -- /-
 -- todo: ^^ struct setter ^^
 -- -/
+
+opaque WindowHandlePointed : NonemptyType
+def WindowHandle : Type := WindowHandlePointed.type
+instance : Nonempty WindowHandle := WindowHandlePointed.property
 
 end Raylib

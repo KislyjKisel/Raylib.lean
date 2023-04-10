@@ -592,3 +592,14 @@ static inline Music * lean_raylib_Music_from (b_lean_obj_arg obj) {
 // static inline FilePathList const* lean_raylib_FilePathList_from (b_lean_obj_arg obj) {
 //     return (FilePathList const*) lean_get_external_data(obj);
 // }
+
+
+// # Window Handle
+
+static inline lean_object* lean_raylib_WindowHandle_box (void* handle) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_default_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, handle);
+}

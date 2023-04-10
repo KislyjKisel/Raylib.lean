@@ -6,3 +6,7 @@
 static inline void lean_raylib_AudioStream_setCallback(b_lean_obj_arg stream, AudioCallback callback) {
     SetAudioStreamCallback(*((AudioStream*)lean_get_external_data(stream)), callback);
 }
+
+static inline void* lean_raylib_WindowHandle_unbox (b_lean_obj_arg handle) {
+    return lean_get_external_data(handle);
+}

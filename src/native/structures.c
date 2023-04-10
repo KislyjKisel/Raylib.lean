@@ -4,21 +4,21 @@
 
 // # Rectangle
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_mk(double x, double y, double width, double height) {
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_mk(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
     LET_BOX_STRUCT(Rectangle, rectangle,
-        .x = (float)x,
-        .y = (float)y,
-        .width = (float)width,
-        .height = (float)height
+        .x = lean_pod_Float32_fromBits(x),
+        .y = lean_pod_Float32_fromBits(y),
+        .width = lean_pod_Float32_fromBits(width),
+        .height = lean_pod_Float32_fromBits(height)
     );
     return lean_raylib_Rectangle_to(rectangle);
 }
 
-LEAN_EXPORT double lean_raylib__Rectangle_x(b_lean_obj_arg obj) {
+LEAN_EXPORT uint32_t lean_raylib__Rectangle_x(b_lean_obj_arg obj) {
     return lean_raylib_Rectangle_from(obj)->x;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(double x, lean_obj_arg rect_box) {
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(uint32_t x, lean_obj_arg rect_box) {
     if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
         lean_raylib_Rectangle_from(rect_box)->x = x;
         return rect_box;
@@ -29,11 +29,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(double x, lean_obj_arg rec
     return lean_raylib_Rectangle_to(rect_new);
 }
 
-LEAN_EXPORT double lean_raylib__Rectangle_y(b_lean_obj_arg obj) {
+LEAN_EXPORT uint32_t lean_raylib__Rectangle_y(b_lean_obj_arg obj) {
     return lean_raylib_Rectangle_from(obj)->y;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(double y, lean_obj_arg rect_box) {
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(uint32_t y, lean_obj_arg rect_box) {
     if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
         lean_raylib_Rectangle_from(rect_box)->y = y;
         return rect_box;
@@ -44,11 +44,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(double y, lean_obj_arg rec
     return lean_raylib_Rectangle_to(rect_new);
 }
 
-LEAN_EXPORT double lean_raylib__Rectangle_width(b_lean_obj_arg obj) {
+LEAN_EXPORT uint32_t lean_raylib__Rectangle_width(b_lean_obj_arg obj) {
     return lean_raylib_Rectangle_from(obj)->width;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(double width, lean_obj_arg rect_box) {
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(uint32_t width, lean_obj_arg rect_box) {
     if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
         lean_raylib_Rectangle_from(rect_box)->width = width;
         return rect_box;
@@ -59,11 +59,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(double width, lean_obj
     return lean_raylib_Rectangle_to(rect_new);
 }
 
-LEAN_EXPORT double lean_raylib__Rectangle_height(b_lean_obj_arg obj) {
+LEAN_EXPORT uint32_t lean_raylib__Rectangle_height(b_lean_obj_arg obj) {
     return lean_raylib_Rectangle_from(obj)->height;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_height_set(double height, lean_obj_arg rect_box) {
+LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_height_set(uint32_t height, lean_obj_arg rect_box) {
     if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
         lean_raylib_Rectangle_from(rect_box)->height = height;
         return rect_box;
@@ -441,13 +441,13 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_layout_set(uint32_t layout, lea
 
 LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_mk(
     b_lean_obj_arg position, b_lean_obj_arg target, b_lean_obj_arg up,
-    double fovy, uint32_t projection
+    uint32_t fovy, uint32_t projection
 ) {
     LET_BOX_STRUCT(Camera3D, cam3d,
         .position = lean_raylib_Vector3_from(position),
         .target = lean_raylib_Vector3_from(target),
         .up = lean_raylib_Vector3_from(up),
-        .fovy = (float)fovy,
+        .fovy = lean_pod_Float32_fromBits(fovy),
         .projection = projection
     );
     return lean_raylib_Camera3D_to(cam3d);
@@ -498,18 +498,18 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_up_set(lean_obj_arg up, lean_obj_
     return lean_raylib_Camera3D_to(cam3d_new);
 }
 
-LEAN_EXPORT double lean_raylib__Camera3D_fovy(b_lean_obj_arg cam3d) {
+LEAN_EXPORT uint32_t lean_raylib__Camera3D_fovy(b_lean_obj_arg cam3d) {
     return (double)lean_raylib_Camera3D_from(cam3d)->fovy;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_fovy_set(double fovy, lean_obj_arg cam3d) {
+LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_fovy_set(uint32_t fovy, lean_obj_arg cam3d) {
     if(LEAN_LIKELY(lean_is_exclusive(cam3d))) {
         lean_raylib_Camera3D_from(cam3d)->fovy = fovy;
         return cam3d;
     }
     LET_BOX(Camera3D, cam3d_new, *lean_raylib_Camera3D_from(cam3d));
     lean_dec_ref(cam3d);
-    cam3d_new->fovy = (float)fovy;
+    cam3d_new->fovy = lean_pod_Float32_fromBits(fovy);
     return lean_raylib_Camera3D_to(cam3d_new);
 }
 
@@ -531,12 +531,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera3D_projection_set(uint32_t projectio
 
 // # Camera 2D
 
-LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_mk(b_lean_obj_arg offset, b_lean_obj_arg target, double rotation, double zoom) {
+LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_mk(b_lean_obj_arg offset, b_lean_obj_arg target, uint32_t rotation, uint32_t zoom) {
     LET_BOX_STRUCT(Camera2D, cam2d,
         .offset = lean_raylib_Vector2_from(offset),
         .target = lean_raylib_Vector2_from(target),
-        .rotation = (float)rotation,
-        .zoom = (float)zoom
+        .rotation = lean_pod_Float32_fromBits(rotation),
+        .zoom = lean_pod_Float32_fromBits(zoom)
     );
     return lean_raylib_Camera2D_to(cam2d);
 }
@@ -571,33 +571,33 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_target_set(b_lean_obj_arg target,
     return lean_raylib_Camera2D_to(cam2d_new);
 }
 
-LEAN_EXPORT double lean_raylib__Camera2D_rotation(b_lean_obj_arg cam2d) {
+LEAN_EXPORT uint32_t lean_raylib__Camera2D_rotation(b_lean_obj_arg cam2d) {
     return (double)lean_raylib_Camera2D_from(cam2d)->rotation;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_rotation_set(double rotation, lean_obj_arg cam2d) {
+LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_rotation_set(uint32_t rotation, lean_obj_arg cam2d) {
     if(LEAN_LIKELY(lean_is_exclusive(cam2d))) {
         lean_raylib_Camera2D_from(cam2d)->rotation = rotation;
         return cam2d;
     }
     LET_BOX(Camera2D, cam2d_new, *lean_raylib_Camera2D_from(cam2d));
     lean_dec_ref(cam2d);
-    cam2d_new->rotation = (float)rotation;
+    cam2d_new->rotation = lean_pod_Float32_fromBits(rotation);
     return lean_raylib_Camera2D_to(cam2d_new);
 }
 
-LEAN_EXPORT double lean_raylib__Camera2D_zoom(b_lean_obj_arg cam2d) {
+LEAN_EXPORT uint32_t lean_raylib__Camera2D_zoom(b_lean_obj_arg cam2d) {
     return (double)lean_raylib_Camera2D_from(cam2d)->zoom;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_zoom_set(double zoom, lean_obj_arg cam2d) {
+LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_zoom_set(uint32_t zoom, lean_obj_arg cam2d) {
     if(LEAN_LIKELY(lean_is_exclusive(cam2d))) {
         lean_raylib_Camera2D_from(cam2d)->zoom = zoom;
         return cam2d;
     }
     LET_BOX(Camera2D, cam2d_new, *lean_raylib_Camera2D_from(cam2d));
     lean_dec_ref(cam2d);
-    cam2d_new->zoom = (float)zoom;
+    cam2d_new->zoom = lean_pod_Float32_fromBits(zoom);
     return lean_raylib_Camera2D_to(cam2d_new);
 }
 
@@ -820,11 +820,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_zoom_set(double zoom, lean_obj_ar
 //     return lean_raylib_Shader_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_mk(lean_obj_arg texture, uint32_t color, double value) {
+// LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_mk(lean_obj_arg texture, uint32_t color, uint32_t value) {
 //     LET_BOX_STRUCT(MaterialMap, result_,
 //         .texture = /*cast Texture2D to_lean?false*/(texture),
 //         .color = lean_raylib_Color_from(color),
-//         .value = (float)value
+//         .value = lean_pod_Float32_fromBits(value)
 //     );
 //     return lean_raylib_MaterialMap_to(result_);
 // }
@@ -851,14 +851,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__Camera2D_zoom_set(double zoom, lean_obj_ar
 //     return lean_raylib_MaterialMap_to(result_);
 // }
 
-// LEAN_EXPORT double lean_raylib__MaterialMap_value(b_lean_obj_arg obj) {
+// LEAN_EXPORT uint32_t lean_raylib__MaterialMap_value(b_lean_obj_arg obj) {
 //     float result_ = lean_raylib_MaterialMap_from(obj)->value;
 //     return (double)result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_value_set(double value, b_lean_obj_arg obj) {
+// LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_value_set(uint32_t value, b_lean_obj_arg obj) {
 //     LET_BOX(MaterialMap, result_, *lean_raylib_MaterialMap_from(obj));
-//     result_->value = (float)value;
+//     result_->value = lean_pod_Float32_fromBits(value);
 //     return lean_raylib_MaterialMap_to(result_);
 // }
 
@@ -1188,10 +1188,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__Ray_direction_set(b_lean_obj_arg direction
 
 // # Ray collision
 
-// LEAN_EXPORT lean_obj_res lean_raylib__RayCollision_mk(uint8_t hit, double distance, lean_obj_arg point, lean_obj_arg normal) {
+// LEAN_EXPORT lean_obj_res lean_raylib__RayCollision_mk(uint8_t hit, uint32_t distance, lean_obj_arg point, lean_obj_arg normal) {
 //     LET_BOX_STRUCT(RayCollision, result_,
 //         .hit = hit,
-//         .distance = (float)distance,
+//         .distance = lean_pod_Float32_fromBits(distance),
 //         .point = lean_raylib_Vector3_from(point),
 //         .normal = lean_raylib_Vector3_from(normal)
 //     );
@@ -1209,14 +1209,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__Ray_direction_set(b_lean_obj_arg direction
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
-// LEAN_EXPORT double lean_raylib__RayCollision_distance(b_lean_obj_arg obj) {
+// LEAN_EXPORT uint32_t lean_raylib__RayCollision_distance(b_lean_obj_arg obj) {
 //     float result_ = lean_raylib_RayCollision_from(obj)->distance;
 //     return (double)result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__RayCollision_distance_set(double distance, b_lean_obj_arg obj) {
+// LEAN_EXPORT lean_obj_res lean_raylib__RayCollision_distance_set(uint32_t distance, b_lean_obj_arg obj) {
 //     LET_BOX(RayCollision, result_, *lean_raylib_RayCollision_from(obj));
-//     result_->distance = (float)distance;
+//     result_->distance = lean_pod_Float32_fromBits(distance);
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
@@ -1373,16 +1373,16 @@ LEAN_EXPORT lean_obj_res lean_raylib__Music_looping_set(uint8_t looping, lean_ob
 
 // # Vr device info
 
-// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_mk(uint32_t hResolution, uint32_t vResolution, double hScreenSize, double vScreenSize, double vScreenCenter, double eyeToScreenDistance, double lensSeparationDistance, double interpupillaryDistance, /*float[4]*/lean_obj_arg lensDistortionValues, /*float[4]*/lean_obj_arg chromaAbCorrection) {
+// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_mk(uint32_t hResolution, uint32_t vResolution, uint32_t hScreenSize, uint32_t vScreenSize, uint32_t vScreenCenter, uint32_t eyeToScreenDistance, uint32_t lensSeparationDistance, uint32_t interpupillaryDistance, /*float[4]*/lean_obj_arg lensDistortionValues, /*float[4]*/lean_obj_arg chromaAbCorrection) {
 //     LET_BOX_STRUCT(VrDeviceInfo, result_,
 //         .hResolution = hResolution,
 //         .vResolution = vResolution,
-//         .hScreenSize = (float)hScreenSize,
-//         .vScreenSize = (float)vScreenSize,
-//         .vScreenCenter = (float)vScreenCenter,
-//         .eyeToScreenDistance = (float)eyeToScreenDistance,
-//         .lensSeparationDistance = (float)lensSeparationDistance,
-//         .interpupillaryDistance = (float)interpupillaryDistance,
+//         .hScreenSize = lean_pod_Float32_fromBits(hScreenSize),
+//         .vScreenSize = lean_pod_Float32_fromBits(vScreenSize),
+//         .vScreenCenter = lean_pod_Float32_fromBits(vScreenCenter),
+//         .eyeToScreenDistance = lean_pod_Float32_fromBits(eyeToScreenDistance),
+//         .lensSeparationDistance = lean_pod_Float32_fromBits(lensSeparationDistance),
+//         .interpupillaryDistance = lean_pod_Float32_fromBits(interpupillaryDistance),
 //         .lensDistortionValues = /*cast float[4] to_lean?false*/(lensDistortionValues),
 //         .chromaAbCorrection = /*cast float[4] to_lean?false*/(chromaAbCorrection)
 //     );
@@ -1411,69 +1411,69 @@ LEAN_EXPORT lean_obj_res lean_raylib__Music_looping_set(uint8_t looping, lean_ob
 //     return lean_raylib_VrDeviceInfo_to(result_);
 // }
 
-// LEAN_EXPORT double lean_raylib__VrDeviceInfo_hScreenSize(b_lean_obj_arg obj) {
+// LEAN_EXPORT uint32_t lean_raylib__VrDeviceInfo_hScreenSize(b_lean_obj_arg obj) {
 //     float result_ = lean_raylib_VrDeviceInfo_from(obj)->hScreenSize;
 //     return (double)result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_hScreenSize_set(double hScreenSize, b_lean_obj_arg obj) {
+// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_hScreenSize_set(uint32_t hScreenSize, b_lean_obj_arg obj) {
 //     LET_BOX(VrDeviceInfo, result_, *lean_raylib_VrDeviceInfo_from(obj));
-//     result_->hScreenSize = (float)hScreenSize;
+//     result_->hScreenSize = lean_pod_Float32_fromBits(hScreenSize);
 //     return lean_raylib_VrDeviceInfo_to(result_);
 // }
 
-// LEAN_EXPORT double lean_raylib__VrDeviceInfo_vScreenSize(b_lean_obj_arg obj) {
+// LEAN_EXPORT uint32_t lean_raylib__VrDeviceInfo_vScreenSize(b_lean_obj_arg obj) {
 //     float result_ = lean_raylib_VrDeviceInfo_from(obj)->vScreenSize;
 //     return (double)result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_vScreenSize_set(double vScreenSize, b_lean_obj_arg obj) {
+// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_vScreenSize_set(uint32_t vScreenSize, b_lean_obj_arg obj) {
 //     LET_BOX(VrDeviceInfo, result_, *lean_raylib_VrDeviceInfo_from(obj));
-//     result_->vScreenSize = (float)vScreenSize;
+//     result_->vScreenSize = lean_pod_Float32_fromBits(vScreenSize);
 //     return lean_raylib_VrDeviceInfo_to(result_);
 // }
 
-// LEAN_EXPORT double lean_raylib__VrDeviceInfo_vScreenCenter(b_lean_obj_arg obj) {
+// LEAN_EXPORT uint32_t lean_raylib__VrDeviceInfo_vScreenCenter(b_lean_obj_arg obj) {
 //     float result_ = lean_raylib_VrDeviceInfo_from(obj)->vScreenCenter;
 //     return (double)result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_vScreenCenter_set(double vScreenCenter, b_lean_obj_arg obj) {
+// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_vScreenCenter_set(uint32_t vScreenCenter, b_lean_obj_arg obj) {
 //     LET_BOX(VrDeviceInfo, result_, *lean_raylib_VrDeviceInfo_from(obj));
-//     result_->vScreenCenter = (float)vScreenCenter;
+//     result_->vScreenCenter = lean_pod_Float32_fromBits(vScreenCenter);
 //     return lean_raylib_VrDeviceInfo_to(result_);
 // }
 
-// LEAN_EXPORT double lean_raylib__VrDeviceInfo_eyeToScreenDistance(b_lean_obj_arg obj) {
+// LEAN_EXPORT uint32_t lean_raylib__VrDeviceInfo_eyeToScreenDistance(b_lean_obj_arg obj) {
 //     float result_ = lean_raylib_VrDeviceInfo_from(obj)->eyeToScreenDistance;
 //     return (double)result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_eyeToScreenDistance_set(double eyeToScreenDistance, b_lean_obj_arg obj) {
+// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_eyeToScreenDistance_set(uint32_t eyeToScreenDistance, b_lean_obj_arg obj) {
 //     LET_BOX(VrDeviceInfo, result_, *lean_raylib_VrDeviceInfo_from(obj));
-//     result_->eyeToScreenDistance = (float)eyeToScreenDistance;
+//     result_->eyeToScreenDistance = lean_pod_Float32_fromBits(eyeToScreenDistance);
 //     return lean_raylib_VrDeviceInfo_to(result_);
 // }
 
-// LEAN_EXPORT double lean_raylib__VrDeviceInfo_lensSeparationDistance(b_lean_obj_arg obj) {
+// LEAN_EXPORT uint32_t lean_raylib__VrDeviceInfo_lensSeparationDistance(b_lean_obj_arg obj) {
 //     float result_ = lean_raylib_VrDeviceInfo_from(obj)->lensSeparationDistance;
 //     return (double)result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_lensSeparationDistance_set(double lensSeparationDistance, b_lean_obj_arg obj) {
+// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_lensSeparationDistance_set(uint32_t lensSeparationDistance, b_lean_obj_arg obj) {
 //     LET_BOX(VrDeviceInfo, result_, *lean_raylib_VrDeviceInfo_from(obj));
-//     result_->lensSeparationDistance = (float)lensSeparationDistance;
+//     result_->lensSeparationDistance = lean_pod_Float32_fromBits(lensSeparationDistance);
 //     return lean_raylib_VrDeviceInfo_to(result_);
 // }
 
-// LEAN_EXPORT double lean_raylib__VrDeviceInfo_interpupillaryDistance(b_lean_obj_arg obj) {
+// LEAN_EXPORT uint32_t lean_raylib__VrDeviceInfo_interpupillaryDistance(b_lean_obj_arg obj) {
 //     float result_ = lean_raylib_VrDeviceInfo_from(obj)->interpupillaryDistance;
 //     return (double)result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_interpupillaryDistance_set(double interpupillaryDistance, b_lean_obj_arg obj) {
+// LEAN_EXPORT lean_obj_res lean_raylib__VrDeviceInfo_interpupillaryDistance_set(uint32_t interpupillaryDistance, b_lean_obj_arg obj) {
 //     LET_BOX(VrDeviceInfo, result_, *lean_raylib_VrDeviceInfo_from(obj));
-//     result_->interpupillaryDistance = (float)interpupillaryDistance;
+//     result_->interpupillaryDistance = lean_pod_Float32_fromBits(interpupillaryDistance);
 //     return lean_raylib_VrDeviceInfo_to(result_);
 // }
 

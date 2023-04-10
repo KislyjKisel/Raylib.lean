@@ -7,6 +7,7 @@ import Raylib.Util
 
 set_option autoImplicit false
 
+open Pod (Float32)
 open Raymath (Vector2 Vector3 Vector4 Matrix)
 
 namespace Raylib
@@ -109,15 +110,11 @@ opaque setWindowSize (width : UInt32) (height : UInt32) : BaseIO Unit
 
 /-- Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowOpacity"]
-opaque setWindowOpacity (opacity : Float) : BaseIO Unit
+opaque setWindowOpacity (opacity : Float32) : BaseIO Unit
 
--- /-- Get native window handle -/
--- @[extern "lean_raylib__GetWindowHandle"]
--- opaque getWindowHandle : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void *
---   params:
--- -/
+/-- Get native window handle -/
+@[extern "lean_raylib__GetWindowHandle"]
+opaque getWindowHandle : BaseIO WindowHandle
 
 /-- Get current screen width -/
 @[extern "lean_raylib__GetScreenWidth"]
@@ -205,7 +202,7 @@ opaque pollInputEvents : BaseIO Unit
 
 /-- Wait for some time (halt program execution) -/
 @[extern "lean_raylib__WaitTime"]
-opaque waitTime (seconds : Float) : BaseIO Unit
+opaque waitTime (seconds : Float32) : BaseIO Unit
 
 /-- Shows cursor -/
 @[extern "lean_raylib__ShowCursor"]
@@ -266,6 +263,7 @@ opaque beginTextureMode (target : @& RenderTexture2D) : BaseIO Unit
 /-- Ends drawing to render texture -/
 @[extern "lean_raylib__EndTextureMode"]
 opaque endTextureMode : BaseIO Unit
+
 -- /-- Begin custom shader drawing -/
 -- @[extern "lean_raylib__BeginShaderMode"]
 -- opaque beginShaderMode (shader : Shader) : Unit
@@ -390,11 +388,11 @@ opaque getFPS : BaseIO UInt32
 
 /-- Get time in seconds for last frame drawn (delta time) -/
 @[extern "lean_raylib__GetFrameTime"]
-opaque getFrameTime : BaseIO Float
+opaque getFrameTime : BaseIO Float32
 
 /-- Get elapsed time in seconds since InitWindow() -/
 @[extern "lean_raylib__GetTime"]
-opaque getTime : BaseIO Float
+opaque getTime : BaseIO Float32
 
 /-- Get a random value between min and max (both included) -/
 @[extern "lean_raylib__GetRandomValue"]
@@ -490,6 +488,7 @@ opaque openURL (url : @& String) : BaseIO Unit
 --   params:
 --   | callback : SaveFileTextCallback
 -- -/
+
 /-- Load file data as byte array (read) -/
 @[extern "lean_raylib__LoadFileData"]
 opaque loadFileData (fileName : @& String) : BaseIO ByteArray
@@ -692,7 +691,7 @@ opaque getGamepadAxisCount (gamepad : UInt32) : BaseIO UInt32
 
 /-- Get axis movement value for a gamepad axis -/
 @[extern "lean_raylib__GetGamepadAxisMovement"]
-opaque getGamepadAxisMovement (gamepad : UInt32) (axis : UInt32) : BaseIO Float
+opaque getGamepadAxisMovement (gamepad : UInt32) (axis : UInt32) : BaseIO Float32
 
 /-- Set internal gamepad mappings (SDL_GameControllerDB) -/
 @[extern "lean_raylib__SetGamepadMappings"]
@@ -740,11 +739,11 @@ opaque setMouseOffset (offsetX : Int32) (offsetY : Int32) : BaseIO Unit
 
 /-- Set mouse scaling -/
 @[extern "lean_raylib__SetMouseScale"]
-opaque setMouseScale (scaleX : Float) (scaleY : Float) : BaseIO Unit
+opaque setMouseScale (scaleX : Float32) (scaleY : Float32) : BaseIO Unit
 
 /-- Get mouse wheel movement for X or Y, whichever is larger -/
 @[extern "lean_raylib__GetMouseWheelMove"]
-opaque getMouseWheelMove : BaseIO Float
+opaque getMouseWheelMove : BaseIO Float32
 
 /-- Get mouse wheel movement for both X and Y -/
 @[extern "lean_raylib__GetMouseWheelMoveV"]
@@ -788,7 +787,7 @@ opaque getGestureDetected : BaseIO Gesture
 
 /-- Get gesture hold time in milliseconds -/
 @[extern "lean_raylib__GetGestureHoldDuration"]
-opaque getGestureHoldDuration : BaseIO Float
+opaque getGestureHoldDuration : BaseIO Float32
 
 /-- Get gesture drag vector -/
 @[extern "lean_raylib__GetGestureDragVector"]
@@ -796,7 +795,7 @@ opaque getGestureDragVector : BaseIO Vector2
 
 /-- Get gesture drag angle -/
 @[extern "lean_raylib__GetGestureDragAngle"]
-opaque getGestureDragAngle : BaseIO Float
+opaque getGestureDragAngle : BaseIO Float32
 
 /-- Get gesture pinch delta -/
 @[extern "lean_raylib__GetGesturePinchVector"]
@@ -804,7 +803,7 @@ opaque getGesturePinchVector : BaseIO Vector2
 
 /-- Get gesture pinch angle -/
 @[extern "lean_raylib__GetGesturePinchAngle"]
-opaque getGesturePinchAngle : BaseIO Float
+opaque getGesturePinchAngle : BaseIO Float32
 
 /-- Update camera position for selected mode -/
 @[extern "lean_raylib__UpdateCamera"]
@@ -812,7 +811,7 @@ opaque updateCamera (cam : Camera) (mode : CameraMode) : BaseIO Camera
 
 /-- Update camera movement/rotation -/
 @[extern "lean_raylib__UpdateCameraPro"]
-opaque updateCameraPro (cam : Camera) (movement rotation : @& Vector3) (zoom : Float) : BaseIO Camera
+opaque updateCameraPro (cam : Camera) (movement rotation : @& Vector3) (zoom : Float32) : BaseIO Camera
 
 /-- Set texture and rectangle to be used on shapes drawing -/
 @[extern "lean_raylib__SetShapesTexture"]
@@ -836,68 +835,63 @@ opaque drawLineV (startPos : Vector2) (endPos : Vector2) (color : Color) : BaseI
 
 /-- Draw a line defining thickness -/
 @[extern "lean_raylib__DrawLineEx"]
-opaque drawLineEx (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : BaseIO Unit
+opaque drawLineEx (startPos : Vector2) (endPos : Vector2) (thick : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw a line using cubic-bezier curves in-out -/
 @[extern "lean_raylib__DrawLineBezier"]
-opaque drawLineBezier (startPos : Vector2) (endPos : Vector2) (thick : Float) (color : Color) : BaseIO Unit
+opaque drawLineBezier (startPos : Vector2) (endPos : Vector2) (thick : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw line using quadratic bezier curves with a control point -/
 @[extern "lean_raylib__DrawLineBezierQuad"]
-opaque drawLineBezierQuad (startPos : Vector2) (endPos : Vector2) (controlPos : Vector2) (thick : Float) (color : Color) : BaseIO Unit
+opaque drawLineBezierQuad (startPos : Vector2) (endPos : Vector2) (controlPos : Vector2) (thick : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw line using cubic bezier curves with 2 control points -/
 @[extern "lean_raylib__DrawLineBezierCubic"]
-opaque drawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControlPos : Vector2) (endControlPos : Vector2) (thick : Float) (color : Color) : BaseIO Unit
--- /-- Draw lines sequence -/
--- @[extern "lean_raylib__DrawLineStrip"]
--- opaque drawLineStrip : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | points : Vector2 *
---   | pointCount : int
---   | color : Color
--- -/
+opaque drawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControlPos : Vector2) (endControlPos : Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw lines sequence -/
+@[extern "lean_raylib__DrawLineStrip"]
+opaque drawLineStrip (points : @& Array Vector2) (color : Color) : IO Unit
+
 /-- Draw a color-filled circle -/
 @[extern "lean_raylib__DrawCircle"]
-opaque drawCircle (centerX : Int32) (centerY : Int32) (radius : Float) (color : Color) : BaseIO Unit
+opaque drawCircle (centerX : Int32) (centerY : Int32) (radius : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw a piece of a circle -/
 @[extern "lean_raylib__DrawCircleSector"]
-opaque drawCircleSector (center : @& Vector2) (radius : Float) (startAngle : Float) (endAngle : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+opaque drawCircleSector (center : @& Vector2) (radius : Float32) (startAngle : Float32) (endAngle : Float32) (segments : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw circle sector outline -/
 @[extern "lean_raylib__DrawCircleSectorLines"]
-opaque drawCircleSectorLines (center : @& Vector2) (radius : Float) (startAngle : Float) (endAngle : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+opaque drawCircleSectorLines (center : @& Vector2) (radius : Float32) (startAngle : Float32) (endAngle : Float32) (segments : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw a gradient-filled circle -/
 @[extern "lean_raylib__DrawCircleGradient"]
-opaque drawCircleGradient (centerX : Int32) (centerY : Int32) (radius : Float) (color1 : Color) (color2 : Color) : BaseIO Unit
+opaque drawCircleGradient (centerX : Int32) (centerY : Int32) (radius : Float32) (color1 : Color) (color2 : Color) : BaseIO Unit
 
 /-- Draw a color-filled circle (Vector version) -/
 @[extern "lean_raylib__DrawCircleV"]
-opaque drawCircleV (center : @& Vector2) (radius : Float) (color : Color) : BaseIO Unit
+opaque drawCircleV (center : @& Vector2) (radius : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw circle outline -/
 @[extern "lean_raylib__DrawCircleLines"]
-opaque drawCircleLines (centerX : Int32) (centerY : Int32) (radius : Float) (color : Color) : BaseIO Unit
+opaque drawCircleLines (centerX : Int32) (centerY : Int32) (radius : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw ellipse -/
 @[extern "lean_raylib__DrawEllipse"]
-opaque drawEllipse (centerX : Int32) (centerY : Int32) (radiusH : Float) (radiusV : Float) (color : Color) : BaseIO Unit
+opaque drawEllipse (centerX : Int32) (centerY : Int32) (radiusH : Float32) (radiusV : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw ellipse outline -/
 @[extern "lean_raylib__DrawEllipseLines"]
-opaque drawEllipseLines (centerX : Int32) (centerY : Int32) (radiusH : Float) (radiusV : Float) (color : Color) : BaseIO Unit
+opaque drawEllipseLines (centerX : Int32) (centerY : Int32) (radiusH : Float32) (radiusV : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw ring -/
 @[extern "lean_raylib__DrawRing"]
-opaque drawRing (center : @& Vector2) (innerRadius : Float) (outerRadius : Float) (startAngle : Float) (endAngle : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+opaque drawRing (center : @& Vector2) (innerRadius : Float32) (outerRadius : Float32) (startAngle : Float32) (endAngle : Float32) (segments : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw ring outline -/
 @[extern "lean_raylib__DrawRingLines"]
-opaque drawRingLines (center : @& Vector2) (innerRadius : Float) (outerRadius : Float) (startAngle : Float) (endAngle : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+opaque drawRingLines (center : @& Vector2) (innerRadius : Float32) (outerRadius : Float32) (startAngle : Float32) (endAngle : Float32) (segments : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw a color-filled rectangle -/
 @[extern "lean_raylib__DrawRectangle"]
@@ -913,7 +907,7 @@ opaque drawRectangleRec (rec : @& Rectangle) (color : Color) : BaseIO Unit
 
 /-- Draw a color-filled rectangle with pro parameters -/
 @[extern "lean_raylib__DrawRectanglePro"]
-opaque drawRectanglePro (rec : @& Rectangle) (origin : @& Vector2) (rotation : Float) (color : Color) : BaseIO Unit
+opaque drawRectanglePro (rec : @& Rectangle) (origin : @& Vector2) (rotation : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw a vertical-gradient-filled rectangle -/
 @[extern "lean_raylib__DrawRectangleGradientV"]
@@ -933,15 +927,15 @@ opaque drawRectangleLines (posX : Int32) (posY : Int32) (width : Int32) (height 
 
 /-- Draw rectangle outline with extended parameters -/
 @[extern "lean_raylib__DrawRectangleLinesEx"]
-opaque drawRectangleLinesEx (rec : @& Rectangle) (lineThick : Float) (color : Color) : BaseIO Unit
+opaque drawRectangleLinesEx (rec : @& Rectangle) (lineThick : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw rectangle with rounded edges -/
 @[extern "lean_raylib__DrawRectangleRounded"]
-opaque drawRectangleRounded (rec : @& Rectangle) (roundness : Float) (segments : UInt32) (color : Color) : BaseIO Unit
+opaque drawRectangleRounded (rec : @& Rectangle) (roundness : Float32) (segments : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw rectangle with rounded edges outline -/
 @[extern "lean_raylib__DrawRectangleRoundedLines"]
-opaque drawRectangleRoundedLines (rec : @& Rectangle) (roundness : Float) (segments : UInt32) (lineThick : Float) (color : Color) : BaseIO Unit
+opaque drawRectangleRoundedLines (rec : @& Rectangle) (roundness : Float32) (segments : UInt32) (lineThick : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw a color-filled triangle (vertex in counter-clockwise order!) -/
 @[extern "lean_raylib__DrawTriangle"]
@@ -950,50 +944,44 @@ opaque drawTriangle (v1 : @& Vector2) (v2 : @& Vector2) (v3 : @& Vector2) (color
 /-- Draw triangle outline (vertex in counter-clockwise order!) -/
 @[extern "lean_raylib__DrawTriangleLines"]
 opaque drawTriangleLines (v1 : @& Vector2) (v2 : @& Vector2) (v3 : @& Vector2) (color : Color) : BaseIO Unit
--- /-- Draw a triangle fan defined by points (first vertex is the center) -/
--- @[extern "lean_raylib__DrawTriangleFan"]
--- opaque drawTriangleFan : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | points : Vector2 *
---   | pointCount : int
---   | color : Color
--- -/
--- /-- Draw a triangle strip defined by points -/
--- @[extern "lean_raylib__DrawTriangleStrip"]
--- opaque drawTriangleStrip : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | points : Vector2 *
---   | pointCount : int
---   | color : Color
--- -/
--- /-- Draw a regular polygon (Vector version) -/
--- @[extern "lean_raylib__DrawPoly"]
--- opaque drawPoly (center : Vector2) (sides : Int32) (radius : Float) (rotation : Float) (color : Color) : Unit
--- /-- Draw a polygon outline of n sides -/
--- @[extern "lean_raylib__DrawPolyLines"]
--- opaque drawPolyLines (center : Vector2) (sides : Int32) (radius : Float) (rotation : Float) (color : Color) : Unit
--- /-- Draw a polygon outline of n sides with extended parameters -/
--- @[extern "lean_raylib__DrawPolyLinesEx"]
--- opaque drawPolyLinesEx (center : Vector2) (sides : Int32) (radius : Float) (rotation : Float) (lineThick : Float) (color : Color) : Unit
+
+/-- Draw a triangle fan defined by points (first vertex is the center) -/
+@[extern "lean_raylib__DrawTriangleFan"]
+opaque drawTriangleFan (points : @& Array Vector2) (color : Color) : BaseIO Unit
+
+/-- Draw a triangle strip defined by points -/
+@[extern "lean_raylib__DrawTriangleStrip"]
+opaque drawTriangleStrip (points : @& Array Vector2) (color : Color) : BaseIO Unit
+
+/-- Draw a regular polygon (Vector version) -/
+@[extern "lean_raylib__DrawPoly"]
+opaque drawPoly (center : @& Vector2) (sides : UInt32) (radius : Float32) (rotation : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw a polygon outline of n sides -/
+@[extern "lean_raylib__DrawPolyLines"]
+opaque drawPolyLines (center : @& Vector2) (sides : UInt32) (radius : Float32) (rotation : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw a polygon outline of n sides with extended parameters -/
+@[extern "lean_raylib__DrawPolyLinesEx"]
+opaque drawPolyLinesEx (center : @& Vector2) (sides : UInt32) (radius : Float32) (rotation : Float32) (lineThick : Float32) (color : Color) : BaseIO Unit
+
 -- /-- Check collision between two rectangles -/
 -- @[extern "lean_raylib__CheckCollisionRecs"]
 -- opaque checkCollisionRecs (rec1 : Rectangle) (rec2 : Rectangle) : Bool
--- /-- Check collision between two circles -/
--- @[extern "lean_raylib__CheckCollisionCircles"]
--- opaque checkCollisionCircles (center1 : Vector2) (radius1 : Float) (center2 : Vector2) (radius2 : Float) : Bool
+
+/-- Check collision between two circles -/
+@[extern "lean_raylib__CheckCollisionCircles"]
+opaque checkCollisionCircles (center1 : @& Vector2) (radius1 : Float32) (center2 : @& Vector2) (radius2 : Float32) : Bool
+
 -- /-- Check collision between circle and rectangle -/
 -- @[extern "lean_raylib__CheckCollisionCircleRec"]
--- opaque checkCollisionCircleRec (center : Vector2) (radius : Float) (rec : Rectangle) : Bool
+-- opaque checkCollisionCircleRec (center : Vector2) (radius : Float32) (rec : Rectangle) : Bool
 -- /-- Check if point is inside rectangle -/
 -- @[extern "lean_raylib__CheckCollisionPointRec"]
 -- opaque checkCollisionPointRec (point : Vector2) (rec : Rectangle) : Bool
 -- /-- Check if point is inside circle -/
 -- @[extern "lean_raylib__CheckCollisionPointCircle"]
--- opaque checkCollisionPointCircle (point : Vector2) (center : Vector2) (radius : Float) : Bool
+-- opaque checkCollisionPointCircle (point : Vector2) (center : Vector2) (radius : Float32) : Bool
 -- /-- Check if point is inside a triangle -/
 -- @[extern "lean_raylib__CheckCollisionPointTriangle"]
 -- opaque checkCollisionPointTriangle (point : Vector2) (p1 : Vector2) (p2 : Vector2) (p3 : Vector2) : Bool
@@ -1036,6 +1024,7 @@ opaque loadImageRaw
   (fileName : @& String) (width : UInt32) (height : UInt32)
   (format : PixelFormat) (headerSize : UInt32)
   : BaseIO Image
+
 /-- Load image sequence from file (frames appended to image.data) -/
 @[extern "lean_raylib__LoadImageAnim"]
 opaque loadImageAnim (fileName : @& String) : BaseIO (Image × UInt32)
@@ -1088,7 +1077,7 @@ opaque genImageGradientH (width : UInt32) (height : UInt32) (left : Color) (righ
 
 /-- Generate image: radial gradient -/
 @[extern "lean_raylib__GenImageGradientRadial"]
-opaque genImageGradientRadial (width : UInt32) (height : UInt32) (density : Float) (inner : Color) (outer : Color) : Image
+opaque genImageGradientRadial (width : UInt32) (height : UInt32) (density : Float32) (inner : Color) (outer : Color) : Image
 
 /-- Generate image: checked -/
 @[extern "lean_raylib__GenImageChecked"]
@@ -1097,11 +1086,11 @@ opaque genImageChecked (width : UInt32) (height : UInt32) (checksX : Int32) (che
 /-- Generate image: white noise -/
 -- IO: Random
 @[extern "lean_raylib__GenImageWhiteNoise"]
-opaque genImageWhiteNoise (width : UInt32) (height : UInt32) (factor : Float) : BaseIO Image
+opaque genImageWhiteNoise (width : UInt32) (height : UInt32) (factor : Float32) : BaseIO Image
 
 /-- Generate image: perlin noise -/
 @[extern "lean_raylib__GenImagePerlinNoise"]
-opaque genImagePerlinNoise (width : UInt32) (height : UInt32) (offsetX : Int32) (offsetY : Int32) (scale : Float) : Image
+opaque genImagePerlinNoise (width : UInt32) (height : UInt32) (offsetX : Int32) (offsetY : Int32) (scale : Float32) : Image
 
 /-- Generate image: cellular algorithm, bigger tileSize means bigger cells -/
 -- IO: Random
@@ -1119,30 +1108,23 @@ opaque imageCopy (image : @& Image) : Image
 /-- Create an image from another image piece -/
 @[extern "lean_raylib__ImageFromImage"]
 opaque imageFromImage (image : @& Image) (rec : @& Rectangle) : Image
--- /-- Create an image from text (default font) -/
--- @[extern "lean_raylib__ImageText"]
--- opaque imageText (text : String) (fontSize : Int32) (color : Color) : Image
+
+/-- Create an image from text (default font) -/
+@[extern "lean_raylib__ImageText"]
+opaque imageText (text : @& String) (fontSize : UInt32) (color : Color) : Image
+
 -- /-- Create an image from text (custom sprite font) -/
 -- @[extern "lean_raylib__ImageTextEx"]
--- opaque imageTextEx (font : Font) (text : String) (fontSize : Float) (spacing : Float) (tint : Color) : Image
--- /-- Convert image data to desired format -/
--- @[extern "lean_raylib__ImageFormat"]
--- opaque imageFormat : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | newFormat : int
--- -/
--- /-- Convert image to POT (power-of-two) -/
--- @[extern "lean_raylib__ImageToPOT"]
--- opaque imageToPOT : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | fill : Color
--- -/
+-- opaque imageTextEx (font : Font) (text : String) (fontSize : Float32) (spacing : Float32) (tint : Color) : Image
+
+/-- Convert image data to desired format -/
+@[extern "lean_raylib__ImageFormat"]
+opaque imageFormat (image : Image) (newFormat : PixelFormat) : Image
+
+/-- Convert image to POT (power-of-two) -/
+@[extern "lean_raylib__ImageToPOT"]
+opaque imageToPOT (image : Image) (fill : Color) : Image
+
 -- /-- Crop an image to a defined rectangle -/
 -- @[extern "lean_raylib__ImageCrop"]
 -- opaque imageCrop : Unit -> Unit
@@ -1371,7 +1353,7 @@ opaque imageFromImage (image : @& Image) (rec : @& Rectangle) : Image
 -- -/
 -- /-- Get image alpha border rectangle -/
 -- @[extern "lean_raylib__GetImageAlphaBorder"]
--- opaque getImageAlphaBorder (image : Image) (threshold : Float) : Rectangle
+-- opaque getImageAlphaBorder (image : Image) (threshold : Float32) : Rectangle
 -- /-- Get image pixel color at (x, y) position -/
 -- @[extern "lean_raylib__GetImageColor"]
 -- opaque getImageColor (image : Image) (x : Int32) (y : Int32) : Color
@@ -1638,7 +1620,7 @@ opaque drawTextureV (texture : @& Texture2DRef) (position : @& Vector2) (tint : 
 
 /-- Draw a Texture2D with extended parameters -/
 @[extern "lean_raylib__DrawTextureEx"]
-opaque drawTextureEx (texture : @& Texture2DRef) (position : @& Vector2) (rotation : Float) (scale : Float) (tint : Color) : BaseIO Unit
+opaque drawTextureEx (texture : @& Texture2DRef) (position : @& Vector2) (rotation : Float32) (scale : Float32) (tint : Color) : BaseIO Unit
 
 /-- Draw a part of a texture defined by a rectangle -/
 @[extern "lean_raylib__DrawTextureRec"]
@@ -1646,15 +1628,15 @@ opaque drawTextureRec (texture : @& Texture2DRef) (source : @& Rectangle) (posit
 
 /-- Draw a part of a texture defined by a rectangle with 'pro' parameters -/
 @[extern "lean_raylib__DrawTexturePro"]
-opaque drawTexturePro (texture : @& Texture2DRef) (source : @& Rectangle) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float) (tint : Color) : BaseIO Unit
+opaque drawTexturePro (texture : @& Texture2DRef) (source : @& Rectangle) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float32) (tint : Color) : BaseIO Unit
 
 /-- Draws a texture (or part of it) that stretches or shrinks nicely -/
 @[extern "lean_raylib__DrawTextureNPatch"]
-opaque drawTextureNPatch (texture : @& Texture2D) (nPatchInfo : @& NPatchInfo) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float) (tint : Color) : BaseIO Unit
+opaque drawTextureNPatch (texture : @& Texture2D) (nPatchInfo : @& NPatchInfo) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float32) (tint : Color) : BaseIO Unit
 
 /-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
 @[extern "lean_raylib__Fade"]
-opaque fade (color : Color) (alpha : Float) : Color
+opaque fade (color : Color) (alpha : Float32) : Color
 
 /-- Get hexadecimal value for a Color -/
 @[extern "lean_raylib__ColorToInt", deprecated Color.rgba]
@@ -1674,7 +1656,7 @@ opaque colorToHSV (color : Color) : Vector3
 
 /-- Get a Color from HSV values, hue [0..360], saturation/value [0..1] -/
 @[extern "lean_raylib__ColorFromHSV"]
-opaque colorFromHSV (hue : Float) (saturation : Float) (value : Float) : Color
+opaque colorFromHSV (hue : Float32) (saturation : Float32) (value : Float32) : Color
 
 /-- Get color multiplied with another color -/
 @[extern "lean_raylib__ColorTint"]
@@ -1682,15 +1664,15 @@ opaque colorTint (color : Color) (tint : Color) : Color
 
 /-- Get color with brightness correction, brightness factor goes from -1.0f to 1.0f -/
 @[extern "lean_raylib__ColorBrightness"]
-opaque colorBrightness (color : Color) (factor : Float) : Color
+opaque colorBrightness (color : Color) (factor : Float32) : Color
 
 /-- Get color with contrast correction, contrast values between -1.0f and 1.0f -/
 @[extern "lean_raylib__ColorContrast"]
-opaque colorContrast (color : Color) (contrast : Float) : Color
+opaque colorContrast (color : Color) (contrast : Float32) : Color
 
 /-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
 @[extern "lean_raylib__ColorAlpha"]
-opaque colorAlpha (color : Color) (alpha : Float) : Color
+opaque colorAlpha (color : Color) (alpha : Float32) : Color
 
 /-- Get src alpha-blended into dst color with tint -/
 @[extern "lean_raylib__ColorAlphaBlend"]
@@ -1709,6 +1691,7 @@ opaque getColor (hexValue : UInt32) : Color
 --   | srcPtr : void *
 --   | format : int
 -- -/
+
 -- /-- Set color formatted into destination pixel pointer -/
 -- @[extern "lean_raylib__SetPixelColor"]
 -- opaque setPixelColor : Unit -> Unit
@@ -1719,9 +1702,11 @@ opaque getColor (hexValue : UInt32) : Color
 --   | color : Color
 --   | format : int
 -- -/
--- /-- Get pixel data size in bytes for certain format -/
--- @[extern "lean_raylib__GetPixelDataSize"]
--- opaque getPixelDataSize (width : Int32) (height : Int32) (format : Int32) : Int32
+
+/-- Get pixel data size in bytes for certain format -/
+@[extern "lean_raylib__GetPixelDataSize"]
+opaque getPixelDataSize (width : UInt32) (height : UInt32) (format : PixelFormat) : UInt32
+
 -- /-- Get the default Font -/
 -- @[extern "lean_raylib__GetFontDefault"]
 -- opaque getFontDefault (_ : Unit) : Font
@@ -1810,13 +1795,13 @@ opaque drawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32)
 
 -- /-- Draw text using font and additional parameters -/
 -- @[extern "lean_raylib__DrawTextEx"]
--- opaque drawTextEx (font : Font) (text : String) (position : Vector2) (fontSize : Float) (spacing : Float) (tint : Color) : Unit
+-- opaque drawTextEx (font : Font) (text : String) (position : Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : Unit
 -- /-- Draw text using Font and pro parameters (rotation) -/
 -- @[extern "lean_raylib__DrawTextPro"]
--- opaque drawTextPro (font : Font) (text : String) (position : Vector2) (origin : Vector2) (rotation : Float) (fontSize : Float) (spacing : Float) (tint : Color) : Unit
+-- opaque drawTextPro (font : Font) (text : String) (position : Vector2) (origin : Vector2) (rotation : Float32) (fontSize : Float32) (spacing : Float32) (tint : Color) : Unit
 -- /-- Draw one character (codepoint) -/
 -- @[extern "lean_raylib__DrawTextCodepoint"]
--- opaque drawTextCodepoint (font : Font) (codepoint : Int32) (position : Vector2) (fontSize : Float) (tint : Color) : Unit
+-- opaque drawTextCodepoint (font : Font) (codepoint : Int32) (position : Vector2) (fontSize : Float32) (tint : Color) : Unit
 -- /-- Draw multiple character (codepoint) -/
 -- @[extern "lean_raylib__DrawTextCodepoints"]
 -- opaque drawTextCodepoints : Unit -> Unit
@@ -1836,7 +1821,7 @@ opaque drawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32)
 -- opaque measureText (text : String) (fontSize : Int32) : Int32
 -- /-- Measure string size for Font -/
 -- @[extern "lean_raylib__MeasureTextEx"]
--- opaque measureTextEx (font : Font) (text : String) (fontSize : Float) (spacing : Float) : Vector2
+-- opaque measureTextEx (font : Font) (text : String) (fontSize : Float32) (spacing : Float32) : Vector2
 -- /-- Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found -/
 -- @[extern "lean_raylib__GetGlyphIndex"]
 -- opaque getGlyphIndex (font : Font) (codepoint : Int32) : Int32
@@ -1846,171 +1831,6 @@ opaque drawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32)
 -- /-- Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found -/
 -- @[extern "lean_raylib__GetGlyphAtlasRec"]
 -- opaque getGlyphAtlasRec (font : Font) (codepoint : Int32) : Rectangle
--- /-- Load UTF-8 text encoded from codepoints array -/
--- @[extern "lean_raylib__LoadUTF8"]
--- opaque loadUTF8 : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: char *
---   params:
---   | codepoints : const int *
---   | length : int
--- -/
--- /-- Unload UTF-8 text encoded from codepoints array -/
--- @[extern "lean_raylib__UnloadUTF8"]
--- opaque unloadUTF8 : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | text : char *
--- -/
--- /-- Load all codepoints from a UTF-8 text string, codepoints count returned by parameter -/
--- @[extern "lean_raylib__LoadCodepoints"]
--- opaque loadCodepoints : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: int *
---   params:
---   | text : const char *
---   | count : int *
--- -/
--- /-- Unload codepoints data from memory -/
--- @[extern "lean_raylib__UnloadCodepoints"]
--- opaque unloadCodepoints : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | codepoints : int *
--- -/
--- /-- Get total number of codepoints in a UTF-8 encoded string -/
--- @[extern "lean_raylib__GetCodepointCount"]
--- opaque getCodepointCount (text : String) : Int32
--- /-- Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure -/
--- @[extern "lean_raylib__GetCodepoint"]
--- opaque getCodepoint : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: int
---   params:
---   | text : const char *
---   | codepointSize : int *
--- -/
--- /-- Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure -/
--- @[extern "lean_raylib__GetCodepointNext"]
--- opaque getCodepointNext : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: int
---   params:
---   | text : const char *
---   | codepointSize : int *
--- -/
--- /-- Get previous codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure -/
--- @[extern "lean_raylib__GetCodepointPrevious"]
--- opaque getCodepointPrevious : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: int
---   params:
---   | text : const char *
---   | codepointSize : int *
--- -/
--- /-- Encode one codepoint into UTF-8 byte array (array length returned as parameter) -/
--- @[extern "lean_raylib__CodepointToUTF8"]
--- opaque codepointToUTF8 : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: const char *
---   params:
---   | codepoint : int
---   | utf8Size : int *
--- -/
--- /-- Copy one string to another, returns bytes copied -/
--- @[extern "lean_raylib__TextCopy"]
--- opaque textCopy : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: int
---   params:
---   | dst : char *
---   | src : const char *
--- -/
--- /-- Check if two text string are equal -/
--- @[extern "lean_raylib__TextIsEqual"]
--- opaque textIsEqual (text1 : String) (text2 : String) : Bool
--- /-- Get text length, checks for '\0' ending -/
--- @[extern "lean_raylib__TextLength"]
--- opaque textLength (text : String) : UInt32
--- /-- Text formatting with variables (sprintf() style) -/
--- @[extern "lean_raylib__TextFormat"]
--- opaque textFormat : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: const char *
---   params:
---   | text : const char *
---   | args : /*variadic*/ ...
--- -/
--- /-- Get a piece of a text string -/
--- @[extern "lean_raylib__TextSubtext"]
--- opaque textSubtext (text : String) (position : Int32) (length : Int32) : String
--- /-- Replace text string (WARNING: memory must be freed!) -/
--- @[extern "lean_raylib__TextReplace"]
--- opaque textReplace : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: char *
---   params:
---   | text : char *
---   | replace : const char *
---   | by : const char *
--- -/
--- /-- Insert text in a position (WARNING: memory must be freed!) -/
--- @[extern "lean_raylib__TextInsert"]
--- opaque textInsert : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: char *
---   params:
---   | text : const char *
---   | insert : const char *
---   | position : int
--- -/
--- /-- Join text strings with delimiter -/
--- @[extern "lean_raylib__TextJoin"]
--- opaque textJoin : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: const char *
---   params:
---   | textList : const char * *
---   | count : int
---   | delimiter : const char *
--- -/
--- /-- Split text into multiple strings -/
--- @[extern "lean_raylib__TextSplit"]
--- opaque textSplit : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: const char * *
---   params:
---   | text : const char *
---   | delimiter : char
---   | count : int *
--- -/
--- /-- Append text at specific position and move cursor! -/
--- @[extern "lean_raylib__TextAppend"]
--- opaque textAppend : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | text : char *
---   | append : const char *
---   | position : int *
--- -/
--- /-- Find first text occurrence within a string -/
--- @[extern "lean_raylib__TextFindIndex"]
--- opaque textFindIndex (text : String) (find : String) : Int32
--- /-- Get upper case version of provided string -/
--- @[extern "lean_raylib__TextToUpper"]
--- opaque textToUpper (text : String) : String
--- /-- Get lower case version of provided string -/
--- @[extern "lean_raylib__TextToLower"]
--- opaque textToLower (text : String) : String
--- /-- Get Pascal case notation version of provided string -/
--- @[extern "lean_raylib__TextToPascal"]
--- opaque textToPascal (text : String) : String
--- /-- Get integer value from text (negative values not supported) -/
--- @[extern "lean_raylib__TextToInteger"]
--- opaque textToInteger (text : String) : Int32
 
 /-- Draw a line in 3D world space -/
 @[extern "lean_raylib__DrawLine3D"]
@@ -2022,7 +1842,7 @@ opaque drawPoint3D (position : @& Vector3) (color : Color) : BaseIO Unit
 
 /-- Draw a circle in 3D world space -/
 @[extern "lean_raylib__DrawCircle3D"]
-opaque drawCircle3D (center : @& Vector3) (radius : Float) (rotationAxis : @& Vector3) (rotationAngle : Float) (color : Color) : BaseIO Unit
+opaque drawCircle3D (center : @& Vector3) (radius : Float32) (rotationAxis : @& Vector3) (rotationAngle : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw a color-filled triangle (vertex in counter-clockwise order!) -/
 @[extern "lean_raylib__DrawTriangle3D"]
@@ -2034,7 +1854,7 @@ opaque drawTriangleStrip3D (points : @& Array Vector3) (color : Color) : BaseIO 
 
 /-- Draw cube -/
 @[extern "lean_raylib__DrawCube"]
-opaque drawCube (position : @& Vector3) (width : Float) (height : Float) (length : Float) (color : Color) : BaseIO Unit
+opaque drawCube (position : @& Vector3) (width : Float32) (height : Float32) (length : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw cube (Vector version) -/
 @[extern "lean_raylib__DrawCubeV"]
@@ -2042,7 +1862,7 @@ opaque drawCubeV (position : @& Vector3) (size : @& Vector3) (color : Color) : B
 
 /-- Draw cube wires -/
 @[extern "lean_raylib__DrawCubeWires"]
-opaque drawCubeWires (position : @& Vector3) (width : Float) (height : Float) (length : Float) (color : Color) : BaseIO Unit
+opaque drawCubeWires (position : @& Vector3) (width : Float32) (height : Float32) (length : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw cube wires (Vector version) -/
 @[extern "lean_raylib__DrawCubeWiresV"]
@@ -2050,39 +1870,39 @@ opaque drawCubeWiresV (position : @& Vector3) (size : @& Vector3) (color : Color
 
 /-- Draw sphere -/
 @[extern "lean_raylib__DrawSphere"]
-opaque drawSphere (centerPos : @& Vector3) (radius : Float) (color : Color) : BaseIO Unit
+opaque drawSphere (centerPos : @& Vector3) (radius : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw sphere with extended parameters -/
 @[extern "lean_raylib__DrawSphereEx"]
-opaque drawSphereEx (centerPos : @& Vector3) (radius : Float) (rings : UInt32) (slices : UInt32) (color : Color) : BaseIO Unit
+opaque drawSphereEx (centerPos : @& Vector3) (radius : Float32) (rings : UInt32) (slices : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw sphere wires -/
 @[extern "lean_raylib__DrawSphereWires"]
-opaque drawSphereWires (centerPos : @& Vector3) (radius : Float) (rings : UInt32) (slices : UInt32) (color : Color) : BaseIO Unit
+opaque drawSphereWires (centerPos : @& Vector3) (radius : Float32) (rings : UInt32) (slices : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw a cylinder/cone -/
 @[extern "lean_raylib__DrawCylinder"]
-opaque drawCylinder (position : @& Vector3) (radiusTop : Float) (radiusBottom : Float) (height : Float) (slices : UInt32) (color : Color) : BaseIO Unit
+opaque drawCylinder (position : @& Vector3) (radiusTop : Float32) (radiusBottom : Float32) (height : Float32) (slices : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw a cylinder with base at startPos and top at endPos -/
 @[extern "lean_raylib__DrawCylinderEx"]
-opaque drawCylinderEx (startPos : @& Vector3) (endPos : @& Vector3) (startRadius : Float) (endRadius : Float) (sides : UInt32) (color : Color) : BaseIO Unit
+opaque drawCylinderEx (startPos : @& Vector3) (endPos : @& Vector3) (startRadius : Float32) (endRadius : Float32) (sides : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw a cylinder/cone wires -/
 @[extern "lean_raylib__DrawCylinderWires"]
-opaque drawCylinderWires (position : @& Vector3) (radiusTop : Float) (radiusBottom : Float) (height : Float) (slices : UInt32) (color : Color) : BaseIO Unit
+opaque drawCylinderWires (position : @& Vector3) (radiusTop : Float32) (radiusBottom : Float32) (height : Float32) (slices : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw a cylinder wires with base at startPos and top at endPos -/
 @[extern "lean_raylib__DrawCylinderWiresEx"]
-opaque drawCylinderWiresEx (startPos : @& Vector3) (endPos : @& Vector3) (startRadius : Float) (endRadius : Float) (sides : UInt32) (color : Color) : BaseIO Unit
+opaque drawCylinderWiresEx (startPos : @& Vector3) (endPos : @& Vector3) (startRadius : Float32) (endRadius : Float32) (sides : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw a capsule with the center of its sphere caps at startPos and endPos -/
 @[extern "lean_raylib__DrawCapsule"]
-opaque drawCapsule (startPos : @& Vector3) (endPos : @& Vector3) (radius : Float) (slices : UInt32) (rings : UInt32) (color : Color) : BaseIO Unit
+opaque drawCapsule (startPos : @& Vector3) (endPos : @& Vector3) (radius : Float32) (slices : UInt32) (rings : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw capsule wireframe with the center of its sphere caps at startPos and endPos -/
 @[extern "lean_raylib__DrawCapsuleWires"]
-opaque drawCapsuleWires (startPos : @& Vector3) (endPos : @& Vector3) (radius : Float) (slices : UInt32) (rings : UInt32) (color : Color) : BaseIO Unit
+opaque drawCapsuleWires (startPos : @& Vector3) (endPos : @& Vector3) (radius : Float32) (slices : UInt32) (rings : UInt32) (color : Color) : BaseIO Unit
 
 /-- Draw a plane XZ -/
 @[extern "lean_raylib__DrawPlane"]
@@ -2094,7 +1914,7 @@ opaque drawRay (ray : @& Ray) (color : Color) : BaseIO Unit
 
 /-- Draw a grid (centered at (0, 0, 0)) -/
 @[extern "lean_raylib__DrawGrid"]
-opaque drawGrid (slices : UInt32) (spacing : Float) : BaseIO Unit
+opaque drawGrid (slices : UInt32) (spacing : Float32) : BaseIO Unit
 
 -- /-- Load model from files (meshes and materials) -/
 -- @[extern "lean_raylib__LoadModel"]
@@ -2113,16 +1933,16 @@ opaque drawGrid (slices : UInt32) (spacing : Float) : BaseIO Unit
 -- opaque getModelBoundingBox (model : Model) : BoundingBox
 -- /-- Draw a model (with texture if set) -/
 -- @[extern "lean_raylib__DrawModel"]
--- opaque drawModel (model : Model) (position : Vector3) (scale : Float) (tint : Color) : Unit
+-- opaque drawModel (model : Model) (position : Vector3) (scale : Float32) (tint : Color) : Unit
 -- /-- Draw a model with extended parameters -/
 -- @[extern "lean_raylib__DrawModelEx"]
--- opaque drawModelEx (model : Model) (position : Vector3) (rotationAxis : Vector3) (rotationAngle : Float) (scale : Vector3) (tint : Color) : Unit
+-- opaque drawModelEx (model : Model) (position : Vector3) (rotationAxis : Vector3) (rotationAngle : Float32) (scale : Vector3) (tint : Color) : Unit
 -- /-- Draw a model wires (with texture if set) -/
 -- @[extern "lean_raylib__DrawModelWires"]
--- opaque drawModelWires (model : Model) (position : Vector3) (scale : Float) (tint : Color) : Unit
+-- opaque drawModelWires (model : Model) (position : Vector3) (scale : Float32) (tint : Color) : Unit
 -- /-- Draw a model wires (with texture if set) with extended parameters -/
 -- @[extern "lean_raylib__DrawModelWiresEx"]
--- opaque drawModelWiresEx (model : Model) (position : Vector3) (rotationAxis : Vector3) (rotationAngle : Float) (scale : Vector3) (tint : Color) : Unit
+-- opaque drawModelWiresEx (model : Model) (position : Vector3) (rotationAxis : Vector3) (rotationAngle : Float32) (scale : Vector3) (tint : Color) : Unit
 
 /-- Draw bounding box (wires) -/
 @[extern "lean_raylib__DrawBoundingBox"]
@@ -2130,7 +1950,7 @@ opaque drawBoundingBox (box : @& BoundingBox) (color : Color) : BaseIO Unit
 
 /-- Draw a billboard texture -/
 @[extern "lean_raylib__DrawBillboard"]
-opaque drawBillboard (camera : @& Camera) (texture : @& Texture2DRef) (position : @& Vector3) (size : Float) (tint : Color) : BaseIO Unit
+opaque drawBillboard (camera : @& Camera) (texture : @& Texture2DRef) (position : @& Vector3) (size : Float32) (tint : Color) : BaseIO Unit
 
 /-- Draw a billboard texture defined by source -/
 @[extern "lean_raylib__DrawBillboardRec"]
@@ -2138,7 +1958,7 @@ opaque drawBillboardRec (camera : @& Camera) (texture : @& Texture2DRef) (source
 
 /-- Draw a billboard texture defined by source and rotation -/
 @[extern "lean_raylib__DrawBillboardPro"]
-opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source : @& Rectangle) (position : @& Vector3) (up : @& Vector3) (size : @& Vector2) (origin : @& Vector2) (rotation : Float) (tint : Color) : BaseIO Unit
+opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source : @& Rectangle) (position : @& Vector3) (up : @& Vector3) (size : @& Vector2) (origin : @& Vector2) (rotation : Float32) (tint : Color) : BaseIO Unit
 
 -- /-- Upload mesh vertex data in GPU and provide VAO/VBO ids -/
 -- @[extern "lean_raylib__UploadMesh"]
@@ -2194,31 +2014,31 @@ opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source
 -- -/
 -- /-- Generate polygonal mesh -/
 -- @[extern "lean_raylib__GenMeshPoly"]
--- opaque genMeshPoly (sides : Int32) (radius : Float) : Mesh
+-- opaque genMeshPoly (sides : Int32) (radius : Float32) : Mesh
 -- /-- Generate plane mesh (with subdivisions) -/
 -- @[extern "lean_raylib__GenMeshPlane"]
--- opaque genMeshPlane (width : Float) (length : Float) (resX : Int32) (resZ : Int32) : Mesh
+-- opaque genMeshPlane (width : Float32) (length : Float32) (resX : Int32) (resZ : Int32) : Mesh
 -- /-- Generate cuboid mesh -/
 -- @[extern "lean_raylib__GenMeshCube"]
--- opaque genMeshCube (width : Float) (height : Float) (length : Float) : Mesh
+-- opaque genMeshCube (width : Float32) (height : Float32) (length : Float32) : Mesh
 -- /-- Generate sphere mesh (standard sphere) -/
 -- @[extern "lean_raylib__GenMeshSphere"]
--- opaque genMeshSphere (radius : Float) (rings : Int32) (slices : Int32) : Mesh
+-- opaque genMeshSphere (radius : Float32) (rings : Int32) (slices : Int32) : Mesh
 -- /-- Generate half-sphere mesh (no bottom cap) -/
 -- @[extern "lean_raylib__GenMeshHemiSphere"]
--- opaque genMeshHemiSphere (radius : Float) (rings : Int32) (slices : Int32) : Mesh
+-- opaque genMeshHemiSphere (radius : Float32) (rings : Int32) (slices : Int32) : Mesh
 -- /-- Generate cylinder mesh -/
 -- @[extern "lean_raylib__GenMeshCylinder"]
--- opaque genMeshCylinder (radius : Float) (height : Float) (slices : Int32) : Mesh
+-- opaque genMeshCylinder (radius : Float32) (height : Float32) (slices : Int32) : Mesh
 -- /-- Generate cone/pyramid mesh -/
 -- @[extern "lean_raylib__GenMeshCone"]
--- opaque genMeshCone (radius : Float) (height : Float) (slices : Int32) : Mesh
+-- opaque genMeshCone (radius : Float32) (height : Float32) (slices : Int32) : Mesh
 -- /-- Generate torus mesh -/
 -- @[extern "lean_raylib__GenMeshTorus"]
--- opaque genMeshTorus (radius : Float) (size : Float) (radSeg : Int32) (sides : Int32) : Mesh
+-- opaque genMeshTorus (radius : Float32) (size : Float32) (radSeg : Int32) (sides : Int32) : Mesh
 -- /-- Generate trefoil knot mesh -/
 -- @[extern "lean_raylib__GenMeshKnot"]
--- opaque genMeshKnot (radius : Float) (size : Float) (radSeg : Int32) (sides : Int32) : Mesh
+-- opaque genMeshKnot (radius : Float32) (size : Float32) (radSeg : Int32) (sides : Int32) : Mesh
 -- /-- Generate heightmap mesh from image data -/
 -- @[extern "lean_raylib__GenMeshHeightmap"]
 -- opaque genMeshHeightmap (heightmap : Image) (size : Vector3) : Mesh
@@ -2290,18 +2110,20 @@ opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source
 -- /-- Check model animation skeleton match -/
 -- @[extern "lean_raylib__IsModelAnimationValid"]
 -- opaque isModelAnimationValid (model : Model) (anim : ModelAnimation) : Bool
--- /-- Check collision between two spheres -/
--- @[extern "lean_raylib__CheckCollisionSpheres"]
--- opaque checkCollisionSpheres (center1 : Vector3) (radius1 : Float) (center2 : Vector3) (radius2 : Float) : Bool
+
+/-- Check collision between two spheres -/
+@[extern "lean_raylib__CheckCollisionSpheres"]
+opaque checkCollisionSpheres (center1 : @& Vector3) (radius1 : Float32) (center2 : @& Vector3) (radius2 : Float32) : Bool
+
 -- /-- Check collision between two bounding boxes -/
 -- @[extern "lean_raylib__CheckCollisionBoxes"]
 -- opaque checkCollisionBoxes (box1 : BoundingBox) (box2 : BoundingBox) : Bool
 -- /-- Check collision between box and sphere -/
 -- @[extern "lean_raylib__CheckCollisionBoxSphere"]
--- opaque checkCollisionBoxSphere (box : BoundingBox) (center : Vector3) (radius : Float) : Bool
+-- opaque checkCollisionBoxSphere (box : BoundingBox) (center : Vector3) (radius : Float32) : Bool
 -- /-- Get collision info between ray and sphere -/
 -- @[extern "lean_raylib__GetRayCollisionSphere"]
--- opaque getRayCollisionSphere (ray : Ray) (center : Vector3) (radius : Float) : RayCollision
+-- opaque getRayCollisionSphere (ray : Ray) (center : Vector3) (radius : Float32) : RayCollision
 -- /-- Get collision info between ray and box -/
 -- @[extern "lean_raylib__GetRayCollisionBox"]
 -- opaque getRayCollisionBox (ray : Ray) (box : BoundingBox) : RayCollision
@@ -2329,7 +2151,7 @@ opaque isAudioDeviceReady : BaseIO Bool
 
 /-- Set master volume (listener) -/
 @[extern "lean_raylib__SetMasterVolume"]
-opaque setMasterVolume (volume : Float) : BaseIO Unit
+opaque setMasterVolume (volume : Float32) : BaseIO Unit
 
 /-- Load wave data from file -/
 @[extern "lean_raylib__LoadWave"]
@@ -2406,15 +2228,15 @@ opaque isSoundPlaying (sound : @& Sound) : BaseIO Bool
 
 /-- Set volume for a sound (1.0 is max level) -/
 @[extern "lean_raylib__SetSoundVolume"]
-opaque setSoundVolume (sound : @& Sound) (volume : Float) : BaseIO Unit
+opaque setSoundVolume (sound : @& Sound) (volume : Float32) : BaseIO Unit
 
 /-- Set pitch for a sound (1.0 is base level) -/
 @[extern "lean_raylib__SetSoundPitch"]
-opaque setSoundPitch (sound : @& Sound) (pitch : Float) : BaseIO Unit
+opaque setSoundPitch (sound : @& Sound) (pitch : Float32) : BaseIO Unit
 
 /-- Set pan for a sound (0.5 is center) -/
 @[extern "lean_raylib__SetSoundPan"]
-opaque setSoundPan (sound : @& Sound) (pan : Float) : BaseIO Unit
+opaque setSoundPan (sound : @& Sound) (pan : Float32) : BaseIO Unit
 
 /-- Copy a wave to a new wave -/
 @[extern "lean_raylib__WaveCopy"]
@@ -2493,23 +2315,23 @@ opaque resumeMusicStream (music : @& Music) : BaseIO Unit
 
 /-- Seek music to a position (in seconds) -/
 @[extern "lean_raylib__SeekMusicStream"]
-opaque seekMusicStream (music : @& Music) (position : Float) : BaseIO Unit
+opaque seekMusicStream (music : @& Music) (position : Float32) : BaseIO Unit
 
 /-- Set volume for music (1.0 is max level) -/
 @[extern "lean_raylib__SetMusicVolume"]
-opaque setMusicVolume (music : @& Music) (volume : Float) : BaseIO Unit
+opaque setMusicVolume (music : @& Music) (volume : Float32) : BaseIO Unit
 
 /-- Set pitch for a music (1.0 is base level) -/
 @[extern "lean_raylib__SetMusicPitch"]
-opaque setMusicPitch (music : @& Music) (pitch : Float) : BaseIO Unit
+opaque setMusicPitch (music : @& Music) (pitch : Float32) : BaseIO Unit
 
 /-- Set pan for a music (0.5 is center) -/
 @[extern "lean_raylib__SetMusicPan"]
-opaque setMusicPan (music : @& Music) (pan : Float) : BaseIO Unit
+opaque setMusicPan (music : @& Music) (pan : Float32) : BaseIO Unit
 
 /-- Get music time length (in seconds) -/
 @[extern "lean_raylib__GetMusicTimeLength"]
-opaque getMusicTimeLength (music : @& Music) : Float
+opaque getMusicTimeLength (music : @& Music) : Float32
 
 /-- Get current music time played (in seconds) -/
 @[extern "lean_raylib__GetMusicTimePlayed"]
@@ -2563,15 +2385,15 @@ opaque stopAudioStream (stream : @& AudioStream) : BaseIO Unit
 
 /-- Set volume for audio stream (1.0 is max level) -/
 @[extern "lean_raylib__SetAudioStreamVolume"]
-opaque setAudioStreamVolume (stream : @& AudioStream) (volume : Float) : BaseIO Unit
+opaque setAudioStreamVolume (stream : @& AudioStream) (volume : Float32) : BaseIO Unit
 
 /-- Set pitch for audio stream (1.0 is base level) -/
 @[extern "lean_raylib__SetAudioStreamPitch"]
-opaque setAudioStreamPitch (stream : @& AudioStream) (pitch : Float) : BaseIO Unit
+opaque setAudioStreamPitch (stream : @& AudioStream) (pitch : Float32) : BaseIO Unit
 
 /-- Set pan for audio stream (0.5 is centered) -/
 @[extern "lean_raylib__SetAudioStreamPan"]
-opaque setAudioStreamPan (stream : @& AudioStream) (pan : Float) : BaseIO Unit
+opaque setAudioStreamPan (stream : @& AudioStream) (pan : Float32) : BaseIO Unit
 
 /-- Default size for new audio streams -/
 @[extern "lean_raylib__SetAudioStreamBufferSizeDefault"]
