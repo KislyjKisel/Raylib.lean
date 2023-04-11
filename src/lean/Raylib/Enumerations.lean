@@ -1276,6 +1276,12 @@ def CameraProjection.perspective : CameraProjection := Subtype.mk 0 CameraProjec
 def CameraProjection.orthographic : CameraProjection := Subtype.mk 1 CameraProjection.Is.orthographic
 
 instance : Inhabited CameraProjection := ⟨CameraProjection.perspective⟩
+instance : ReprAtom CameraProjection := ⟨⟩
+
+instance : Repr CameraProjection := Repr.mk λ x _ ↦
+  if x.val == 0
+    then ".perspective"
+    else ".orthographic"
 
 
 /-! # NPatch layout -/

@@ -39,16 +39,18 @@ def main : IO Unit := do
 
     let mp ← getMousePosition
 
-    cam3d := cam3d.set_position $ Vector3.mk
-      ((mp.x - (windowWidth / 2).toUInt64.toFloat32) * mouseSensitivity)
-      ((mp.y - (windowHeight / 2).toUInt64.toFloat32) * mouseSensitivity)
-      0
+    cam3d := { cam3d with
+      position := Vector3.mk
+        ((mp.x - (windowWidth / 2).toUInt64.toFloat32) * mouseSensitivity)
+        ((mp.y - (windowHeight / 2).toUInt64.toFloat32) * mouseSensitivity)
+        0
+    }
 
     let camPos := cam3d.position
     if (← isKeyDown .w)
-      then cam3d := cam3d.set_position $ Vector3.mk camPos.x camPos.y (camPos.z + moveSpeed)
+      then cam3d := { cam3d with position := Vector3.mk camPos.x camPos.y (camPos.z + moveSpeed) }
     if (← isKeyDown .s)
-      then cam3d := cam3d.set_position $ Vector3.mk camPos.x camPos.y (camPos.z - moveSpeed)
+      then cam3d := { cam3d with position := Vector3.mk camPos.x camPos.y (camPos.z - moveSpeed) }
 
     if (← isKeyDown .leftAlt) && (← isKeyPressed .enter)
       then toggleFullscreen

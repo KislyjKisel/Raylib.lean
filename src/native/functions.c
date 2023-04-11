@@ -268,7 +268,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndDrawing (lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__BeginMode2D (b_lean_obj_arg camera, lean_obj_arg world) {
-    BeginMode2D(*lean_raylib_Camera2D_from(camera));
+    BeginMode2D(lean_raylib_Camera2D_from(camera));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -278,7 +278,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndMode2D (lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__BeginMode3D (b_lean_obj_arg camera, lean_obj_arg world) {
-    BeginMode3D(*lean_raylib_Camera3D_from(camera));
+    BeginMode3D(lean_raylib_Camera3D_from(camera));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -398,29 +398,30 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndScissorMode (lean_obj_arg world) {
 // }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMouseRay (b_lean_obj_arg mousePosition, b_lean_obj_arg camera, lean_obj_arg world) {
-    LET_BOX(Ray, ray, GetMouseRay(lean_raylib_Vector2_from(mousePosition), *lean_raylib_Camera3D_from(camera)));
-    return lean_io_result_mk_ok(lean_raylib_Ray_to(ray));
+    return lean_io_result_mk_ok(lean_raylib_Ray_to(
+        GetMouseRay(lean_raylib_Vector2_from(mousePosition), lean_raylib_Camera3D_from(camera))
+    ));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix (b_lean_obj_arg camera) {
-    return lean_raylib_Matrix_to(GetCameraMatrix(*lean_raylib_Camera3D_from(camera)));
+    return lean_raylib_Matrix_to(GetCameraMatrix(lean_raylib_Camera3D_from(camera)));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetCameraMatrix2D (b_lean_obj_arg camera) {
-    return lean_raylib_Matrix_to(GetCameraMatrix2D(*lean_raylib_Camera2D_from(camera)));
+    return lean_raylib_Matrix_to(GetCameraMatrix2D(lean_raylib_Camera2D_from(camera)));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen (b_lean_obj_arg position, b_lean_obj_arg camera, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetWorldToScreen(
         lean_raylib_Vector3_from(position),
-        *lean_raylib_Camera3D_from(camera)
+        lean_raylib_Camera3D_from(camera)
     )));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetScreenToWorld2D (b_lean_obj_arg position, b_lean_obj_arg camera) {
     return lean_raylib_Vector2_to(GetScreenToWorld2D(
         lean_raylib_Vector2_from(position),
-        *lean_raylib_Camera2D_from(camera)
+        lean_raylib_Camera2D_from(camera)
     ));
 }
 
@@ -430,7 +431,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreenEx (
 ) {
     return lean_io_result_mk_ok(lean_raylib_Vector2_to(GetWorldToScreenEx(
         lean_raylib_Vector3_from(position),
-        *lean_raylib_Camera3D_from(camera),
+        lean_raylib_Camera3D_from(camera),
         width,
         height
     )));
@@ -439,7 +440,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreenEx (
 LEAN_EXPORT lean_obj_res lean_raylib__GetWorldToScreen2D (lean_obj_arg position, lean_obj_arg camera) {
     return lean_raylib_Vector2_to(GetWorldToScreen2D(
         lean_raylib_Vector2_from(position),
-        *lean_raylib_Camera2D_from(camera)
+        lean_raylib_Camera2D_from(camera)
     ));
 }
 
@@ -912,36 +913,34 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetGesturePinchAngle (lean_obj_arg world) 
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateCamera (lean_obj_arg camera_old_box, uint32_t mode, lean_obj_arg world) {
-    lean_object* camera_res_box;
-    if(LEAN_LIKELY(lean_is_exclusive(camera_old_box))) {
-        camera_res_box = camera_old_box;
+    Camera3D camera = lean_raylib_Camera3D_from(camera_old_box);
+    UpdateCamera(&camera, mode);
+    if(lean_is_exclusive(camera_old_box)) {
+        lean_raylib_Camera3D_set(camera_old_box, camera);
+        return lean_io_result_mk_ok(camera_old_box);
     }
     else {
-        LET_BOX(Camera, camera_res, *lean_raylib_Camera3D_from(camera_old_box));
         lean_dec_ref(camera_old_box);
-        camera_res_box = lean_raylib_Camera3D_to(camera_res);
+        return lean_io_result_mk_ok(lean_raylib_Camera3D_to(camera));
     }
-    UpdateCamera(lean_raylib_Camera3D_from(camera_res_box), mode);
-    return lean_io_result_mk_ok(camera_res_box);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateCameraPro (lean_obj_arg camera_old_box, b_lean_obj_arg movement, b_lean_obj_arg rotation, uint32_t zoom) {
-    lean_object* camera_res_box;
-    if(LEAN_LIKELY(lean_is_exclusive(camera_old_box))) {
-        camera_res_box = camera_old_box;
-    }
-    else {
-        LET_BOX(Camera, camera_res, *lean_raylib_Camera3D_from(camera_old_box));
-        lean_dec_ref(camera_old_box);
-        camera_res_box = lean_raylib_Camera3D_to(camera_res);
-    }
+    Camera3D camera = lean_raylib_Camera3D_from(camera_old_box);
     UpdateCameraPro(
-        lean_raylib_Camera3D_from(camera_res_box),
+        &camera,
         lean_raylib_Vector3_from(movement),
         lean_raylib_Vector3_from(rotation),
         lean_pod_Float32_fromBits(zoom)
     );
-    return lean_io_result_mk_ok(camera_res_box);
+    if(lean_is_exclusive(camera_old_box)) {
+        lean_raylib_Camera3D_set(camera_old_box, camera);
+        return lean_io_result_mk_ok(camera_old_box);
+    }
+    else {
+        lean_dec_ref(camera_old_box);
+        return lean_io_result_mk_ok(lean_raylib_Camera3D_to(camera));
+    }
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetShapesTexture (lean_obj_arg textureRef_box, b_lean_obj_arg source, lean_obj_arg world) {
@@ -1995,7 +1994,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawPlane (b_lean_obj_arg centerPos, b_lea
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawRay (b_lean_obj_arg ray, uint32_t color, lean_obj_arg world) {
-    DrawRay(*lean_raylib_Ray_from(ray), lean_raylib_Color_from(color));
+    DrawRay(lean_raylib_Ray_from(ray), lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -2050,22 +2049,22 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawGrid (uint32_t slices, uint32_t spacin
 // }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawBoundingBox (b_lean_obj_arg box, uint32_t color, lean_obj_arg world) {
-    DrawBoundingBox(*lean_raylib_BoundingBox_from(box), lean_raylib_Color_from(color));
+    DrawBoundingBox(lean_raylib_BoundingBox_from(box), lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawBillboard (b_lean_obj_arg camera, b_lean_obj_arg textureRef, b_lean_obj_arg position, uint32_t size, uint32_t tint, lean_obj_arg world) {
-    DrawBillboard(*lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, lean_raylib_Vector3_from(position), lean_pod_Float32_fromBits(size), lean_raylib_Color_from(tint));
+    DrawBillboard(lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, lean_raylib_Vector3_from(position), lean_pod_Float32_fromBits(size), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawBillboardRec (b_lean_obj_arg camera, b_lean_obj_arg textureRef, b_lean_obj_arg source, b_lean_obj_arg position, b_lean_obj_arg size, uint32_t tint, lean_obj_arg world) {
-    DrawBillboardRec(*lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, lean_raylib_Rectangle_from(source), lean_raylib_Vector3_from(position), lean_raylib_Vector2_from(size), lean_raylib_Color_from(tint));
+    DrawBillboardRec(lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, lean_raylib_Rectangle_from(source), lean_raylib_Vector3_from(position), lean_raylib_Vector2_from(size), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawBillboardPro (b_lean_obj_arg camera, b_lean_obj_arg textureRef, b_lean_obj_arg source, b_lean_obj_arg position, b_lean_obj_arg up, b_lean_obj_arg size, b_lean_obj_arg origin, uint32_t rotation, uint32_t tint, lean_obj_arg world) {
-    DrawBillboardPro(*lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, lean_raylib_Rectangle_from(source), lean_raylib_Vector3_from(position), lean_raylib_Vector3_from(up), lean_raylib_Vector2_from(size), lean_raylib_Vector2_from(origin), lean_pod_Float32_fromBits(rotation), lean_raylib_Color_from(tint));
+    DrawBillboardPro(lean_raylib_Camera3D_from(camera), lean_raylib_TextureRef_from(textureRef)->texture, lean_raylib_Rectangle_from(source), lean_raylib_Vector3_from(position), lean_raylib_Vector3_from(up), lean_raylib_Vector2_from(size), lean_raylib_Vector2_from(origin), lean_pod_Float32_fromBits(rotation), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 

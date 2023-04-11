@@ -4,7 +4,7 @@ import Raylib.Enumerations
 set_option autoImplicit false
 
 open Pod (Float32)
-open Raymath (Vector2 Vector3 Vector4)
+open Raymath (Vector2 Vector3 Vector4 Matrix)
 
 namespace Raylib
 
@@ -306,83 +306,34 @@ opaque NPatchInfo.set_layout (layout : NPatchLayout) (npatchInfo : NPatchInfo) :
 
 /-! # Camera 3D -/
 
-opaque Camera3DPointed : NonemptyType
 /-- Camera, defines position/orientation in 3d space -/
-def Camera3D : Type := Camera3DPointed.type
-instance : Nonempty Camera3D := Camera3DPointed.property
-
-@[extern "lean_raylib__Camera3D_mk"]
-opaque Camera3D.mk
-  (position : @& Vector3) (target : @& Vector3) (up : @& Vector3)
-  (fovy : Float32) (projection : CameraProjection)
-  : Camera3D
-
-/-- Getter: Camera position -/
-@[extern "lean_raylib__Camera3D_position"]
-opaque Camera3D.position (cam3d : @& Camera3D) : Vector3
-/-- Setter: Camera position -/
-@[extern "lean_raylib__Camera3D_position_set"]
-opaque Camera3D.set_position (position : @& Vector3) (cam3d : Camera3D) : Camera3D
-/-- Getter: Camera target it looks-at -/
-@[extern "lean_raylib__Camera3D_target"]
-opaque Camera3D.target (cam3d : @& Camera3D) : Vector3
-/-- Setter: Camera target it looks-at -/
-@[extern "lean_raylib__Camera3D_target_set"]
-opaque Camera3D.set_target (target : @& Vector3) (cam3d : Camera3D) : Camera3D
-/-- Getter: Camera up vector (rotation over its axis) -/
-@[extern "lean_raylib__Camera3D_up"]
-opaque Camera3D.up (cam3d : @& Camera3D) : Vector3
-/-- Setter: Camera up vector (rotation over its axis) -/
-@[extern "lean_raylib__Camera3D_up_set"]
-opaque Camera3D.set_up (up : @& Vector3) (cam3d : Camera3D) : Camera3D
-/-- Getter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
-@[extern "lean_raylib__Camera3D_fovy"]
-opaque Camera3D.fovy (cam3d : @& Camera3D) : Float32
-/-- Setter: Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
-@[extern "lean_raylib__Camera3D_fovy_set"]
-opaque Camera3D.set_fovy (fovy : Float32) (cam3d : Camera3D) : Camera3D
-/-- Getter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
-@[extern "lean_raylib__Camera3D_projection"]
-opaque Camera3D.projection (cam3d : @& Camera3D) : CameraProjection
-/-- Setter: Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC -/
-@[extern "lean_raylib__Camera3D_projection_set"]
-opaque Camera3D.set_projection (projection : CameraProjection) (cam3d : Camera3D) : Camera3D
+structure Camera3D where
+  /-- Camera position -/
+  position : Vector3
+  /-- Camera target it looks-at -/
+  target : Vector3
+  /-- Camera up vector (rotation over its axis) -/
+  up : Vector3
+  /-- Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic -/
+  fovy : Float32
+  /-- Camera projection: `.perspective` or `.orthographic` -/
+  projection : CameraProjection
+deriving Inhabited, Repr
 
 
 /-! # Camera 2D -/
 
-opaque Camera2DPointed : NonemptyType
 /-- Camera2D, defines position/orientation in 2d space -/
-def Camera2D : Type := Camera2DPointed.type
-instance : Nonempty Camera2D := Camera2DPointed.property
-
-@[extern "lean_raylib__Camera2D_mk"]
-opaque Camera2D.mk (offset : @& Vector2) (target : @& Vector2) (rotation : Float32) (zoom : Float32) : Camera2D
-
-/-- Getter: Camera offset (displacement from target) -/
-@[extern "lean_raylib__Camera2D_offset"]
-opaque Camera2D.offset (cam2d : @& Camera2D) : Vector2
-/-- Setter: Camera offset (displacement from target) -/
-@[extern "lean_raylib__Camera2D_offset_set"]
-opaque Camera2D.set_offset (offset : @& Vector2) (cam2d : Camera2D) : Camera2D
-/-- Getter: Camera target (rotation and zoom origin) -/
-@[extern "lean_raylib__Camera2D_target"]
-opaque Camera2D.target (cam2d : @& Camera2D) : Vector2
-/-- Setter: Camera target (rotation and zoom origin) -/
-@[extern "lean_raylib__Camera2D_target_set"]
-opaque Camera2D.set_target (target : @& Vector2) (cam2d : Camera2D) : Camera2D
-/-- Getter: Camera rotation in degrees -/
-@[extern "lean_raylib__Camera2D_rotation"]
-opaque Camera2D.rotation (cam2d : @& Camera2D) : Float32
-/-- Setter: Camera rotation in degrees -/
-@[extern "lean_raylib__Camera2D_rotation_set"]
-opaque Camera2D.set_rotation (rotation : Float32) (cam2d : Camera2D) : Camera2D
-/-- Getter: Camera zoom (scaling), should be 1.0f by default -/
-@[extern "lean_raylib__Camera2D_zoom"]
-opaque Camera2D.zoom (cam2d : @& Camera2D) : Float32
-/-- Setter: Camera zoom (scaling), should be 1.0f by default -/
-@[extern "lean_raylib__Camera2D_zoom_set"]
-opaque Camera2D.set_zoom (zoom : Float32) (cam2d : Camera2D) : Camera2D
+structure Camera2D where
+  /-- Camera offset (displacement from target) -/
+  offset : Vector2
+  /-- Camera target (rotation and zoom origin) -/
+  target : Vector2
+  /-- Camera rotation in degrees -/
+  rotation : Float32
+  /-- Camera zoom (scaling), should be `1.0` by default -/
+  zoom : Float32
+deriving Inhabited, Repr
 
 
 /-! # Mesh -/
@@ -928,84 +879,38 @@ opaque Camera2D.set_zoom (zoom : Float32) (cam2d : Camera2D) : Camera2D
 
 /-! # Ray -/
 
-opaque RayPointed : NonemptyType
 /-- Ray, ray for raycasting -/
-def Ray : Type := RayPointed.type
-instance : Nonempty Ray := RayPointed.property
-
-@[extern "lean_raylib__Ray_mk"]
-opaque Ray.mk (position : @& Vector3) (direction : @& Vector3) : Ray
-
-/-- Getter: Ray position (origin) -/
-@[extern "lean_raylib__Ray_position"]
-opaque Ray.position (ray : @& Ray) : Vector3
-/-- Setter: Ray position (origin) -/
-@[extern "lean_raylib__Ray_position_set"]
-opaque Ray.set_position (position : @& Vector3) (ray : Ray) : Ray
-/-- Getter: Ray direction -/
-@[extern "lean_raylib__Ray_direction"]
-opaque Ray.direction (ray : @& Ray) : Vector3
-/-- Setter: Ray direction -/
-@[extern "lean_raylib__Ray_direction_set"]
-opaque Ray.set_direction (direction : @& Vector3) (ray : Ray) : Ray
+structure Ray where
+  /-- Ray position (origin) -/
+  position : Vector3
+  /-- Ray direction -/
+  direction : Vector3
+deriving Inhabited, Repr
 
 
 /-! # Ray collision -/
 
--- opaque RayCollisionPointed : NonemptyType
--- /-- RayCollision, ray hit information -/
--- def RayCollision : Type := RayCollisionPointed.type
--- instance : Nonempty RayCollision := RayCollisionPointed.property
--- @[extern "lean_raylib__RayCollision_mk"]
--- opaque RayCollision.mk (hit : Bool) (distance : Float32) (point : Vector3) (normal : Vector3) : RayCollision
--- /-- Getter: Did the ray hit something? -/
--- @[extern "lean_raylib__RayCollision_hit"]
--- opaque RayCollision.hit (self : @& RayCollision) : Bool
--- /-- Setter: Did the ray hit something? -/
--- @[extern "lean_raylib__RayCollision_hit_set"]
--- opaque RayCollision.set_hit (hit : Bool) (self : RayCollision) : RayCollision
--- /-- Getter: Distance to the nearest hit -/
--- @[extern "lean_raylib__RayCollision_distance"]
--- opaque RayCollision.distance (self : @& RayCollision) : Float32
--- /-- Setter: Distance to the nearest hit -/
--- @[extern "lean_raylib__RayCollision_distance_set"]
--- opaque RayCollision.set_distance (distance : Float32) (self : RayCollision) : RayCollision
--- /-- Getter: Point of the nearest hit -/
--- @[extern "lean_raylib__RayCollision_point"]
--- opaque RayCollision.point (self : @& RayCollision) : Vector3
--- /-- Setter: Point of the nearest hit -/
--- @[extern "lean_raylib__RayCollision_point_set"]
--- opaque RayCollision.set_point (point : Vector3) (self : RayCollision) : RayCollision
--- /-- Getter: Surface normal of hit -/
--- @[extern "lean_raylib__RayCollision_normal"]
--- opaque RayCollision.normal (self : @& RayCollision) : Vector3
--- /-- Setter: Surface normal of hit -/
--- @[extern "lean_raylib__RayCollision_normal_set"]
--- opaque RayCollision.set_normal (normal : Vector3) (self : RayCollision) : RayCollision
+/-- RayCollision, ray hit information -/
+structure RayCollision where
+  /-- Did the ray hit something? -/
+  hit : Bool
+  /-- Distance to the nearest hit -/
+  distance : Float32
+  /-- Point of the nearest hit -/
+  point : Vector3
+  /-- Surface normal of hit -/
+  normal : Vector3
+deriving Inhabited, Repr
 
 
 /-! # Bounding box -/
 
-opaque BoundingBoxPointed : NonemptyType
-/-- BoundingBox -/
-def BoundingBox : Type := BoundingBoxPointed.type
-instance : Nonempty BoundingBox := BoundingBoxPointed.property
-
-@[extern "lean_raylib__BoundingBox_mk"]
-opaque BoundingBox.mk (min : @& Vector3) (max : @& Vector3) : BoundingBox
-
-/-- Getter: Minimum vertex box-corner -/
-@[extern "lean_raylib__BoundingBox_min"]
-opaque BoundingBox.min (bbox : @& BoundingBox) : Vector3
-/-- Setter: Minimum vertex box-corner -/
-@[extern "lean_raylib__BoundingBox_min_set"]
-opaque BoundingBox.set_min (min : @& Vector3) (bbox : BoundingBox) : BoundingBox
-/-- Getter: Maximum vertex box-corner -/
-@[extern "lean_raylib__BoundingBox_max"]
-opaque BoundingBox.max (bbox : @& BoundingBox) : Vector3
-/-- Setter: Maximum vertex box-corner -/
-@[extern "lean_raylib__BoundingBox_max_set"]
-opaque BoundingBox.set_max (max : @& Vector3) (bbox : BoundingBox) : BoundingBox
+structure BoundingBox where
+  /-- Minimum vertex box-corner -/
+  min : Vector3
+  /-- Maximum vertex box-corner -/
+  max : Vector3
+deriving Inhabited, Repr
 
 
 /-! # Wave -/
@@ -1096,214 +1001,58 @@ opaque Music.set_looping (looping : Bool) (music : Music) : Music
 
 /-! # Vr device info -/
 
--- opaque VrDeviceInfoPointed : NonemptyType
--- /-- VrDeviceInfo, Head-Mounted-Display device parameters -/
--- def VrDeviceInfo : Type := VrDeviceInfoPointed.type
--- instance : Nonempty VrDeviceInfo := VrDeviceInfoPointed.property
--- @[extern "lean_raylib__VrDeviceInfo_mk"]
--- opaque VrDeviceInfo.mk : VrDeviceInfo
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | hResolution: int -- Horizontal resolution in pixels
---   | vResolution: int -- Vertical resolution in pixels
---   | hScreenSize: float -- Horizontal size in meters
---   | vScreenSize: float -- Vertical size in meters
---   | vScreenCenter: float -- Screen center in meters
---   | eyeToScreenDistance: float -- Distance between eye and display in meters
---   | lensSeparationDistance: float -- Lens separation distance in meters
---   | interpupillaryDistance: float -- IPD (distance between pupils) in meters
---   | lensDistortionValues: float[4] -- Lens distortion constant parameters
---   | chromaAbCorrection: float[4] -- Chromatic aberration correction parameters
--- -/
--- /-- Getter: Horizontal resolution in pixels -/
--- @[extern "lean_raylib__VrDeviceInfo_hResolution"]
--- opaque VrDeviceInfo.hResolution (self : @& VrDeviceInfo) : Int32
--- /-- Setter: Horizontal resolution in pixels -/
--- @[extern "lean_raylib__VrDeviceInfo_hResolution_set"]
--- opaque VrDeviceInfo.set_hResolution (hResolution : Int32) (self : VrDeviceInfo) : VrDeviceInfo
--- /-- Getter: Vertical resolution in pixels -/
--- @[extern "lean_raylib__VrDeviceInfo_vResolution"]
--- opaque VrDeviceInfo.vResolution (self : @& VrDeviceInfo) : Int32
--- /-- Setter: Vertical resolution in pixels -/
--- @[extern "lean_raylib__VrDeviceInfo_vResolution_set"]
--- opaque VrDeviceInfo.set_vResolution (vResolution : Int32) (self : VrDeviceInfo) : VrDeviceInfo
--- /-- Getter: Horizontal size in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_hScreenSize"]
--- opaque VrDeviceInfo.hScreenSize (self : @& VrDeviceInfo) : Float32
--- /-- Setter: Horizontal size in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_hScreenSize_set"]
--- opaque VrDeviceInfo.set_hScreenSize (hScreenSize : Float32) (self : VrDeviceInfo) : VrDeviceInfo
--- /-- Getter: Vertical size in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_vScreenSize"]
--- opaque VrDeviceInfo.vScreenSize (self : @& VrDeviceInfo) : Float32
--- /-- Setter: Vertical size in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_vScreenSize_set"]
--- opaque VrDeviceInfo.set_vScreenSize (vScreenSize : Float32) (self : VrDeviceInfo) : VrDeviceInfo
--- /-- Getter: Screen center in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_vScreenCenter"]
--- opaque VrDeviceInfo.vScreenCenter (self : @& VrDeviceInfo) : Float32
--- /-- Setter: Screen center in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_vScreenCenter_set"]
--- opaque VrDeviceInfo.set_vScreenCenter (vScreenCenter : Float32) (self : VrDeviceInfo) : VrDeviceInfo
--- /-- Getter: Distance between eye and display in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_eyeToScreenDistance"]
--- opaque VrDeviceInfo.eyeToScreenDistance (self : @& VrDeviceInfo) : Float32
--- /-- Setter: Distance between eye and display in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_eyeToScreenDistance_set"]
--- opaque VrDeviceInfo.set_eyeToScreenDistance (eyeToScreenDistance : Float32) (self : VrDeviceInfo) : VrDeviceInfo
--- /-- Getter: Lens separation distance in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_lensSeparationDistance"]
--- opaque VrDeviceInfo.lensSeparationDistance (self : @& VrDeviceInfo) : Float32
--- /-- Setter: Lens separation distance in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_lensSeparationDistance_set"]
--- opaque VrDeviceInfo.set_lensSeparationDistance (lensSeparationDistance : Float32) (self : VrDeviceInfo) : VrDeviceInfo
--- /-- Getter: IPD (distance between pupils) in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_interpupillaryDistance"]
--- opaque VrDeviceInfo.interpupillaryDistance (self : @& VrDeviceInfo) : Float32
--- /-- Setter: IPD (distance between pupils) in meters -/
--- @[extern "lean_raylib__VrDeviceInfo_interpupillaryDistance_set"]
--- opaque VrDeviceInfo.set_interpupillaryDistance (interpupillaryDistance : Float32) (self : VrDeviceInfo) : VrDeviceInfo
--- /-- Getter: Lens distortion constant parameters -/
--- @[extern "lean_raylib__VrDeviceInfo_lensDistortionValues"]
--- opaque VrDeviceInfo.lensDistortionValues (self : @& VrDeviceInfo) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Lens distortion constant parameters -/
--- @[extern "lean_raylib__VrDeviceInfo_lensDistortionValues_set"]
--- opaque VrDeviceInfo.set_lensDistortionValues (lensDistortionValues : Unit) (self : VrDeviceInfo) : VrDeviceInfo
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Chromatic aberration correction parameters -/
--- @[extern "lean_raylib__VrDeviceInfo_chromaAbCorrection"]
--- opaque VrDeviceInfo.chromaAbCorrection (self : @& VrDeviceInfo) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Chromatic aberration correction parameters -/
--- @[extern "lean_raylib__VrDeviceInfo_chromaAbCorrection_set"]
--- opaque VrDeviceInfo.set_chromaAbCorrection (chromaAbCorrection : Unit) (self : VrDeviceInfo) : VrDeviceInfo
--- /-
--- todo: ^^ struct setter ^^
--- -/
+/-- Head-Mounted-Display device parameters -/
+structure VrDeviceInfo where
+  /-- Horizontal resolution in pixels -/
+  hResolution : UInt32
+  /-- Vertical resolution in pixels -/
+  vResolution : UInt32
+  /-- Horizontal size in meters -/
+  hScreenSize : Float32
+  /-- Vertical size in meters -/
+  vScreenSize : Float32
+  /-- Screen center in meters -/
+  vScreenCenter : Float32
+  /-- Distance between eye and display in meters -/
+  eyeToScreenDistance : Float32
+  /-- Lens separation distance in meters -/
+  lensSeparationDistance : Float32
+  /-- IPD (distance between pupils) in meters -/
+  interpupillaryDistance : Float32
+  /-- Lens distortion constant parameters -/
+  lensDistortionValues : Vector4
+  /-- Chromatic aberration correction parameters -/
+  chromaAbCorrection : Vector4
+deriving Inhabited, Repr
 
 
 /-! # Vr stereo config -/
 
--- opaque VrStereoConfigPointed : NonemptyType
--- /-- VrStereoConfig, VR stereo rendering configuration for simulator -/
--- def VrStereoConfig : Type := VrStereoConfigPointed.type
--- instance : Nonempty VrStereoConfig := VrStereoConfigPointed.property
--- @[extern "lean_raylib__VrStereoConfig_mk"]
--- opaque VrStereoConfig.mk : VrStereoConfig
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | projection: Matrix[2] -- VR projection matrices (per eye)
---   | viewOffset: Matrix[2] -- VR view offset matrices (per eye)
---   | leftLensCenter: float[2] -- VR left lens center
---   | rightLensCenter: float[2] -- VR right lens center
---   | leftScreenCenter: float[2] -- VR left screen center
---   | rightScreenCenter: float[2] -- VR right screen center
---   | scale: float[2] -- VR distortion scale
---   | scaleIn: float[2] -- VR distortion scale in
--- -/
--- /-- Getter: VR projection matrices (per eye) -/
--- @[extern "lean_raylib__VrStereoConfig_projection"]
--- opaque VrStereoConfig.projection (self : @& VrStereoConfig) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: VR projection matrices (per eye) -/
--- @[extern "lean_raylib__VrStereoConfig_projection_set"]
--- opaque VrStereoConfig.set_projection (projection : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: VR view offset matrices (per eye) -/
--- @[extern "lean_raylib__VrStereoConfig_viewOffset"]
--- opaque VrStereoConfig.viewOffset (self : @& VrStereoConfig) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: VR view offset matrices (per eye) -/
--- @[extern "lean_raylib__VrStereoConfig_viewOffset_set"]
--- opaque VrStereoConfig.set_viewOffset (viewOffset : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: VR left lens center -/
--- @[extern "lean_raylib__VrStereoConfig_leftLensCenter"]
--- opaque VrStereoConfig.leftLensCenter (self : @& VrStereoConfig) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: VR left lens center -/
--- @[extern "lean_raylib__VrStereoConfig_leftLensCenter_set"]
--- opaque VrStereoConfig.set_leftLensCenter (leftLensCenter : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: VR right lens center -/
--- @[extern "lean_raylib__VrStereoConfig_rightLensCenter"]
--- opaque VrStereoConfig.rightLensCenter (self : @& VrStereoConfig) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: VR right lens center -/
--- @[extern "lean_raylib__VrStereoConfig_rightLensCenter_set"]
--- opaque VrStereoConfig.set_rightLensCenter (rightLensCenter : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: VR left screen center -/
--- @[extern "lean_raylib__VrStereoConfig_leftScreenCenter"]
--- opaque VrStereoConfig.leftScreenCenter (self : @& VrStereoConfig) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: VR left screen center -/
--- @[extern "lean_raylib__VrStereoConfig_leftScreenCenter_set"]
--- opaque VrStereoConfig.set_leftScreenCenter (leftScreenCenter : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: VR right screen center -/
--- @[extern "lean_raylib__VrStereoConfig_rightScreenCenter"]
--- opaque VrStereoConfig.rightScreenCenter (self : @& VrStereoConfig) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: VR right screen center -/
--- @[extern "lean_raylib__VrStereoConfig_rightScreenCenter_set"]
--- opaque VrStereoConfig.set_rightScreenCenter (rightScreenCenter : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: VR distortion scale -/
--- @[extern "lean_raylib__VrStereoConfig_scale"]
--- opaque VrStereoConfig.scale (self : @& VrStereoConfig) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: VR distortion scale -/
--- @[extern "lean_raylib__VrStereoConfig_scale_set"]
--- opaque VrStereoConfig.set_scale (scale : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: VR distortion scale in -/
--- @[extern "lean_raylib__VrStereoConfig_scaleIn"]
--- opaque VrStereoConfig.scaleIn (self : @& VrStereoConfig) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: VR distortion scale in -/
--- @[extern "lean_raylib__VrStereoConfig_scaleIn_set"]
--- opaque VrStereoConfig.set_scaleIn (scaleIn : Unit) (self : VrStereoConfig) : VrStereoConfig
--- /-
--- todo: ^^ struct setter ^^
--- -/
+/-- VR stereo rendering configuration for simulator -/
+structure VrStereoConfig where
+  /-- VR left projection matrix -/
+  leftProjection : Matrix
+  /-- VR right projection matrix -/
+  rightProjection : Matrix
+  /-- VR left view offset matrix -/
+  leftViewOffset : Matrix
+  /-- VR right view offset matrix -/
+  rightViewOffset : Matrix
+  /-- VR left lens center -/
+  leftLensCenter : Vector2
+  /-- VR right lens center -/
+  rightLensCenter : Vector2
+  /-- VR left screen center -/
+  leftScreenCenter : Vector2
+  /-- VR right screen center -/
+  rightScreenCenter : Vector2
+  /-- VR distortion scale -/
+  scale : Vector2
+  /-- VR distortion scale in -/
+  scaleIn : Vector2
+deriving Inhabited, Repr
+
+/-! # Window handle -/
 
 opaque WindowHandlePointed : NonemptyType
 def WindowHandle : Type := WindowHandlePointed.type
