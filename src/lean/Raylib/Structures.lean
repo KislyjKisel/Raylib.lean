@@ -54,45 +54,14 @@ end Color
 
 /-! # Rectangle -/
 
-opaque RectanglePointed : NonemptyType
-/-- Rectangle, 4 components -/
-def Rectangle : Type := RectanglePointed.type
-instance : Nonempty Rectangle := RectanglePointed.property
-
-@[extern "lean_raylib__Rectangle_mk"]
-opaque Rectangle.mk (x : Float32) (y : Float32) (width : Float32) (height : Float32) : Rectangle
-
-/-- Getter: Rectangle top-left corner position x -/
-@[extern "lean_raylib__Rectangle_x"]
-opaque Rectangle.x (self : @& Rectangle) : Float32
-
-/-- Setter: Rectangle top-left corner position x -/
-@[extern "lean_raylib__Rectangle_x_set"]
-opaque Rectangle.set_x (x : Float32) (rectangle : Rectangle) : Rectangle
-
-/-- Getter: Rectangle top-left corner position y -/
-@[extern "lean_raylib__Rectangle_y"]
-opaque Rectangle.y (self : @& Rectangle) : Float32
-
-/-- Setter: Rectangle top-left corner position y -/
-@[extern "lean_raylib__Rectangle_y_set"]
-opaque Rectangle.set_y (y : Float32) (rectangle : Rectangle) : Rectangle
-
-/-- Getter: Rectangle width -/
-@[extern "lean_raylib__Rectangle_width"]
-opaque Rectangle.width (self : @& Rectangle) : Float32
-
-/-- Setter: Rectangle width -/
-@[extern "lean_raylib__Rectangle_width_set"]
-opaque Rectangle.set_width (width : Float32) (rectangle : Rectangle) : Rectangle
-
-/-- Getter: Rectangle height -/
-@[extern "lean_raylib__Rectangle_height"]
-opaque Rectangle.height (self : @& Rectangle) : Float32
-
-/-- Setter: Rectangle height -/
-@[extern "lean_raylib__Rectangle_height_set"]
-opaque Rectangle.set_height (height : Float32) (rectangle : Rectangle) : Rectangle
+structure Rectangle where
+  /-- Top-left corner position `x` -/
+  x : Float32
+  /-- Top-left corner position `y` -/
+  y : Float32
+  width : Float32
+  height : Float32
+deriving Inhabited, Repr
 
 
 /-! # Image -/

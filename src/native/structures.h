@@ -135,16 +135,26 @@ static inline uint32_t lean_raylib_Color_to(Color color) {
 
 // # Rectangle
 
-static inline lean_object* lean_raylib_Rectangle_to (Rectangle const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+static inline void lean_raylib_Rectangle_set (b_lean_obj_arg obj, Rectangle r) {
+    lean_ctor_set(obj, 0, lean_box_uint32(lean_pod_Float32_toBits(r.x)));
+    lean_ctor_set(obj, 1, lean_box_uint32(lean_pod_Float32_toBits(r.y)));
+    lean_ctor_set(obj, 2, lean_box_uint32(lean_pod_Float32_toBits(r.width)));
+    lean_ctor_set(obj, 3, lean_box_uint32(lean_pod_Float32_toBits(r.height)));
 }
 
-static inline Rectangle* lean_raylib_Rectangle_from (b_lean_obj_arg obj) {
-    return (Rectangle*) lean_get_external_data(obj);
+static inline lean_object* lean_raylib_Rectangle_to (Rectangle r) {
+    lean_object* obj = lean_alloc_ctor(0, 4, 0);
+    lean_raylib_Rectangle_set(obj, r);
+    return obj;
+}
+
+static inline Rectangle lean_raylib_Rectangle_from (b_lean_obj_arg obj) {
+    Rectangle r;
+    r.x = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 0)));
+    r.y = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 1)));
+    r.width = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 2)));
+    r.height = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 3)));
+    return r;
 }
 
 

@@ -2,79 +2,6 @@
 #include "util.h"
 #include "structures.h"
 
-// # Rectangle
-
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_mk(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
-    LET_BOX_STRUCT(Rectangle, rectangle,
-        .x = lean_pod_Float32_fromBits(x),
-        .y = lean_pod_Float32_fromBits(y),
-        .width = lean_pod_Float32_fromBits(width),
-        .height = lean_pod_Float32_fromBits(height)
-    );
-    return lean_raylib_Rectangle_to(rectangle);
-}
-
-LEAN_EXPORT uint32_t lean_raylib__Rectangle_x(b_lean_obj_arg obj) {
-    return lean_raylib_Rectangle_from(obj)->x;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_x_set(uint32_t x, lean_obj_arg rect_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
-        lean_raylib_Rectangle_from(rect_box)->x = x;
-        return rect_box;
-    }
-    lean_dec_ref(rect_box);
-    LET_BOX(Rectangle, rect_new, *lean_raylib_Rectangle_from(rect_box));
-    rect_new->x = x;
-    return lean_raylib_Rectangle_to(rect_new);
-}
-
-LEAN_EXPORT uint32_t lean_raylib__Rectangle_y(b_lean_obj_arg obj) {
-    return lean_raylib_Rectangle_from(obj)->y;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_y_set(uint32_t y, lean_obj_arg rect_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
-        lean_raylib_Rectangle_from(rect_box)->y = y;
-        return rect_box;
-    }
-    lean_dec_ref(rect_box);
-    LET_BOX(Rectangle, rect_new, *lean_raylib_Rectangle_from(rect_box));
-    rect_new->y = y;
-    return lean_raylib_Rectangle_to(rect_new);
-}
-
-LEAN_EXPORT uint32_t lean_raylib__Rectangle_width(b_lean_obj_arg obj) {
-    return lean_raylib_Rectangle_from(obj)->width;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_width_set(uint32_t width, lean_obj_arg rect_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
-        lean_raylib_Rectangle_from(rect_box)->width = width;
-        return rect_box;
-    }
-    lean_dec_ref(rect_box);
-    LET_BOX(Rectangle, rect_new, *lean_raylib_Rectangle_from(rect_box));
-    rect_new->width = width;
-    return lean_raylib_Rectangle_to(rect_new);
-}
-
-LEAN_EXPORT uint32_t lean_raylib__Rectangle_height(b_lean_obj_arg obj) {
-    return lean_raylib_Rectangle_from(obj)->height;
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__Rectangle_height_set(uint32_t height, lean_obj_arg rect_box) {
-    if(LEAN_LIKELY(lean_is_exclusive(rect_box))) {
-        lean_raylib_Rectangle_from(rect_box)->height = height;
-        return rect_box;
-    }
-    lean_dec_ref(rect_box);
-    LET_BOX(Rectangle, rect_new, *lean_raylib_Rectangle_from(rect_box));
-    rect_new->height = height;
-    return lean_raylib_Rectangle_to(rect_new);
-}
-
-
 // # Image
 
 LEAN_EXPORT lean_obj_res lean_raylib__Image_mk(
@@ -185,7 +112,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_mk(
     uint32_t right, uint32_t bottom, uint32_t layout
 ) {
     LET_BOX_STRUCT(NPatchInfo, npatchInfo,
-        .source = *lean_raylib_Rectangle_from(source),
+        .source = lean_raylib_Rectangle_from(source),
         .left = left,
         .top = top,
         .right = right,
@@ -196,12 +123,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_mk(
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_source(b_lean_obj_arg npatchInfo) {
-    LET_BOX(Rectangle, source, lean_raylib_NPatchInfo_from(npatchInfo)->source);
-    return lean_raylib_Rectangle_to(source);
+    return lean_raylib_Rectangle_to(lean_raylib_NPatchInfo_from(npatchInfo)->source);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_source_set(b_lean_obj_arg source_box, lean_obj_arg npatchInfo_box) {
-    Rectangle source = *lean_raylib_Rectangle_from(source_box);
+    Rectangle source = lean_raylib_Rectangle_from(source_box);
     if(LEAN_LIKELY(lean_is_exclusive(npatchInfo_box))) {
         lean_raylib_NPatchInfo_from(npatchInfo_box)->source = source;
         return npatchInfo_box;
