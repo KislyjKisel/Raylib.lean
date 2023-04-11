@@ -327,25 +327,25 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndScissorMode (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BeginVrStereoMode (lean_obj_arg config, lean_obj_arg world) {
-//     BeginVrStereoMode(lean_raylib_VrStereoConfig_from(config));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BeginVrStereoMode (b_lean_obj_arg config, lean_obj_arg world) {
+    BeginVrStereoMode(lean_raylib_VrStereoConfig_from(config));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EndVrStereoMode (lean_obj_arg world) {
-//     EndVrStereoMode();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__EndVrStereoMode (lean_obj_arg world) {
+    EndVrStereoMode();
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadVrStereoConfig (lean_obj_arg device, lean_obj_arg world) {
-//     VrStereoConfig result_ = LoadVrStereoConfig(lean_raylib_VrDeviceInfo_from(device));
-//     return lean_raylib_VrStereoConfig_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadVrStereoConfig (b_lean_obj_arg device, lean_obj_arg world) {
+    VrStereoConfig vrStereoConfig = LoadVrStereoConfig(lean_raylib_VrDeviceInfo_from(device));
+    return lean_raylib_VrStereoConfig_to(&vrStereoConfig);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadVrStereoConfig (lean_obj_arg config, lean_obj_arg world) {
-//     UnloadVrStereoConfig(lean_raylib_VrStereoConfig_from(config));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UnloadVrStereoConfig (b_lean_obj_arg config, lean_obj_arg world) {
+    UnloadVrStereoConfig(lean_raylib_VrStereoConfig_from(config));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (/* const char* */lean_obj_arg vsFileName, /* const char* */lean_obj_arg fsFileName, lean_obj_arg world) {
 //     Shader result_ = LoadShader(lean_string_cstr(vsFileName), lean_string_cstr(fsFileName));

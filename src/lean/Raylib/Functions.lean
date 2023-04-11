@@ -287,18 +287,22 @@ opaque beginScissorMode (x y width height : UInt32) : BaseIO Unit
 @[extern "lean_raylib__EndScissorMode"]
 opaque endScissorMode : BaseIO Unit
 
--- /-- Begin stereo rendering (requires VR simulator) -/
--- @[extern "lean_raylib__BeginVrStereoMode"]
--- opaque beginVrStereoMode (config : VrStereoConfig) : Unit
--- /-- End stereo rendering (requires VR simulator) -/
--- @[extern "lean_raylib__EndVrStereoMode"]
--- opaque endVrStereoMode (_ : Unit) : Unit
--- /-- Load VR stereo config for VR simulator device parameters -/
--- @[extern "lean_raylib__LoadVrStereoConfig"]
--- opaque loadVrStereoConfig (device : VrDeviceInfo) : VrStereoConfig
--- /-- Unload VR stereo config -/
--- @[extern "lean_raylib__UnloadVrStereoConfig"]
--- opaque unloadVrStereoConfig (config : VrStereoConfig) : Unit
+/-- Begin stereo rendering (requires VR simulator) -/
+@[extern "lean_raylib__BeginVrStereoMode"]
+opaque beginVrStereoMode (config : @& VrStereoConfig) : BaseIO Unit
+
+/-- End stereo rendering (requires VR simulator) -/
+@[extern "lean_raylib__EndVrStereoMode"]
+opaque endVrStereoMode : BaseIO Unit
+
+/-- Load VR stereo config for VR simulator device parameters -/
+@[extern "lean_raylib__LoadVrStereoConfig"]
+opaque loadVrStereoConfig (device : @& VrDeviceInfo) : VrStereoConfig
+
+/-- Unload VR stereo config (no-op) -/
+@[extern "lean_raylib__UnloadVrStereoConfig"]
+opaque unloadVrStereoConfig (config : @& VrStereoConfig) : BaseIO Unit
+
 -- /-- Load shader from files and bind default locations -/
 -- @[extern "lean_raylib__LoadShader"]
 -- opaque loadShader (vsFileName : String) (fsFileName : String) : Shader
