@@ -1176,12 +1176,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawPolyLinesEx (lean_obj_arg center, uint
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionRecs (lean_obj_arg rec1, lean_obj_arg rec2, lean_obj_arg world) {
-//     bool result_ = CheckCollisionRecs(lean_raylib_Rectangle_from(rec1), lean_raylib_Rectangle_from(rec2));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionRecs (b_lean_obj_arg rec1, b_lean_obj_arg rec2) {
+    return CheckCollisionRecs(lean_raylib_Rectangle_from(rec1), lean_raylib_Rectangle_from(rec2));
+}
 
-LEAN_EXPORT uint8_t lean_raylib__CheckCollisionCircles (lean_obj_arg center1, uint32_t radius1, lean_obj_arg center2, uint32_t radius2) {
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionCircles (b_lean_obj_arg center1, uint32_t radius1, b_lean_obj_arg center2, uint32_t radius2) {
     return CheckCollisionCircles(
         lean_raylib_Vector2_from(center1),
         lean_pod_Float32_fromBits(radius1),
@@ -1190,45 +1189,75 @@ LEAN_EXPORT uint8_t lean_raylib__CheckCollisionCircles (lean_obj_arg center1, ui
     );
 }
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionCircleRec (lean_obj_arg center, uint32_t radius, lean_obj_arg rec, lean_obj_arg world) {
-//     bool result_ = CheckCollisionCircleRec(lean_raylib_Vector2_from(center), lean_pod_Float32_fromBits(radius), lean_raylib_Rectangle_from(rec));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionCircleRec (b_lean_obj_arg center, uint32_t radius, b_lean_obj_arg rec) {
+    return CheckCollisionCircleRec(
+        lean_raylib_Vector2_from(center),
+        lean_pod_Float32_fromBits(radius),
+        lean_raylib_Rectangle_from(rec)
+    );
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointRec (lean_obj_arg point, lean_obj_arg rec, lean_obj_arg world) {
-//     bool result_ = CheckCollisionPointRec(lean_raylib_Vector2_from(point), lean_raylib_Rectangle_from(rec));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointRec (b_lean_obj_arg point, b_lean_obj_arg rec) {
+    return CheckCollisionPointRec(lean_raylib_Vector2_from(point), lean_raylib_Rectangle_from(rec));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointCircle (lean_obj_arg point, lean_obj_arg center, uint32_t radius, lean_obj_arg world) {
-//     bool result_ = CheckCollisionPointCircle(lean_raylib_Vector2_from(point), lean_raylib_Vector2_from(center), lean_pod_Float32_fromBits(radius));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointCircle (b_lean_obj_arg point, b_lean_obj_arg center, uint32_t radius) {
+    return CheckCollisionPointCircle(
+        lean_raylib_Vector2_from(point),
+        lean_raylib_Vector2_from(center),
+        lean_pod_Float32_fromBits(radius)
+    );
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointTriangle (lean_obj_arg point, lean_obj_arg p1, lean_obj_arg p2, lean_obj_arg p3, lean_obj_arg world) {
-//     bool result_ = CheckCollisionPointTriangle(lean_raylib_Vector2_from(point), lean_raylib_Vector2_from(p1), lean_raylib_Vector2_from(p2), lean_raylib_Vector2_from(p3));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointTriangle (b_lean_obj_arg point, b_lean_obj_arg p1, b_lean_obj_arg p2, b_lean_obj_arg p3) {
+    return CheckCollisionPointTriangle(
+        lean_raylib_Vector2_from(point),
+        lean_raylib_Vector2_from(p1),
+        lean_raylib_Vector2_from(p2),
+        lean_raylib_Vector2_from(p3)
+    );
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointPoly (lean_obj_arg point, /* Vector2* */lean_obj_arg points, uint32_t pointCount, lean_obj_arg world) {
-//     bool result_ = CheckCollisionPointPoly(lean_raylib_Vector2_from(point), /*todo: ptr?*/points, pointCount);
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointPoly (b_lean_obj_arg point, b_lean_obj_arg points) {
+    size_t pointCount = lean_array_size(points);
+    Vector2* points_c = malloc(pointCount * sizeof(Vector2));
+    for(size_t i = 0; i < pointCount; ++i) {
+        points_c[i] = lean_raylib_Vector2_from(lean_array_uget(points, i));
+    }
+    bool result = CheckCollisionPointPoly(lean_raylib_Vector2_from(point), points_c, pointCount);
+    free(points_c);
+    return result;
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionLines (lean_obj_arg startPos1, lean_obj_arg endPos1, lean_obj_arg startPos2, lean_obj_arg endPos2, /* Vector2* */lean_obj_arg collisionPoint, lean_obj_arg world) {
-//     bool result_ = CheckCollisionLines(lean_raylib_Vector2_from(startPos1), lean_raylib_Vector2_from(endPos1), lean_raylib_Vector2_from(startPos2), lean_raylib_Vector2_from(endPos2), /*todo: ptr?*/collisionPoint);
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__CheckCollisionLines (b_lean_obj_arg startPos1, b_lean_obj_arg endPos1, b_lean_obj_arg startPos2, b_lean_obj_arg endPos2) {
+    Vector2 collisionPoint;
+    if(CheckCollisionLines(
+        lean_raylib_Vector2_from(startPos1),
+        lean_raylib_Vector2_from(endPos1),
+        lean_raylib_Vector2_from(startPos2),
+        lean_raylib_Vector2_from(endPos2),
+        &collisionPoint
+    )) {
+        return lean_mk_option_some(lean_raylib_Vector2_to(collisionPoint));
+    }
+    return lean_mk_option_none;
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointLine (lean_obj_arg point, lean_obj_arg p1, lean_obj_arg p2, uint32_t threshold) {
-//     bool result_ = CheckCollisionPointLine(lean_raylib_Vector2_from(point), lean_raylib_Vector2_from(p1), lean_raylib_Vector2_from(p2), threshold);
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointLine (b_lean_obj_arg point, b_lean_obj_arg p1, b_lean_obj_arg p2, uint32_t threshold) {
+    return CheckCollisionPointLine(
+        lean_raylib_Vector2_from(point),
+        lean_raylib_Vector2_from(p1),
+        lean_raylib_Vector2_from(p2),
+        threshold
+    );
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetCollisionRec (lean_obj_arg rec1, lean_obj_arg rec2, lean_obj_arg world) {
-//     Rectangle result_ = GetCollisionRec(lean_raylib_Rectangle_from(rec1), lean_raylib_Rectangle_from(rec2));
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetCollisionRec (b_lean_obj_arg rec1, b_lean_obj_arg rec2) {
+    return lean_raylib_Rectangle_to(GetCollisionRec(
+        lean_raylib_Rectangle_from(rec1),
+        lean_raylib_Rectangle_from(rec2)
+    ));
+}
 
 
 // # Images

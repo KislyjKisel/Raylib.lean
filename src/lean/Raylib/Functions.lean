@@ -969,54 +969,45 @@ opaque drawPolyLines (center : @& Vector2) (sides : UInt32) (radius : Float32) (
 @[extern "lean_raylib__DrawPolyLinesEx"]
 opaque drawPolyLinesEx (center : @& Vector2) (sides : UInt32) (radius : Float32) (rotation : Float32) (lineThick : Float32) (color : Color) : BaseIO Unit
 
--- /-- Check collision between two rectangles -/
--- @[extern "lean_raylib__CheckCollisionRecs"]
--- opaque checkCollisionRecs (rec1 : Rectangle) (rec2 : Rectangle) : Bool
+/-- Check collision between two rectangles -/
+@[extern "lean_raylib__CheckCollisionRecs"]
+opaque checkCollisionRecs (rec1 : @& Rectangle) (rec2 : @& Rectangle) : Bool
 
 /-- Check collision between two circles -/
 @[extern "lean_raylib__CheckCollisionCircles"]
 opaque checkCollisionCircles (center1 : @& Vector2) (radius1 : Float32) (center2 : @& Vector2) (radius2 : Float32) : Bool
 
--- /-- Check collision between circle and rectangle -/
--- @[extern "lean_raylib__CheckCollisionCircleRec"]
--- opaque checkCollisionCircleRec (center : Vector2) (radius : Float32) (rec : Rectangle) : Bool
--- /-- Check if point is inside rectangle -/
--- @[extern "lean_raylib__CheckCollisionPointRec"]
--- opaque checkCollisionPointRec (point : Vector2) (rec : Rectangle) : Bool
--- /-- Check if point is inside circle -/
--- @[extern "lean_raylib__CheckCollisionPointCircle"]
--- opaque checkCollisionPointCircle (point : Vector2) (center : Vector2) (radius : Float32) : Bool
--- /-- Check if point is inside a triangle -/
--- @[extern "lean_raylib__CheckCollisionPointTriangle"]
--- opaque checkCollisionPointTriangle (point : Vector2) (p1 : Vector2) (p2 : Vector2) (p3 : Vector2) : Bool
--- /-- Check if point is within a polygon described by array of vertices -/
--- @[extern "lean_raylib__CheckCollisionPointPoly"]
--- opaque checkCollisionPointPoly : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: bool
---   params:
---   | point : Vector2
---   | points : Vector2 *
---   | pointCount : int
--- -/
--- /-- Check the collision between two lines defined by two points each, returns collision point by reference -/
--- @[extern "lean_raylib__CheckCollisionLines"]
--- opaque checkCollisionLines : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: bool
---   params:
---   | startPos1 : Vector2
---   | endPos1 : Vector2
---   | startPos2 : Vector2
---   | endPos2 : Vector2
---   | collisionPoint : Vector2 *
--- -/
--- /-- Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold] -/
--- @[extern "lean_raylib__CheckCollisionPointLine"]
--- opaque checkCollisionPointLine (point : Vector2) (p1 : Vector2) (p2 : Vector2) (threshold : Int32) : Bool
--- /-- Get collision rectangle for two rectangles collision -/
--- @[extern "lean_raylib__GetCollisionRec"]
--- opaque getCollisionRec (rec1 : Rectangle) (rec2 : Rectangle) : Rectangle
+/-- Check collision between circle and rectangle -/
+@[extern "lean_raylib__CheckCollisionCircleRec"]
+opaque checkCollisionCircleRec (center : @& Vector2) (radius : Float32) (rec : @& Rectangle) : Bool
+
+/-- Check if point is inside rectangle -/
+@[extern "lean_raylib__CheckCollisionPointRec"]
+opaque checkCollisionPointRec (point : @& Vector2) (rec : @& Rectangle) : Bool
+
+/-- Check if point is inside circle -/
+@[extern "lean_raylib__CheckCollisionPointCircle"]
+opaque checkCollisionPointCircle (point : @& Vector2) (center : @& Vector2) (radius : Float32) : Bool
+
+/-- Check if point is inside a triangle -/
+@[extern "lean_raylib__CheckCollisionPointTriangle"]
+opaque checkCollisionPointTriangle (point : @& Vector2) (p1 : @& Vector2) (p2 : @& Vector2) (p3 : @& Vector2) : Bool
+
+/-- Check if point is within a polygon described by array of vertices -/
+@[extern "lean_raylib__CheckCollisionPointPoly"]
+opaque checkCollisionPointPoly (point : @& Vector2) (points : @& Array Vector2) : Bool
+
+/-- Check the collision between two lines defined by two points each, returns collision point by reference -/
+@[extern "lean_raylib__CheckCollisionLines"]
+opaque checkCollisionLines (startPos1 : @& Vector2) (endPos1 : @& Vector2) (startPos2 : @& Vector2) (endPos2 : @& Vector2) : Option Vector2
+
+/-- Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold] -/
+@[extern "lean_raylib__CheckCollisionPointLine"]
+opaque checkCollisionPointLine (point : @& Vector2) (p1 : @& Vector2) (p2 : @& Vector2) (threshold : UInt32) : Bool
+
+/-- Get collision rectangle for two rectangles collision -/
+@[extern "lean_raylib__GetCollisionRec"]
+opaque getCollisionRec (rec1 : @& Rectangle) (rec2 : @& Rectangle) : Rectangle
 
 /-- Load image from file into CPU memory (RAM) -/
 @[extern "lean_raylib__LoadImage"]
