@@ -12,8 +12,6 @@ lean_lib Raymath {
   precompileModules := true
 }
 
-def x := LeanLibConfig
-
 inductive RaylibSrc
   | System
   | Submodule
@@ -80,27 +78,7 @@ def buildRaylibSubmodule (pkgDir : FilePath) (printCmdOutput : Bool) : IO Unit :
   }
   if printCmdOutput then IO.println cmakeBuildOutput
 
-extern_lib «raymath-lean» (pkg : Package) := do
-  let name := nameToStaticLib "raymath-lean"
-  let mut flags :=
-    #["-I", (← getLeanIncludeDir).toString, "-fPIC"].append $
-      Array.mk $ ((get_config? cflags).getD "").splitOn.filter $ not ∘ String.isEmpty
-
-  match pkg.deps.find? λ dep ↦ dep.name == `pod with
-    | none => error "Missing dependency 'Pod'"
-    | some pod =>
-      flags := flags ++ #[
-        "-I",
-        (pod.dir / "src" / "native" / "include").toString
-      ]
-
-  let bindingsOFile ← buildBindingsO pkg flags "raymath"
-  buildStaticLib (pkg.libDir / name) #[
-    bindingsOFile
-  ]
-
-extern_lib «raylib-lean» (pkg : Package) := do
-  let name := nameToStaticLib "raylib-lean"
+def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
   let mut flags :=
     #["-I", (← getLeanIncludeDir).toString, "-fPIC"].append $
       Array.mk $ ((get_config? cflags).getD "").splitOn.filter $ not ∘ String.isEmpty
@@ -137,7 +115,19 @@ extern_lib «raylib-lean» (pkg : Package) := do
   if (get_config? unsafe_opts).isSome then {
     flags := flags.push "-DRAYLIB_LEAN_UNSAFE_OPTS"
   }
+  pure flags
 
+extern_lib «raymath-lean» (pkg : Package) := do
+  let name := nameToStaticLib "raymath-lean"
+  let flags ← bindingsCFlags pkg
+  let bindingsOFile ← buildBindingsO pkg flags "raymath"
+  buildStaticLib (pkg.libDir / name) #[
+    bindingsOFile
+  ]
+
+extern_lib «raylib-lean» (pkg : Package) := do
+  let name := nameToStaticLib "raylib-lean"
+  let flags ← bindingsCFlags pkg
   let bindingsEnumerationsOFile ← buildBindingsO pkg flags "enumerations"
   let bindingsStructuresOFile ← buildBindingsO pkg flags "structures"
   let bindingsFunctionsOFile ← buildBindingsO pkg flags "functions"
