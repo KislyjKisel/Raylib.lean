@@ -2,14 +2,19 @@
 
 Partial [raylib](https://github.com/raysan5/raylib) `4.5.0` bindings for Lean4.
 
-## Coverage
+## Not implemented
 
-* Images and textures
-* Audio
-* Most of 2D rendering
-* 3D primitive rendering (w/o shaders)
+### Raylib
 
-Callbacks are not implemented.
+* Meshes, models
+* Data array manip (ex. `UpdateSound`)
+* Fonts
+* Callbacks
+
+### Raymath
+
+* Matrix functions
+* Quaternion functions
 
 ## Usage
 
