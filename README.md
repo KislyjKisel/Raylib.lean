@@ -13,7 +13,7 @@ Callbacks are not implemented.
 
 ## Usage
 
-Add this to `lakefile.lean`, uses system-wide `raylib` by default:
+Add this to `lakefile.lean`:
 ```
 require Raylib from git
   "https://github.com/KislyjKisel/Raylib.lean.git" @ "main"
