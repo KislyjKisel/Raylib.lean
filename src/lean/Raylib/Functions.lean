@@ -1364,14 +1364,10 @@ opaque isRenderTextureReady (target : @& RenderTexture2D) : Bool
 --   | rec : Rectangle
 --   | pixels : const void *
 -- -/
--- /-- Generate GPU mipmaps for a texture -/
--- @[extern "lean_raylib__GenTextureMipmaps"]
--- opaque genTextureMipmaps : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | texture : Texture2D *
--- -/
+
+/-- Generate GPU mipmaps for a texture -/
+@[extern "lean_raylib__GenTextureMipmaps"]
+opaque genTextureMipmaps (texture : Texture2D) : Texture2D
 
 /-- Set texture scaling filter mode -/
 @[extern "lean_raylib__SetTextureFilter"]

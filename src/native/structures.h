@@ -132,8 +132,8 @@ static inline lean_object* lean_raylib_Texture_to (Texture const* obj) {
     return lean_alloc_external(class_, (void*)obj);
 }
 
-static inline Texture const* lean_raylib_Texture_from (b_lean_obj_arg obj) {
-    return (Texture const*) lean_get_external_data(obj);
+static inline Texture* lean_raylib_Texture_from (b_lean_obj_arg obj) {
+    return (Texture*) lean_get_external_data(obj);
 }
 
 

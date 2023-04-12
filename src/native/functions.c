@@ -1860,10 +1860,21 @@ LEAN_EXPORT uint8_t lean_raylib__IsRenderTextureReady (b_lean_obj_arg target) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenTextureMipmaps (/* Texture2D* */lean_obj_arg texture, lean_obj_arg world) {
-//     GenTextureMipmaps(/*todo: ptr?*/texture);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenTextureMipmaps (lean_obj_arg texture_old_box) {
+    lean_object* texture_res_box;
+    if(lean_is_exclusive(texture_old_box)) {
+        texture_res_box = texture_old_box;
+    }
+    else {
+        Image image = LoadImageFromTexture(*lean_raylib_Texture_from(texture_old_box));
+        LET_BOX(Texture, texture_res, LoadTextureFromImage(image));
+        UnloadImage(image);
+        lean_dec_ref(texture_old_box);
+        texture_res_box = lean_raylib_Texture_to(texture_res);
+    }
+    GenTextureMipmaps(lean_raylib_Texture_from(texture_res_box));
+    return texture_old_box;
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetTextureFilter (b_lean_obj_arg textureRef, uint32_t filter, lean_obj_arg world) {
     SetTextureFilter(lean_raylib_TextureRef_from(textureRef)->texture, filter);
