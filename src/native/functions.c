@@ -2278,40 +2278,56 @@ LEAN_EXPORT uint8_t lean_raylib__CheckCollisionSpheres (b_lean_obj_arg center1, 
     );
 }
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionBoxes (lean_obj_arg box1, lean_obj_arg box2, lean_obj_arg world) {
-//     bool result_ = CheckCollisionBoxes(lean_raylib_BoundingBox_from(box1), lean_raylib_BoundingBox_from(box2));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionBoxes (b_lean_obj_arg box1, b_lean_obj_arg box2) {
+    return CheckCollisionBoxes(lean_raylib_BoundingBox_from(box1), lean_raylib_BoundingBox_from(box2));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__CheckCollisionBoxSphere (lean_obj_arg box, lean_obj_arg center, uint32_t radius, lean_obj_arg world) {
-//     bool result_ = CheckCollisionBoxSphere(lean_raylib_BoundingBox_from(box), lean_raylib_Vector3_from(center), lean_pod_Float32_fromBits(radius));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionBoxSphere (b_lean_obj_arg box, b_lean_obj_arg center, uint32_t radius) {
+    return CheckCollisionBoxSphere(
+        lean_raylib_BoundingBox_from(box),
+        lean_raylib_Vector3_from(center),
+        lean_pod_Float32_fromBits(radius)
+    );
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionSphere (lean_obj_arg ray, lean_obj_arg center, uint32_t radius, lean_obj_arg world) {
-//     RayCollision result_ = GetRayCollisionSphere(lean_raylib_Ray_from(ray), lean_raylib_Vector3_from(center), lean_pod_Float32_fromBits(radius));
-//     return lean_raylib_RayCollision_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionSphere (b_lean_obj_arg ray, b_lean_obj_arg center, uint32_t radius) {
+    return lean_raylib_RayCollision_to(GetRayCollisionSphere(
+        lean_raylib_Ray_from(ray),
+        lean_raylib_Vector3_from(center),
+        lean_pod_Float32_fromBits(radius)
+    ));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionBox (lean_obj_arg ray, lean_obj_arg box, lean_obj_arg world) {
-//     RayCollision result_ = GetRayCollisionBox(lean_raylib_Ray_from(ray), lean_raylib_BoundingBox_from(box));
-//     return lean_raylib_RayCollision_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionBox (b_lean_obj_arg ray, b_lean_obj_arg box) {
+    return lean_raylib_RayCollision_to(GetRayCollisionBox(
+        lean_raylib_Ray_from(ray),
+        lean_raylib_BoundingBox_from(box)
+    ));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionMesh (lean_obj_arg ray, lean_obj_arg mesh, lean_obj_arg transform, lean_obj_arg world) {
+// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionMesh (lean_obj_arg ray, lean_obj_arg mesh, lean_obj_arg transform) {
 //     RayCollision result_ = GetRayCollisionMesh(lean_raylib_Ray_from(ray), lean_raylib_Mesh_from(mesh), lean_raylib_Matrix_from(transform));
 //     return lean_raylib_RayCollision_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionTriangle (lean_obj_arg ray, lean_obj_arg p1, lean_obj_arg p2, lean_obj_arg p3, lean_obj_arg world) {
-//     RayCollision result_ = GetRayCollisionTriangle(lean_raylib_Ray_from(ray), lean_raylib_Vector3_from(p1), lean_raylib_Vector3_from(p2), lean_raylib_Vector3_from(p3));
-//     return lean_raylib_RayCollision_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionTriangle (b_lean_obj_arg ray, b_lean_obj_arg p1, b_lean_obj_arg p2, b_lean_obj_arg p3) {
+    return lean_raylib_RayCollision_to(GetRayCollisionTriangle(
+        lean_raylib_Ray_from(ray),
+        lean_raylib_Vector3_from(p1),
+        lean_raylib_Vector3_from(p2),
+        lean_raylib_Vector3_from(p3)
+    ));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionQuad (lean_obj_arg ray, lean_obj_arg p1, lean_obj_arg p2, lean_obj_arg p3, lean_obj_arg p4, lean_obj_arg world) {
-//     RayCollision result_ = GetRayCollisionQuad(lean_raylib_Ray_from(ray), lean_raylib_Vector3_from(p1), lean_raylib_Vector3_from(p2), lean_raylib_Vector3_from(p3), lean_raylib_Vector3_from(p4));
-//     return lean_raylib_RayCollision_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetRayCollisionQuad (b_lean_obj_arg ray, b_lean_obj_arg p1, b_lean_obj_arg p2, b_lean_obj_arg p3, b_lean_obj_arg p4) {
+    return lean_raylib_RayCollision_to(GetRayCollisionQuad(
+        lean_raylib_Ray_from(ray),
+        lean_raylib_Vector3_from(p1),
+        lean_raylib_Vector3_from(p2),
+        lean_raylib_Vector3_from(p3),
+        lean_raylib_Vector3_from(p4)
+    ));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__InitAudioDevice (lean_obj_arg world) {
     InitAudioDevice();

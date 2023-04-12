@@ -1909,27 +1909,33 @@ opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source
 @[extern "lean_raylib__CheckCollisionSpheres"]
 opaque checkCollisionSpheres (center1 : @& Vector3) (radius1 : Float32) (center2 : @& Vector3) (radius2 : Float32) : Bool
 
--- /-- Check collision between two bounding boxes -/
--- @[extern "lean_raylib__CheckCollisionBoxes"]
--- opaque checkCollisionBoxes (box1 : BoundingBox) (box2 : BoundingBox) : Bool
--- /-- Check collision between box and sphere -/
--- @[extern "lean_raylib__CheckCollisionBoxSphere"]
--- opaque checkCollisionBoxSphere (box : BoundingBox) (center : Vector3) (radius : Float32) : Bool
--- /-- Get collision info between ray and sphere -/
--- @[extern "lean_raylib__GetRayCollisionSphere"]
--- opaque getRayCollisionSphere (ray : Ray) (center : Vector3) (radius : Float32) : RayCollision
--- /-- Get collision info between ray and box -/
--- @[extern "lean_raylib__GetRayCollisionBox"]
--- opaque getRayCollisionBox (ray : Ray) (box : BoundingBox) : RayCollision
+/-- Check collision between two bounding boxes -/
+@[extern "lean_raylib__CheckCollisionBoxes"]
+opaque checkCollisionBoxes (box1 : @& BoundingBox) (box2 : @& BoundingBox) : Bool
+
+/-- Check collision between box and sphere -/
+@[extern "lean_raylib__CheckCollisionBoxSphere"]
+opaque checkCollisionBoxSphere (box : @& BoundingBox) (center : @& Vector3) (radius : Float32) : Bool
+
+/-- Get collision info between ray and sphere -/
+@[extern "lean_raylib__GetRayCollisionSphere"]
+opaque getRayCollisionSphere (ray : @& Ray) (center : @& Vector3) (radius : Float32) : RayCollision
+
+/-- Get collision info between ray and box -/
+@[extern "lean_raylib__GetRayCollisionBox"]
+opaque getRayCollisionBox (ray : @& Ray) (box : @& BoundingBox) : RayCollision
+
 -- /-- Get collision info between ray and mesh -/
 -- @[extern "lean_raylib__GetRayCollisionMesh"]
 -- opaque getRayCollisionMesh (ray : Ray) (mesh : Mesh) (transform : Matrix) : RayCollision
--- /-- Get collision info between ray and triangle -/
--- @[extern "lean_raylib__GetRayCollisionTriangle"]
--- opaque getRayCollisionTriangle (ray : Ray) (p1 : Vector3) (p2 : Vector3) (p3 : Vector3) : RayCollision
--- /-- Get collision info between ray and quad -/
--- @[extern "lean_raylib__GetRayCollisionQuad"]
--- opaque getRayCollisionQuad (ray : Ray) (p1 : Vector3) (p2 : Vector3) (p3 : Vector3) (p4 : Vector3) : RayCollision
+
+/-- Get collision info between ray and triangle -/
+@[extern "lean_raylib__GetRayCollisionTriangle"]
+opaque getRayCollisionTriangle (ray : @& Ray) (p1 : @& Vector3) (p2 : @& Vector3) (p3 : @& Vector3) : RayCollision
+
+/-- Get collision info between ray and quad -/
+@[extern "lean_raylib__GetRayCollisionQuad"]
+opaque getRayCollisionQuad (ray : @& Ray) (p1 : @& Vector3) (p2 : @& Vector3) (p3 : @& Vector3) (p4 : @& Vector3) : RayCollision
 
 /-- Initialize audio device and context -/
 @[extern "lean_raylib__InitAudioDevice"]
