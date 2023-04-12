@@ -258,18 +258,19 @@ opaque endMode3D : BaseIO Unit
 
 /-- Begin drawing to render texture -/
 @[extern "lean_raylib__BeginTextureMode"]
-opaque beginTextureMode (target : @& RenderTexture2D) : BaseIO Unit
+opaque beginTextureMode (target : RenderTexture2D) : BaseIO Unit
 
 /-- Ends drawing to render texture -/
 @[extern "lean_raylib__EndTextureMode"]
 opaque endTextureMode : BaseIO Unit
 
--- /-- Begin custom shader drawing -/
--- @[extern "lean_raylib__BeginShaderMode"]
--- opaque beginShaderMode (shader : Shader) : Unit
--- /-- End custom shader drawing (use default shader) -/
--- @[extern "lean_raylib__EndShaderMode"]
--- opaque endShaderMode (_ : Unit) : Unit
+/-- Begin custom shader drawing -/
+@[extern "lean_raylib__BeginShaderMode"]
+opaque beginShaderMode (shader : Shader) : BaseIO Unit
+
+/-- End custom shader drawing (use default shader) -/
+@[extern "lean_raylib__EndShaderMode"]
+opaque endShaderMode : BaseIO Unit
 
 /-- Begin blending mode (alpha, additive, multiplied, subtract, custom) -/
 @[extern "lean_raylib__BeginBlendMode"]
@@ -303,53 +304,52 @@ opaque loadVrStereoConfig (device : @& VrDeviceInfo) : VrStereoConfig
 @[extern "lean_raylib__UnloadVrStereoConfig"]
 opaque unloadVrStereoConfig (config : @& VrStereoConfig) : BaseIO Unit
 
--- /-- Load shader from files and bind default locations -/
--- @[extern "lean_raylib__LoadShader"]
--- opaque loadShader (vsFileName : String) (fsFileName : String) : Shader
--- /-- Load shader from code strings and bind default locations -/
--- @[extern "lean_raylib__LoadShaderFromMemory"]
--- opaque loadShaderFromMemory (vsCode : String) (fsCode : String) : Shader
--- /-- Check if a shader is ready -/
--- @[extern "lean_raylib__IsShaderReady"]
--- opaque isShaderReady (shader : Shader) : Bool
--- /-- Get shader uniform location -/
--- @[extern "lean_raylib__GetShaderLocation"]
--- opaque getShaderLocation (shader : Shader) (uniformName : String) : Int32
--- /-- Get shader attribute location -/
--- @[extern "lean_raylib__GetShaderLocationAttrib"]
--- opaque getShaderLocationAttrib (shader : Shader) (attribName : String) : Int32
--- /-- Set shader uniform value -/
--- @[extern "lean_raylib__SetShaderValue"]
--- opaque setShaderValue : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | shader : Shader
---   | locIndex : int
---   | value : const void *
---   | uniformType : int
--- -/
--- /-- Set shader uniform value vector -/
--- @[extern "lean_raylib__SetShaderValueV"]
--- opaque setShaderValueV : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | shader : Shader
---   | locIndex : int
---   | value : const void *
---   | uniformType : int
---   | count : int
--- -/
--- /-- Set shader uniform value (matrix 4x4) -/
--- @[extern "lean_raylib__SetShaderValueMatrix"]
--- opaque setShaderValueMatrix (shader : Shader) (locIndex : Int32) (mat : Matrix) : Unit
--- /-- Set shader uniform value for texture (sampler2d) -/
--- @[extern "lean_raylib__SetShaderValueTexture"]
--- opaque setShaderValueTexture (shader : Shader) (locIndex : Int32) (texture : Texture2D) : Unit
--- /-- Unload shader from GPU memory (VRAM) -/
--- @[extern "lean_raylib__UnloadShader"]
--- opaque unloadShader (shader : Shader) : Unit
+/-- Load shader from files and bind default locations -/
+@[extern "lean_raylib__LoadShader"]
+opaque loadShader (vsFileName : @& String) (fsFileName : @& String) : BaseIO Shader
+
+/-- Load shader from code strings and bind default locations -/
+@[extern "lean_raylib__LoadShaderFromMemory"]
+opaque loadShaderFromMemory (vsCode : @& String) (fsCode : @& String) : BaseIO Shader
+
+/-- Check if a shader is ready -/
+@[extern "lean_raylib__IsShaderReady"]
+opaque isShaderReady (shader : @& Shader) : Bool
+
+/-- Get shader uniform location -/
+@[extern "lean_raylib__GetShaderLocation"]
+opaque getShaderLocation (shader : @& Shader) (uniformName : @& String) : Option UInt32
+
+/-- Get shader attribute location -/
+@[extern "lean_raylib__GetShaderLocationAttrib"]
+opaque getShaderLocationAttrib (shader : @& Shader) (attribName : @& String) : Option UInt32
+
+def ShaderUniformDataType.lift : ShaderUniformDataType → Type
+    | ⟨⟨0, _⟩, _⟩ => Float32
+    | ⟨⟨1, _⟩, _⟩ => Vector2
+    | ⟨⟨2, _⟩, _⟩ => Vector3
+    | ⟨⟨3, _⟩, _⟩ => Vector4
+    | ⟨⟨4, _⟩, _⟩ => Int32
+    | ⟨⟨5, _⟩, _⟩ => Int32 × Int32
+    | ⟨⟨6, _⟩, _⟩ => Int32 × Int32 × Int32
+    | ⟨⟨7, _⟩, _⟩ => Int32 × Int32 × Int32 × Int32
+    | ⟨⟨8, _⟩, _⟩ => UInt32
+
+/-- Set shader uniform value -/
+@[extern "lean_raylib__SetShaderValue"]
+opaque setShaderValue (shader : @& Shader) (locIndex : UInt32) (type : ShaderUniformDataType) (value : @& type.lift) : BaseIO Unit
+
+/-- Set shader uniform value vector -/
+@[extern "lean_raylib__SetShaderValueV"]
+opaque setShaderValueV (shader : @& Shader) (locIndex : UInt32) (type : ShaderUniformDataType) (values : @& Array type.lift) : BaseIO Unit
+
+/-- Set shader uniform value (matrix 4x4) -/
+@[extern "lean_raylib__SetShaderValueMatrix"]
+opaque setShaderValueMatrix (shader : @& Shader) (locIndex : UInt32) (mat : @& Matrix) : BaseIO Unit
+
+/-- Set shader uniform value for texture (sampler2d) -/
+@[extern "lean_raylib__SetShaderValueTexture"]
+opaque setShaderValueTexture (shader : @& Shader) (locIndex : UInt32) (texture : @& Texture2D) : BaseIO Unit
 
 /-- Get a ray trace from mouse position -/
 -- IO: uses screen size
@@ -497,10 +497,6 @@ opaque openURL (url : @& String) : BaseIO Unit
 @[extern "lean_raylib__LoadFileData"]
 opaque loadFileData (fileName : @& String) : BaseIO ByteArray
 
-/-- Unload file data allocated by LoadFileData() -/
-@[extern "lean_raylib__UnloadFileData", deprecated]
-opaque unloadFileData (data : @& ByteArray) : Unit
-
 /-- Save data to file from byte array (write), returns true on success -/
 @[extern "lean_raylib__SaveFileData"]
 opaque saveFileData (fileName : @& String) (data : @& ByteArray) (offset : USize := 0) (bytesToWrite : UInt32) : IO Bool
@@ -512,10 +508,6 @@ opaque exportDataAsCode (data : @& ByteArray) (offset : USize := 0) (size : UInt
 /-- Load text data from file (read), returns a ~~'\0' terminated~~ string -/
 @[extern "lean_raylib__LoadFileText"]
 opaque loadFileText (fileName : @& String) : BaseIO String
-
-/-- Unload file text data allocated by LoadFileText() -/
-@[extern "lean_raylib__UnloadFileText", deprecated]
-opaque unloadFileText (text : @& String) : Unit
 
 /-- Save text data to file (write), ~~string must be '\0' terminated~~, returns true on success -/
 @[extern "lean_raylib__SaveFileText"]
@@ -1043,13 +1035,6 @@ opaque loadImageFromScreen : BaseIO Image
 @[extern "lean_raylib__IsImageReady"]
 opaque isImageReady (image : @& Image) : Bool
 
-/--
-Unload image from CPU memory (RAM)
-DEPRECATED: The image will be freed only when its RC becomes zero.
--/
-@[extern "lean_raylib__UnloadImage", deprecated]
-opaque unloadImage (image : @& Image) : Unit
-
 /-- Export image data to file, returns true on success -/
 @[extern "lean_raylib__ExportImage"]
 opaque exportImage (image : @& Image) (fileName : @& String) : BaseIO Bool
@@ -1356,17 +1341,9 @@ opaque loadRenderTexture (width : UInt32) (height : UInt32) : BaseIO RenderTextu
 @[extern "lean_raylib__IsTextureReady"]
 opaque isTextureReady (texture : @& Texture2DRef) : Bool
 
-/-- Unload texture from GPU memory (VRAM) -/
-@[extern "lean_raylib__UnloadTexture", deprecated]
-opaque unloadTexture (texture : @& Texture2D) : Unit
-
 /-- Check if a render texture is ready -/
 @[extern "lean_raylib__IsRenderTextureReady"]
 opaque isRenderTextureReady (target : @& RenderTexture2D) : Bool
-
-/-- Unload render texture from GPU memory (VRAM) -/
-@[extern "lean_raylib__UnloadRenderTexture", deprecated]
-opaque unloadRenderTexture (target : @& RenderTexture2D) : Unit
 
 -- /-- Update GPU texture with new data -/
 -- @[extern "lean_raylib__UpdateTexture"]
@@ -1990,14 +1967,6 @@ opaque isSoundReady (sound : @& Sound) : Bool
 --   | sampleCount : int
 -- -/
 
-/-- Unload wave data -/
-@[extern "lean_raylib__UnloadWave"]
-opaque unloadWave (wave : @& Wave) : Unit
-
-/-- Unload sound -/
-@[extern "lean_raylib__UnloadSound"]
-opaque unloadSound (sound : @& Sound) : Unit
-
 /-- Export wave data to file, returns true on success -/
 @[extern "lean_raylib__ExportWave"]
 opaque exportWave (wave : @& Wave) (fileName : @& String) : BaseIO Bool
@@ -2082,13 +2051,6 @@ opaque loadMusicStreamFromMemory (fileType : @& String) (data : @& ByteArray) : 
 @[extern "lean_raylib__IsMusicReady"]
 opaque isMusicReady (music : @& Music) : Bool
 
-/--
-Unload music stream.
-DEPRECATED: Music will be unloaded only when its RC becomes zero.
--/
-@[extern "lean_raylib__UnloadMusicStream", deprecated]
-opaque unloadMusicStream (music : @& Music) : Unit
-
 /-- Start music playing -/
 @[extern "lean_raylib__PlayMusicStream"]
 opaque playMusicStream (music : @& Music) : BaseIO Unit
@@ -2145,10 +2107,6 @@ opaque loadAudioStream (sampleRate : UInt32) (sampleSize : UInt32) (channels : U
 /-- Checks if an audio stream is ready -/
 @[extern "lean_raylib__IsAudioStreamReady"]
 opaque isAudioStreamReady (stream : @& AudioStream) : Bool
-
-/-- Unload audio stream and free memory -/
-@[extern "lean_raylib__UnloadAudioStream", deprecated]
-opaque unloadAudioStream (stream : @& AudioStream) : Unit
 
 /-- Update audio stream buffers with data. -/
 @[extern "lean_raylib__UpdateAudioStream"]

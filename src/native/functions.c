@@ -87,7 +87,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetWindowIcons (b_lean_obj_arg images_box,
     size_t count = lean_array_size(images_box);
     Image* images_c = malloc(count * sizeof(Image));
     for(size_t i = 0; i < count; ++i) {
-        images_c[i] = *lean_raylib_Image_from(lean_array_uget(images_box, i));
+        images_c[i] = *lean_raylib_Image_from(lean_array_get_core(images_box, i));
     }
     SetWindowIcons(images_c, count);
     free(images_c);
@@ -287,25 +287,46 @@ LEAN_EXPORT lean_obj_res lean_raylib__EndMode3D (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__BeginTextureMode (b_lean_obj_arg target, lean_obj_arg world) {
+
+static lean_object* lean_raylib_currentRenderTexture = NULL;
+
+LEAN_EXPORT lean_obj_res lean_raylib__BeginTextureMode (lean_obj_arg target, lean_obj_arg world) {
     BeginTextureMode(*lean_raylib_RenderTexture_from(target));
+    if(lean_raylib_currentRenderTexture != NULL) {
+        lean_dec_ref(lean_raylib_currentRenderTexture);
+    }
+    lean_raylib_currentRenderTexture = target;
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__EndTextureMode (lean_obj_arg world) {
     EndTextureMode();
+    if(lean_raylib_currentRenderTexture != NULL) {
+        lean_dec_ref(lean_raylib_currentRenderTexture);
+        lean_raylib_currentRenderTexture = NULL;
+    }
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__BeginShaderMode (lean_obj_arg shader, lean_obj_arg world) {
-//     BeginShaderMode(lean_raylib_Shader_from(shader));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+static lean_object* lean_raylib_currentShader = NULL;
 
-// LEAN_EXPORT lean_obj_res lean_raylib__EndShaderMode (lean_obj_arg world) {
-//     EndShaderMode();
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__BeginShaderMode (lean_obj_arg shader, lean_obj_arg world) {
+    BeginShaderMode(*lean_raylib_Shader_from(shader));
+    if(lean_raylib_currentShader != NULL) {
+        lean_dec_ref(lean_raylib_currentShader);
+    }
+    lean_raylib_currentShader = shader;
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__EndShaderMode (lean_obj_arg world) {
+    EndShaderMode();
+    if(lean_raylib_currentShader != NULL) {
+        lean_dec_ref(lean_raylib_currentShader);
+        lean_raylib_currentShader = NULL;
+    }
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__BeginBlendMode (uint32_t mode, lean_obj_arg world) {
     BeginBlendMode(mode);
@@ -347,55 +368,208 @@ LEAN_EXPORT lean_obj_res lean_raylib__UnloadVrStereoConfig (b_lean_obj_arg confi
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (/* const char* */lean_obj_arg vsFileName, /* const char* */lean_obj_arg fsFileName, lean_obj_arg world) {
-//     Shader result_ = LoadShader(lean_string_cstr(vsFileName), lean_string_cstr(fsFileName));
-//     return lean_raylib_Shader_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (b_lean_obj_arg vsFileName, b_lean_obj_arg fsFileName, lean_obj_arg world) {
+    LET_BOX(Shader, shader, LoadShader(lean_string_cstr(vsFileName), lean_string_cstr(fsFileName)));
+    return lean_io_result_mk_ok(lean_raylib_Shader_to(shader));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (/* const char* */lean_obj_arg vsCode, /* const char* */lean_obj_arg fsCode, lean_obj_arg world) {
-//     Shader result_ = LoadShaderFromMemory(lean_string_cstr(vsCode), lean_string_cstr(fsCode));
-//     return lean_raylib_Shader_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (b_lean_obj_arg vsCode, b_lean_obj_arg fsCode, lean_obj_arg world) {
+    LET_BOX(Shader, shader, LoadShaderFromMemory(lean_string_cstr(vsCode), lean_string_cstr(fsCode)));
+    return lean_io_result_mk_ok(lean_raylib_Shader_to(shader));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsShaderReady (lean_obj_arg shader, lean_obj_arg world) {
-//     bool result_ = IsShaderReady(lean_raylib_Shader_from(shader));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsShaderReady (b_lean_obj_arg shader) {
+    return IsShaderReady(*lean_raylib_Shader_from(shader));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetShaderLocation (lean_obj_arg shader, /* const char* */lean_obj_arg uniformName, lean_obj_arg world) {
-//     int result_ = GetShaderLocation(lean_raylib_Shader_from(shader), lean_string_cstr(uniformName));
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__GetShaderLocation (lean_obj_arg shader, b_lean_obj_arg uniformName) {
+    int location = GetShaderLocation(*lean_raylib_Shader_from(shader), lean_string_cstr(uniformName));
+    if (location < 0) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_box_uint32(location));
+    }
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetShaderLocationAttrib (lean_obj_arg shader, /* const char* */lean_obj_arg attribName, lean_obj_arg world) {
-//     int result_ = GetShaderLocationAttrib(lean_raylib_Shader_from(shader), lean_string_cstr(attribName));
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__GetShaderLocationAttrib (b_lean_obj_arg shader, b_lean_obj_arg attribName) {
+    int location = GetShaderLocationAttrib(*lean_raylib_Shader_from(shader), lean_string_cstr(attribName));
+    if (location < 0) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_box_uint32(location));
+    }
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValue (lean_obj_arg shader, uint32_t locIndex, /* const void* */lean_obj_arg value, uint32_t uniformType, lean_obj_arg world) {
-//     SetShaderValue(lean_raylib_Shader_from(shader), locIndex, /*todo: ptr?*/value, uniformType);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValue (b_lean_obj_arg shader_box, uint32_t loc, uint32_t uniformType, b_lean_obj_arg value_box, lean_obj_arg world) {
+    Shader shader = *lean_raylib_Shader_from(shader_box);
+    switch(uniformType) {
+        case SHADER_UNIFORM_FLOAT: {
+            float value = lean_pod_Float32_unbox(value_box);
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_FLOAT);
+            break;
+        }
+        case SHADER_UNIFORM_VEC2: {
+            Vector2 value = lean_raylib_Vector2_from(value_box);
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_VEC2);
+            break;
+        }
+        case SHADER_UNIFORM_VEC3: {
+            Vector3 value = lean_raylib_Vector3_from(value_box);
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_VEC3);
+            break;
+        }
+        case SHADER_UNIFORM_VEC4: {
+            Vector4 value = lean_raylib_Vector4_from(value_box);
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_VEC4);
+            break;
+        }
+        case SHADER_UNIFORM_INT: {
+            int value = lean_unbox_uint32(value_box);
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_INT);
+            break;
+        }
+        case SHADER_UNIFORM_IVEC2: {
+            int value[2];
+            value[0] = lean_unbox_uint32(lean_ctor_get(value_box, 0));
+            value[1] = lean_unbox_uint32(lean_ctor_get(value_box, 1));
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_IVEC2);
+            break;
+        }
+        case SHADER_UNIFORM_IVEC3: {
+            int value[3];
+            value[0] = lean_unbox_uint32(lean_ctor_get(value_box, 0));
+            value[1] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(value_box, 1), 0));
+            value[2] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(value_box, 1), 1));
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_IVEC3);
+            break;
+        }
+        case SHADER_UNIFORM_IVEC4: {
+            int value[4];
+            value[0] = lean_unbox_uint32(lean_ctor_get(value_box, 0));
+            value[1] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(value_box, 1), 0));
+            value[2] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(lean_ctor_get(value_box, 1), 1), 0));
+            value[3] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(lean_ctor_get(value_box, 1), 1), 1));
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_IVEC4);
+            break;
+        }
+        case SHADER_UNIFORM_SAMPLER2D: {
+            uint32_t value = lean_unbox_uint32(value_box);
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_SAMPLER2D);
+            break;
+        }
+    }
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValueV (lean_obj_arg shader, uint32_t locIndex, /* const void* */lean_obj_arg value, uint32_t uniformType, uint32_t count, lean_obj_arg world) {
-//     SetShaderValueV(lean_raylib_Shader_from(shader), locIndex, /*todo: ptr?*/value, uniformType, count);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValueV (b_lean_obj_arg shader_box, uint32_t loc, uint32_t uniformType, b_lean_obj_arg values_box, lean_obj_arg world) {
+    Shader shader = *lean_raylib_Shader_from(shader_box);
+    size_t count = lean_array_size(values_box);
+    switch(uniformType) {
+        case SHADER_UNIFORM_FLOAT: {
+            float* values = malloc(count * sizeof(float));
+            for(size_t i = 0; i < count; ++i) {
+                values[i] = lean_pod_Float32_unbox(lean_array_get_core(values_box, i));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_FLOAT, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_VEC2: {
+            Vector2* values = malloc(count * sizeof(Vector2));
+            for(size_t i = 0; i < count; ++i) {
+                values[i] = lean_raylib_Vector2_from(lean_array_get_core(values_box, i));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_VEC2, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_VEC3: {
+            Vector3* values = malloc(count * sizeof(Vector3));
+            for(size_t i = 0; i < count; ++i) {
+                values[i] = lean_raylib_Vector3_from(lean_array_get_core(values_box, i));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_VEC3, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_VEC4: {
+            Vector4* values = malloc(count * sizeof(Vector4));
+            for(size_t i = 0; i < count; ++i) {
+                values[i] = lean_raylib_Vector4_from(lean_array_get_core(values_box, i));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_VEC4, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_INT: {
+            int* values = malloc(count * sizeof(int));
+            for(size_t i = 0; i < count; ++i) {
+                values[i] = lean_unbox_uint32(lean_array_get_core(values_box, i));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_INT, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_IVEC2: {
+            int* values = malloc(count * sizeof(int[2]));
+            for(size_t i = 0; i < count; ++i) {
+                lean_object* tuple = lean_array_get_core(values_box, i);
+                values[2 * i] = lean_unbox_uint32(lean_ctor_get(tuple, 0));
+                values[2 * i + 1] = lean_unbox_uint32(lean_ctor_get(tuple, 1));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_IVEC2, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_IVEC3: {
+            int* values = malloc(count * sizeof(int[3]));
+            for(size_t i = 0; i < count; ++i) {
+                lean_object* tuple = lean_array_get_core(values_box, i);
+                values[3 * i] = lean_unbox_uint32(lean_ctor_get(tuple, 0));
+                values[3 * i + 1] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(tuple, 1), 0));
+                values[3 * i + 2] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(tuple, 1), 1));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_IVEC3, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_IVEC4: {
+            int* values = malloc(count * sizeof(int[4]));
+            for(size_t i = 0; i < count; ++i) {
+                lean_object* tuple = lean_array_get_core(values_box, i);
+                values[4 * i] = lean_unbox_uint32(lean_ctor_get(tuple, 0));
+                values[4 * i + 1] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(tuple, 1), 0));
+                values[4 * i + 2] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(lean_ctor_get(tuple, 1), 1), 0));
+                values[4 * i + 3] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(lean_ctor_get(tuple, 1), 1), 1));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_IVEC4, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_SAMPLER2D: {
+            uint32_t* values = malloc(count * sizeof(uint32_t));
+            for(size_t i = 0; i < count; ++i) {
+                values[i] = lean_unbox_uint32(lean_array_get_core(values_box, i));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_SAMPLER2D, count);
+            free(values);
+            break;
+        }
+    }
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValueMatrix (lean_obj_arg shader, uint32_t locIndex, lean_obj_arg mat, lean_obj_arg world) {
-//     SetShaderValueMatrix(lean_raylib_Shader_from(shader), locIndex, lean_raylib_Matrix_from(mat));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValueMatrix (b_lean_obj_arg shader, uint32_t locIndex, b_lean_obj_arg mat, lean_obj_arg world) {
+    SetShaderValueMatrix(*lean_raylib_Shader_from(shader), locIndex, lean_raylib_Matrix_from(mat));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValueTexture (lean_obj_arg shader, uint32_t locIndex, lean_obj_arg texture, lean_obj_arg world) {
-//     SetShaderValueTexture(lean_raylib_Shader_from(shader), locIndex, /*cast Texture2D to_lean?false*/(texture));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadShader (lean_obj_arg shader, lean_obj_arg world) {
-//     UnloadShader(lean_raylib_Shader_from(shader));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValueTexture (b_lean_obj_arg shader, uint32_t locIndex, b_lean_obj_arg texture, lean_obj_arg world) {
+    SetShaderValueTexture(*lean_raylib_Shader_from(shader), locIndex, *lean_raylib_Texture_from(texture));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMouseRay (b_lean_obj_arg mousePosition, b_lean_obj_arg camera, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_raylib_Ray_to(
@@ -545,10 +719,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFileData (b_lean_obj_arg fileName) {
     return lean_io_result_mk_ok(arr);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileData (b_lean_obj_arg data) {
-    return lean_box(0);
-}
-
 LEAN_EXPORT lean_obj_res lean_raylib__SaveFileData (b_lean_obj_arg fileName, b_lean_obj_arg data, size_t offset, uint32_t bytesToWrite, lean_obj_arg world) {
     unsigned int size = lean_sarray_elem_size(data);
     if(offset >= size || offset + bytesToWrite > size) {
@@ -574,10 +744,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFileText (b_lean_obj_arg fileName, lea
     lean_object* text_box = lean_mk_string(text);
     UnloadFileText(text);
     return lean_io_result_mk_ok(text_box);
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadFileText (b_lean_obj_arg text) {
-    return lean_box(0);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SaveFileText (b_lean_obj_arg fileName, b_lean_obj_arg text, lean_obj_arg world) {
@@ -944,13 +1110,13 @@ LEAN_EXPORT lean_obj_res lean_raylib__UpdateCameraPro (lean_obj_arg camera_old_b
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetShapesTexture (lean_obj_arg textureRef_box, b_lean_obj_arg source, lean_obj_arg world) {
-    static lean_object* current = NULL;
+    static lean_object* currentShapesTextureOwner = NULL;
     lean_raylib_TextureRef const* textureRef = lean_raylib_TextureRef_from(textureRef_box);
-    if(current != NULL) {
-        lean_dec(current);
-    }
-    current = textureRef->owner;
     SetShapesTexture(textureRef->texture, lean_raylib_Rectangle_from(source));
+    if(currentShapesTextureOwner != NULL) {
+        lean_dec(currentShapesTextureOwner);
+    }
+    currentShapesTextureOwner = textureRef->owner;
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -998,7 +1164,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawLineStrip (b_lean_obj_arg points, uint
     size_t pointCount = lean_array_size(points);
     Vector2* points_c = malloc(pointCount * sizeof(Vector2));
     for(size_t i = 0; i < pointCount; ++i) {
-        points_c[i] = lean_raylib_Vector2_from(lean_array_uget(points, i));
+        points_c[i] = lean_raylib_Vector2_from(lean_array_get_core(points, i));
     }
     DrawLineStrip(points_c, pointCount, lean_raylib_Color_from(color));
     free(points_c);
@@ -1124,7 +1290,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangleFan (b_lean_obj_arg points, ui
     size_t pointCount = lean_array_size(points);
     Vector2* points_c = malloc(pointCount * sizeof(Vector2));
     for(size_t i = 0; i < pointCount; ++i) {
-        points_c[i] = lean_raylib_Vector2_from(lean_array_uget(points, i));
+        points_c[i] = lean_raylib_Vector2_from(lean_array_get_core(points, i));
     }
     DrawTriangleFan(points_c, pointCount, lean_raylib_Color_from(color));
     free(points_c);
@@ -1135,7 +1301,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTriangleStrip (b_lean_obj_arg points, 
     size_t pointCount = lean_array_size(points);
     Vector2* points_c = malloc(pointCount * sizeof(Vector2));
     for(size_t i = 0; i < pointCount; ++i) {
-        points_c[i] = lean_raylib_Vector2_from(lean_array_uget(points, i));
+        points_c[i] = lean_raylib_Vector2_from(lean_array_get_core(points, i));
     }
     DrawTriangleStrip(points_c, pointCount, lean_raylib_Color_from(color));
     free(points_c);
@@ -1222,7 +1388,7 @@ LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointPoly (b_lean_obj_arg point, 
     size_t pointCount = lean_array_size(points);
     Vector2* points_c = malloc(pointCount * sizeof(Vector2));
     for(size_t i = 0; i < pointCount; ++i) {
-        points_c[i] = lean_raylib_Vector2_from(lean_array_uget(points, i));
+        points_c[i] = lean_raylib_Vector2_from(lean_array_get_core(points, i));
     }
     bool result = CheckCollisionPointPoly(lean_raylib_Vector2_from(point), points_c, pointCount);
     free(points_c);
@@ -1312,10 +1478,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromScreen (lean_obj_arg world) {
 
 LEAN_EXPORT uint8_t lean_raylib__IsImageReady (b_lean_obj_arg image) {
     return IsImageReady(*lean_raylib_Image_from(image));
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadImage (b_lean_obj_arg _image) {
-    return lean_box(0);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__ExportImage (b_lean_obj_arg image, b_lean_obj_arg fileName, lean_obj_arg world) {
@@ -1684,16 +1846,8 @@ LEAN_EXPORT uint8_t lean_raylib__IsTextureReady (b_lean_obj_arg textureRef) {
     return IsTextureReady(lean_raylib_TextureRef_from(textureRef)->texture);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadTexture (b_lean_obj_arg texture) {
-    return lean_box(0);
-}
-
 LEAN_EXPORT uint8_t lean_raylib__IsRenderTextureReady (b_lean_obj_arg target) {
     return IsRenderTextureReady(*lean_raylib_RenderTexture_from(target));
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadRenderTexture (b_lean_obj_arg target) {
-    return lean_box(0);
 }
 
 // LEAN_EXPORT lean_obj_res lean_raylib__UpdateTexture (lean_obj_arg texture, /* const void* */lean_obj_arg pixels, lean_obj_arg world) {
@@ -2381,14 +2535,6 @@ LEAN_EXPORT uint8_t lean_raylib__IsSoundReady (b_lean_obj_arg sound) {
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadWave (b_lean_obj_arg wave) {
-    return lean_box(0);
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadSound (b_lean_obj_arg sound) {
-    return lean_box(0);
-}
-
 LEAN_EXPORT lean_obj_res lean_raylib__ExportWave (b_lean_obj_arg wave, b_lean_obj_arg fileName, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(
         ExportWave(*lean_raylib_Wave_from(wave), lean_string_cstr(fileName))
@@ -2496,10 +2642,6 @@ LEAN_EXPORT uint8_t lean_raylib__IsMusicReady (b_lean_obj_arg music) {
     return IsMusicReady(*lean_raylib_Music_from(music));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadMusicStream (lean_obj_arg music) {
-    return lean_box(0);
-}
-
 LEAN_EXPORT lean_obj_res lean_raylib__PlayMusicStream (lean_obj_arg music, lean_obj_arg world) {
     PlayMusicStream(*lean_raylib_Music_from(music));
     return lean_io_result_mk_ok(lean_box(0));
@@ -2568,10 +2710,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (uint32_t sampleRate, uint
 
 LEAN_EXPORT uint8_t lean_raylib__IsAudioStreamReady (lean_obj_arg stream) {
     return IsAudioStreamReady(*lean_raylib_AudioStream_from(stream));
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__UnloadAudioStream (b_lean_obj_arg stream) {
-    return lean_box(0);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateAudioStream (b_lean_obj_arg stream, b_lean_obj_arg data, uint32_t frameCount, lean_obj_arg world) {

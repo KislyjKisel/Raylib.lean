@@ -130,6 +130,12 @@ opaque TextureRef.mipmaps (texture : @& TextureRef) : UInt32
 @[extern "lean_raylib__TextureRef_format"]
 opaque TextureRef.format (texture : @& TextureRef) : PixelFormat
 
+@[extern "lean_raylib__Texture_default"]
+private opaque Texture.default_ : Unit → Texture
+
+/-- Texture used on shapes drawing (usually a white pixel) -/
+def Texture.default : Texture := Texture.default_ ()
+
 
 /-! # Render texture -/
 
@@ -528,35 +534,20 @@ deriving Inhabited, Repr
 
 /-! # Shader -/
 
--- opaque ShaderPointed : NonemptyType
--- /-- Shader -/
--- def Shader : Type := ShaderPointed.type
--- instance : Nonempty Shader := ShaderPointed.property
--- @[extern "lean_raylib__Shader_mk"]
--- opaque Shader.mk : Shader
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | id: unsigned int -- Shader program id
---   | locs: int * -- Shader locations array (RL_MAX_SHADER_LOCATIONS)
--- -/
--- /-- Getter: Shader program id -/
--- @[extern "lean_raylib__Shader_id"]
--- opaque Shader.id (self : @& Shader) : UInt32
--- /-- Setter: Shader program id -/
--- @[extern "lean_raylib__Shader_id_set"]
--- opaque Shader.set_id (id : UInt32) (self : Shader) : Shader
--- /-- Getter: Shader locations array (RL_MAX_SHADER_LOCATIONS) -/
--- @[extern "lean_raylib__Shader_locs"]
--- opaque Shader.locs (self : @& Shader) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Shader locations array (RL_MAX_SHADER_LOCATIONS) -/
--- @[extern "lean_raylib__Shader_locs_set"]
--- opaque Shader.set_locs (locs : Unit) (self : Shader) : Shader
--- /-
--- todo: ^^ struct setter ^^
--- -/
+opaque ShaderPointed : NonemptyType
+def Shader : Type := ShaderPointed.type
+instance : Nonempty Shader := ShaderPointed.property
+
+/-- Shader program id -/
+@[extern "lean_raylib__Shader_id"]
+opaque Shader.id (self : @& Shader) : UInt32
+
+/-- Shader locations array -/
+@[extern "lean_raylib__Shader_locs"]
+opaque Shader.locs (self : @& Shader) : Array UInt32
+
+@[extern "lean_raylib__Shader_defaultLoc"]
+opaque Shader.defaultLoc (self : @& Shader) (index : ShaderLocationIndex) : Option UInt32
 
 
 /-! # Material map -/

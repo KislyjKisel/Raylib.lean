@@ -270,17 +270,28 @@ static inline Camera2D lean_raylib_Camera2D_from (b_lean_obj_arg obj) {
 //     return (Mesh const*) lean_get_external_data(obj);
 // }
 
-// static inline lean_object* lean_raylib_Shader_to (Shader const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
 
-// static inline Shader const* lean_raylib_Shader_from (b_lean_obj_arg obj) {
-//     return (Shader const*) lean_get_external_data(obj);
-// }
+// # Shader
+
+static void lean_raylib_Shader_finalize(void* shader) {
+    UnloadShader(*(Shader*)shader);
+    free(shader);
+}
+
+static inline lean_object* lean_raylib_Shader_to (Shader const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Shader_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline Shader const* lean_raylib_Shader_from (b_lean_obj_arg obj) {
+    return (Shader const*) lean_get_external_data(obj);
+}
+
+
+// # Material map
 
 // static inline lean_object* lean_raylib_MaterialMap_to (MaterialMap const* obj) {
 //     static lean_external_class* class_ = NULL;

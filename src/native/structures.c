@@ -1,5 +1,6 @@
 #include <memory.h>
 #include "util.h"
+#include <rlgl.h>
 #include "structures.h"
 
 // # Image
@@ -88,6 +89,11 @@ LEAN_EXPORT uint32_t lean_raylib__TextureRef_mipmaps(b_lean_obj_arg obj) {
 
 LEAN_EXPORT uint32_t lean_raylib__TextureRef_format(b_lean_obj_arg obj) {
     return lean_raylib_TextureRef_from(obj)->texture.format;
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__Texture_default() {
+    LET_BOX(Texture, texture, (Texture){0});
+    return lean_raylib_Texture_to(texture);
 }
 
 
@@ -551,35 +557,36 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_layout_set(uint32_t layout, lea
 //     return lean_raylib_Mesh_to(result_);
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Shader_mk(uint32_t id, /* int* */lean_obj_arg locs) {
-//     LET_BOX_STRUCT(Shader, result_,
-//         .id = id,
-//         .locs = /*todo: ptr?*/locs
-//     );
-//     return lean_raylib_Shader_to(result_);
-// }
 
-// LEAN_EXPORT uint32_t lean_raylib__Shader_id(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Shader_from(obj)->id;
-//     return result_;
-// }
+// # Shader
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Shader_id_set(uint32_t id, b_lean_obj_arg obj) {
-//     LET_BOX(Shader, result_, *lean_raylib_Shader_from(obj));
-//     result_->id = id;
-//     return lean_raylib_Shader_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Shader_id(b_lean_obj_arg shader) {
+    return lean_raylib_Shader_from(shader)->id;
+}
 
-// LEAN_EXPORT /* int* */lean_obj_arg lean_raylib__Shader_locs(b_lean_obj_arg obj) {
-//     int * result_ = lean_raylib_Shader_from(obj)->locs;
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Shader_locs(b_lean_obj_arg shader) {
+    int* locs_c = lean_raylib_Shader_from(shader)->locs;
+    lean_object* locs_lean = lean_alloc_array(0, 2);
+    for(size_t i = 0; i < RL_MAX_SHADER_LOCATIONS; ++i) {
+        if(locs_c[i] >= 0) {
+            lean_array_push(locs_lean, lean_box_uint32(locs_c[i]));
+        }
+    }
+    return locs_lean;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Shader_locs_set(/* int* */lean_obj_arg locs, b_lean_obj_arg obj) {
-//     LET_BOX(Shader, result_, *lean_raylib_Shader_from(obj));
-//     result_->locs = /*todo: ptr?*/locs;
-//     return lean_raylib_Shader_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Shader_defaultLoc(b_lean_obj_arg shader, uint32_t index) {
+    int location = lean_raylib_Shader_from(shader)->locs[index];
+    if (location < 0) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_box_uint32(location));
+    }
+}
+
+
+// # Material map
 
 // LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_mk(lean_obj_arg texture, uint32_t color, uint32_t value) {
 //     LET_BOX_STRUCT(MaterialMap, result_,
