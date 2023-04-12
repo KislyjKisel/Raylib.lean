@@ -76,15 +76,15 @@ static inline lean_object* lean_raylib_Image_to (Image const* obj) {
     return lean_alloc_external(class_, (void*)obj);
 }
 
-// /// Decrements RC and returns image. Makes a copy if the ref is not exclusive.
-// static inline Image lean_raylib_Image_from_own(lean_obj_arg image_box) {
-//     Image image = *lean_raylib_Image_from(image_box);
-//     if (!lean_is_exclusive(image_box)) {
-//         image = ImageCopy(image);
-//     }
-//     lean_dec_ref(image_box);
-//     return image;
-// }
+static inline lean_obj_res lean_raylib_Image_exclusive(lean_obj_arg image_box) {
+    if (LEAN_LIKELY(lean_is_exclusive(image_box))) {
+        return image_box;
+    }
+    LET_BOX(Image, image_copy, ImageCopy(*lean_raylib_Image_from(image_box)));
+    lean_object* image_copy_box = lean_raylib_Image_to(image_copy);
+    lean_dec_ref(image_box);
+    return image_copy_box;
+}
 
 
 // # Texture

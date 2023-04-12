@@ -1385,257 +1385,279 @@ LEAN_EXPORT lean_obj_res lean_raylib__ImageFromImage (b_lean_obj_arg image, b_le
     return lean_raylib_Image_to(image_copy);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__ImageText (b_lean_obj_arg text, uint32_t fontSize, uint32_t color, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__ImageText (b_lean_obj_arg text, uint32_t fontSize, uint32_t color) {
     LET_BOX(Image, image, ImageText(lean_string_cstr(text), fontSize, lean_raylib_Color_from(color)));
     return lean_raylib_Image_to(image);
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
+// LEAN_EXPORT lean_obj_res lean_raylib__ImageTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, uint32_t fontSize, uint32_t spacing, uint32_t tint) {
 //     Image result_ = ImageTextEx(lean_raylib_Font_from(font), lean_string_cstr(text), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
 //     return lean_raylib_Image_to(result_);
 // }
 
 LEAN_EXPORT lean_obj_res lean_raylib__ImageFormat (lean_obj_arg image_old_box, uint32_t newFormat) {
-    lean_object* lean_res_box;
-    if (lean_is_exclusive(image_old_box)) {
-        lean_res_box = image_old_box;
-    }
-    else {
-        LET_BOX(Image, image_res, ImageCopy(*lean_raylib_Image_from(image_old_box)));
-        lean_dec_ref(image_old_box);
-        lean_res_box = lean_raylib_Image_to(image_res);
-    }
-    ImageFormat(lean_raylib_Image_from(lean_res_box), newFormat);
-    return lean_res_box;
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageFormat(lean_raylib_Image_from(image_res_box), newFormat);
+    return image_res_box;
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__ImageToPOT (lean_obj_arg image_old_box, uint32_t fill) {
-    lean_object* lean_res_box;
-    if (lean_is_exclusive(image_old_box)) {
-        lean_res_box = image_old_box;
-    }
-    else {
-        LET_BOX(Image, image_res, ImageCopy(*lean_raylib_Image_from(image_old_box)));
-        lean_dec_ref(image_old_box);
-        lean_res_box = lean_raylib_Image_to(image_res);
-    }
-    ImageToPOT(lean_raylib_Image_from(lean_res_box), lean_raylib_Color_from(fill));
-    return lean_res_box;
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageToPOT(lean_raylib_Image_from(image_res_box), lean_raylib_Color_from(fill));
+    return image_res_box;
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageCrop (/* Image* */lean_obj_arg image, lean_obj_arg crop, lean_obj_arg world) {
-//     ImageCrop(/*todo: ptr?*/image, lean_raylib_Rectangle_from(crop));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageCrop (lean_obj_arg image_old_box, b_lean_obj_arg crop) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageCrop(lean_raylib_Image_from(image_res_box), lean_raylib_Rectangle_from(crop));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageAlphaCrop (/* Image* */lean_obj_arg image, uint32_t threshold) {
-//     ImageAlphaCrop(/*todo: ptr?*/image, lean_pod_Float32_fromBits(threshold));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageAlphaCrop (lean_obj_arg image_old_box, uint32_t threshold) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageAlphaCrop(lean_raylib_Image_from(image_res_box), lean_pod_Float32_fromBits(threshold));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageAlphaClear (/* Image* */lean_obj_arg image, uint32_t color, uint32_t threshold) {
-//     ImageAlphaClear(/*todo: ptr?*/image, lean_raylib_Color_from(color), lean_pod_Float32_fromBits(threshold));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageAlphaClear (lean_obj_arg image_old_box, uint32_t color, uint32_t threshold) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageAlphaClear(lean_raylib_Image_from(image_res_box), lean_raylib_Color_from(color), lean_pod_Float32_fromBits(threshold));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageAlphaMask (/* Image* */lean_obj_arg image, lean_obj_arg alphaMask, lean_obj_arg world) {
-//     ImageAlphaMask(/*todo: ptr?*/image, lean_raylib_Image_from(alphaMask));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageAlphaMask (lean_obj_arg image_old_box, b_lean_obj_arg alphaMask) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageAlphaMask(lean_raylib_Image_from(image_res_box), *lean_raylib_Image_from(alphaMask));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageAlphaPremultiply (/* Image* */lean_obj_arg image, lean_obj_arg world) {
-//     ImageAlphaPremultiply(/*todo: ptr?*/image);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageAlphaPremultiply (lean_obj_arg image_old_box) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageAlphaPremultiply(lean_raylib_Image_from(image_res_box));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageBlurGaussian (/* Image* */lean_obj_arg image, uint32_t blurSize, lean_obj_arg world) {
-//     ImageBlurGaussian(/*todo: ptr?*/image, blurSize);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageBlurGaussian (lean_obj_arg image_old_box, uint32_t blurSize) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageBlurGaussian(lean_raylib_Image_from(image_res_box), blurSize);
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageResize (/* Image* */lean_obj_arg image, uint32_t newWidth, uint32_t newHeight, lean_obj_arg world) {
-//     ImageResize(/*todo: ptr?*/image, newWidth, newHeight);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageResize (lean_obj_arg image_old_box, uint32_t newWidth, uint32_t newHeight) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageResize(lean_raylib_Image_from(image_res_box), newWidth, newHeight);
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageResizeNN (/* Image* */lean_obj_arg image, uint32_t newWidth, uint32_t newHeight, lean_obj_arg world) {
-//     ImageResizeNN(/*todo: ptr?*/image, newWidth, newHeight);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageResizeNN (lean_obj_arg image_old_box, uint32_t newWidth, uint32_t newHeight) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageResizeNN(lean_raylib_Image_from(image_res_box), newWidth, newHeight);
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageResizeCanvas (/* Image* */lean_obj_arg image, uint32_t newWidth, uint32_t newHeight, uint32_t offsetX, uint32_t offsetY, uint32_t fill, lean_obj_arg world) {
-//     ImageResizeCanvas(/*todo: ptr?*/image, newWidth, newHeight, offsetX, offsetY, lean_raylib_Color_from(fill));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageResizeCanvas (lean_obj_arg image_old_box, uint32_t newWidth, uint32_t newHeight, uint32_t offsetX, uint32_t offsetY, uint32_t fill) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageResizeCanvas(lean_raylib_Image_from(image_res_box), newWidth, newHeight, offsetX, offsetY, lean_raylib_Color_from(fill));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageMipmaps (/* Image* */lean_obj_arg image, lean_obj_arg world) {
-//     ImageMipmaps(/*todo: ptr?*/image);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageMipmaps (lean_obj_arg image_old_box) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageMipmaps(lean_raylib_Image_from(image_res_box));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDither (/* Image* */lean_obj_arg image, uint32_t rBpp, uint32_t gBpp, uint32_t bBpp, uint32_t aBpp, lean_obj_arg world) {
-//     ImageDither(/*todo: ptr?*/image, rBpp, gBpp, bBpp, aBpp);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDither (lean_obj_arg image_old_box, uint32_t rBpp, uint32_t gBpp, uint32_t bBpp, uint32_t aBpp) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDither(lean_raylib_Image_from(image_res_box), rBpp, gBpp, bBpp, aBpp);
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageFlipVertical (/* Image* */lean_obj_arg image, lean_obj_arg world) {
-//     ImageFlipVertical(/*todo: ptr?*/image);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageFlipVertical (lean_obj_arg image_old_box) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageFlipVertical(lean_raylib_Image_from(image_res_box));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageFlipHorizontal (/* Image* */lean_obj_arg image, lean_obj_arg world) {
-//     ImageFlipHorizontal(/*todo: ptr?*/image);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageFlipHorizontal (lean_obj_arg image_old_box) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageFlipHorizontal(lean_raylib_Image_from(image_res_box));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageRotateCW (/* Image* */lean_obj_arg image, lean_obj_arg world) {
-//     ImageRotateCW(/*todo: ptr?*/image);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageRotateCW (lean_obj_arg image_old_box) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageRotateCW(lean_raylib_Image_from(image_res_box));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageRotateCCW (/* Image* */lean_obj_arg image, lean_obj_arg world) {
-//     ImageRotateCCW(/*todo: ptr?*/image);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageRotateCCW (lean_obj_arg image_old_box) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageRotateCCW(lean_raylib_Image_from(image_res_box));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageColorTint (/* Image* */lean_obj_arg image, uint32_t color, lean_obj_arg world) {
-//     ImageColorTint(/*todo: ptr?*/image, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageColorTint (lean_obj_arg image_old_box, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageColorTint(lean_raylib_Image_from(image_res_box), lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageColorInvert (/* Image* */lean_obj_arg image, lean_obj_arg world) {
-//     ImageColorInvert(/*todo: ptr?*/image);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageColorInvert (lean_obj_arg image_old_box) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageColorInvert(lean_raylib_Image_from(image_res_box));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageColorGrayscale (/* Image* */lean_obj_arg image, lean_obj_arg world) {
-//     ImageColorGrayscale(/*todo: ptr?*/image);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageColorGrayscale (lean_obj_arg image_old_box) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageColorGrayscale(lean_raylib_Image_from(image_res_box));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageColorContrast (/* Image* */lean_obj_arg image, uint32_t contrast, lean_obj_arg world) {
-//     ImageColorContrast(/*todo: ptr?*/image, lean_pod_Float32_fromBits(contrast));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageColorContrast (lean_obj_arg image_old_box, uint32_t contrast) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageColorContrast(lean_raylib_Image_from(image_res_box), lean_pod_Float32_fromBits(contrast));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageColorBrightness (/* Image* */lean_obj_arg image, uint32_t brightness, lean_obj_arg world) {
-//     ImageColorBrightness(/*todo: ptr?*/image, brightness);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageColorBrightness (lean_obj_arg image_old_box, uint32_t brightness) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageColorBrightness(lean_raylib_Image_from(image_res_box), brightness);
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageColorReplace (/* Image* */lean_obj_arg image, uint32_t color, uint32_t replace, lean_obj_arg world) {
-//     ImageColorReplace(/*todo: ptr?*/image, lean_raylib_Color_from(color), lean_raylib_Color_from(replace));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageColorReplace (lean_obj_arg image_old_box, uint32_t color, uint32_t replace) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageColorReplace(lean_raylib_Image_from(image_res_box), lean_raylib_Color_from(color), lean_raylib_Color_from(replace));
+    return image_res_box;
+}
 
-// LEAN_EXPORT /* Color* */lean_obj_arg lean_raylib__LoadImageColors (lean_obj_arg image, lean_obj_arg world) {
+// LEAN_EXPORT /* Color* */lean_obj_arg lean_raylib__LoadImageColors (lean_obj_arg image_old_box) {
 //     Color * result_ = LoadImageColors(lean_raylib_Image_from(image));
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT /* Color* */lean_obj_arg lean_raylib__LoadImagePalette (lean_obj_arg image, uint32_t maxPaletteSize, /* int* */lean_obj_arg colorCount, lean_obj_arg world) {
+// LEAN_EXPORT /* Color* */lean_obj_arg lean_raylib__LoadImagePalette (lean_obj_arg image_old_box, uint32_t maxPaletteSize, /* int* */lean_obj_arg colorCount) {
 //     Color * result_ = LoadImagePalette(lean_raylib_Image_from(image), maxPaletteSize, /*todo: ptr?*/colorCount);
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadImageColors (/* Color* */lean_obj_arg colors, lean_obj_arg world) {
+// LEAN_EXPORT lean_obj_res lean_raylib__UnloadImageColors (/* Color* */lean_obj_arg colors) {
 //     UnloadImageColors(/*todo: ptr?*/colors);
-//     return lean_io_result_mk_ok(lean_box(0));
+//     return image_res_box;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadImagePalette (/* Color* */lean_obj_arg colors, lean_obj_arg world) {
+// LEAN_EXPORT lean_obj_res lean_raylib__UnloadImagePalette (/* Color* */lean_obj_arg colors) {
 //     UnloadImagePalette(/*todo: ptr?*/colors);
-//     return lean_io_result_mk_ok(lean_box(0));
+//     return image_res_box;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetImageAlphaBorder (lean_obj_arg image, uint32_t threshold) {
-//     Rectangle result_ = GetImageAlphaBorder(lean_raylib_Image_from(image), lean_pod_Float32_fromBits(threshold));
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetImageAlphaBorder (b_lean_obj_arg image, uint32_t threshold) {
+    return lean_raylib_Rectangle_to(GetImageAlphaBorder(
+        *lean_raylib_Image_from(image),
+        lean_pod_Float32_fromBits(threshold)
+    ));
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GetImageColor (lean_obj_arg image, uint32_t x, uint32_t y, lean_obj_arg world) {
-//     Color result_ = GetImageColor(lean_raylib_Image_from(image), x, y);
-//     return lean_raylib_Color_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__GetImageColor (lean_obj_arg image, uint32_t x, uint32_t y) {
+    return lean_raylib_Color_to(GetImageColor(*lean_raylib_Image_from(image), x, y));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageClearBackground (/* Image* */lean_obj_arg dst, uint32_t color, lean_obj_arg world) {
-//     ImageClearBackground(/*todo: ptr?*/dst, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageClearBackground (lean_obj_arg image_old_box, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageClearBackground(lean_raylib_Image_from(image_res_box), lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawPixel (/* Image* */lean_obj_arg dst, uint32_t posX, uint32_t posY, uint32_t color, lean_obj_arg world) {
-//     ImageDrawPixel(/*todo: ptr?*/dst, posX, posY, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawPixel (lean_obj_arg image_old_box, uint32_t posX, uint32_t posY, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawPixel(lean_raylib_Image_from(image_res_box), posX, posY, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawPixelV (/* Image* */lean_obj_arg dst, lean_obj_arg position, uint32_t color, lean_obj_arg world) {
-//     ImageDrawPixelV(/*todo: ptr?*/dst, lean_raylib_Vector2_from(position), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawPixelV (lean_obj_arg image_old_box, b_lean_obj_arg position, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawPixelV(lean_raylib_Image_from(image_res_box), lean_raylib_Vector2_from(position), lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawLine (/* Image* */lean_obj_arg dst, uint32_t startPosX, uint32_t startPosY, uint32_t endPosX, uint32_t endPosY, uint32_t color, lean_obj_arg world) {
-//     ImageDrawLine(/*todo: ptr?*/dst, startPosX, startPosY, endPosX, endPosY, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawLine (lean_obj_arg image_old_box, uint32_t startPosX, uint32_t startPosY, uint32_t endPosX, uint32_t endPosY, uint32_t color, lean_obj_arg world) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawLine(lean_raylib_Image_from(image_res_box), startPosX, startPosY, endPosX, endPosY, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawLineV (/* Image* */lean_obj_arg dst, lean_obj_arg start, lean_obj_arg end, uint32_t color, lean_obj_arg world) {
-//     ImageDrawLineV(/*todo: ptr?*/dst, lean_raylib_Vector2_from(start), lean_raylib_Vector2_from(end), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawLineV (lean_obj_arg image_old_box, b_lean_obj_arg start, b_lean_obj_arg end, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawLineV(lean_raylib_Image_from(image_res_box), lean_raylib_Vector2_from(start), lean_raylib_Vector2_from(end), lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawCircle (/* Image* */lean_obj_arg dst, uint32_t centerX, uint32_t centerY, uint32_t radius, uint32_t color, lean_obj_arg world) {
-//     ImageDrawCircle(/*todo: ptr?*/dst, centerX, centerY, radius, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawCircle (lean_obj_arg image_old_box, uint32_t centerX, uint32_t centerY, uint32_t radius, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawCircle(lean_raylib_Image_from(image_res_box), centerX, centerY, radius, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawCircleV (/* Image* */lean_obj_arg dst, lean_obj_arg center, uint32_t radius, uint32_t color, lean_obj_arg world) {
-//     ImageDrawCircleV(/*todo: ptr?*/dst, lean_raylib_Vector2_from(center), radius, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawCircleV (lean_obj_arg image_old_box, b_lean_obj_arg center, uint32_t radius, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawCircleV(lean_raylib_Image_from(image_res_box), lean_raylib_Vector2_from(center), radius, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawCircleLines (/* Image* */lean_obj_arg dst, uint32_t centerX, uint32_t centerY, uint32_t radius, uint32_t color, lean_obj_arg world) {
-//     ImageDrawCircleLines(/*todo: ptr?*/dst, centerX, centerY, radius, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawCircleLines (lean_obj_arg image_old_box, uint32_t centerX, uint32_t centerY, uint32_t radius, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawCircleLines(lean_raylib_Image_from(image_res_box), centerX, centerY, radius, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawCircleLinesV (/* Image* */lean_obj_arg dst, lean_obj_arg center, uint32_t radius, uint32_t color, lean_obj_arg world) {
-//     ImageDrawCircleLinesV(/*todo: ptr?*/dst, lean_raylib_Vector2_from(center), radius, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawCircleLinesV (lean_obj_arg image_old_box, b_lean_obj_arg center, uint32_t radius, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawCircleLinesV(lean_raylib_Image_from(image_res_box), lean_raylib_Vector2_from(center), radius, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawRectangle (/* Image* */lean_obj_arg dst, uint32_t posX, uint32_t posY, uint32_t width, uint32_t height, uint32_t color, lean_obj_arg world) {
-//     ImageDrawRectangle(/*todo: ptr?*/dst, posX, posY, width, height, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawRectangle (lean_obj_arg image_old_box, uint32_t posX, uint32_t posY, uint32_t width, uint32_t height, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawRectangle(lean_raylib_Image_from(image_res_box), posX, posY, width, height, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawRectangleV (/* Image* */lean_obj_arg dst, lean_obj_arg position, lean_obj_arg size, uint32_t color, lean_obj_arg world) {
-//     ImageDrawRectangleV(/*todo: ptr?*/dst, lean_raylib_Vector2_from(position), lean_raylib_Vector2_from(size), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawRectangleV (lean_obj_arg image_old_box, b_lean_obj_arg position, b_lean_obj_arg size, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawRectangleV(lean_raylib_Image_from(image_res_box), lean_raylib_Vector2_from(position), lean_raylib_Vector2_from(size), lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawRectangleRec (/* Image* */lean_obj_arg dst, lean_obj_arg rec, uint32_t color, lean_obj_arg world) {
-//     ImageDrawRectangleRec(/*todo: ptr?*/dst, lean_raylib_Rectangle_from(rec), lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawRectangleRec (lean_obj_arg image_old_box, b_lean_obj_arg rec, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawRectangleRec(lean_raylib_Image_from(image_res_box), lean_raylib_Rectangle_from(rec), lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawRectangleLines (/* Image* */lean_obj_arg dst, lean_obj_arg rec, uint32_t thick, uint32_t color, lean_obj_arg world) {
-//     ImageDrawRectangleLines(/*todo: ptr?*/dst, lean_raylib_Rectangle_from(rec), thick, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawRectangleLines (lean_obj_arg image_old_box, b_lean_obj_arg rec, uint32_t thick, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawRectangleLines(lean_raylib_Image_from(image_res_box), lean_raylib_Rectangle_from(rec), thick, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDraw (/* Image* */lean_obj_arg dst, lean_obj_arg src, lean_obj_arg srcRec, lean_obj_arg dstRec, uint32_t tint, lean_obj_arg world) {
-//     ImageDraw(/*todo: ptr?*/dst, lean_raylib_Image_from(src), lean_raylib_Rectangle_from(srcRec), lean_raylib_Rectangle_from(dstRec), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDraw (lean_obj_arg image_old_box, b_lean_obj_arg src, b_lean_obj_arg srcRec, b_lean_obj_arg dstRec, uint32_t tint) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDraw(lean_raylib_Image_from(image_res_box), *lean_raylib_Image_from(src), lean_raylib_Rectangle_from(srcRec), lean_raylib_Rectangle_from(dstRec), lean_raylib_Color_from(tint));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawText (/* Image* */lean_obj_arg dst, /* const char* */lean_obj_arg text, uint32_t posX, uint32_t posY, uint32_t fontSize, uint32_t color, lean_obj_arg world) {
-//     ImageDrawText(/*todo: ptr?*/dst, lean_string_cstr(text), posX, posY, fontSize, lean_raylib_Color_from(color));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawText (lean_obj_arg image_old_box, b_lean_obj_arg text, uint32_t posX, uint32_t posY, uint32_t fontSize, uint32_t color) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawText(lean_raylib_Image_from(image_res_box), lean_string_cstr(text), posX, posY, fontSize, lean_raylib_Color_from(color));
+    return image_res_box;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawTextEx (/* Image* */lean_obj_arg dst, lean_obj_arg font, /* const char* */lean_obj_arg text, lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
-//     ImageDrawTextEx(/*todo: ptr?*/dst, lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
+// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawTextEx (lean_obj_arg image_old_box, lean_obj_arg font, /* const char* */lean_obj_arg text, lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint) {
+//     lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+//     ImageDrawTextEx(lean_raylib_Image_from(image_res_box), lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+//     return image_res_box;
 // }
 
 LEAN_EXPORT lean_obj_res lean_raylib__LoadTexture (b_lean_obj_arg fileName, lean_obj_arg world) {

@@ -1120,198 +1120,103 @@ opaque imageFormat (image : Image) (newFormat : PixelFormat) : Image
 @[extern "lean_raylib__ImageToPOT"]
 opaque imageToPOT (image : Image) (fill : Color) : Image
 
--- /-- Crop an image to a defined rectangle -/
--- @[extern "lean_raylib__ImageCrop"]
--- opaque imageCrop : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | crop : Rectangle
--- -/
--- /-- Crop image depending on alpha value -/
--- @[extern "lean_raylib__ImageAlphaCrop"]
--- opaque imageAlphaCrop : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | threshold : float
--- -/
--- /-- Clear alpha channel to desired color -/
--- @[extern "lean_raylib__ImageAlphaClear"]
--- opaque imageAlphaClear : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | color : Color
---   | threshold : float
--- -/
--- /-- Apply alpha mask to image -/
--- @[extern "lean_raylib__ImageAlphaMask"]
--- opaque imageAlphaMask : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | alphaMask : Image
--- -/
--- /-- Premultiply alpha channel -/
--- @[extern "lean_raylib__ImageAlphaPremultiply"]
--- opaque imageAlphaPremultiply : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
--- -/
--- /-- Apply Gaussian blur using a box blur approximation -/
--- @[extern "lean_raylib__ImageBlurGaussian"]
--- opaque imageBlurGaussian : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | blurSize : int
--- -/
--- /-- Resize image (Bicubic scaling algorithm) -/
--- @[extern "lean_raylib__ImageResize"]
--- opaque imageResize : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | newWidth : int
---   | newHeight : int
--- -/
--- /-- Resize image (Nearest-Neighbor scaling algorithm) -/
--- @[extern "lean_raylib__ImageResizeNN"]
--- opaque imageResizeNN : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | newWidth : int
---   | newHeight : int
--- -/
--- /-- Resize canvas and fill with color -/
--- @[extern "lean_raylib__ImageResizeCanvas"]
--- opaque imageResizeCanvas : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | newWidth : int
---   | newHeight : int
---   | offsetX : int
---   | offsetY : int
---   | fill : Color
--- -/
--- /-- Compute all mipmap levels for a provided image -/
--- @[extern "lean_raylib__ImageMipmaps"]
--- opaque imageMipmaps : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
--- -/
--- /-- Dither image data to 16bpp or lower (Floyd-Steinberg dithering) -/
--- @[extern "lean_raylib__ImageDither"]
--- opaque imageDither : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | rBpp : int
---   | gBpp : int
---   | bBpp : int
---   | aBpp : int
--- -/
--- /-- Flip image vertically -/
--- @[extern "lean_raylib__ImageFlipVertical"]
--- opaque imageFlipVertical : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
--- -/
--- /-- Flip image horizontally -/
--- @[extern "lean_raylib__ImageFlipHorizontal"]
--- opaque imageFlipHorizontal : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
--- -/
--- /-- Rotate image clockwise 90deg -/
--- @[extern "lean_raylib__ImageRotateCW"]
--- opaque imageRotateCW : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
--- -/
--- /-- Rotate image counter-clockwise 90deg -/
--- @[extern "lean_raylib__ImageRotateCCW"]
--- opaque imageRotateCCW : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
--- -/
--- /-- Modify image color: tint -/
--- @[extern "lean_raylib__ImageColorTint"]
--- opaque imageColorTint : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | color : Color
--- -/
--- /-- Modify image color: invert -/
--- @[extern "lean_raylib__ImageColorInvert"]
--- opaque imageColorInvert : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
--- -/
--- /-- Modify image color: grayscale -/
--- @[extern "lean_raylib__ImageColorGrayscale"]
--- opaque imageColorGrayscale : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
--- -/
--- /-- Modify image color: contrast (-100 to 100) -/
--- @[extern "lean_raylib__ImageColorContrast"]
--- opaque imageColorContrast : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | contrast : float
--- -/
--- /-- Modify image color: brightness (-255 to 255) -/
--- @[extern "lean_raylib__ImageColorBrightness"]
--- opaque imageColorBrightness : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | brightness : int
--- -/
--- /-- Modify image color: replace color -/
--- @[extern "lean_raylib__ImageColorReplace"]
--- opaque imageColorReplace : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | image : Image *
---   | color : Color
---   | replace : Color
--- -/
+/-- Crop an image to a defined rectangle -/
+@[extern "lean_raylib__ImageCrop"]
+opaque imageCrop (image : Image) (crop : @& Rectangle) : Image
+
+/-- Crop image depending on alpha value -/
+@[extern "lean_raylib__ImageAlphaCrop"]
+opaque imageAlphaCrop (image : Image) (threshold : Float32) : Image
+
+/-- Clear alpha channel to desired color -/
+@[extern "lean_raylib__ImageAlphaClear"]
+opaque imageAlphaClear (image : Image) (color : Color) (threshold : Float32) : Image
+
+/-- Apply alpha mask to image -/
+@[extern "lean_raylib__ImageAlphaMask"]
+opaque imageAlphaMask (image : Image) (alphaMask : @& Image) : Image
+
+/-- Premultiply alpha channel -/
+@[extern "lean_raylib__ImageAlphaPremultiply"]
+opaque imageAlphaPremultiply (image : Image) : Image
+
+/-- Apply Gaussian blur using a box blur approximation -/
+@[extern "lean_raylib__ImageBlurGaussian"]
+opaque imageBlurGaussian (image : Image) (blurSize : UInt32) : Image
+
+/-- Resize image (Bicubic scaling algorithm) -/
+@[extern "lean_raylib__ImageResize"]
+opaque imageResize (image : Image) (newWidth : UInt32) (newHeight : UInt32) : Image
+
+/-- Resize image (Nearest-Neighbor scaling algorithm) -/
+@[extern "lean_raylib__ImageResizeNN"]
+opaque imageResizeNN (image : Image) (newWidth : UInt32) (newHeight : UInt32) : Image
+
+/-- Resize canvas and fill with color -/
+@[extern "lean_raylib__ImageResizeCanvas"]
+opaque imageResizeCanvas
+  (image : Image)
+  (newWidth : UInt32)
+  (newHeight : UInt32)
+  (offsetX : Int32)
+  (offsetY : Int32)
+  (fill : Color)
+  : Image
+
+/-- Compute all mipmap levels for a provided image -/
+@[extern "lean_raylib__ImageMipmaps"]
+opaque imageMipmaps (image : Image) : Image
+
+/--
+Dither image data to 16bpp or lower (Floyd-Steinberg dithering).
+NOTE: In case selected bpp do not represent a known 16bit format,
+dithered data is stored in the LSB part of the `UInt16`.
+
+`rBpp + gBpp + bBpp + aBpp ≤ 16`
+-/
+@[extern "lean_raylib__ImageDither"]
+opaque imageDither (image : Image) (rBpp : UInt32) (gBpp : UInt32) (bBpp : UInt32) (aBpp : UInt32) : Image
+
+/-- Flip image vertically -/
+@[extern "lean_raylib__ImageFlipVertical"]
+opaque imageFlipVertical (image : Image) : Image
+
+/-- Flip image horizontally -/
+@[extern "lean_raylib__ImageFlipHorizontal"]
+opaque imageFlipHorizontal (image : Image) : Image
+
+/-- Rotate image clockwise 90deg -/
+@[extern "lean_raylib__ImageRotateCW"]
+opaque imageRotateCW (image : Image) : Image
+
+/-- Rotate image counter-clockwise 90deg -/
+@[extern "lean_raylib__ImageRotateCCW"]
+opaque imageRotateCCW (image : Image) : Image
+
+/-- Modify image color: tint -/
+@[extern "lean_raylib__ImageColorTint"]
+opaque imageColorTint (image : Image) (color : Color) : Image
+
+/-- Modify image color: invert -/
+@[extern "lean_raylib__ImageColorInvert"]
+opaque imageColorInvert (image : Image) : Image
+
+/-- Modify image color: grayscale -/
+@[extern "lean_raylib__ImageColorGrayscale"]
+opaque imageColorGrayscale (image : Image) : Image
+
+/-- Modify image color: contrast (clamped between -100 and 100) -/
+@[extern "lean_raylib__ImageColorContrast"]
+opaque imageColorContrast (image : Image) (contrast : Float32) : Image
+
+/-- Modify image color: brightness (clamped between -255 and 255) -/
+@[extern "lean_raylib__ImageColorBrightness"]
+opaque imageColorBrightness (image : Image) (brightness : Int32) : Image
+
+/-- Modify image color: replace color -/
+@[extern "lean_raylib__ImageColorReplace"]
+opaque imageColorReplace (image : Image) (color : Color) (replace : Color) : Image
+
 -- /-- Load color data from image as a Color array (RGBA - 32bit) -/
 -- @[extern "lean_raylib__LoadImageColors"]
 -- opaque loadImageColors : Unit -> Unit
@@ -1346,182 +1251,75 @@ opaque imageToPOT (image : Image) (fill : Color) : Image
 --   params:
 --   | colors : Color *
 -- -/
--- /-- Get image alpha border rectangle -/
--- @[extern "lean_raylib__GetImageAlphaBorder"]
--- opaque getImageAlphaBorder (image : Image) (threshold : Float32) : Rectangle
--- /-- Get image pixel color at (x, y) position -/
--- @[extern "lean_raylib__GetImageColor"]
--- opaque getImageColor (image : Image) (x : Int32) (y : Int32) : Color
--- /-- Clear image background with given color -/
--- @[extern "lean_raylib__ImageClearBackground"]
--- opaque imageClearBackground : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | color : Color
--- -/
--- /-- Draw pixel within an image -/
--- @[extern "lean_raylib__ImageDrawPixel"]
--- opaque imageDrawPixel : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | posX : int
---   | posY : int
---   | color : Color
--- -/
--- /-- Draw pixel within an image (Vector version) -/
--- @[extern "lean_raylib__ImageDrawPixelV"]
--- opaque imageDrawPixelV : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | position : Vector2
---   | color : Color
--- -/
--- /-- Draw line within an image -/
--- @[extern "lean_raylib__ImageDrawLine"]
--- opaque imageDrawLine : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | startPosX : int
---   | startPosY : int
---   | endPosX : int
---   | endPosY : int
---   | color : Color
--- -/
--- /-- Draw line within an image (Vector version) -/
--- @[extern "lean_raylib__ImageDrawLineV"]
--- opaque imageDrawLineV : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | start : Vector2
---   | end : Vector2
---   | color : Color
--- -/
--- /-- Draw a filled circle within an image -/
--- @[extern "lean_raylib__ImageDrawCircle"]
--- opaque imageDrawCircle : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | centerX : int
---   | centerY : int
---   | radius : int
---   | color : Color
--- -/
--- /-- Draw a filled circle within an image (Vector version) -/
--- @[extern "lean_raylib__ImageDrawCircleV"]
--- opaque imageDrawCircleV : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | center : Vector2
---   | radius : int
---   | color : Color
--- -/
--- /-- Draw circle outline within an image -/
--- @[extern "lean_raylib__ImageDrawCircleLines"]
--- opaque imageDrawCircleLines : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | centerX : int
---   | centerY : int
---   | radius : int
---   | color : Color
--- -/
--- /-- Draw circle outline within an image (Vector version) -/
--- @[extern "lean_raylib__ImageDrawCircleLinesV"]
--- opaque imageDrawCircleLinesV : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | center : Vector2
---   | radius : int
---   | color : Color
--- -/
--- /-- Draw rectangle within an image -/
--- @[extern "lean_raylib__ImageDrawRectangle"]
--- opaque imageDrawRectangle : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | posX : int
---   | posY : int
---   | width : int
---   | height : int
---   | color : Color
--- -/
--- /-- Draw rectangle within an image (Vector version) -/
--- @[extern "lean_raylib__ImageDrawRectangleV"]
--- opaque imageDrawRectangleV : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | position : Vector2
---   | size : Vector2
---   | color : Color
--- -/
--- /-- Draw rectangle within an image -/
--- @[extern "lean_raylib__ImageDrawRectangleRec"]
--- opaque imageDrawRectangleRec : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | rec : Rectangle
---   | color : Color
--- -/
--- /-- Draw rectangle lines within an image -/
--- @[extern "lean_raylib__ImageDrawRectangleLines"]
--- opaque imageDrawRectangleLines : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | rec : Rectangle
---   | thick : int
---   | color : Color
--- -/
--- /-- Draw a source image within a destination image (tint applied to source) -/
--- @[extern "lean_raylib__ImageDraw"]
--- opaque imageDraw : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | src : Image
---   | srcRec : Rectangle
---   | dstRec : Rectangle
---   | tint : Color
--- -/
--- /-- Draw text (using default font) within an image (destination) -/
--- @[extern "lean_raylib__ImageDrawText"]
--- opaque imageDrawText : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | text : const char *
---   | posX : int
---   | posY : int
---   | fontSize : int
---   | color : Color
--- -/
+
+/-- Get image alpha border rectangle -/
+@[extern "lean_raylib__GetImageAlphaBorder"]
+opaque getImageAlphaBorder (image : @& Image) (threshold : Float32) : Rectangle
+
+/-- Get image pixel color at (x, y) position -/
+@[extern "lean_raylib__GetImageColor"]
+opaque getImageColor (image : @& Image) (x : UInt32) (y : UInt32) : Color
+
+/-- Clear image background with given color -/
+@[extern "lean_raylib__ImageClearBackground"]
+opaque imageClearBackground (image : Image) (color : Color) : Image
+
+/-- Draw pixel within an image -/
+@[extern "lean_raylib__ImageDrawPixel"]
+opaque imageDrawPixel (image : Image) (posX : UInt32) (posY : UInt32) (color : Color) : Image
+
+/-- Draw pixel within an image (Vector version) -/
+@[extern "lean_raylib__ImageDrawPixelV"]
+opaque imageDrawPixelV (image : Image) (position : @& Vector2) (color : Color) : Image
+
+/-- Draw line within an image -/
+@[extern "lean_raylib__ImageDrawLine"]
+opaque imageDrawLine (image : Image) (startPosX : Int32) (startPosY : Int32) (endPosX : Int32) (endPosY : Int32) (color : Color) : Image
+
+/-- Draw line within an image (Vector version) -/
+@[extern "lean_raylib__ImageDrawLineV"]
+opaque imageDrawLineV (image : Image) (start : @& Vector2) (finish : @& Vector2) (color : Color) : Image
+
+/-- Draw a filled circle within an image -/
+@[extern "lean_raylib__ImageDrawCircle"]
+opaque imageDrawCircle (image : Image) (centerX : Int32) (centerY : Int32) (radius : UInt32) (color : Color) : Image
+
+/-- Draw a filled circle within an image (Vector version) -/
+@[extern "lean_raylib__ImageDrawCircleV"]
+opaque imageDrawCircleV (dst : Image) (center : @& Vector2) (radius : UInt32) (color : Color) : Image
+
+/-- Draw circle outline within an image -/
+@[extern "lean_raylib__ImageDrawCircleLines"]
+opaque imageDrawCircleLines (dst : Image) (centerX : Int32) (centerY : Int32) (radius : UInt32) (color : Color) : Image
+
+/-- Draw circle outline within an image (Vector version) -/
+@[extern "lean_raylib__ImageDrawCircleLinesV"]
+opaque imageDrawCircleLinesV (dst : Image) (center : @& Vector2) (radius : UInt32) (color : Color) : Image
+
+/-- Draw rectangle within an image -/
+@[extern "lean_raylib__ImageDrawRectangle"]
+opaque imageDrawRectangle (dst : Image) (posX : Int32) (posY : Int32) (width : UInt32) (height : UInt32) (color : Color) : Image
+
+/-- Draw rectangle within an image (Vector version) -/
+@[extern "lean_raylib__ImageDrawRectangleV"]
+opaque imageDrawRectangleV (dst : Image) (position : @& Vector2) (size : @& Vector2) (color : Color) : Image
+
+/-- Draw rectangle within an image -/
+@[extern "lean_raylib__ImageDrawRectangleRec"]
+opaque imageDrawRectangleRec (dst : Image) (rect : @& Rectangle) (color : Color) : Image
+
+/-- Draw rectangle lines within an image -/
+@[extern "lean_raylib__ImageDrawRectangleLines"]
+opaque imageDrawRectangleLines (dst : Image) (rect : @& Rectangle) (thick : UInt32) (color : Color) : Image
+
+/-- Draw a source image within a destination image (tint applied to source) -/
+@[extern "lean_raylib__ImageDraw"]
+opaque imageDraw (dst : Image) (src : @& Image) (srcRec : @& Rectangle) (dstRec : @& Rectangle) (tint : Color) : Image
+
+/-- Draw text (using default font) within an image (destination) -/
+@[extern "lean_raylib__ImageDrawText"]
+opaque imageDrawText (dst : Image) (text : @& String) (posX : Int32) (posY : Int32) (fontSize : UInt32) (color : Color) : Image
+
 -- /-- Draw text (custom sprite font) within an image (destination) -/
 -- @[extern "lean_raylib__ImageDrawTextEx"]
 -- opaque imageDrawTextEx : Unit -> Unit
@@ -1536,6 +1334,7 @@ opaque imageToPOT (image : Image) (fill : Color) : Image
 --   | spacing : float
 --   | tint : Color
 -- -/
+
 /-- Load texture from file into GPU memory (VRAM) -/
 @[extern "lean_raylib__LoadTexture"]
 opaque loadTexture (fileName : @& String) : BaseIO Texture2D
