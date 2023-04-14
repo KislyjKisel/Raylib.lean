@@ -4,17 +4,6 @@
 #include "util.h"
 #include "include/raymath_lean.h"
 
-#define LEAN_RAYLIB_POD_EXCLUSIVE(ty)\
-static inline lean_obj_res lean_raylib_##ty##_exclusive (lean_obj_arg obj) {\
-    if(lean_is_exclusive(obj)) {\
-        return obj;\
-    }\
-    ##ty## value = lean_raylib_##ty##_from(obj);\
-    lean_dec_ref(obj);\
-    return lean_raylib_##ty##_to(value);\
-}
-
-
 // # Color
 
 static inline Color lean_raylib_Color_from(uint32_t color) {

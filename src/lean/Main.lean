@@ -7,8 +7,8 @@ open Raylib
 
 def windowWidth : UInt32 := 800
 def windowHeight : UInt32 := 600
-def mouseSensitivity : Float32 := 1 / 100
-def moveSpeed : Float32 := 0.1
+def mouseSensitivity : Float32 := 1 / 200
+def moveSpeed : Float32 := 0.15
 
 def main : IO Unit := do
   setConfigFlags .vsyncHint
@@ -16,12 +16,16 @@ def main : IO Unit := do
   initAudioDevice
   setExitKey .null
 
+  let camUp := Vector3.mk 0 1 0
+  let mut camForward := Vector3.mk 0 0 1
   let mut cam3d := Camera3D.mk
     (Vector3.mk 0 0 0)
-    (Vector3.mk 0 0 10)
-    (Vector3.mk 0 1 0)
+    (camForward.scale 10)
+    camUp
     90
     .perspective
+
+  let mut lastMousePosition : Option Vector2 := none
 
   repeat do
     beginDrawing
@@ -38,22 +42,35 @@ def main : IO Unit := do
     endDrawing
 
     let mp ← getMousePosition
+    if let some lmp := lastMousePosition then
+      let dmp := (lmp - mp).scale mouseSensitivity
+      camForward := camForward.rotateByAxisAngle camUp dmp.x
+      camForward := camForward.rotateByAxisAngle (camForward.cross camUp) dmp.y
 
-    cam3d := { cam3d with
-      position := Vector3.mk
-        ((mp.x - (windowWidth / 2).toUInt64.toFloat32) * mouseSensitivity)
-        ((mp.y - (windowHeight / 2).toUInt64.toFloat32) * mouseSensitivity)
-        0
-    }
+    if ← isWindowFullscreen
+      then
+        setMousePosition (Int32.mk (windowWidth / 2)) (Int32.mk (windowHeight / 2))
+        lastMousePosition := some (← getMousePosition)
+      else
+        lastMousePosition := some mp
 
-    let camPos := cam3d.position
     if (← isKeyDown .w)
-      then cam3d := { cam3d with position := Vector3.mk camPos.x camPos.y (camPos.z + moveSpeed) }
+      then cam3d := { cam3d with position := cam3d.position + camForward.scale moveSpeed }
     if (← isKeyDown .s)
-      then cam3d := { cam3d with position := Vector3.mk camPos.x camPos.y (camPos.z - moveSpeed) }
+      then cam3d := { cam3d with position := cam3d.position - camForward.scale moveSpeed }
+    if (← isKeyDown .a)
+      then cam3d := { cam3d with position := cam3d.position - (camForward.cross camUp).scale moveSpeed }
+    if (← isKeyDown .d)
+      then cam3d := { cam3d with position := cam3d.position + (camForward.cross camUp).scale moveSpeed }
 
     if (← isKeyDown .leftAlt) && (← isKeyPressed .enter)
-      then toggleFullscreen
+      then
+        toggleFullscreen
+        if ← isWindowFullscreen
+          then hideCursor
+          else showCursor
+
+    cam3d := { cam3d with target := cam3d.position + camForward }
 
     if (← windowShouldClose) then break
 

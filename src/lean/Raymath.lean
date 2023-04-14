@@ -14,23 +14,24 @@ def epsilon : Float32 := 0.000001
 def deg2Rad : Float32 := pi / 180
 def rad2Deg : Float32 := 180 / pi
 
-/-! # Lemmas -/
+/-! # Util -/
 
-def usize_size_ge_2_pow_32 : USize.size ≥ 2 ^ 32 :=
+theorem usize_size_ge_2_pow_32 : USize.size ≥ 2 ^ 32 :=
   match usize_size_eq with
     | Or.inl p => Nat.le_of_eq p.symm
     | Or.inr p => Nat.le_of_lt $ Nat.lt_of_lt_of_eq (by decide) p.symm
 
-def «2uz=2» : (2 % USize.size) = 2 := Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le (by decide) usize_size_ge_2_pow_32)
-def «3uz=3» : (3 % USize.size) = 3 := Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le (by decide) usize_size_ge_2_pow_32)
-def «4uz=4» : (4 % USize.size) = 4 := Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le (by decide) usize_size_ge_2_pow_32)
+theorem mod_usize_size_refl (i : Nat) (h : i < 2^32) : i % USize.size = i :=
+  Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le h usize_size_ge_2_pow_32)
 
-end Raymath
+def toUSizeInj {m} (n : Nat) (h₁ : n < m) (h₂ : m ≤ 2 ^ 32 := by decide) : USize :=
+  ⟨n, Nat.lt_of_lt_of_le h₁ $ Nat.le_trans h₂ usize_size_ge_2_pow_32⟩
 
+theorem toUSizeInj_lt {m} (n : Nat) (h₁ : n < m) (h₂ : m < 2 ^ 32 := by decide) :
+  toUSizeInj n h₁ (Nat.le_of_lt h₂) < m.toUSize :=
+  (Nat.lt_of_lt_of_eq h₁ $ Eq.symm $ mod_usize_size_refl m h₂)
 
 /-! # Types and Structures Definition -/
-
-namespace Raymath
 
 structure Vector2 where
   x : Float32
@@ -53,7 +54,24 @@ deriving Inhabited, Repr
 /-- Quaternion, 4 components (Vector4 alias) -/
 abbrev Quaternion := Vector4
 
-/-- Matrix type (OpenGL style 4x4 - right handed, column major) -/
+/--
+Matrix type (OpenGL style 4x4 - right handed, column major).
+
+Field names (`m.m14`):
+```c
+ 0  4  8 12
+ 1  5  9 13
+ 2  6 10 14
+ 3  7 11 15
+```
+Field indices (`m.12`):
+```c
+ 1  2  3  4
+ 5  6  7  8
+ 9 10 11 12
+13 14 15 16
+```
+-/
 structure Matrix where
   -- Matrix first row
   m0 : Float32
@@ -114,9 +132,11 @@ def equals (x y : Float32) : Bool :=
 end Pod.Float32
 
 
+namespace Raymath
+
 /-! ## Vector2 math -/
 
-namespace Raymath.Vector2
+namespace Vector2
 
 /-- Vector with components value 0.0 -/
 def zero : Vector2 := Vector2.mk Float32.zero Float32.zero
@@ -259,36 +279,44 @@ def clampValue (v : Vector2) (min max : Float32) : Vector2 :=
 
 /-- Check whether two given vectors are almost equal -/
 def equals (p q : Vector2) : Bool :=
-  (p.x - q.x).abs <= Raymath.epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
-  (p.y - q.y).abs <= Raymath.epsilon * Float32.one.max (p.y.abs.max q.y.abs)
+  (p.x - q.x).abs <= epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
+  (p.y - q.y).abs <= epsilon * Float32.one.max (p.y.abs.max q.y.abs)
 
 
 def beq (v1 v2 : Vector2) : Bool :=
   v1.x == v2.x && v1.y == v2.y
 
-@[extern "lean_raymath_Vector_get"]
-def get (v : @& Vector2) (i : USize) (h : i < 2) : Float32 := ite (i = 0) v.x v.y
+@[extern "lean_raymath_Vector_uget"]
+def uget (v : @& Vector2) (i : USize) (h : i < 2) : Float32 := ite (i = 0) v.x v.y
 
-end Raymath.Vector2
+def get (v : @& Vector2) (i : Fin 2) : Float32 :=
+  v.uget (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt)
 
-instance : Add Raymath.Vector2 := ⟨Raymath.Vector2.add⟩
-instance : Sub Raymath.Vector2 := ⟨Raymath.Vector2.sub⟩
-instance : Mul Raymath.Vector2 := ⟨Raymath.Vector2.mul⟩
-instance : Div Raymath.Vector2 := ⟨Raymath.Vector2.div⟩
-instance : BEq Raymath.Vector2 := ⟨Raymath.Vector2.beq⟩
-instance : Neg Raymath.Vector2 := ⟨Raymath.Vector2.neg⟩
-instance : Min Raymath.Vector2 := ⟨Raymath.Vector2.min⟩
-instance : Max Raymath.Vector2 := ⟨Raymath.Vector2.max⟩
-instance : GetElem Raymath.Vector2 USize Float32 (λ _ i ↦ i < 2) := ⟨Raymath.Vector2.get⟩
-instance : GetElem Raymath.Vector2 (Fin 2) Float32 (λ _ _ ↦ True) where
-  getElem v i _ := v.get
-    ⟨i.val, Nat.lt_trans i.isLt $ Nat.lt_of_lt_of_le (by decide) Raymath.usize_size_ge_2_pow_32⟩ $
-    Nat.lt_of_lt_of_eq i.isLt Raymath.«2uz=2».symm
+@[extern "lean_raymath_Vector2_uset"]
+def uset (v : Vector2) (i : USize) (h : i < 2) (value : Float32) : Vector2 :=
+  ite (i = 0) { v with x := value } { v with y := value }
+
+def set (v : Vector2) (i : Fin 2) (value : Float32) : Vector2 :=
+  v.uset (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+
+end Vector2
+
+instance : Add Vector2 := ⟨Vector2.add⟩
+instance : Sub Vector2 := ⟨Vector2.sub⟩
+instance : Mul Vector2 := ⟨Vector2.mul⟩
+instance : Div Vector2 := ⟨Vector2.div⟩
+instance : BEq Vector2 := ⟨Vector2.beq⟩
+instance : Neg Vector2 := ⟨Vector2.neg⟩
+instance : Min Vector2 := ⟨Vector2.min⟩
+instance : Max Vector2 := ⟨Vector2.max⟩
+instance : GetElem Vector2 USize Float32 (λ _ i ↦ i < 2) := ⟨Vector2.uget⟩
+instance : GetElem Vector2 Nat Float32 (λ _ i ↦ i < 2) where
+  getElem v i h := v.get $ .mk i h
 
 
 /-! ## Vector3 math -/
 
-namespace Raymath.Vector3
+namespace Vector3
 
 /-- Vector with components value 0.0 -/
 def zero : Vector3 := Vector3.mk Float32.zero Float32.zero Float32.zero
@@ -512,9 +540,9 @@ def clampValue (v : Vector3) (min max : Float32) : Vector3 :=
 
 /-- Check whether two given vectors are almost equal -/
 def equals (p q : Vector3) : Bool :=
-  (p.x - q.x).abs <= Raymath.epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
-  (p.y - q.y).abs <= Raymath.epsilon * Float32.one.max (p.y.abs.max q.y.abs) &&
-  (p.z - q.z).abs <= Raymath.epsilon * Float32.one.max (p.z.abs.max q.z.abs)
+  (p.x - q.x).abs <= epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
+  (p.y - q.y).abs <= epsilon * Float32.one.max (p.y.abs.max q.y.abs) &&
+  (p.z - q.z).abs <= epsilon * Float32.one.max (p.z.abs.max q.z.abs)
 
 def beq (v1 v2 : Vector3) : Bool :=
   v1.x == v2.x && v1.y == v2.y && v1.z == v2.z
@@ -539,38 +567,50 @@ def refract (v n : Vector3) (r : Float32) : Vector3 :=
         (r * v.z - (r * dot + d) * n.z)
     else Vector3.zero
 
-@[extern "lean_raymath_Vector_get"]
-def get (v : @& Vector3) (i : USize) («i<3uz» : i < 3) : Float32 :=
-  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» «3uz=3»
+@[extern "lean_raymath_Vector_uget"]
+def uget (v : @& Vector3) (i : USize) («i<3uz» : i < 3) : Float32 :=
+  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» $ mod_usize_size_refl 3 (by decide)
   match i, «↑i<3» with
     | ⟨0, _⟩, _ => v.x
     | ⟨1, _⟩, _ => v.y
     | ⟨2, _⟩, _ => v.z
     | ⟨n+3, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 3 n
 
+def get (v : @& Vector3) (i : Fin 3) : Float32 :=
+  v.uget (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt)
 
-end Raymath.Vector3
+@[extern "lean_raymath_Vector3_uset"]
+def uset (v : Vector3) (i : USize) («i<3uz» : i < 3) (value : Float32) : Vector3 :=
+  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» $ mod_usize_size_refl 3 (by decide)
+  match i, «↑i<3» with
+    | ⟨0, _⟩, _ => { v with x := value }
+    | ⟨1, _⟩, _ => { v with y := value }
+    | ⟨2, _⟩, _ => { v with z := value }
+    | ⟨n+3, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 3 n
 
-instance : Add Raymath.Vector3 := ⟨Raymath.Vector3.add⟩
-instance : Sub Raymath.Vector3 := ⟨Raymath.Vector3.sub⟩
-instance : Mul Raymath.Vector3 := ⟨Raymath.Vector3.mul⟩
-instance : Div Raymath.Vector3 := ⟨Raymath.Vector3.div⟩
-instance : BEq Raymath.Vector3 := ⟨Raymath.Vector3.beq⟩
-instance : Neg Raymath.Vector3 := ⟨Raymath.Vector3.neg⟩
-instance : Min Raymath.Vector3 := ⟨Raymath.Vector3.min⟩
-instance : Max Raymath.Vector3 := ⟨Raymath.Vector3.max⟩
-instance : GetElem Raymath.Vector3 USize Float32 (λ _ i ↦ i < 3) := ⟨Raymath.Vector3.get⟩
-instance : GetElem Raymath.Vector3 (Fin 3) Float32 (λ _ _ ↦ True) where
-  getElem v i _ := v.get
-    ⟨i.val, Nat.lt_trans i.isLt $ Nat.lt_of_lt_of_le (by decide) Raymath.usize_size_ge_2_pow_32⟩ $
-    Nat.lt_of_lt_of_eq i.isLt Raymath.«3uz=3».symm
+def set (v : Vector3) (i : Fin 3) (value : Float32) : Vector3 :=
+  v.uset (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+
+end Vector3
+
+instance : Add Vector3 := ⟨Vector3.add⟩
+instance : Sub Vector3 := ⟨Vector3.sub⟩
+instance : Mul Vector3 := ⟨Vector3.mul⟩
+instance : Div Vector3 := ⟨Vector3.div⟩
+instance : BEq Vector3 := ⟨Vector3.beq⟩
+instance : Neg Vector3 := ⟨Vector3.neg⟩
+instance : Min Vector3 := ⟨Vector3.min⟩
+instance : Max Vector3 := ⟨Vector3.max⟩
+instance : GetElem Vector3 USize Float32 (λ _ i ↦ i < 3) := ⟨Vector3.uget⟩
+instance : GetElem Vector3 Nat Float32 (λ _ i ↦ i < 3) where
+  getElem v i h := v.get $ .mk i h
 
 
-namespace Raymath.Vector4
+namespace Vector4
 
-@[extern "lean_raymath_Vector_get"]
-def get (v : @& Vector4) (i : USize) («i<4uz» : i < 4) : Float32 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» «4uz=4»
+@[extern "lean_raymath_Vector_uget"]
+def uget (v : @& Vector4) (i : USize) («i<4uz» : i < 4) : Float32 :=
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
   match i, «↑i<4» with
     | ⟨0, _⟩, _ => v.x
     | ⟨1, _⟩, _ => v.y
@@ -578,10 +618,102 @@ def get (v : @& Vector4) (i : USize) («i<4uz» : i < 4) : Float32 :=
     | ⟨3, _⟩, _ => v.w
     | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
 
-end Raymath.Vector4
+def get (v : @& Vector4) (i : Fin 4) : Float32 :=
+  v.uget (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt)
 
-instance : GetElem Raymath.Vector4 USize Float32 (λ _ i ↦ i < 4) := ⟨Raymath.Vector4.get⟩
-instance : GetElem Raymath.Vector4 (Fin 4) Float32 (λ _ _ ↦ True) where
-  getElem v i _ := v.get
-    ⟨i.val, Nat.lt_trans i.isLt $ Nat.lt_of_lt_of_le (by decide) Raymath.usize_size_ge_2_pow_32⟩ $
-    Nat.lt_of_lt_of_eq i.isLt Raymath.«4uz=4».symm
+@[extern "lean_raymath_Vector4_uset"]
+def uset (v : Vector4) (i : USize) («i<4uz» : i < 4) (value : Float32) : Vector4 :=
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  match i, «↑i<4» with
+    | ⟨0, _⟩, _ => { v with x := value }
+    | ⟨1, _⟩, _ => { v with y := value }
+    | ⟨2, _⟩, _ => { v with z := value }
+    | ⟨3, _⟩, _ => { v with w := value }
+    | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
+
+def set (v : Vector4) (i : Fin 4) (value : Float32) : Vector4 :=
+  v.uset (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+
+end Vector4
+
+instance : GetElem Vector4 USize Float32 (λ _ i ↦ i < 4) := ⟨Vector4.uget⟩
+instance : GetElem Vector4 Nat Float32 (λ _ i ↦ i < 4) where
+  getElem v i h := v.get $ .mk i h
+
+
+namespace Matrix
+
+@[extern "lean_raymath_Matrix_urow"]
+def urow (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  match i, «↑i<4» with
+    | ⟨0, _⟩, _ => .mk m.m0 m.m4 m.m8 m.m12
+    | ⟨1, _⟩, _ => .mk m.m1 m.m5 m.m9 m.m13
+    | ⟨2, _⟩, _ => .mk m.m2 m.m6 m.m10 m.m14
+    | ⟨3, _⟩, _ => .mk m.m3 m.m7 m.m11 m.m15
+    | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
+
+def row (m : @& Matrix) (i : Nat) (h : i < 4) : Vector4 :=
+  m.urow (toUSizeInj i h) (toUSizeInj_lt i h)
+
+@[extern "lean_raymath_Matrix_ucolumn"]
+def ucolumn (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  match i, «↑i<4» with
+    | ⟨0, _⟩, _ => .mk m.m0 m.m1 m.m2 m.m3
+    | ⟨1, _⟩, _ => .mk m.m4 m.m5 m.m6 m.m7
+    | ⟨2, _⟩, _ => .mk m.m8 m.m9 m.m10 m.m11
+    | ⟨3, _⟩, _ => .mk m.m12 m.m13 m.m14 m.m15
+    | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
+
+def column (m : @& Matrix) (i : Nat) (h : i < 4) : Vector4 :=
+  m.ucolumn (toUSizeInj i h) (toUSizeInj_lt i h)
+
+@[extern "lean_raymath_Matrix_uget"]
+def uget (m : @& Matrix) (i : USize) (j : USize) (h₁ : i < 4) (h₂ : j < 4) : Float32 :=
+  (m.urow i h₁).uget j h₂
+
+def get (m : @& Matrix) (i : Fin 4) (j : Fin 4) : Float32 := m.uget
+  (toUSizeInj i.val i.isLt) (toUSizeInj j.val j.isLt)
+  (toUSizeInj_lt i.val i.isLt) (toUSizeInj_lt j.val j.isLt)
+
+@[extern "lean_raymath_Matrix_usetRow"]
+def usetRow (m : Matrix) (i : USize) («i<4uz» : i < 4) (value : @& Vector4) : Matrix :=
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  match i, «↑i<4» with
+    | ⟨0, _⟩, _ => { m with m0 := value.x, m4 := value.y, m8 := value.z, m12 := value.w }
+    | ⟨1, _⟩, _ => { m with m1 := value.x, m5 := value.y, m9 := value.z, m13 := value.w }
+    | ⟨2, _⟩, _ => { m with m2 := value.x, m6 := value.y, m10 := value.z, m14 := value.w }
+    | ⟨3, _⟩, _ => { m with m3 := value.x, m7 := value.y, m11 := value.z, m15 := value.w }
+    | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
+
+def setRow (m : Matrix) (i : Fin 4) (value : @& Vector4) : Matrix :=
+  m.usetRow (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+
+@[extern "lean_raymath_Matrix_usetColumn"]
+def usetColumn (m : Matrix) (i : USize) («i<4uz» : i < 4) (value : @& Vector4) : Matrix :=
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  match i, «↑i<4» with
+    | ⟨0, _⟩, _ => { m with m0 := value.x, m1 := value.y, m2 := value.z, m3 := value.w }
+    | ⟨1, _⟩, _ => { m with m4 := value.x, m5 := value.y, m6 := value.z, m7 := value.w }
+    | ⟨2, _⟩, _ => { m with m8 := value.x, m9 := value.y, m10 := value.z, m11 := value.w }
+    | ⟨3, _⟩, _ => { m with m12 := value.x, m13 := value.y, m14 := value.z, m15 := value.w }
+    | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
+
+def setColumn (m : Matrix) (i : Fin 4) (value : @& Vector4) : Matrix :=
+  m.usetColumn (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+
+@[extern "lean_raymath_Matrix_uset"]
+def uset (m : Matrix) (i : USize) (j : USize) (h₁ : i < 4) (h₂ : j < 4) (value : Float32) : Matrix :=
+  let row := m.urow i h₁
+  m.usetRow i h₁ (row.uset j h₂ value)
+
+def set (m : Matrix) (i : Fin 4) (j : Fin 4) (value : Float32) : Matrix := m.uset
+  (toUSizeInj i.val i.isLt) (toUSizeInj j.val j.isLt)
+  (toUSizeInj_lt i.val i.isLt) (toUSizeInj_lt j.val j.isLt)
+  value
+
+end Matrix
+
+instance : GetElem Matrix USize Vector4 (λ _ i ↦ i < 4) := ⟨Matrix.urow⟩
+instance : GetElem Matrix Nat Vector4 (λ _ i ↦ i < 4) := ⟨Matrix.row⟩
