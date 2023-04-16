@@ -1,4 +1,4 @@
-#include <lean/lean.h>
+#include "util.h"
 #include <raymath.h>
 #include <lean_pod.h>
 #include "include/raymath_lean.h"
@@ -163,10 +163,7 @@ LEAN_EXPORT lean_obj_res lean_raymath_Quaternion_toAxisAngle(b_lean_obj_arg q) {
     Vector3 axis;
     float angle;
     QuaternionToAxisAngle(lean_raylib_Vector4_from(q), &axis, &angle);
-    lean_object* res = lean_alloc_ctor(0, 2, 0);
-    lean_ctor_set(res, 0, lean_raylib_Vector3_to(axis));
-    lean_ctor_set(res, 0, lean_pod_Float32_box(angle));
-    return res;
+    return lean_mk_tuple2(lean_raylib_Vector3_to(axis), lean_pod_Float32_box(angle));
 }
 
 LEAN_EXPORT lean_obj_res lean_raymath_Quaternion_toEuler(b_lean_obj_res q) {
