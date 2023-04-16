@@ -147,3 +147,35 @@ LEAN_EXPORT lean_obj_res lean_raymath_Matrix_uset(lean_obj_arg m, size_t i, size
         return lean_raylib_Matrix_to(u.matrix);
     }
 }
+
+LEAN_EXPORT lean_obj_res lean_raymath_Quaternion_fromMatrix(b_lean_obj_arg mat) {
+    return lean_raylib_Vector4_to(QuaternionFromMatrix(lean_raylib_Matrix_from(mat)));
+}
+
+LEAN_EXPORT lean_obj_res lean_raymath_Quaternion_fromAxisAngle(b_lean_obj_arg axis, uint32_t angle) {
+    return lean_raylib_Vector4_to(QuaternionFromAxisAngle(
+        lean_raylib_Vector3_from(axis),
+        lean_pod_Float32_fromBits(angle)
+    ));
+}
+
+LEAN_EXPORT lean_obj_res lean_raymath_Quaternion_toAxisAngle(b_lean_obj_arg q) {
+    Vector3 axis;
+    float angle;
+    QuaternionToAxisAngle(lean_raylib_Vector4_from(q), &axis, &angle);
+    lean_object* res = lean_alloc_ctor(0, 2, 0);
+    lean_ctor_set(res, 0, lean_raylib_Vector3_to(axis));
+    lean_ctor_set(res, 0, lean_pod_Float32_box(angle));
+    return res;
+}
+
+LEAN_EXPORT lean_obj_res lean_raymath_Quaternion_toEuler(b_lean_obj_res q) {
+    return lean_raylib_Vector3_to(QuaternionToEuler(lean_raylib_Vector4_from(q)));
+}
+
+LEAN_EXPORT uint8_t lean_raymath_Quaternion_equals(b_lean_obj_arg p, b_lean_obj_arg q) {
+    return QuaternionEquals(
+        lean_raylib_Vector4_from(p),
+        lean_raylib_Vector4_from(q)
+    );
+}
