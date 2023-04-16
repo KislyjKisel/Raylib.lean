@@ -34,3 +34,7 @@ static inline lean_object* lean_mk_option_some(lean_object* value) {
     lean_ctor_set(result, 0, value);
     return result;
 }
+
+static inline int lean_option_is_some(b_lean_obj_arg opt) {
+    return lean_ptr_tag(opt) == 1;
+}

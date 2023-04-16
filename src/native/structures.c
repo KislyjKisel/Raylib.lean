@@ -5,35 +5,6 @@
 
 // # Image
 
-LEAN_EXPORT lean_obj_res lean_raylib__Image_mk(
-    /* ByteArray */ lean_obj_arg data, uint32_t width, uint32_t height,
-    uint32_t mipmaps, uint32_t format
-) {
-    void* own_data;
-    if(lean_is_exclusive(data)) {
-        own_data = lean_sarray_cptr(data);
-        #ifdef RAYLIB_LEAN_UNSAFE_OPTS
-            lean_dealloc(data);
-        #else
-            lean_dec_ref_cold(data);
-        #endif
-    }
-    else {
-        size_t size = lean_sarray_size(data);
-        own_data = malloc(size);
-        memcpy(own_data, data, size);
-        lean_dec(data);
-    }
-    LET_BOX_STRUCT(Image, image,
-        .data = own_data,
-        .width = width,
-        .height = height,
-        .mipmaps = mipmaps,
-        .format = format
-    );
-    return lean_raylib_Image_to(image);
-}
-
 LEAN_EXPORT lean_obj_res lean_raylib__Image_default(lean_obj_arg unit) {
     LET_BOX_STRUCT(Image, image,
         .data = NULL,
@@ -222,151 +193,32 @@ LEAN_EXPORT lean_obj_res lean_raylib__NPatchInfo_layout_set(uint32_t layout, lea
 }
 
 
-// # Glyph info
+// # Font
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GlyphInfo_mk(uint32_t value, uint32_t offsetX, uint32_t offsetY, uint32_t advanceX, lean_obj_arg image) {
-//     LET_BOX_STRUCT(GlyphInfo, result_,
-//         .value = value,
-//         .offsetX = offsetX,
-//         .offsetY = offsetY,
-//         .advanceX = advanceX,
-//         .image = lean_raylib_Image_from(image)
-//     );
-//     return lean_raylib_GlyphInfo_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Font_baseSize(b_lean_obj_arg obj) {
+    return lean_raylib_Font_from(obj)->baseSize;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GlyphInfo_value(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_GlyphInfo_from(obj)->value;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Font_glyphCount(b_lean_obj_arg obj) {
+    return lean_raylib_Font_from(obj)->glyphCount;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GlyphInfo_value_set(uint32_t value, b_lean_obj_arg obj) {
-//     LET_BOX(GlyphInfo, result_, *lean_raylib_GlyphInfo_from(obj));
-//     result_->value = value;
-//     return lean_raylib_GlyphInfo_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Font_glyphPadding(b_lean_obj_arg obj) {
+    return lean_raylib_Font_from(obj)->glyphPadding;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__GlyphInfo_offsetX(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_GlyphInfo_from(obj)->offsetX;
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Font_texture(lean_obj_arg obj) {
+    return lean_raylib_TextureRef_alloc(lean_raylib_Font_from(obj)->texture, obj);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GlyphInfo_offsetX_set(uint32_t offsetX, b_lean_obj_arg obj) {
-//     LET_BOX(GlyphInfo, result_, *lean_raylib_GlyphInfo_from(obj));
-//     result_->offsetX = offsetX;
-//     return lean_raylib_GlyphInfo_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__GlyphInfo_offsetY(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_GlyphInfo_from(obj)->offsetY;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__GlyphInfo_offsetY_set(uint32_t offsetY, b_lean_obj_arg obj) {
-//     LET_BOX(GlyphInfo, result_, *lean_raylib_GlyphInfo_from(obj));
-//     result_->offsetY = offsetY;
-//     return lean_raylib_GlyphInfo_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__GlyphInfo_advanceX(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_GlyphInfo_from(obj)->advanceX;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__GlyphInfo_advanceX_set(uint32_t advanceX, b_lean_obj_arg obj) {
-//     LET_BOX(GlyphInfo, result_, *lean_raylib_GlyphInfo_from(obj));
-//     result_->advanceX = advanceX;
-//     return lean_raylib_GlyphInfo_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_arg lean_raylib__GlyphInfo_image(b_lean_obj_arg obj) {
-//     Image result_ = lean_raylib_GlyphInfo_from(obj)->image;
-//     return lean_raylib_Image_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__GlyphInfo_image_set(lean_obj_arg image, b_lean_obj_arg obj) {
-//     LET_BOX(GlyphInfo, result_, *lean_raylib_GlyphInfo_from(obj));
-//     result_->image = lean_raylib_Image_from(image);
-//     return lean_raylib_GlyphInfo_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Font_mk(uint32_t baseSize, uint32_t glyphCount, uint32_t glyphPadding, lean_obj_arg texture, /* Rectangle* */lean_obj_arg recs, /* GlyphInfo* */lean_obj_arg glyphs) {
-//     LET_BOX_STRUCT(Font, result_,
-//         .baseSize = baseSize,
-//         .glyphCount = glyphCount,
-//         .glyphPadding = glyphPadding,
-//         .texture = /*cast Texture2D to_lean?false*/(texture),
-//         .recs = /*todo: ptr?*/recs,
-//         .glyphs = /*todo: ptr?*/glyphs
-//     );
-//     return lean_raylib_Font_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Font_baseSize(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Font_from(obj)->baseSize;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Font_baseSize_set(uint32_t baseSize, b_lean_obj_arg obj) {
-//     LET_BOX(Font, result_, *lean_raylib_Font_from(obj));
-//     result_->baseSize = baseSize;
-//     return lean_raylib_Font_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Font_glyphCount(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Font_from(obj)->glyphCount;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Font_glyphCount_set(uint32_t glyphCount, b_lean_obj_arg obj) {
-//     LET_BOX(Font, result_, *lean_raylib_Font_from(obj));
-//     result_->glyphCount = glyphCount;
-//     return lean_raylib_Font_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Font_glyphPadding(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Font_from(obj)->glyphPadding;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Font_glyphPadding_set(uint32_t glyphPadding, b_lean_obj_arg obj) {
-//     LET_BOX(Font, result_, *lean_raylib_Font_from(obj));
-//     result_->glyphPadding = glyphPadding;
-//     return lean_raylib_Font_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_arg lean_raylib__Font_texture(b_lean_obj_arg obj) {
-//     Texture2D result_ = lean_raylib_Font_from(obj)->texture;
-//     return /*cast Texture2D to_lean?true*/(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Font_texture_set(lean_obj_arg texture, b_lean_obj_arg obj) {
-//     LET_BOX(Font, result_, *lean_raylib_Font_from(obj));
-//     result_->texture = /*cast Texture2D to_lean?false*/(texture);
-//     return lean_raylib_Font_to(result_);
-// }
-
-// LEAN_EXPORT /* Rectangle* */lean_obj_arg lean_raylib__Font_recs(b_lean_obj_arg obj) {
-//     Rectangle * result_ = lean_raylib_Font_from(obj)->recs;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Font_recs_set(/* Rectangle* */lean_obj_arg recs, b_lean_obj_arg obj) {
-//     LET_BOX(Font, result_, *lean_raylib_Font_from(obj));
-//     result_->recs = /*todo: ptr?*/recs;
-//     return lean_raylib_Font_to(result_);
-// }
-
-// LEAN_EXPORT /* GlyphInfo* */lean_obj_arg lean_raylib__Font_glyphs(b_lean_obj_arg obj) {
-//     GlyphInfo * result_ = lean_raylib_Font_from(obj)->glyphs;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Font_glyphs_set(/* GlyphInfo* */lean_obj_arg glyphs, b_lean_obj_arg obj) {
-//     LET_BOX(Font, result_, *lean_raylib_Font_from(obj));
-//     result_->glyphs = /*todo: ptr?*/glyphs;
-//     return lean_raylib_Font_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Font_recs(b_lean_obj_arg obj) {
+    Font* font = lean_raylib_Font_from(obj);
+    lean_object* arr = lean_alloc_array(font->glyphCount, font->glyphCount);
+    for(size_t i = 0; i < font->glyphCount; ++i) {
+        lean_array_set_core(arr, i, lean_raylib_Rectangle_to(font->recs[i]));
+    }
+    return arr;
+}
 
 
 // # Mesh
@@ -566,10 +418,15 @@ LEAN_EXPORT uint32_t lean_raylib__Shader_id(b_lean_obj_arg shader) {
 
 LEAN_EXPORT lean_obj_res lean_raylib__Shader_locs(b_lean_obj_arg shader) {
     int* locs_c = lean_raylib_Shader_from(shader)->locs;
-    lean_object* locs_lean = lean_alloc_array(0, 2);
+    size_t count = 0;
+    for(size_t i = 0; i < RL_MAX_SHADER_LOCATIONS; ++i) {
+        count += locs_c[i] >= 0;
+    }
+    lean_object* locs_lean = lean_alloc_array(count, count);
+    size_t last = 0;
     for(size_t i = 0; i < RL_MAX_SHADER_LOCATIONS; ++i) {
         if(locs_c[i] >= 0) {
-            lean_array_push(locs_lean, lean_box_uint32(locs_c[i]));
+            lean_array_set_core(locs_lean, last++, lean_box_uint32(locs_c[i]));
         }
     }
     return locs_lean;

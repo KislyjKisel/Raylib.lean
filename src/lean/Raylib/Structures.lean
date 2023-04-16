@@ -74,11 +74,6 @@ instance : Nonempty Image := ImagePointed.property
 @[extern "lean_raylib__Image_default"]
 opaque Image.empty (_ : Unit) : Image
 
-@[extern "lean_raylib__Image_mk"]
-unsafe opaque Image.mk
-  (data : ByteArray) (width : UInt32) (height : UInt32)
-  (mipmaps : UInt32) (format : PixelFormat) : Image
-
 /-- Getter: Image base width -/
 @[extern "lean_raylib__Image_width"]
 opaque Image.width (self : @& Image) : UInt32
@@ -203,111 +198,46 @@ opaque NPatchInfo.set_layout (layout : NPatchLayout) (npatchInfo : NPatchInfo) :
 
 /-! # Glyph info -/
 
--- opaque GlyphInfoPointed : NonemptyType
--- /-- GlyphInfo, font characters glyphs info -/
--- def GlyphInfo : Type := GlyphInfoPointed.type
--- instance : Nonempty GlyphInfo := GlyphInfoPointed.property
--- @[extern "lean_raylib__GlyphInfo_mk"]
--- opaque GlyphInfo.mk (value : Int32) (offsetX : Int32) (offsetY : Int32) (advanceX : Int32) (image : Image) : GlyphInfo
--- /-- Getter: Character value (Unicode) -/
--- @[extern "lean_raylib__GlyphInfo_value"]
--- opaque GlyphInfo.value (self : @& GlyphInfo) : Int32
--- /-- Setter: Character value (Unicode) -/
--- @[extern "lean_raylib__GlyphInfo_value_set"]
--- opaque GlyphInfo.set_value (value : Int32) (self : GlyphInfo) : GlyphInfo
--- /-- Getter: Character offset X when drawing -/
--- @[extern "lean_raylib__GlyphInfo_offsetX"]
--- opaque GlyphInfo.offsetX (self : @& GlyphInfo) : Int32
--- /-- Setter: Character offset X when drawing -/
--- @[extern "lean_raylib__GlyphInfo_offsetX_set"]
--- opaque GlyphInfo.set_offsetX (offsetX : Int32) (self : GlyphInfo) : GlyphInfo
--- /-- Getter: Character offset Y when drawing -/
--- @[extern "lean_raylib__GlyphInfo_offsetY"]
--- opaque GlyphInfo.offsetY (self : @& GlyphInfo) : Int32
--- /-- Setter: Character offset Y when drawing -/
--- @[extern "lean_raylib__GlyphInfo_offsetY_set"]
--- opaque GlyphInfo.set_offsetY (offsetY : Int32) (self : GlyphInfo) : GlyphInfo
--- /-- Getter: Character advance position X -/
--- @[extern "lean_raylib__GlyphInfo_advanceX"]
--- opaque GlyphInfo.advanceX (self : @& GlyphInfo) : Int32
--- /-- Setter: Character advance position X -/
--- @[extern "lean_raylib__GlyphInfo_advanceX_set"]
--- opaque GlyphInfo.set_advanceX (advanceX : Int32) (self : GlyphInfo) : GlyphInfo
--- /-- Getter: Character image data -/
--- @[extern "lean_raylib__GlyphInfo_image"]
--- opaque GlyphInfo.image (self : @& GlyphInfo) : Image
--- /-- Setter: Character image data -/
--- @[extern "lean_raylib__GlyphInfo_image_set"]
--- opaque GlyphInfo.set_image (image : Image) (self : GlyphInfo) : GlyphInfo
--- opaque FontPointed : NonemptyType
--- /-- Font, font texture and GlyphInfo array data -/
--- def Font : Type := FontPointed.type
--- instance : Nonempty Font := FontPointed.property
--- @[extern "lean_raylib__Font_mk"]
--- opaque Font.mk : Font
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | baseSize: int -- Base size (default chars height)
---   | glyphCount: int -- Number of glyph characters
---   | glyphPadding: int -- Padding around the glyph characters
---   | texture: Texture2D -- Texture atlas containing the glyphs
---   | recs: Rectangle * -- Rectangles in texture for the glyphs
---   | glyphs: GlyphInfo * -- Glyphs info data
--- -/
--- /-- Getter: Base size (default chars height) -/
--- @[extern "lean_raylib__Font_baseSize"]
--- opaque Font.baseSize (self : @& Font) : Int32
--- /-- Setter: Base size (default chars height) -/
--- @[extern "lean_raylib__Font_baseSize_set"]
--- opaque Font.set_baseSize (baseSize : Int32) (self : Font) : Font
--- /-- Getter: Number of glyph characters -/
--- @[extern "lean_raylib__Font_glyphCount"]
--- opaque Font.glyphCount (self : @& Font) : Int32
--- /-- Setter: Number of glyph characters -/
--- @[extern "lean_raylib__Font_glyphCount_set"]
--- opaque Font.set_glyphCount (glyphCount : Int32) (self : Font) : Font
--- /-- Getter: Padding around the glyph characters -/
--- @[extern "lean_raylib__Font_glyphPadding"]
--- opaque Font.glyphPadding (self : @& Font) : Int32
--- /-- Setter: Padding around the glyph characters -/
--- @[extern "lean_raylib__Font_glyphPadding_set"]
--- opaque Font.set_glyphPadding (glyphPadding : Int32) (self : Font) : Font
--- /-- Getter: Texture atlas containing the glyphs -/
--- @[extern "lean_raylib__Font_texture"]
--- opaque Font.texture (self : @& Font) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Texture atlas containing the glyphs -/
--- @[extern "lean_raylib__Font_texture_set"]
--- opaque Font.set_texture (texture : Unit) (self : Font) : Font
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Rectangles in texture for the glyphs -/
--- @[extern "lean_raylib__Font_recs"]
--- opaque Font.recs (self : @& Font) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Rectangles in texture for the glyphs -/
--- @[extern "lean_raylib__Font_recs_set"]
--- opaque Font.set_recs (recs : Unit) (self : Font) : Font
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Glyphs info data -/
--- @[extern "lean_raylib__Font_glyphs"]
--- opaque Font.glyphs (self : @& Font) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Glyphs info data -/
--- @[extern "lean_raylib__Font_glyphs_set"]
--- opaque Font.set_glyphs (glyphs : Unit) (self : Font) : Font
--- /-
--- todo: ^^ struct setter ^^
--- -/
+structure GlyphInfo where
+  /-- Character value (Unicode) -/
+  value : Char
+  /-- Character offset X when drawing -/
+  offsetX : UInt32
+  /-- Character offset Y when drawing -/
+  offsetY : UInt32
+  /-- Character advance position X -/
+  advanceX : UInt32
+  /-- Character image data -/
+  image : Image
+deriving Nonempty
+
+
+/-! # Font -/
+
+opaque FontPointed : NonemptyType
+/-- Font, font texture and GlyphInfo array data -/
+def Font : Type := FontPointed.type
+instance : Nonempty Font := FontPointed.property
+
+/-- Base size (default chars height) -/
+@[extern "lean_raylib__Font_baseSize"]
+opaque Font.baseSize (font : @& Font) : UInt32
+
+/-- Number of glyph characters -/
+@[extern "lean_raylib__Font_glyphCount"]
+opaque Font.glyphCount (font : @& Font) : UInt32
+
+/-- Padding around the glyph characters -/
+@[extern "lean_raylib__Font_glyphPadding"]
+opaque Font.glyphPadding (font : @& Font) : UInt32
+
+/-- Texture atlas containing the glyphs -/
+@[extern "lean_raylib__Font_texture"]
+opaque Font.texture (font : Font) : TextureRef
+
+/-- Rectangles in texture for the glyphs -/
+@[extern "lean_raylib__Font_recs"]
+opaque Font.recs (font : @& Font) : Array Rectangle
 
 
 /-! # Camera 3D -/

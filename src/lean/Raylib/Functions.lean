@@ -1093,9 +1093,9 @@ opaque imageFromImage (image : @& Image) (rec : @& Rectangle) : Image
 @[extern "lean_raylib__ImageText"]
 opaque imageText (text : @& String) (fontSize : UInt32) (color : Color) : Image
 
--- /-- Create an image from text (custom sprite font) -/
--- @[extern "lean_raylib__ImageTextEx"]
--- opaque imageTextEx (font : Font) (text : String) (fontSize : Float32) (spacing : Float32) (tint : Color) : Image
+/-- Create an image from text (custom sprite font) -/
+@[extern "lean_raylib__ImageTextEx"]
+opaque imageTextEx (font : @& Font) (text : @& String) (fontSize : Float32) (spacing : Float32) (tint : Color) : Image
 
 /-- Convert image data to desired format -/
 @[extern "lean_raylib__ImageFormat"]
@@ -1305,20 +1305,9 @@ opaque imageDraw (dst : Image) (src : @& Image) (srcRec : @& Rectangle) (dstRec 
 @[extern "lean_raylib__ImageDrawText"]
 opaque imageDrawText (dst : Image) (text : @& String) (posX : Int32) (posY : Int32) (fontSize : UInt32) (color : Color) : Image
 
--- /-- Draw text (custom sprite font) within an image (destination) -/
--- @[extern "lean_raylib__ImageDrawTextEx"]
--- opaque imageDrawTextEx : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dst : Image *
---   | font : Font
---   | text : const char *
---   | position : Vector2
---   | fontSize : float
---   | spacing : float
---   | tint : Color
--- -/
+/-- Draw text (custom sprite font) within an image (destination) -/
+@[extern "lean_raylib__ImageDrawTextEx"]
+opaque imageDrawTextEx (dst : Image) (font : @& Font) (text : @& String) (position : @& Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : Image
 
 /-- Load texture from file into GPU memory (VRAM) -/
 @[extern "lean_raylib__LoadTexture"]
@@ -1474,26 +1463,22 @@ opaque getColor (hexValue : UInt32) : Color
 @[extern "lean_raylib__GetPixelDataSize"]
 opaque getPixelDataSize (width : UInt32) (height : UInt32) (format : PixelFormat) : UInt32
 
--- /-- Get the default Font -/
--- @[extern "lean_raylib__GetFontDefault"]
--- opaque getFontDefault (_ : Unit) : Font
--- /-- Load font from file into GPU memory (VRAM) -/
--- @[extern "lean_raylib__LoadFont"]
--- opaque loadFont (fileName : String) : Font
--- /-- Load font from file with extended parameters, use NULL for fontChars and 0 for glyphCount to load the default character set -/
--- @[extern "lean_raylib__LoadFontEx"]
--- opaque loadFontEx : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Font
---   params:
---   | fileName : const char *
---   | fontSize : int
---   | fontChars : int *
---   | glyphCount : int
--- -/
--- /-- Load font from Image (XNA style) -/
--- @[extern "lean_raylib__LoadFontFromImage"]
--- opaque loadFontFromImage (image : Image) (key : Color) (firstChar : Int32) : Font
+/-- Get the default Font -/
+@[extern "lean_raylib__GetFontDefault"]
+opaque getFontDefault : BaseIO Font
+
+/-- Load font from file into GPU memory (VRAM) -/
+@[extern "lean_raylib__LoadFont"]
+opaque loadFont (fileName : @& String) : BaseIO Font
+
+/-- Load font from file with extended parameters, use `none` for `fontChars` to load the default character set -/
+@[extern "lean_raylib__LoadFontEx"]
+opaque loadFontEx (fileName : @& String) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : BaseIO Font
+
+/-- Load font from Image (XNA style) -/
+@[extern "lean_raylib__LoadFontFromImage"]
+opaque loadFontFromImage (image : @& Image) (key : Color) (firstChar : Char) : Font
+
 -- /-- Load font from memory buffer, fileType refers to extension: i.e. '.ttf' -/
 -- @[extern "lean_raylib__LoadFontFromMemory"]
 -- opaque loadFontFromMemory : Unit -> Unit
@@ -1507,9 +1492,11 @@ opaque getPixelDataSize (width : UInt32) (height : UInt32) (format : PixelFormat
 --   | fontChars : int *
 --   | glyphCount : int
 -- -/
--- /-- Check if a font is ready -/
--- @[extern "lean_raylib__IsFontReady"]
--- opaque isFontReady (font : Font) : Bool
+
+/-- Check if a font is ready -/
+@[extern "lean_raylib__IsFontReady"]
+opaque isFontReady (font : @& Font) : Bool
+
 -- /-- Load font data for further use -/
 -- @[extern "lean_raylib__LoadFontData"]
 -- opaque loadFontData : Unit -> Unit
@@ -1523,34 +1510,19 @@ opaque getPixelDataSize (width : UInt32) (height : UInt32) (format : PixelFormat
 --   | glyphCount : int
 --   | type : int
 -- -/
--- /-- Generate image font atlas using chars info -/
--- @[extern "lean_raylib__GenImageFontAtlas"]
--- opaque genImageFontAtlas : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Image
---   params:
---   | chars : const GlyphInfo *
---   | recs : Rectangle * *
---   | glyphCount : int
---   | fontSize : int
---   | padding : int
---   | packMethod : int
--- -/
--- /-- Unload font chars info data (RAM) -/
--- @[extern "lean_raylib__UnloadFontData"]
--- opaque unloadFontData : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | chars : GlyphInfo *
---   | glyphCount : int
--- -/
--- /-- Unload font from GPU memory (VRAM) -/
--- @[extern "lean_raylib__UnloadFont"]
--- opaque unloadFont (font : Font) : Unit
--- /-- Export font as code file, returns true on success -/
--- @[extern "lean_raylib__ExportFontAsCode"]
--- opaque exportFontAsCode (font : Font) (fileName : String) : Bool
+
+/-- `0` - Default, `1` - Skyline -/
+def FontAtlasPackMethod : Type := Subtype (α := UInt32) (· < 2)
+
+/-- Generate image font atlas using chars info -/
+@[extern "lean_raylib__GenImageFontAtlas"]
+opaque genImageFontAtlas (chars : @& Option (Array GlyphInfo)) (fontSize : UInt32) (padding : UInt32) (packMethod : FontAtlasPackMethod) : Image × Array Rectangle
+
+-- axiom : ∀ chars, (genImageFontAtlas chars _ _ _).snd.size = (chars.map Array.size).getD 95
+
+/-- Export font as code file, returns true on success -/
+@[extern "lean_raylib__ExportFontAsCode"]
+opaque exportFontAsCode (font : @& Font) (fileName : @& String) : BaseIO Bool
 
 /-- Draw current FPS -/
 @[extern "lean_raylib__DrawFPS"]
@@ -1558,17 +1530,24 @@ opaque drawFPS (posX : Int32) (posY : Int32) : BaseIO Unit
 
 /-- Draw text (using default font) -/
 @[extern "lean_raylib__DrawText"]
-opaque drawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32) (color : Color) : BaseIO Unit
+opaque drawText (text : @& String) (posX : Int32) (posY : Int32) (fontSize : Int32) (color : Color) : BaseIO Unit
 
--- /-- Draw text using font and additional parameters -/
--- @[extern "lean_raylib__DrawTextEx"]
--- opaque drawTextEx (font : Font) (text : String) (position : Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : Unit
--- /-- Draw text using Font and pro parameters (rotation) -/
--- @[extern "lean_raylib__DrawTextPro"]
--- opaque drawTextPro (font : Font) (text : String) (position : Vector2) (origin : Vector2) (rotation : Float32) (fontSize : Float32) (spacing : Float32) (tint : Color) : Unit
--- /-- Draw one character (codepoint) -/
--- @[extern "lean_raylib__DrawTextCodepoint"]
--- opaque drawTextCodepoint (font : Font) (codepoint : Int32) (position : Vector2) (fontSize : Float32) (tint : Color) : Unit
+/-- Draw text using font and additional parameters -/
+@[extern "lean_raylib__DrawTextEx"]
+opaque drawTextEx (font : @& Font) (text : @& String) (position : @& Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
+
+/-- Draw text using font and pro parameters (rotation) -/
+@[extern "lean_raylib__DrawTextPro"]
+opaque drawTextPro (font : @& Font) (text : @& String) (position : @& Vector2) (origin : @& Vector2) (rotation : Float32) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
+
+/-- Draw utf-8 text using font and additional parameters -/
+@[extern "lean_raylib__DrawTextUtf8"]
+opaque drawTextUtf8 (font : @& Font) (text : @& String) (position : @& Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
+
+/-- Draw one character (codepoint) -/
+@[extern "lean_raylib__DrawTextCodepoint"]
+opaque drawTextCodepoint (font : @& Font) (codepoint : Char) (position : @& Vector2) (fontSize : Float32) (tint : Color) : BaseIO Unit
+
 -- /-- Draw multiple character (codepoint) -/
 -- @[extern "lean_raylib__DrawTextCodepoints"]
 -- opaque drawTextCodepoints : Unit -> Unit
@@ -1583,21 +1562,26 @@ opaque drawText (text : String) (posX : Int32) (posY : Int32) (fontSize : Int32)
 --   | spacing : float
 --   | tint : Color
 -- -/
--- /-- Measure string width for default font -/
--- @[extern "lean_raylib__MeasureText"]
--- opaque measureText (text : String) (fontSize : Int32) : Int32
--- /-- Measure string size for Font -/
--- @[extern "lean_raylib__MeasureTextEx"]
--- opaque measureTextEx (font : Font) (text : String) (fontSize : Float32) (spacing : Float32) : Vector2
--- /-- Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found -/
--- @[extern "lean_raylib__GetGlyphIndex"]
--- opaque getGlyphIndex (font : Font) (codepoint : Int32) : Int32
+
+/-- Measure string width for default font -/
+@[extern "lean_raylib__MeasureText"]
+opaque measureText (text : @& String) (fontSize : UInt32) : BaseIO UInt32
+
+/-- Measure string size for `Font` -/
+@[extern "lean_raylib__MeasureTextEx"]
+opaque measureTextEx (font : @& Font) (text : @& String) (fontSize : Float32) (spacing : Float32) : Vector2
+
+/-- Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found -/
+@[extern "lean_raylib__GetGlyphIndex"]
+opaque getGlyphIndex (font : @& Font) (codepoint : Char) : USize
+
 -- /-- Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found -/
 -- @[extern "lean_raylib__GetGlyphInfo"]
--- opaque getGlyphInfo (font : Font) (codepoint : Int32) : GlyphInfo
--- /-- Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found -/
--- @[extern "lean_raylib__GetGlyphAtlasRec"]
--- opaque getGlyphAtlasRec (font : Font) (codepoint : Int32) : Rectangle
+-- opaque getGlyphInfo (font : @& Font) (codepoint : Char) : GlyphInfo
+
+/-- Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found -/
+@[extern "lean_raylib__GetGlyphAtlasRec"]
+opaque getGlyphAtlasRec (font : @& Font) (codepoint : Char) : Rectangle
 
 /-- Draw a line in 3D world space -/
 @[extern "lean_raylib__DrawLine3D"]

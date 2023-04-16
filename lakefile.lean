@@ -112,9 +112,6 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
     | .Unknown name =>
       error s!"Unknown 'raylib' source: {name}"
 
-  if (get_config? unsafe_opts).isSome then {
-    flags := flags.push "-DRAYLIB_LEAN_UNSAFE_OPTS"
-  }
   pure flags
 
 extern_lib «raymath-lean» (pkg : Package) := do

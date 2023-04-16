@@ -163,29 +163,50 @@ static inline NPatchInfo* lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
 
 // # Glyph info
 
-// static inline lean_object* lean_raylib_GlyphInfo_to (GlyphInfo const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
+// static inline void lean_raylib_GlyphInfo_set (b_lean_obj_arg obj, uint32_t value, uint32_t offsetX, uint32_t offsetY, uint32_t advanceX, lean_obj_arg image) {
+//     lean_ctor_set(obj, 0, lean_box_uint32(value));
+//     lean_ctor_set(obj, 1, lean_box_uint32(offsetX));
+//     lean_ctor_set(obj, 2, lean_box_uint32(offsetY));
+//     lean_ctor_set(obj, 3, lean_box_uint32(advanceX));
+//     lean_ctor_set(obj, 4, image);
 // }
 
-// static inline GlyphInfo const* lean_raylib_GlyphInfo_from (b_lean_obj_arg obj) {
-//     return (GlyphInfo const*) lean_get_external_data(obj);
+// static inline lean_object* lean_raylib_GlyphInfo_to (GlyphInfo r) {
+//     lean_object* obj = lean_alloc_ctor(0, 5, 0);
+//     LET_BOX(Image, image, r.image);
+//     lean_raylib_GlyphInfo_set(obj, r.value, r.offsetX, r.offsetY, r.advanceX, lean_raylib_Image_to(image));
+//     return obj;
 // }
 
-// static inline lean_object* lean_raylib_Font_to (Font const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
+// static inline GlyphInfo lean_raylib_GlyphInfo_from (b_lean_obj_arg obj) {
+//     GlyphInfo r;
+//     r.value = lean_unbox_uint32(lean_ctor_get(obj, 0));
+//     r.offsetX = lean_unbox_uint32(lean_ctor_get(obj, 1));
+//     r.offsetY = lean_unbox_uint32(lean_ctor_get(obj, 2));
+//     r.advanceX = lean_unbox_uint32(lean_ctor_get(obj, 3));
+//     r.image = *lean_raylib_Image_from(lean_ctor_get(obj, 4));
+//     return r;
 // }
 
-// static inline Font const* lean_raylib_Font_from (b_lean_obj_arg obj) {
-//     return (Font const*) lean_get_external_data(obj);
-// }
+
+// # Font
+
+static void lean_raylib_Font_finalize(void* font) {
+    UnloadFont(*(Font*)font);
+    free(font);
+}
+
+static inline lean_object* lean_raylib_Font_to (Font const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Font_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline Font const* lean_raylib_Font_from (b_lean_obj_arg obj) {
+    return (Font const*) lean_get_external_data(obj);
+}
 
 
 // # Camera 3D

@@ -1552,10 +1552,16 @@ LEAN_EXPORT lean_obj_res lean_raylib__ImageText (b_lean_obj_arg text, uint32_t f
     return lean_raylib_Image_to(image);
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, uint32_t fontSize, uint32_t spacing, uint32_t tint) {
-//     Image result_ = ImageTextEx(lean_raylib_Font_from(font), lean_string_cstr(text), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageTextEx (b_lean_obj_arg font, b_lean_obj_arg text, uint32_t fontSize, uint32_t spacing, uint32_t tint) {
+    LET_BOX(Image, image, ImageTextEx(
+        *lean_raylib_Font_from(font),
+        lean_string_cstr(text),
+        lean_pod_Float32_fromBits(fontSize),
+        lean_pod_Float32_fromBits(spacing),
+        lean_raylib_Color_from(tint)
+    ));
+    return lean_raylib_Image_to(image);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__ImageFormat (lean_obj_arg image_old_box, uint32_t newFormat) {
     lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
@@ -1816,11 +1822,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawText (lean_obj_arg image_old_box,
     return image_res_box;
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawTextEx (lean_obj_arg image_old_box, lean_obj_arg font, /* const char* */lean_obj_arg text, lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint) {
-//     lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
-//     ImageDrawTextEx(lean_raylib_Image_from(image_res_box), lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
-//     return image_res_box;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawTextEx (lean_obj_arg image_old_box, b_lean_obj_arg font, b_lean_obj_arg text, b_lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint) {
+    lean_object* image_res_box = lean_raylib_Image_exclusive(image_old_box);
+    ImageDrawTextEx(lean_raylib_Image_from(image_res_box), *lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+    return image_res_box;
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__LoadTexture (b_lean_obj_arg fileName, lean_obj_arg world) {
     LET_BOX(Texture2D, texture, LoadTexture(lean_string_cstr(fileName)));
@@ -1998,115 +2004,136 @@ LEAN_EXPORT uint32_t lean_raylib__GetPixelDataSize (uint32_t width, uint32_t hei
     return GetPixelDataSize(width, height, format);
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetFontDefault (lean_obj_arg world) {
-//     Font result_ = GetFontDefault();
-//     return lean_raylib_Font_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetFontDefault (b_lean_obj_arg unit, lean_obj_arg world) {
+    LET_BOX(Font, font, GetFontDefault());
+    return lean_io_result_mk_ok(lean_raylib_Font_to(font));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadFont (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     Font result_ = LoadFont(lean_string_cstr(fileName));
-//     return lean_raylib_Font_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFont (b_lean_obj_arg fileName, lean_obj_arg world) {
+    LET_BOX(Font, font, LoadFont(lean_string_cstr(fileName)));
+    return lean_io_result_mk_ok(lean_raylib_Font_to(font));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadFontEx (/* const char* */lean_obj_arg fileName, uint32_t fontSize, /* int* */lean_obj_arg fontChars, uint32_t glyphCount, lean_obj_arg world) {
-//     Font result_ = LoadFontEx(lean_string_cstr(fileName), fontSize, /*todo: ptr?*/fontChars, glyphCount);
-//     return lean_raylib_Font_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFontEx (b_lean_obj_arg fileName, uint32_t fontSize, b_lean_obj_arg fontChars_opt, lean_obj_arg world) {
+    size_t glyphCount = 0;
+    int* fontChars_c = NULL;
+    if(lean_option_is_some(fontChars_opt)) {
+        lean_object* fontChars_arr = lean_ctor_get(fontChars_opt, 0);
+        glyphCount = lean_array_size(fontChars_arr);
+        fontChars_c = malloc(sizeof(int) * glyphCount);
+        for(size_t i = 0; i < glyphCount; ++i) {
+            fontChars_c[i] = lean_unbox_uint32(lean_array_get_core(fontChars_arr, i));
+        }
+    }
+    LET_BOX(Font, font, LoadFontEx(lean_string_cstr(fileName), fontSize, fontChars_c, glyphCount));
+    free(fontChars_c);
+    return lean_io_result_mk_ok(lean_raylib_Font_to(font));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromImage (lean_obj_arg image, uint32_t key, uint32_t firstChar, lean_obj_arg world) {
-//     Font result_ = LoadFontFromImage(lean_raylib_Image_from(image), lean_raylib_Color_from(key), firstChar);
-//     return lean_raylib_Font_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromImage (b_lean_obj_arg image, uint32_t key, uint32_t firstChar) {
+    LET_BOX(Font, font, LoadFontFromImage(*lean_raylib_Image_from(image), lean_raylib_Color_from(key), firstChar));
+    return lean_raylib_Font_to(font);
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (/* const char* */lean_obj_arg fileType, /* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize, uint32_t fontSize, /* int* */lean_obj_arg fontChars, uint32_t glyphCount, lean_obj_arg world) {
 //     Font result_ = LoadFontFromMemory(lean_string_cstr(fileType), /*todo: ptr?*/fileData, dataSize, fontSize, /*todo: ptr?*/fontChars, glyphCount);
 //     return lean_raylib_Font_to(result_);
 // }
 
-// LEAN_EXPORT uint8_t lean_raylib__IsFontReady (lean_obj_arg font, lean_obj_arg world) {
-//     bool result_ = IsFontReady(lean_raylib_Font_from(font));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsFontReady (lean_obj_arg font) {
+    return IsFontReady(*lean_raylib_Font_from(font));
+}
 
 // LEAN_EXPORT /* GlyphInfo* */lean_obj_arg lean_raylib__LoadFontData (/* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize, uint32_t fontSize, /* int* */lean_obj_arg fontChars, uint32_t glyphCount, uint32_t type, lean_obj_arg world) {
 //     GlyphInfo * result_ = LoadFontData(/*todo: ptr?*/fileData, dataSize, fontSize, /*todo: ptr?*/fontChars, glyphCount, type);
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageFontAtlas (/* const GlyphInfo* */lean_obj_arg chars, /* Rectangle ** */lean_obj_arg recs, uint32_t glyphCount, uint32_t fontSize, uint32_t padding, uint32_t packMethod) {
-//     Image result_ = GenImageFontAtlas(/*todo: ptr?*/chars, /*todo: ptr?*/recs, glyphCount, fontSize, padding, packMethod);
-//     return lean_raylib_Image_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageFontAtlas (b_lean_obj_arg chars_opt, uint32_t fontSize, uint32_t padding, uint32_t packMethod) {
+    size_t glyphCount = 0;
+    int* chars_c = NULL;
+    if(lean_option_is_some(chars_opt)) {
+        lean_object* chars_arr = lean_ctor_get(chars_opt, 0);
+        glyphCount = lean_array_size(chars_arr);
+        chars_c = malloc(sizeof(int) * glyphCount);
+        for(size_t i = 0; i < glyphCount; ++i) {
+            chars_c[i] = lean_unbox_uint32(lean_array_get_core(chars_arr, i));
+        }
+    }
+    Rectangle* recs = NULL;
+    LET_BOX(Image, image, GenImageFontAtlas(chars_c, &recs, glyphCount, fontSize, padding, packMethod));
+    free(chars_c);
+    lean_object* recs_box = lean_alloc_array(glyphCount, glyphCount);
+    for(size_t i = 0; i < glyphCount; ++i) {
+        lean_array_set_core(recs_box, i, lean_raylib_Rectangle_to(recs[i]));
+    }
+    RL_FREE(recs);
+    return lean_mk_tuple2(lean_raylib_Image_to(image), recs_box);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadFontData (/* GlyphInfo* */lean_obj_arg chars, uint32_t glyphCount, lean_obj_arg world) {
-//     UnloadFontData(/*todo: ptr?*/chars, glyphCount);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadFont (lean_obj_arg font, lean_obj_arg world) {
-//     UnloadFont(lean_raylib_Font_from(font));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT uint8_t lean_raylib__ExportFontAsCode (lean_obj_arg font, /* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     bool result_ = ExportFontAsCode(lean_raylib_Font_from(font), lean_string_cstr(fileName));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ExportFontAsCode (b_lean_obj_arg font, b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(ExportFontAsCode(*lean_raylib_Font_from(font), lean_string_cstr(fileName))));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawFPS (uint32_t posX, uint32_t posY, lean_obj_arg world) {
     DrawFPS(posX, posY);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__DrawText (lean_obj_arg text, uint32_t posX, uint32_t posY, uint32_t fontSize, uint32_t color, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__DrawText (b_lean_obj_arg text, uint32_t posX, uint32_t posY, uint32_t fontSize, uint32_t color, lean_obj_arg world) {
     DrawText(lean_string_cstr(text), posX, posY, fontSize, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
-//     DrawTextEx(lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTextEx (b_lean_obj_arg font, b_lean_obj_arg text, b_lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
+    DrawTextEx(*lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTextPro (lean_obj_arg font, /* const char* */lean_obj_arg text, lean_obj_arg position, lean_obj_arg origin, uint32_t rotation, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
-//     DrawTextPro(lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), lean_raylib_Vector2_from(origin), lean_pod_Float32_fromBits(rotation), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTextPro (b_lean_obj_arg font, b_lean_obj_arg text, b_lean_obj_arg position, b_lean_obj_arg origin, uint32_t rotation, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
+    DrawTextPro(*lean_raylib_Font_from(font), lean_string_cstr(text), lean_raylib_Vector2_from(position), lean_raylib_Vector2_from(origin), lean_pod_Float32_fromBits(rotation), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTextCodepoint (lean_obj_arg font, uint32_t codepoint, lean_obj_arg position, uint32_t fontSize, uint32_t tint, lean_obj_arg world) {
-//     DrawTextCodepoint(lean_raylib_Font_from(font), codepoint, lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTextUtf8 (b_lean_obj_arg font, b_lean_obj_arg text, b_lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
+    DrawTextCodepoints(*lean_raylib_Font_from(font), lean_string_cstr(text), lean_string_len(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__DrawTextCodepoint (b_lean_obj_arg font, uint32_t codepoint, b_lean_obj_arg position, uint32_t fontSize, uint32_t tint, lean_obj_arg world) {
+    DrawTextCodepoint(*lean_raylib_Font_from(font), codepoint, lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_raylib_Color_from(tint));
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__DrawTextCodepoints (lean_obj_arg font, /* const int* */lean_obj_arg codepoints, uint32_t count, lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
-//     DrawTextCodepoints(lean_raylib_Font_from(font), /*todo: ptr?*/codepoints, count, lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+//     DrawTextCodepoints(*lean_raylib_Font_from(font), /*todo: ptr?*/codepoints, count, lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-// LEAN_EXPORT uint32_t lean_raylib__MeasureText (/* const char* */lean_obj_arg text, uint32_t fontSize, lean_obj_arg world) {
-//     int result_ = MeasureText(lean_string_cstr(text), fontSize);
-//     return result_;
+LEAN_EXPORT lean_obj_res lean_raylib__MeasureText (b_lean_obj_arg text, uint32_t fontSize, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box_uint32(MeasureText(lean_string_cstr(text), fontSize)));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__MeasureTextEx (b_lean_obj_arg font, b_lean_obj_arg text, uint32_t fontSize, uint32_t spacing) {
+    return lean_raylib_Vector2_to(MeasureTextEx(
+        *lean_raylib_Font_from(font),
+        lean_string_cstr(text),
+        lean_pod_Float32_fromBits(fontSize),
+        lean_pod_Float32_fromBits(spacing)
+    ));
+}
+
+LEAN_EXPORT size_t lean_raylib__GetGlyphIndex (b_lean_obj_arg font, uint32_t codepoint) {
+    return GetGlyphIndex(*lean_raylib_Font_from(font), codepoint);
+}
+
+// LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphInfo (b_lean_obj_arg font, uint32_t codepoint) {
+//     return lean_raylib_GlyphInfo_to(GetGlyphInfo(*lean_raylib_Font_from(font), codepoint));
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__MeasureTextEx (lean_obj_arg font, /* const char* */lean_obj_arg text, uint32_t fontSize, uint32_t spacing, lean_obj_arg world) {
-//     Vector2 result_ = MeasureTextEx(lean_raylib_Font_from(font), lean_string_cstr(text), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing));
-//     return lean_raylib_Vector2_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__GetGlyphIndex (lean_obj_arg font, uint32_t codepoint, lean_obj_arg world) {
-//     int result_ = GetGlyphIndex(lean_raylib_Font_from(font), codepoint);
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphInfo (lean_obj_arg font, uint32_t codepoint, lean_obj_arg world) {
-//     GlyphInfo result_ = GetGlyphInfo(lean_raylib_Font_from(font), codepoint);
-//     return lean_raylib_GlyphInfo_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphAtlasRec (lean_obj_arg font, uint32_t codepoint, lean_obj_arg world) {
-//     Rectangle result_ = GetGlyphAtlasRec(lean_raylib_Font_from(font), codepoint);
-//     return lean_raylib_Rectangle_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphAtlasRec (b_lean_obj_arg font, uint32_t codepoint) {
+    return lean_raylib_Rectangle_to(GetGlyphAtlasRec(*lean_raylib_Font_from(font), codepoint));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawLine3D (b_lean_obj_arg startPos, b_lean_obj_arg endPos, uint32_t color, lean_obj_arg world) {
     DrawLine3D(lean_raylib_Vector3_from(startPos), lean_raylib_Vector3_from(endPos), lean_raylib_Color_from(color));
