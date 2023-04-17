@@ -1,4 +1,4 @@
-import Pod.Float32
+import Pod.Float
 
 open Pod (Float32)
 
