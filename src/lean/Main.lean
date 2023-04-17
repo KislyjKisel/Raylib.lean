@@ -26,15 +26,12 @@ def main : IO Unit := do
     .perspective
 
   setMousePosition (Int32.mk (windowWidth / 2)) (Int32.mk (windowHeight / 2))
-  let mut lastMousePosition : Vector2 ← getMousePosition
+  let mut lastMousePosition ← getMousePosition
 
   repeat do
-    let mp ← getMousePosition
-
     beginDrawing
     clearBackground .raywhite
     drawFPS 0 0
-    drawTextPro (← getFontDefault) "TEXT" mp Vector2.zero (100 * (← getTime)) 36 10 .black
     beginMode3D cam3d
 
     drawCube
@@ -45,6 +42,7 @@ def main : IO Unit := do
     endMode3D
     endDrawing
 
+    let mp ← getMousePosition
     let dmp := (lastMousePosition - mp).scale mouseSensitivity
     camForward := camForward.rotateByAxisAngle camUp dmp.x
     camForward := camForward.rotateByAxisAngle (camForward.cross camUp) dmp.y
