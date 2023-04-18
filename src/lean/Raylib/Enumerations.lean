@@ -1,3 +1,8 @@
+import Pod.UInt
+import Pod.Float
+import Raymath
+import Raylib.Util
+
 namespace Raylib
 
 /-! # Config flags -/
@@ -920,6 +925,17 @@ end ShaderUniformDataType
 
 instance : Inhabited ShaderUniformDataType := ⟨ShaderUniformDataType.float⟩
 
+def ShaderUniformDataType.lift : ShaderUniformDataType → Type
+    | ⟨⟨0, _⟩, _⟩ => Pod.Float32
+    | ⟨⟨1, _⟩, _⟩ => Raymath.Vector2
+    | ⟨⟨2, _⟩, _⟩ => Raymath.Vector3
+    | ⟨⟨3, _⟩, _⟩ => Raymath.Vector4
+    | ⟨⟨4, _⟩, _⟩ => Int32
+    | ⟨⟨5, _⟩, _⟩ => Int32 × Int32
+    | ⟨⟨6, _⟩, _⟩ => Int32 × Int32 × Int32
+    | ⟨⟨7, _⟩, _⟩ => Int32 × Int32 × Int32 × Int32
+    | ⟨⟨8, _⟩, _⟩ => UInt32
+
 
 /-! # Shader attribute data type -/
 
@@ -1306,5 +1322,21 @@ end NPatchLayout
 
 instance : Inhabited NPatchLayout := ⟨NPatchLayout.ninePatch⟩
 
+
+/-! # Audio sample type -/
+
+inductive AudioSampleType.Is : UInt32 -> Prop where
+  | u8 : AudioSampleType.Is 8
+  | u16 : AudioSampleType.Is 16
+  | u32 : AudioSampleType.Is 32
+
+def AudioSampleType : Type := Subtype AudioSampleType.Is
+
+def AudioSampleType.size : AudioSampleType → UInt32 := Subtype.val
+
+def AudioSampleType.alignment : AudioSampleType → Nat
+  | ⟨⟨8, _⟩, _⟩ => UInt8.alignment
+  | ⟨⟨16, _⟩, _⟩ => UInt16.alignment
+  | ⟨⟨32, _⟩, _⟩ => UInt32.alignment
 
 end Raylib

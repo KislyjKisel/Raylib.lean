@@ -79,12 +79,15 @@ static inline lean_obj_res lean_raylib_Image_exclusive(lean_obj_arg image_box) {
 // # Texture
 
 typedef struct {
-    lean_object* owner;
+    lean_object* owner; // NOT NULLABLE
     Texture texture;
 } lean_raylib_TextureRef;
 
 static void lean_raylib_TextureRef_foreach(void* textureRef, b_lean_obj_arg f) {
-    lean_apply_1(f, ((lean_raylib_TextureRef*)textureRef)->owner);
+    lean_object* owner = ((lean_raylib_TextureRef*)textureRef)->owner;
+    lean_inc_ref(f);
+    lean_inc(owner);
+    lean_apply_1(f, owner);
 }
 
 static void lean_raylib_TextureRef_finalize(void* textureRef) {
@@ -471,21 +474,39 @@ static inline Wave* lean_raylib_Wave_from (b_lean_obj_arg obj) {
 
 // # Audio stream
 
-static void lean_raylib_AudioStream_finalize(void* audioStream) {
-    UnloadAudioStream(*(AudioStream*)audioStream);
+typedef struct {
+    AudioStream stream;
+    lean_object* callback;
+} lean_raylib_AudioStream;
+
+static void lean_raylib_AudioStream_finalize(void* audioStream_v) {
+    lean_raylib_AudioStream* audioStream = audioStream_v;
+    UnloadAudioStream(audioStream->stream);
+    if (audioStream->callback != NULL) {
+        lean_dec_ref(audioStream->callback);
+    }
     free(audioStream);
+}
+
+static void lean_raylib_AudioStream_foreach(void* audioStream, b_lean_obj_arg f) {
+    lean_object* callback = ((lean_raylib_AudioStream*)audioStream)->callback;
+    if (callback != NULL) {
+        lean_inc_ref(f);
+        lean_inc(callback);
+        lean_apply_1(f, callback);
+    }
 }
 
 static inline lean_object* lean_raylib_AudioStream_to (AudioStream const* obj) {
     static lean_external_class* class_ = NULL;
     if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_AudioStream_finalize, lean_raylib_default_foreach);
+        class_ = lean_register_external_class(lean_raylib_AudioStream_finalize, lean_raylib_AudioStream_foreach);
     }
     return lean_alloc_external(class_, (void*)obj);
 }
 
-static inline AudioStream const* lean_raylib_AudioStream_from (b_lean_obj_arg obj) {
-    return (AudioStream const*) lean_get_external_data(obj);
+static inline lean_raylib_AudioStream* lean_raylib_AudioStream_from (b_lean_obj_arg obj) {
+    return (lean_raylib_AudioStream*) lean_get_external_data(obj);
 }
 
 

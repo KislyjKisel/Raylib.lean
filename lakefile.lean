@@ -25,6 +25,8 @@ def raylibSrc : RaylibSrc := match get_config? raylib with
   | some "custom" => .Custom
   | some name => .Unknown name
 
+def splitArgStr (s : String) : Array String := Array.mk $ s.splitOn.filter $ not ∘ String.isEmpty
+
 @[default_target]
 lean_exe test {
   root := `Main
@@ -34,7 +36,7 @@ lean_exe test {
       | .Submodule => #["-Lraylib/build/raylib", "-lraylib"]
       | .Custom => #[]
       | .Unknown _ => #[]
-  ).append $ Array.mk $ ((get_config? lflags).getD "").splitOn
+  ).append $ splitArgStr $ (get_config? lflags).getD ""
 }
 
 def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
@@ -81,7 +83,7 @@ def buildRaylibSubmodule (pkgDir : FilePath) (printCmdOutput : Bool) : IO Unit :
 def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
   let mut flags :=
     #["-I", (← getLeanIncludeDir).toString, "-fPIC"].append $
-      Array.mk $ ((get_config? cflags).getD "").splitOn.filter $ not ∘ String.isEmpty
+      splitArgStr $ (get_config? cflags).getD ""
 
   match pkg.deps.find? λ dep ↦ dep.name == `pod with
     | none => error "Missing dependency 'Pod'"
@@ -128,10 +130,12 @@ extern_lib «raylib-lean» (pkg : Package) := do
   let bindingsEnumerationsOFile ← buildBindingsO pkg flags "enumerations"
   let bindingsStructuresOFile ← buildBindingsO pkg flags "structures"
   let bindingsFunctionsOFile ← buildBindingsO pkg flags "functions"
+  let bindingsCallbacksOFile ← buildBindingsO pkg flags "callbacks"
   buildStaticLib (pkg.libDir / name) #[
     bindingsEnumerationsOFile,
     bindingsStructuresOFile,
-    bindingsFunctionsOFile
+    bindingsFunctionsOFile,
+    bindingsCallbacksOFile
   ]
 
 script buildRL do

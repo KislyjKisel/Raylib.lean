@@ -1,3 +1,10 @@
+import Pod.UInt
+import Pod.BytesRef
+import Raylib.Structures
+import Raylib.ST2
+
+set_option autoImplicit false
+
 namespace Raylib
 -- /-! # Callbacks -/
 -- /-- Logging: Redirect trace log messages -/
@@ -9,43 +16,21 @@ namespace Raylib
 --   | text : const char *
 --   | args : va_list
 -- -/
--- /-- FileIO: Load binary data -/
--- def LoadFileDataCallback : Type := panic! "Untranslated"
--- /- todo: ^^ callback ^^
---   returns: unsigned char *
---   params:
---   | fileName : const char *
---   | bytesRead : unsigned int *
--- -/
--- /-- FileIO: Save binary data -/
--- def SaveFileDataCallback : Type := panic! "Untranslated"
--- /- todo: ^^ callback ^^
---   returns: bool
---   params:
---   | fileName : const char *
---   | data : void *
---   | bytesToWrite : unsigned int
--- -/
--- /-- FileIO: Load text data -/
--- def LoadFileTextCallback : Type := panic! "Untranslated"
--- /- todo: ^^ callback ^^
---   returns: char *
---   params:
---   | fileName : const char *
--- -/
--- /-- FileIO: Save text data -/
--- def SaveFileTextCallback : Type := panic! "Untranslated"
--- /- todo: ^^ callback ^^
---   returns: bool
---   params:
---   | fileName : const char *
---   | text : char *
--- -/
--- def AudioCallback : Type := panic! "Untranslated"
--- /- todo: ^^ callback ^^
---   returns: void
---   params:
---   | bufferData : void *
---   | frames : unsigned int
--- -/
+
+/-- FileIO: Load binary data -/
+def LoadFileDataCallback : Type := System.FilePath → IO ByteArray
+
+/-- FileIO: Save binary data -/
+def SaveFileDataCallback : Type 1 := {σ : Type} →
+  System.FilePath → {size : USize} → Pod.BytesRefImm σ size 1 → EST2 IO.Error σ IO.RealWorld Bool
+
+/-- FileIO: Load text data -/
+def LoadFileTextCallback : Type := System.FilePath → IO String
+
+/-- FileIO: Save text data -/
+def SaveFileTextCallback : Type := System.FilePath → String → IO Bool
+
+def AudioCallback (st : AudioSampleType) := {σ : Type} →
+  (frames : USize) → Pod.BytesRefMut σ (frames * st.size.toUSize) st.alignment → EST2 IO.Error σ IO.RealWorld Unit
+
 end Raylib

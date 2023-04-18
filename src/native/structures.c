@@ -212,7 +212,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Font_texture(lean_obj_arg obj) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Font_recs(b_lean_obj_arg obj) {
-    Font* font = lean_raylib_Font_from(obj);
+    const Font* font = lean_raylib_Font_from(obj);
     lean_object* arr = lean_alloc_array(font->glyphCount, font->glyphCount);
     for(size_t i = 0; i < font->glyphCount; ++i) {
         lean_array_set_core(arr, i, lean_raylib_Rectangle_to(font->recs[i]));
@@ -432,7 +432,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Shader_locs(b_lean_obj_arg shader) {
     return locs_lean;
 }
 
-LEAN_EXPORT uint32_t lean_raylib__Shader_defaultLoc(b_lean_obj_arg shader, uint32_t index) {
+LEAN_EXPORT lean_obj_res lean_raylib__Shader_defaultLoc(b_lean_obj_arg shader, uint32_t index) {
     int location = lean_raylib_Shader_from(shader)->locs[index];
     if (location < 0) {
         return lean_mk_option_none();
@@ -792,15 +792,15 @@ LEAN_EXPORT uint32_t lean_raylib__Wave_channels(b_lean_obj_arg wave) {
 // # Audio stream
 
 LEAN_EXPORT uint32_t lean_raylib__AudioStream_sampleRate(b_lean_obj_arg audioStream) {
-    return lean_raylib_AudioStream_from(audioStream)->sampleRate;
+    return lean_raylib_AudioStream_from(audioStream)->stream.sampleRate;
 }
 
 LEAN_EXPORT uint32_t lean_raylib__AudioStream_sampleSize(b_lean_obj_arg audioStream) {
-    return lean_raylib_AudioStream_from(audioStream)->sampleSize;
+    return lean_raylib_AudioStream_from(audioStream)->stream.sampleSize;
 }
 
 LEAN_EXPORT uint32_t lean_raylib__AudioStream_channels(b_lean_obj_arg audioStream) {
-    return lean_raylib_AudioStream_from(audioStream)->channels;
+    return lean_raylib_AudioStream_from(audioStream)->stream.channels;
 }
 
 

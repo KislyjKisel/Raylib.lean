@@ -16,6 +16,14 @@ def main : IO Unit := do
   initAudioDevice
   setExitKey .null
 
+  setSaveFileDataCallback λ name size br ↦ do
+    EST2.lift₂ $ IO.println s!"SaveFileData, name: {name}, size: {size}"
+    if h: 0 < size then do
+      let b0 ← EST2.lift₁ $ (br.getUInt8 0 h).adaptExcept Empty.rec
+      EST2.lift₂ $ IO.println s!"First byte {b0}"
+    pure true
+  let _ ← saveFileData "A.bin" (ByteArray.empty.push 34).view
+
   let camUp := Vector3.mk 0 1 0
   let mut camForward := Vector3.mk 0 0 1
   let mut cam3d := Camera3D.mk

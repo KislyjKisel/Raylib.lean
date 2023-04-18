@@ -857,20 +857,22 @@ opaque Wave.channels (wave : @& Wave) : UInt32
 
 /-! # Audio stream -/
 
-opaque AudioStreamPointed : NonemptyType
+opaque AudioStreamPointed (st : AudioSampleType) : NonemptyType
 /-- AudioStream, custom audio stream -/
-def AudioStream : Type := AudioStreamPointed.type
-instance : Nonempty AudioStream := AudioStreamPointed.property
+def AudioStream (st : AudioSampleType) : Type := (AudioStreamPointed st).type
+instance {st} : Nonempty (AudioStream st) := (AudioStreamPointed st).property
 
-/-- Getter: Frequency (samples per second) -/
+/-- Frequency (samples per second) -/
 @[extern "lean_raylib__AudioStream_sampleRate"]
-opaque AudioStream.sampleRate (self : @& AudioStream) : UInt32
-/-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
+opaque AudioStream.sampleRate {st} (self : @& AudioStream st) : UInt32
+
+/-- Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
 @[extern "lean_raylib__AudioStream_sampleSize"]
-opaque AudioStream.sampleSize (self : @& AudioStream) : UInt32
-/-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
+def AudioStream.sampleSize {st} (self : @& AudioStream st) : UInt32 := st.size
+
+/-- Number of channels (1-mono, 2-stereo, ...) -/
 @[extern "lean_raylib__AudioStream_channels"]
-opaque AudioStream.channels (self : @& AudioStream) : UInt32
+opaque AudioStream.channels {st} (self : @& AudioStream st) : UInt32
 
 
 /-! # Sound -/

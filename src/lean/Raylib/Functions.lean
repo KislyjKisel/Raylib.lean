@@ -1,3 +1,4 @@
+import Pod.BytesView
 import Raymath
 import Raylib.Aliases
 import Raylib.Callbacks
@@ -324,17 +325,6 @@ opaque getShaderLocation (shader : @& Shader) (uniformName : @& String) : Option
 @[extern "lean_raylib__GetShaderLocationAttrib"]
 opaque getShaderLocationAttrib (shader : @& Shader) (attribName : @& String) : Option UInt32
 
-def ShaderUniformDataType.lift : ShaderUniformDataType → Type
-    | ⟨⟨0, _⟩, _⟩ => Float32
-    | ⟨⟨1, _⟩, _⟩ => Vector2
-    | ⟨⟨2, _⟩, _⟩ => Vector3
-    | ⟨⟨3, _⟩, _⟩ => Vector4
-    | ⟨⟨4, _⟩, _⟩ => Int32
-    | ⟨⟨5, _⟩, _⟩ => Int32 × Int32
-    | ⟨⟨6, _⟩, _⟩ => Int32 × Int32 × Int32
-    | ⟨⟨7, _⟩, _⟩ => Int32 × Int32 × Int32 × Int32
-    | ⟨⟨8, _⟩, _⟩ => UInt32
-
 /-- Set shader uniform value -/
 @[extern "lean_raylib__SetShaderValue"]
 opaque setShaderValue (shader : @& Shader) (locIndex : UInt32) (type : ShaderUniformDataType) (value : @& type.lift) : BaseIO Unit
@@ -454,44 +444,43 @@ opaque openURL (url : @& String) : BaseIO Unit
 
 -- /-- Set custom trace log -/
 -- @[extern "lean_raylib__SetTraceLogCallback"]
--- opaque setTraceLogCallback : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | callback : TraceLogCallback
--- -/
--- /-- Set custom file binary data loader -/
--- @[extern "lean_raylib__SetLoadFileDataCallback"]
--- opaque setLoadFileDataCallback : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | callback : LoadFileDataCallback
--- -/
--- /-- Set custom file binary data saver -/
--- @[extern "lean_raylib__SetSaveFileDataCallback"]
--- opaque setSaveFileDataCallback : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | callback : SaveFileDataCallback
--- -/
--- /-- Set custom file text data loader -/
--- @[extern "lean_raylib__SetLoadFileTextCallback"]
--- opaque setLoadFileTextCallback : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | callback : LoadFileTextCallback
--- -/
--- /-- Set custom file text data saver -/
--- @[extern "lean_raylib__SetSaveFileTextCallback"]
--- opaque setSaveFileTextCallback : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | callback : SaveFileTextCallback
--- -/
+-- opaque setTraceLogCallback (callback : TraceLogCallback) : BaseIO Unit
+
+/-- Reset default trace log -/
+@[extern "lean_raylib__ResetTraceLogCallback"]
+opaque resetTraceLogCallback : BaseIO Unit
+
+/-- Set custom file binary data loader -/
+@[extern "lean_raylib__SetLoadFileDataCallback"]
+opaque setLoadFileDataCallback (callback : LoadFileDataCallback) : BaseIO Unit
+
+/-- Reset default file binary data loader -/
+@[extern "lean_raylib__ResetLoadFileDataCallback"]
+opaque resetLoadFileDataCallback : BaseIO Unit
+
+/-- Set custom file binary data saver -/
+@[extern "lean_raylib__SetSaveFileDataCallback"]
+opaque setSaveFileDataCallback (callback : SaveFileDataCallback) : BaseIO Unit
+
+/-- Reset default file binary data saver -/
+@[extern "lean_raylib__ResetSaveFileDataCallback"]
+opaque resetSaveFileDataCallback : BaseIO Unit
+
+/-- Set custom file text data loader -/
+@[extern "lean_raylib__SetLoadFileTextCallback"]
+opaque setLoadFileTextCallback (callback : LoadFileTextCallback) : BaseIO Unit
+
+/-- Reset default file text data loader -/
+@[extern "lean_raylib__ResetLoadFileTextCallback"]
+opaque resetLoadFileTextCallback : BaseIO Unit
+
+/-- Set custom file text data saver -/
+@[extern "lean_raylib__SetSaveFileTextCallback"]
+opaque setSaveFileTextCallback (callback : SaveFileTextCallback) : BaseIO Unit
+
+/-- Reset default file text data saver -/
+@[extern "lean_raylib__ResetSaveFileTextCallback"]
+opaque resetSaveFileTextCallback : BaseIO Unit
 
 /-- Load file data as byte array (read) -/
 @[extern "lean_raylib__LoadFileData"]
@@ -499,11 +488,11 @@ opaque loadFileData (fileName : @& String) : BaseIO ByteArray
 
 /-- Save data to file from byte array (write), returns true on success -/
 @[extern "lean_raylib__SaveFileData"]
-opaque saveFileData (fileName : @& String) (data : @& ByteArray) (offset : USize := 0) (bytesToWrite : UInt32) : IO Bool
+opaque saveFileData (fileName : @& String) {size} (data : @& Pod.BytesView size 1) : IO Bool
 
 /-- Export data to code (.h), returns true on success -/
 @[extern "lean_raylib__ExportDataAsCode"]
-opaque exportDataAsCode (data : @& ByteArray) (offset : USize := 0) (size : UInt32) (fileName : @& String) : IO Bool
+opaque exportDataAsCode {size} (data : @& Pod.BytesView size 1) (fileName : @& String) : IO Bool
 
 /-- Load text data from file (read), returns a ~~'\0' terminated~~ string -/
 @[extern "lean_raylib__LoadFileText"]
@@ -2082,16 +2071,16 @@ opaque getMusicTimePlayed (music : @& Music) : BaseIO Float
 /-- Load audio stream (to stream raw audio pcm data) -/
 -- IO: TraceLog + tracking
 @[extern "lean_raylib__LoadAudioStream"]
-opaque loadAudioStream (sampleRate : UInt32) (sampleSize : UInt32) (channels : UInt32) : BaseIO AudioStream
+opaque loadAudioStream (sampleRate : UInt32) (sampleType : AudioSampleType) (channels : UInt32) : BaseIO (AudioStream sampleType)
 
 /-- Checks if an audio stream is ready -/
 @[extern "lean_raylib__IsAudioStreamReady"]
-opaque isAudioStreamReady (stream : @& AudioStream) : Bool
+opaque isAudioStreamReady {st} (stream : @& AudioStream st) : Bool
 
 /-- Update audio stream buffers with data. -/
 @[extern "lean_raylib__UpdateAudioStream"]
-opaque updateAudioStream
-  (stream : @& AudioStream)
+opaque updateAudioStream {st}
+  (stream : @& AudioStream st)
   (data : ByteArray)
   (frameCount : UInt32)
   (data_size : data.size = frameCount.toNat * stream.channels.toNat * stream.sampleSize.toNat / 8)
@@ -2099,53 +2088,48 @@ opaque updateAudioStream
 
 /-- Check if any audio stream buffers requires refill -/
 @[extern "lean_raylib__IsAudioStreamProcessed"]
-opaque isAudioStreamProcessed (stream : @& AudioStream) : BaseIO Bool
+opaque isAudioStreamProcessed {st} (stream : @& AudioStream st) : BaseIO Bool
 
 /-- Play audio stream -/
 @[extern "lean_raylib__PlayAudioStream"]
-opaque playAudioStream (stream : @& AudioStream) : BaseIO Unit
+opaque playAudioStream {st} (stream : @& AudioStream st) : BaseIO Unit
 
 /-- Pause audio stream -/
 @[extern "lean_raylib__PauseAudioStream"]
-opaque pauseAudioStream (stream : @& AudioStream) : BaseIO Unit
+opaque pauseAudioStream {st} (stream : @& AudioStream st) : BaseIO Unit
 
 /-- Resume audio stream -/
 @[extern "lean_raylib__ResumeAudioStream"]
-opaque resumeAudioStream (stream : @& AudioStream) : BaseIO Unit
+opaque resumeAudioStream {st} (stream : @& AudioStream st) : BaseIO Unit
 
 /-- Check if audio stream is playing -/
 @[extern "lean_raylib__IsAudioStreamPlaying"]
-opaque isAudioStreamPlaying (stream : @& AudioStream) : BaseIO Bool
+opaque isAudioStreamPlaying {st} (stream : @& AudioStream st) : BaseIO Bool
 
 /-- Stop audio stream -/
 @[extern "lean_raylib__StopAudioStream"]
-opaque stopAudioStream (stream : @& AudioStream) : BaseIO Unit
+opaque stopAudioStream {st} (stream : @& AudioStream st) : BaseIO Unit
 
 /-- Set volume for audio stream (1.0 is max level) -/
 @[extern "lean_raylib__SetAudioStreamVolume"]
-opaque setAudioStreamVolume (stream : @& AudioStream) (volume : Float32) : BaseIO Unit
+opaque setAudioStreamVolume {st} (stream : @& AudioStream st) (volume : Float32) : BaseIO Unit
 
 /-- Set pitch for audio stream (1.0 is base level) -/
 @[extern "lean_raylib__SetAudioStreamPitch"]
-opaque setAudioStreamPitch (stream : @& AudioStream) (pitch : Float32) : BaseIO Unit
+opaque setAudioStreamPitch {st} (stream : @& AudioStream st) (pitch : Float32) : BaseIO Unit
 
 /-- Set pan for audio stream (0.5 is centered) -/
 @[extern "lean_raylib__SetAudioStreamPan"]
-opaque setAudioStreamPan (stream : @& AudioStream) (pan : Float32) : BaseIO Unit
+opaque setAudioStreamPan {st} (stream : @& AudioStream st) (pan : Float32) : BaseIO Unit
 
 /-- Default size for new audio streams -/
 @[extern "lean_raylib__SetAudioStreamBufferSizeDefault"]
 opaque setAudioStreamBufferSizeDefault (size : UInt32) : BaseIO Unit
 
--- /-- Audio thread callback to request new data -/
--- @[extern "lean_raylib__SetAudioStreamCallback"]
--- opaque setAudioStreamCallback : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | stream : AudioStream
---   | callback : AudioCallback
--- -/
+/-- Audio thread callback to request new data -/
+@[extern "lean_raylib__SetAudioStreamCallback"]
+opaque setAudioStreamCallback {st} (stream : @& AudioStream st) (callback : AudioCallback st) : BaseIO Unit
+
 -- /-- Attach audio stream processor to stream -/
 -- @[extern "lean_raylib__AttachAudioStreamProcessor"]
 -- opaque attachAudioStreamProcessor : Unit -> Unit

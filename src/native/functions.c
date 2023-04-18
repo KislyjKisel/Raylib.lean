@@ -684,31 +684,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__OpenURL (b_lean_obj_arg url, lean_obj_arg 
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogCallback (lean_obj_arg callback, lean_obj_arg world) {
-//     SetTraceLogCallback(/*cast TraceLogCallback to_lean?false*/(callback));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetLoadFileDataCallback (lean_obj_arg callback, lean_obj_arg world) {
-//     SetLoadFileDataCallback(/*cast LoadFileDataCallback to_lean?false*/(callback));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetSaveFileDataCallback (lean_obj_arg callback, lean_obj_arg world) {
-//     SetSaveFileDataCallback(/*cast SaveFileDataCallback to_lean?false*/(callback));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetLoadFileTextCallback (lean_obj_arg callback, lean_obj_arg world) {
-//     SetLoadFileTextCallback(/*cast LoadFileTextCallback to_lean?false*/(callback));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetSaveFileTextCallback (lean_obj_arg callback, lean_obj_arg world) {
-//     SetSaveFileTextCallback(/*cast SaveFileTextCallback to_lean?false*/(callback));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
 LEAN_EXPORT lean_obj_res lean_raylib__LoadFileData (b_lean_obj_arg fileName) {
     unsigned int bytesReadSize;
     unsigned char* bytesRead = LoadFileData(lean_string_cstr(fileName), &bytesReadSize);
@@ -719,23 +694,17 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFileData (b_lean_obj_arg fileName) {
     return lean_io_result_mk_ok(arr);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__SaveFileData (b_lean_obj_arg fileName, b_lean_obj_arg data, size_t offset, uint32_t bytesToWrite, lean_obj_arg world) {
-    unsigned int size = lean_sarray_elem_size(data);
-    if(offset >= size || offset + bytesToWrite > size) {
-        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string("Saved data span out of ByteArray bounds.")));
-    }
+LEAN_EXPORT lean_obj_res lean_raylib__SaveFileData (b_lean_obj_arg fileName, size_t sz, b_lean_obj_arg data, lean_obj_arg world) {
+    lean_pod_BytesView* dataView = lean_pod_BytesView_unwrap(data);
     return lean_io_result_mk_ok(lean_box(
-        SaveFileData(lean_string_cstr(fileName), lean_sarray_cptr(data) + offset, bytesToWrite)
+        SaveFileData(lean_string_cstr(fileName), dataView->ptr, sz)
     ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__ExportDataAsCode (b_lean_obj_arg data, size_t offset, uint32_t exportSize, b_lean_obj_arg fileName, lean_obj_arg world) {
-    unsigned int arraySize = lean_sarray_elem_size(data);
-    if(offset >= arraySize || offset + exportSize > arraySize) {
-        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string("Exported data span out of ByteArray bounds.")));
-    }
+LEAN_EXPORT lean_obj_res lean_raylib__ExportDataAsCode (size_t sz, b_lean_obj_arg data, b_lean_obj_arg fileName, lean_obj_arg world) {
+    lean_pod_BytesView* dataView = lean_pod_BytesView_unwrap(data);
     return lean_io_result_mk_ok(lean_box(
-        ExportDataAsCode(lean_sarray_cptr(data) + offset, exportSize, lean_string_cstr(fileName))
+        ExportDataAsCode(dataView->ptr, sz, lean_string_cstr(fileName))
     ));
 }
 
@@ -2747,58 +2716,58 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (uint32_t sampleRate, uint
 }
 
 LEAN_EXPORT uint8_t lean_raylib__IsAudioStreamReady (lean_obj_arg stream) {
-    return IsAudioStreamReady(*lean_raylib_AudioStream_from(stream));
+    return IsAudioStreamReady(lean_raylib_AudioStream_from(stream)->stream);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateAudioStream (b_lean_obj_arg stream, b_lean_obj_arg data, uint32_t frameCount, lean_obj_arg world) {
-    UpdateAudioStream(*lean_raylib_AudioStream_from(stream), lean_sarray_cptr(data), frameCount);
+    UpdateAudioStream(lean_raylib_AudioStream_from(stream)->stream, lean_sarray_cptr(data), frameCount);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__IsAudioStreamProcessed (b_lean_obj_arg stream, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(
-        IsAudioStreamProcessed(*lean_raylib_AudioStream_from(stream))
+        IsAudioStreamProcessed(lean_raylib_AudioStream_from(stream)->stream)
     ));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__PlayAudioStream (b_lean_obj_arg stream, lean_obj_arg world) {
-    PlayAudioStream(*lean_raylib_AudioStream_from(stream));
+    PlayAudioStream(lean_raylib_AudioStream_from(stream)->stream);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__PauseAudioStream (b_lean_obj_arg stream, lean_obj_arg world) {
-    PauseAudioStream(*lean_raylib_AudioStream_from(stream));
+    PauseAudioStream(lean_raylib_AudioStream_from(stream)->stream);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__ResumeAudioStream (b_lean_obj_arg stream, lean_obj_arg world) {
-    ResumeAudioStream(*lean_raylib_AudioStream_from(stream));
+    ResumeAudioStream(lean_raylib_AudioStream_from(stream)->stream);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__IsAudioStreamPlaying (b_lean_obj_arg stream, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(
-        IsAudioStreamPlaying(*lean_raylib_AudioStream_from(stream))
+        IsAudioStreamPlaying(lean_raylib_AudioStream_from(stream)->stream)
     ));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__StopAudioStream (b_lean_obj_arg stream, lean_obj_arg world) {
-    StopAudioStream(*lean_raylib_AudioStream_from(stream));
+    StopAudioStream(lean_raylib_AudioStream_from(stream)->stream);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamVolume (b_lean_obj_arg stream, uint32_t volume, lean_obj_arg world) {
-    SetAudioStreamVolume(*lean_raylib_AudioStream_from(stream), lean_pod_Float32_fromBits(volume));
+    SetAudioStreamVolume(lean_raylib_AudioStream_from(stream)->stream, lean_pod_Float32_fromBits(volume));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamPitch (b_lean_obj_arg stream, uint32_t pitch, lean_obj_arg world) {
-    SetAudioStreamPitch(*lean_raylib_AudioStream_from(stream), lean_pod_Float32_fromBits(pitch));
+    SetAudioStreamPitch(lean_raylib_AudioStream_from(stream)->stream, lean_pod_Float32_fromBits(pitch));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamPan (b_lean_obj_arg stream, uint32_t pan, lean_obj_arg world) {
-    SetAudioStreamPan(*lean_raylib_AudioStream_from(stream), lean_pod_Float32_fromBits(pan));
+    SetAudioStreamPan(lean_raylib_AudioStream_from(stream)->stream, lean_pod_Float32_fromBits(pan));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -2807,10 +2776,19 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamBufferSizeDefault (uint32_t 
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (lean_obj_arg stream, lean_obj_arg callback, lean_obj_arg world) {
-//     SetAudioStreamCallback(lean_raylib_AudioStream_from(stream), /*cast AudioCallback to_lean?false*/(callback));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (b_lean_obj_arg stream_box, lean_obj_arg callback, lean_obj_arg world) {
+#ifdef LEAN_RAYLIB_FFCALL
+    lean_raylib_AudioStream* stream = lean_raylib_AudioStream_from(stream_box);
+    if(stream->callback != NULL) {
+        lean_dec_ref(stream->callback);
+    }
+    stream->callback = callback;
+    SetAudioStreamCallback(stream->stream, /*cast AudioCallback to_lean?false*/(callback));
+#else
+    lean_dec_ref(callback);
+#endif
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 // LEAN_EXPORT lean_obj_res lean_raylib__AttachAudioStreamProcessor (lean_obj_arg stream, lean_obj_arg processor, lean_obj_arg world) {
 //     AttachAudioStreamProcessor(lean_raylib_AudioStream_from(stream), /*cast AudioCallback to_lean?false*/(processor));
