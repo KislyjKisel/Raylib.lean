@@ -16,22 +16,15 @@ def main : IO Unit := do
   initAudioDevice
   setExitKey .null
 
-  setSaveFileDataCallback λ name size br ↦ do
-    EST2.lift₂ $ IO.println s!"SaveFileData, name: {name}, size: {size}"
-    if h: 0 < size then do
-      let b0 ← EST2.lift₁ $ (br.getUInt8 0 h).adaptExcept Empty.rec
-      EST2.lift₂ $ IO.println s!"First byte {b0}"
-    pure true
-  let _ ← saveFileData "A.bin" (ByteArray.empty.push 34).view
+  let audioStream ← loadAudioStream 44100 .u16 1
+  setMasterVolume 0.5
+  setAudioStreamCallback audioStream λ frames data ↦ do
+    EST2.lift₂ $ IO.println "Audio callback called"
+  playAudioStream audioStream
 
   let camUp := Vector3.mk 0 1 0
   let mut camForward := Vector3.mk 0 0 1
-  let mut cam3d := Camera3D.mk
-    (Vector3.mk 0 0 0)
-    (camForward.scale 10)
-    camUp
-    90
-    .perspective
+  let mut cam3d := Camera3D.mk (Vector3.mk 0 0 0) camForward camUp 90 .perspective
 
   setMousePosition (Int32.mk (windowWidth / 2)) (Int32.mk (windowHeight / 2))
   let mut lastMousePosition ← getMousePosition
@@ -42,10 +35,7 @@ def main : IO Unit := do
     drawFPS 0 0
     beginMode3D cam3d
 
-    drawCube
-      (Vector3.mk 0 0 5)
-      3 3 3
-      .red
+    drawCube (Vector3.mk 0 0 5) 3 3 3 .red
 
     endMode3D
     endDrawing
@@ -82,5 +72,6 @@ def main : IO Unit := do
 
     if (← windowShouldClose) then break
 
+  stopAudioStream audioStream -- keep reference alive
   closeAudioDevice
   closeWindow

@@ -508,12 +508,17 @@ static void lean_raylib_AudioStream_foreach(void* audioStream, b_lean_obj_arg f)
 #endif
 }
 
-static inline lean_object* lean_raylib_AudioStream_to (AudioStream const* obj) {
+static inline lean_object* lean_raylib_AudioStream_to (AudioStream stream, lean_object* closure) {
     static lean_external_class* class_ = NULL;
     if (class_ == NULL) {
         class_ = lean_register_external_class(lean_raylib_AudioStream_finalize, lean_raylib_AudioStream_foreach);
     }
-    return lean_alloc_external(class_, (void*)obj);
+    lean_raylib_AudioStream* stream_heap = malloc(sizeof(lean_raylib_AudioStream));
+    stream_heap->stream = stream;
+#ifdef LEAN_RAYLIB_LIBFFI
+    stream_heap->closure = closure;
+#endif
+    return lean_alloc_external(class_, (void*)stream_heap);
 }
 
 static inline lean_raylib_AudioStream* lean_raylib_AudioStream_from (b_lean_obj_arg obj) {

@@ -1332,6 +1332,10 @@ inductive AudioSampleType.Is : UInt32 -> Prop where
 
 def AudioSampleType : Type := Subtype AudioSampleType.Is
 
+def AudioSampleType.u8 := Subtype.mk 8 AudioSampleType.Is.u8
+def AudioSampleType.u16 := Subtype.mk 16 AudioSampleType.Is.u16
+def AudioSampleType.u32 := Subtype.mk 32 AudioSampleType.Is.u32
+
 def AudioSampleType.size : AudioSampleType → UInt32 := Subtype.val
 
 def AudioSampleType.alignment : AudioSampleType → Nat
