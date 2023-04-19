@@ -1,6 +1,11 @@
 #include <string.h>
 #include <lean_pod.h>
 #include "util.h"
+#include "structures.h"
+
+#ifdef LEAN_RAYLIB_LIBFFI
+#include <ffi.h>
+#endif
 
 static lean_object* lean_raylib_TraceLogCallback_current = NULL;
 static lean_object* lean_raylib_LoadFileDataCallback_current = NULL;
@@ -43,7 +48,7 @@ static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void*
         lean_box(0),
         lean_box(0)
     );
-        if(lean_ptr_tag(success_iores) == 1) {
+    if(lean_ptr_tag(success_iores) == 1) {
         lean_io_result_show_error(success_iores);
         // lean_object* err = lean_ctor_get(success_iores, 0);
         // lean_inc_ref(err);
@@ -121,3 +126,83 @@ LEAN_RAYLIB_CALLBACK_SET_RESET(LoadFileData);
 LEAN_RAYLIB_CALLBACK_SET_RESET(SaveFileData);
 LEAN_RAYLIB_CALLBACK_SET_RESET(LoadFileText);
 LEAN_RAYLIB_CALLBACK_SET_RESET(SaveFileText);
+
+#ifdef LEAN_RAYLIB_LIBFFI
+static void lean_raylib_AudioStreamCallback_wrapper(ffi_cif *cif, void* ret, void** args, void* user_data) {
+    lean_object* callback = user_data;
+    lean_inc_ref(callback);
+    lean_object* bv = lean_pod_BytesView_wrap(args[0], NULL);
+    size_t frames = *(unsigned int*)args[0];
+    lean_object* res = lean_apply_4(callback, lean_box_usize(frames), bv, lean_box(0), lean_box(0));
+    if(lean_ptr_tag(res) == 1) {
+        lean_io_result_show_error(res);
+        lean_dec_ref(res);
+        return;
+    }
+    lean_dec_ref(res);
+    return;
+}
+#endif
+
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (b_lean_obj_arg stream_box, lean_obj_arg callback, lean_obj_arg world) {
+#ifdef LEAN_RAYLIB_LIBFFI
+    static ffi_type* argtypes[] = { &ffi_type_pointer, &ffi_type_uint };
+    static ffi_cif callback_cif;
+    static int ffi_uninit = 1;
+    if(ffi_uninit) {
+        ffi_status st_cif = ffi_prep_cif(&callback_cif, FFI_DEFAULT_ABI, 2, &ffi_type_void, argtypes);
+        if(st_cif != FFI_OK) {
+            lean_dec_ref(callback);
+            const char* err;
+            switch (st_cif) {
+                case FFI_BAD_TYPEDEF:
+                    err = "Call interface preparation failed: incorrect type";
+                    break;
+                case FFI_BAD_ABI:
+                    err = "Call interface preparation failed: invalid abi parameter";
+                    break;
+                case FFI_BAD_ARGTYPE:
+                    err = "Call interface preparation failed: unexpected BAD_ARGTYPE";
+                    break;
+                default:
+                    err = "Call interface preparation failed: unknown error";
+                    break;
+            }
+            return lean_mk_io_user_error(lean_mk_string(err));
+        }
+        ffi_uninit = 0;
+    }
+
+    AudioCallback callback_c;
+    ffi_closure* callback_closure = (ffi_closure*)ffi_closure_alloc(sizeof(ffi_closure), &callback_c);
+    if(!callback_closure) {
+        lean_dec_ref(callback);
+        return lean_mk_io_user_error(lean_mk_string("Closure allocation failed"));
+    }
+    ffi_status st_tr = ffi_prep_closure_loc(
+        callback_closure,
+        &callback_cif,
+        lean_raylib_AudioStreamCallback_wrapper,
+        callback,
+        callback_c
+    );
+    if(st_tr != FFI_OK) {
+        lean_dec_ref(callback);
+        char err[] = "Closure preparation failed: #?";
+        err[sizeof(err) - 2] = '0' + st_tr;
+        return lean_mk_io_user_error(lean_mk_string(err));
+    }
+
+    lean_raylib_AudioStream* stream = lean_raylib_AudioStream_from(stream_box);
+    if(stream->closure != NULL) {
+        lean_dec_ref(stream->closure->user_data);
+        ffi_closure_free(stream->closure);
+    }
+    stream->closure = callback_closure;
+
+    SetAudioStreamCallback(stream->stream, callback_c);
+#else
+    lean_dec_ref(callback);
+#endif
+    return lean_io_result_mk_ok(lean_box(0));
+}

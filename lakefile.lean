@@ -1,10 +1,17 @@
 import Lake
 open Lake DSL
 
+require Libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "master"
 require Pod from git "https://github.com/KislyjKisel/lean-pod" @ "main"
+
+def packagesDir := defaultPackagesDir
 
 package raylib {
   srcDir := "src/lean"
+  packagesDir := packagesDir
+  moreLeanArgs := if (get_config? libffi).isSome
+    then #[s!"--load-dynlib=./{packagesDir}/Libffi/lib/libffi.so"] -- why not automatic?
+    else #[]
 }
 
 lean_lib Raylib
@@ -30,13 +37,14 @@ def splitArgStr (s : String) : Array String := Array.mk $ s.splitOn.filter $ not
 @[default_target]
 lean_exe test {
   root := `Main
-  moreLinkArgs := (
-    match raylibSrc with
+  moreLinkArgs := Id.run $ do
+    let mut args := splitArgStr $ (get_config? lflags).getD ""
+    args := args.append $ match raylibSrc with
       | .System => #["-L/usr/local/lib", "-lraylib"]
-      | .Submodule => #["-Lraylib/build/raylib", "-lraylib"]
+      | .Submodule => #[s!"-L{__dir__}/raylib/build/raylib", "-lraylib"]
       | .Custom => #[]
       | .Unknown _ => #[]
-  ).append $ splitArgStr $ (get_config? lflags).getD ""
+    pure args
 }
 
 def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
@@ -51,32 +59,32 @@ def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Proces
   else
     return output.stdout
 
-def buildRaylibSubmodule (pkgDir : FilePath) (printCmdOutput : Bool) : IO Unit := do
+def buildRaylibSubmodule (printCmdOutput : Bool) : IO Unit := do
   let gitOutput ← tryRunProcess {
     cmd := "git"
     args := #["submodule", "update", "--init", "--force", "--recursive"]
-    cwd := pkgDir
+    cwd := __dir__
   }
   if printCmdOutput then IO.println gitOutput
 
   let mkdirOutput ← tryRunProcess {
     cmd := "mkdir"
     args := #["-p", "raylib/build"]
-    cwd := pkgDir
+    cwd := __dir__
   }
   if printCmdOutput then IO.println mkdirOutput
 
   let cmakeOutput ← tryRunProcess {
     cmd := "cmake"
     args := #["-DCUSTOMIZE_BUILD=ON", "-DBUILD_EXAMPLES=OFF", "-DWITH_PIC=ON", ".."]
-    cwd := pkgDir / "raylib" / "build"
+    cwd := __dir__ / "raylib" / "build"
   }
   if printCmdOutput then IO.println cmakeOutput
 
   let cmakeBuildOutput ← tryRunProcess {
     cmd := "cmake"
     args := #["--build", "."]
-    cwd := pkgDir / "raylib" / "build"
+    cwd := __dir__ / "raylib" / "build"
   }
   if printCmdOutput then IO.println cmakeBuildOutput
 
@@ -103,7 +111,7 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
       }
 
     | .Submodule => do
-      buildRaylibSubmodule pkg.dir printCmdOutput
+      buildRaylibSubmodule printCmdOutput
       flags := flags.append #[
         "-I",
         (pkg.dir / "raylib" / "build" / "raylib" / "include").toString
@@ -113,6 +121,16 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
 
     | .Unknown name =>
       error s!"Unknown 'raylib' source: {name}"
+
+  if (get_config? libffi).isSome then
+    flags := flags.push "-DLEAN_RAYLIB_LIBFFI"
+    match pkg.deps.find? λ dep ↦ dep.name == `libffi with
+    | none => error "Missing dependency 'Libffi'"
+    | some dep =>
+      flags := flags ++ #[
+        "-I",
+        (dep.dir / "include").toString
+      ]
 
   pure flags
 
@@ -139,5 +157,5 @@ extern_lib «raylib-lean» (pkg : Package) := do
   ]
 
 script buildRL do
-  buildRaylibSubmodule ⟨"."⟩ true
+  buildRaylibSubmodule true
   return 0

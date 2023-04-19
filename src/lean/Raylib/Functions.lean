@@ -1503,9 +1503,9 @@ opaque isFontReady (font : @& Font) : Bool
 /-- `0` - Default, `1` - Skyline -/
 def FontAtlasPackMethod : Type := Subtype (α := UInt32) (· < 2)
 
-/-- Generate image font atlas using chars info -/
-@[extern "lean_raylib__GenImageFontAtlas"]
-opaque genImageFontAtlas (chars : @& Option (Array GlyphInfo)) (fontSize : UInt32) (padding : UInt32) (packMethod : FontAtlasPackMethod) : Image × Array Rectangle
+-- /-- Generate image font atlas using chars info -/
+-- @[extern "lean_raylib__GenImageFontAtlas"]
+-- opaque genImageFontAtlas (chars : @& Option (Array GlyphInfo)) (fontSize : UInt32) (padding : UInt32) (packMethod : FontAtlasPackMethod) : Image × Array Rectangle
 
 -- axiom : ∀ chars, (genImageFontAtlas chars _ _ _).snd.size = (chars.map Array.size).getD 95
 

@@ -7,7 +7,7 @@ Partial [raylib](https://github.com/raysan5/raylib) `4.5.0` bindings for Lean4.
 * Meshes, models
 * Data array manip (ex. `UpdateSound`)
 * GlyphInfo
-* Callbacks
+* TraceLog
 
 ## Usage
 
@@ -31,6 +31,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 * `cflags`: additional flags passed to `cc`.
 * `lflags`: additional flags used to link test executable.
 * `cmdout`: if present, print output of commands used when building submodule.
+* `libffi`: use `libffi`, required for some things to work properly, e.g, audio callback
 
 ### Scripts
 

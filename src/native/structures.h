@@ -4,6 +4,10 @@
 #include "util.h"
 #include "include/raymath_lean.h"
 
+#ifdef LEAN_RAYLIB_LIBFFI
+#include <ffi.h>
+#endif
+
 // # Color
 
 static inline Color lean_raylib_Color_from(uint32_t color) {
@@ -476,25 +480,32 @@ static inline Wave* lean_raylib_Wave_from (b_lean_obj_arg obj) {
 
 typedef struct {
     AudioStream stream;
-    lean_object* callback;
+#ifdef LEAN_RAYLIB_LIBFFI
+    ffi_closure* closure; // NULLABLE
+#endif
 } lean_raylib_AudioStream;
 
 static void lean_raylib_AudioStream_finalize(void* audioStream_v) {
     lean_raylib_AudioStream* audioStream = audioStream_v;
     UnloadAudioStream(audioStream->stream);
-    if (audioStream->callback != NULL) {
-        lean_dec_ref(audioStream->callback);
+#ifdef LEAN_RAYLIB_LIBFFI
+    if (audioStream->closure != NULL) {
+        lean_dec_ref(audioStream->closure->user_data);
+        ffi_closure_free(audioStream->closure);
     }
+#endif
     free(audioStream);
 }
 
 static void lean_raylib_AudioStream_foreach(void* audioStream, b_lean_obj_arg f) {
-    lean_object* callback = ((lean_raylib_AudioStream*)audioStream)->callback;
-    if (callback != NULL) {
+#ifdef LEAN_RAYLIB_LIBFFI
+    if (((lean_raylib_AudioStream*)audioStream)->closure != NULL) {
         lean_inc_ref(f);
+        lean_object* callback = ((lean_raylib_AudioStream*)audioStream)->closure->user_data;
         lean_inc(callback);
         lean_apply_1(f, callback);
     }
+#endif
 }
 
 static inline lean_object* lean_raylib_AudioStream_to (AudioStream const* obj) {

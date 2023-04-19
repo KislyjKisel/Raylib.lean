@@ -382,7 +382,7 @@ LEAN_EXPORT uint8_t lean_raylib__IsShaderReady (b_lean_obj_arg shader) {
     return IsShaderReady(*lean_raylib_Shader_from(shader));
 }
 
-LEAN_EXPORT uint32_t lean_raylib__GetShaderLocation (lean_obj_arg shader, b_lean_obj_arg uniformName) {
+LEAN_EXPORT lean_obj_res lean_raylib__GetShaderLocation (lean_obj_arg shader, b_lean_obj_arg uniformName) {
     int location = GetShaderLocation(*lean_raylib_Shader_from(shader), lean_string_cstr(uniformName));
     if (location < 0) {
         return lean_mk_option_none();
@@ -392,7 +392,7 @@ LEAN_EXPORT uint32_t lean_raylib__GetShaderLocation (lean_obj_arg shader, b_lean
     }
 }
 
-LEAN_EXPORT uint32_t lean_raylib__GetShaderLocationAttrib (b_lean_obj_arg shader, b_lean_obj_arg attribName) {
+LEAN_EXPORT lean_obj_res lean_raylib__GetShaderLocationAttrib (b_lean_obj_arg shader, b_lean_obj_arg attribName) {
     int location = GetShaderLocationAttrib(*lean_raylib_Shader_from(shader), lean_string_cstr(attribName));
     if (location < 0) {
         return lean_mk_option_none();
@@ -1375,7 +1375,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__CheckCollisionLines (b_lean_obj_arg startP
     )) {
         return lean_mk_option_some(lean_raylib_Vector2_to(collisionPoint));
     }
-    return lean_mk_option_none;
+    return lean_mk_option_none();
 }
 
 LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointLine (b_lean_obj_arg point, b_lean_obj_arg p1, b_lean_obj_arg p2, uint32_t threshold) {
@@ -2018,27 +2018,27 @@ LEAN_EXPORT uint8_t lean_raylib__IsFontReady (lean_obj_arg font) {
 //     return /*todo: ptr?*/result_;
 // }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenImageFontAtlas (b_lean_obj_arg chars_opt, uint32_t fontSize, uint32_t padding, uint32_t packMethod) {
-    size_t glyphCount = 0;
-    int* chars_c = NULL;
-    if(lean_option_is_some(chars_opt)) {
-        lean_object* chars_arr = lean_ctor_get(chars_opt, 0);
-        glyphCount = lean_array_size(chars_arr);
-        chars_c = malloc(sizeof(int) * glyphCount);
-        for(size_t i = 0; i < glyphCount; ++i) {
-            chars_c[i] = lean_unbox_uint32(lean_array_get_core(chars_arr, i));
-        }
-    }
-    Rectangle* recs = NULL;
-    LET_BOX(Image, image, GenImageFontAtlas(chars_c, &recs, glyphCount, fontSize, padding, packMethod));
-    free(chars_c);
-    lean_object* recs_box = lean_alloc_array(glyphCount, glyphCount);
-    for(size_t i = 0; i < glyphCount; ++i) {
-        lean_array_set_core(recs_box, i, lean_raylib_Rectangle_to(recs[i]));
-    }
-    RL_FREE(recs);
-    return lean_mk_tuple2(lean_raylib_Image_to(image), recs_box);
-}
+// LEAN_EXPORT lean_obj_res lean_raylib__GenImageFontAtlas (b_lean_obj_arg chars_opt, uint32_t fontSize, uint32_t padding, uint32_t packMethod) {
+//     size_t glyphCount = 0;
+//     GlyphInfo* chars_c = NULL;
+//     if(lean_option_is_some(chars_opt)) {
+//         lean_object* chars_arr = lean_ctor_get(chars_opt, 0);
+//         glyphCount = lean_array_size(chars_arr);
+//         chars_c = malloc(sizeof(int) * glyphCount);
+//         for(size_t i = 0; i < glyphCount; ++i) {
+//             chars_c[i] = lean_raylib_GlyphInfo_from(lean_array_get_core(chars_arr, i));
+//         }
+//     }
+//     Rectangle* recs = NULL;
+//     LET_BOX(Image, image, GenImageFontAtlas(chars_c, &recs, glyphCount, fontSize, padding, packMethod));
+//     free(chars_c);
+//     lean_object* recs_box = lean_alloc_array(glyphCount, glyphCount);
+//     for(size_t i = 0; i < glyphCount; ++i) {
+//         lean_array_set_core(recs_box, i, lean_raylib_Rectangle_to(recs[i]));
+//     }
+//     RL_FREE(recs);
+//     return lean_mk_tuple2(lean_raylib_Image_to(image), recs_box);
+// }
 
 LEAN_EXPORT lean_obj_res lean_raylib__ExportFontAsCode (b_lean_obj_arg font, b_lean_obj_arg fileName, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(ExportFontAsCode(*lean_raylib_Font_from(font), lean_string_cstr(fileName))));
@@ -2065,7 +2065,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTextPro (b_lean_obj_arg font, b_lean_o
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTextUtf8 (b_lean_obj_arg font, b_lean_obj_arg text, b_lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
-    DrawTextCodepoints(*lean_raylib_Font_from(font), lean_string_cstr(text), lean_string_len(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+    DrawTextCodepoints(*lean_raylib_Font_from(font), (const uint32_t*)lean_string_cstr(text), lean_string_len(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -2773,20 +2773,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamPan (b_lean_obj_arg stream, 
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamBufferSizeDefault (uint32_t size, lean_obj_arg world) {
     SetAudioStreamBufferSizeDefault(size);
-    return lean_io_result_mk_ok(lean_box(0));
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (b_lean_obj_arg stream_box, lean_obj_arg callback, lean_obj_arg world) {
-#ifdef LEAN_RAYLIB_FFCALL
-    lean_raylib_AudioStream* stream = lean_raylib_AudioStream_from(stream_box);
-    if(stream->callback != NULL) {
-        lean_dec_ref(stream->callback);
-    }
-    stream->callback = callback;
-    SetAudioStreamCallback(stream->stream, /*cast AudioCallback to_lean?false*/(callback));
-#else
-    lean_dec_ref(callback);
-#endif
     return lean_io_result_mk_ok(lean_box(0));
 }
 

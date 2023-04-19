@@ -46,6 +46,7 @@ def bind {ε σ₁ σ₂ α β} (x : EST2 ε σ₁ σ₂ α) (f : α → EST2 ε
   | EST2.Result.ok a s₁ s₂ => f a s₁ s₂
   | EST2.Result.error e s₁ s₂ => EST2.Result.error e s₁ s₂
 
+@[always_inline, inline]
 def seqRight {ε σ₁ σ₂ α β} (x : EST2 ε σ₁ σ₂ α) (y : Unit → EST2 ε σ₁ σ₂ β) : EST2 ε σ₁ σ₂ β :=
   λ s₁ s₂ ↦ match x s₁ s₂ with
   | EST2.Result.ok _ s₁ s₂ => y () s₁ s₂
