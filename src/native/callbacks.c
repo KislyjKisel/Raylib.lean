@@ -134,7 +134,7 @@ static void lean_raylib_AudioStreamCallback_wrapper(ffi_cif *cif, void* ret, voi
     // vvv Segmentation fault on `lean_alloc_small`
     lean_object* bv = lean_pod_BytesView_wrap(*(uint8_t**)args[0], NULL);
     size_t frames = *(unsigned int*)args[1];
-    lean_object* res = lean_apply_4(callback, lean_box_usize(frames), bv, lean_box(0), lean_box(0));
+    lean_object* res = lean_apply_5(callback, lean_box(0), lean_box_usize(frames), bv, lean_box(0), lean_box(0));
     if(lean_ptr_tag(res) == 1) {
         lean_io_result_show_error(res);
         lean_dec_ref(res);
@@ -145,7 +145,7 @@ static void lean_raylib_AudioStreamCallback_wrapper(ffi_cif *cif, void* ret, voi
 }
 #endif
 
-LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint8_t st, b_lean_obj_arg stream_box, lean_obj_arg callback, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint32_t st, b_lean_obj_arg stream_box, lean_obj_arg callback, lean_obj_arg world) {
 #ifdef LEAN_RAYLIB_LIBFFI
     static ffi_type* argtypes[] = { &ffi_type_pointer, &ffi_type_uint };
     static ffi_cif callback_cif;
