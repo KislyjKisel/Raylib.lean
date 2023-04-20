@@ -115,6 +115,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Set##action##Callback (lean_obj_arg callba
     if (lean_raylib_##action##Callback_current != NULL) {\
         lean_dec_ref(lean_raylib_##action##Callback_current);\
     }\
+    lean_mark_mt(callback);\
     lean_raylib_##action##Callback_current = callback;\
     Set##action##Callback(lean_raylib_##action##Callback_wrapper);\
     return lean_io_result_mk_ok(lean_box(0));\
@@ -194,6 +195,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint32_t st, b_lea
         return lean_mk_io_user_error(lean_mk_string(err));
     }
 
+    lean_mark_mt(callback);
     lean_raylib_AudioStream* stream = lean_raylib_AudioStream_from(stream_box);
     if(stream->closure != NULL) {
         lean_dec_ref(stream->closure->user_data);

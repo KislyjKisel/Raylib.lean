@@ -31,7 +31,8 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 * `cflags`: additional flags passed to `cc`.
 * `lflags`: additional flags used to link test executable.
 * `cmdout`: if present, print output of commands used when building submodule.
-* `libffi`: use `libffi`, required for some things to work properly, e.g, audio callback
+* `libffi`: use `libffi`, required for some things to work, e.g, audio callback
+  (note: audio callback always segfaults with small allocator enabled which is the case by default)
 
 ### Scripts
 
