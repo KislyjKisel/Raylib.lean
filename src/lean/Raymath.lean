@@ -2,9 +2,6 @@ import Pod.Float
 
 open Pod (Float32)
 
-set_option autoImplicit false
-
-
 namespace Raymath
 
 /-! # Constants -/

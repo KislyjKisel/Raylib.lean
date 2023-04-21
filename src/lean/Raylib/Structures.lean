@@ -1,8 +1,6 @@
 import Raymath
 import Raylib.Enumerations
 
-set_option autoImplicit false
-
 open Pod (Float32)
 open Raymath (Vector2 Vector3 Vector4 Matrix)
 

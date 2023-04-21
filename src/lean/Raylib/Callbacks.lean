@@ -3,8 +3,6 @@ import Pod.BytesRef
 import Raylib.Structures
 import Raylib.ST2
 
-set_option autoImplicit false
-
 namespace Raylib
 -- /-! # Callbacks -/
 -- /-- Logging: Redirect trace log messages -/

@@ -1,5 +1,3 @@
-set_option autoImplicit false
-
 namespace Raylib
 
 structure Int32 where

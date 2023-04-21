@@ -9,9 +9,11 @@ def packagesDir := defaultPackagesDir
 package raylib {
   srcDir := "src/lean"
   packagesDir := packagesDir
-  moreLeanArgs := if (get_config? libffi).isSome
-    then #[s!"--load-dynlib=./{packagesDir}/Libffi/lib/libffi.so"] -- why not automatic?
-    else #[]
+  moreLeanArgs := #["-DautoImplicit=false"] ++
+    if (get_config? libffi).isSome
+      then #[s!"--load-dynlib=./{packagesDir}/Libffi/lib/libffi.so"] -- why not automatic?
+      else #[]
+  moreServerArgs := #["-DautoImplicit=false"]
 }
 
 lean_lib Raylib
