@@ -16,11 +16,11 @@ def main : IO Unit := do
   initAudioDevice
   setExitKey .null
 
-  let audioStream ← loadAudioStream 44100 .u16 1
-  setMasterVolume 0.5
-  setAudioStreamCallback audioStream λ frames data ↦ do
-    EST2.lift₂ $ IO.println "Audio callback called"
-  playAudioStream audioStream
+  -- let audioStream ← loadAudioStream 44100 .u16 1
+  -- setMasterVolume 0.5
+  -- setAudioStreamCallback audioStream λ frames data ↦ do
+  --   EST2.lift₂ $ IO.println "Audio callback called"
+  -- playAudioStream audioStream
 
   let camUp := Vector3.mk 0 1 0
   let mut camForward := Vector3.mk 0 0 1
@@ -72,6 +72,6 @@ def main : IO Unit := do
 
     if (← windowShouldClose) then break
 
-  stopAudioStream audioStream -- keep reference alive
+  -- stopAudioStream audioStream -- keep reference alive
   closeAudioDevice
   closeWindow

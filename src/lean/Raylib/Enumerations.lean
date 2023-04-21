@@ -1039,6 +1039,31 @@ end PixelFormat
 
 instance : Inhabited PixelFormat := ⟨PixelFormat.uncompressedR8g8b8a8⟩
 
+def PixelFormat.bpp : PixelFormat → Nat
+  | ⟨⟨1, _⟩, _⟩ => 8
+  | ⟨⟨2, _⟩, _⟩ => 16
+  | ⟨⟨3, _⟩, _⟩ => 16
+  | ⟨⟨4, _⟩, _⟩ => 24
+  | ⟨⟨5, _⟩, _⟩ => 16
+  | ⟨⟨6, _⟩, _⟩ => 16
+  | ⟨⟨7, _⟩, _⟩ => 32
+  | ⟨⟨8, _⟩, _⟩ => 32
+  | ⟨⟨9, _⟩, _⟩ => 96
+  | ⟨⟨10, _⟩, _⟩ => 128
+  | ⟨⟨11, _⟩, _⟩ => 4
+  | ⟨⟨12, _⟩, _⟩ => 4
+  | ⟨⟨13, _⟩, _⟩ => 8
+  | ⟨⟨14, _⟩, _⟩ => 8
+  | ⟨⟨15, _⟩, _⟩ => 4
+  | ⟨⟨16, _⟩, _⟩ => 4
+  | ⟨⟨17, _⟩, _⟩ => 8
+  | ⟨⟨18, _⟩, _⟩ => 4
+  | ⟨⟨19, _⟩, _⟩ => 4
+  | ⟨⟨20, _⟩, _⟩ => 8
+  | ⟨⟨21, _⟩, _⟩ => 2
+
+def PixelFormat.bytesPerPixel (format : PixelFormat) : Nat := (format.bpp + 7) / 8
+
 
 /-! # Texture filter -/
 

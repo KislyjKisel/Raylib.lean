@@ -598,19 +598,27 @@ Returns `0` on error (ex. file doesn't exist).
 @[extern "lean_raylib__GetFileModTime"]
 opaque getFileModTime (fileName : @& String) : BaseIO UInt64
 
-/-- Compress data (DEFLATE algorithm), ~~memory must be MemFree()~~ -/
+/-- Compress data (DEFLATE algorithm) -/
 @[extern "lean_raylib__CompressData"]
-opaque compressData (data : @& ByteArray) : ByteArray
+opaque compressData {size} (data : @& Pod.BytesView size 1) : ByteArray
 
-/-- Decompress data (DEFLATE algorithm), ~~memory must be MemFree()~~ -/
+/-- Compress data (DEFLATE algorithm) -/
+@[extern "lean_raylib__CompressDataST"]
+opaque compressDataST {σ size} (data : @& Pod.BytesRefImm σ size 1) : ST σ ByteArray
+
+/-- Decompress data (DEFLATE algorithm) -/
 @[extern "lean_raylib__DecompressData"]
-opaque decompressData (compData : @& ByteArray) : ByteArray
+opaque decompressData {size} (compData : @& Pod.BytesView size 1) : ByteArray
 
-/-- Encode data to Base64 string, ~~memory must be MemFree()~~ -/
+/-- Encode data to Base64 string -/
 @[extern "lean_raylib__EncodeDataBase64"]
-opaque encodeDataBase64 (data : @& ByteArray) : String
+opaque encodeDataBase64 {size} (data : @& Pod.BytesView size 1) : String
 
-/-- Decode Base64 string data, ~~memory must be MemFree()~~ -/
+/-- Encode data to Base64 string -/
+@[extern "lean_raylib__EncodeDataBase64ST"]
+opaque encodeDataBase64ST {σ size} (data : @& Pod.BytesRefImm σ size 1) : ST σ String
+
+/-- Decode Base64 string data -/
 @[extern "lean_raylib__DecodeDataBase64"]
 opaque decodeDataBase64 (code : @& String) : ByteArray
 
@@ -1007,7 +1015,7 @@ opaque loadImageAnim (fileName : @& String) : BaseIO (Image × UInt32)
 
 /-- Load image from memory buffer, fileType refers to extension: i.e. '.png' -/
 @[extern "lean_raylib__LoadImageFromMemory"]
-opaque loadImageFromMemory (fileType : @& String) (fileData : @& ByteArray) : BaseIO Image
+opaque loadImageFromMemory {size} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Image
 
 /--
 Load image from GPU texture data.
@@ -1191,40 +1199,13 @@ opaque imageColorBrightness (image : Image) (brightness : Int32) : Image
 @[extern "lean_raylib__ImageColorReplace"]
 opaque imageColorReplace (image : Image) (color : Color) (replace : Color) : Image
 
--- /-- Load color data from image as a Color array (RGBA - 32bit) -/
--- @[extern "lean_raylib__LoadImageColors"]
--- opaque loadImageColors : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Color *
---   params:
---   | image : Image
--- -/
--- /-- Load colors palette from image as a Color array (RGBA - 32bit) -/
--- @[extern "lean_raylib__LoadImagePalette"]
--- opaque loadImagePalette : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Color *
---   params:
---   | image : Image
---   | maxPaletteSize : int
---   | colorCount : int *
--- -/
--- /-- Unload color data loaded with LoadImageColors() -/
--- @[extern "lean_raylib__UnloadImageColors"]
--- opaque unloadImageColors : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | colors : Color *
--- -/
--- /-- Unload colors palette loaded with LoadImagePalette() -/
--- @[extern "lean_raylib__UnloadImagePalette"]
--- opaque unloadImagePalette : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | colors : Color *
--- -/
+/-- Load color data from image as a Color array (RGBA - 32bit) -/
+@[extern "lean_raylib__LoadImageColors"]
+opaque loadImageColors (image : @& Image) : Array Color
+
+/-- Load colors palette from image as a Color array (RGBA - 32bit) -/
+@[extern "lean_raylib__LoadImagePalette"]
+opaque loadImagePalette (image : @& Image) (maxPaletteSize : UInt32) : Array Color
 
 /-- Get image alpha border rectangle -/
 @[extern "lean_raylib__GetImageAlphaBorder"]
@@ -1311,7 +1292,6 @@ opaque loadTextureFromImage (image : @& Image) : Texture2D
 opaque loadTextureCubemap (image : @& Image) (layout : CubemapLayout) : TextureCubemap
 
 /-- Load texture for rendering (framebuffer) -/
--- IO: TraceLog
 @[extern "lean_raylib__LoadRenderTexture"]
 opaque loadRenderTexture (width : UInt32) (height : UInt32) : BaseIO RenderTexture2D
 
@@ -1427,26 +1407,17 @@ opaque colorAlphaBlend (dst : Color) (src : Color) (tint : Color) : Color
 @[extern "lean_raylib__GetColor", deprecated Color.mk]
 opaque getColor (hexValue : UInt32) : Color
 
--- /-- Get Color from a source pixel pointer of certain format -/
--- @[extern "lean_raylib__GetPixelColor"]
--- opaque getPixelColor : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Color
---   params:
---   | srcPtr : void *
---   | format : int
--- -/
+/-- Get Color from a source pixel pointer of certain format -/
+@[extern "lean_raylib__GetPixelColor"]
+opaque getPixelColor (format : PixelFormat) (view : @& Pod.BytesView format.bytesPerPixel.toUSize 1) : Color
 
--- /-- Set color formatted into destination pixel pointer -/
--- @[extern "lean_raylib__SetPixelColor"]
--- opaque setPixelColor : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | dstPtr : void *
---   | color : Color
---   | format : int
--- -/
+/-- Get Color from a source pixel pointer of certain format -/
+@[extern "lean_raylib__GetPixelColorST"]
+opaque getPixelColorST {σ} (format : PixelFormat) (ref : @& Pod.BytesRefImm σ format.bytesPerPixel.toUSize 1) : ST σ Color
+
+/-- Set color formatted into destination pixel pointer -/
+@[extern "lean_raylib__SetPixelColorST"]
+opaque setPixelColorST {σ} (format : PixelFormat) (ref : @& Pod.BytesRefMut σ format.bytesPerPixel.toUSize 1) (color : Color) : ST σ Unit
 
 /-- Get pixel data size in bytes for certain format -/
 @[extern "lean_raylib__GetPixelDataSize"]
@@ -1468,19 +1439,12 @@ opaque loadFontEx (fileName : @& String) (fontSize : UInt32) (fontChars : @& Opt
 @[extern "lean_raylib__LoadFontFromImage"]
 opaque loadFontFromImage (image : @& Image) (key : Color) (firstChar : Char) : Font
 
--- /-- Load font from memory buffer, fileType refers to extension: i.e. '.ttf' -/
--- @[extern "lean_raylib__LoadFontFromMemory"]
--- opaque loadFontFromMemory : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Font
---   params:
---   | fileType : const char *
---   | fileData : const unsigned char *
---   | dataSize : int
---   | fontSize : int
---   | fontChars : int *
---   | glyphCount : int
--- -/
+/--
+Load font from memory buffer, fileType refers to extension: i.e. '.ttf'.
+NOTE: data size isn't checked and may cause UB.
+-/
+@[extern "lean_raylib__LoadFontFromMemory"]
+opaque loadFontFromMemory {size} (fileType : @& String) (data : @& Pod.BytesView size 1) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : Font
 
 /-- Check if a font is ready -/
 @[extern "lean_raylib__IsFontReady"]
@@ -1529,28 +1493,13 @@ opaque drawTextEx (font : @& Font) (text : @& String) (position : @& Vector2) (f
 @[extern "lean_raylib__DrawTextPro"]
 opaque drawTextPro (font : @& Font) (text : @& String) (position : @& Vector2) (origin : @& Vector2) (rotation : Float32) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
 
-/-- Draw utf-8 text using font and additional parameters -/
-@[extern "lean_raylib__DrawTextUtf8"]
-opaque drawTextUtf8 (font : @& Font) (text : @& String) (position : @& Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
-
 /-- Draw one character (codepoint) -/
 @[extern "lean_raylib__DrawTextCodepoint"]
 opaque drawTextCodepoint (font : @& Font) (codepoint : Char) (position : @& Vector2) (fontSize : Float32) (tint : Color) : BaseIO Unit
 
--- /-- Draw multiple character (codepoint) -/
--- @[extern "lean_raylib__DrawTextCodepoints"]
--- opaque drawTextCodepoints : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | font : Font
---   | codepoints : const int *
---   | count : int
---   | position : Vector2
---   | fontSize : float
---   | spacing : float
---   | tint : Color
--- -/
+/-- Draw utf-8 text using font and additional parameters. -/
+@[extern "lean_raylib__DrawTextCodepoints"]
+opaque drawTextCodepoints (font : @& Font) (text : @& String) (position : @& Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
 
 /-- Measure string width for default font -/
 @[extern "lean_raylib__MeasureText"]
@@ -1904,9 +1853,8 @@ opaque setMasterVolume (volume : Float32) : BaseIO Unit
 opaque loadWave (fileName : @& String) : BaseIO Wave
 
 /-- Load wave from memory buffer, fileType refers to extension: i.e. '.wav' -/
--- IO: TraceLog
 @[extern "lean_raylib__LoadWaveFromMemory"]
-opaque loadWaveFromMemory (fileType : @& String) (fileData : @& ByteArray) : BaseIO Wave
+opaque loadWaveFromMemory {size} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Wave
 
 /-- Checks if wave data is ready -/
 @[extern "lean_raylib__IsWaveReady"]
@@ -1917,9 +1865,8 @@ opaque isWaveReady (wave : @& Wave) : Bool
 opaque loadSound (fileName : @& String) : BaseIO Sound
 
 /-- Load sound from wave data -/
--- IO: TraceLog
 @[extern "lean_raylib__LoadSoundFromWave"]
-opaque loadSoundFromWave (wave : @& Wave) : BaseIO Sound
+opaque loadSoundFromWave (wave : @& Wave) : Sound
 
 /-- Checks if a sound is ready -/
 @[extern "lean_raylib__IsSoundReady"]
@@ -1981,31 +1928,19 @@ opaque setSoundPan (sound : @& Sound) (pan : Float32) : BaseIO Unit
 opaque waveCopy (wave : @& Wave) : Wave
 
 /-- Crop a wave to defined samples range -/
--- IO: TraceLog
 @[extern "lean_raylib__WaveCrop"]
-opaque waveCrop (wave : Wave) (initSample : UInt32) (finalSample : UInt32) : BaseIO Wave
+opaque waveCrop (wave : Wave) (initSample : UInt32) (finalSample : UInt32) : Wave
 
 /-- Convert wave data to desired format -/
--- IO: TraceLog
 @[extern "lean_raylib__WaveFormat"]
-opaque waveFormat (wave : Wave) (sampleRate : UInt32) (sampleSize : UInt32) (channels : UInt32) : BaseIO Wave
+opaque waveFormat (wave : Wave) (sampleRate : UInt32) (sampleSize : UInt32) (channels : UInt32) : Wave
 
--- /-- Load samples data from wave as a 32bit float data array -/
--- @[extern "lean_raylib__LoadWaveSamples"]
--- opaque loadWaveSamples : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: float *
---   params:
---   | wave : Wave
--- -/
--- /-- Unload samples data loaded with LoadWaveSamples() -/
--- @[extern "lean_raylib__UnloadWaveSamples"]
--- opaque unloadWaveSamples : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | samples : float *
--- -/
+/--
+Load samples data from wave as a 32bit float data array.
+NOTE: Returned sample values are normalized to range [-1..1].
+-/
+@[extern "lean_raylib__LoadWaveSamples"]
+opaque loadWaveSamples (wave : @& Wave) : BaseIO (Array Float32)
 
 /-- Load music stream from file -/
 @[extern "lean_raylib__LoadMusicStream"]
