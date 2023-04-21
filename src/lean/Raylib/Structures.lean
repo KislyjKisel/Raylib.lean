@@ -1,4 +1,4 @@
-import Raymath
+import Raymath.Core
 import Raylib.Enumerations
 
 open Pod (Float32)
@@ -42,10 +42,10 @@ Maps `XYZW` to `RGBA`.
 -/
 def _root_.Raymath.Vector4.toColor (v : Vector4) : Color :=
   Color.fromRgba
-    (v.x.clamp 0 255).toUInt8
-    (v.y.clamp 0 255).toUInt8
-    (v.z.clamp 0 255).toUInt8
-    (v.w.clamp 0 255).toUInt8
+    ((v.x.max 0).min 255).toUInt8
+    ((v.y.max 0).min 255).toUInt8
+    ((v.z.max 0).min 255).toUInt8
+    ((v.w.max 0).min 255).toUInt8
 
 end Color
 

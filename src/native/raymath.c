@@ -24,6 +24,14 @@ LEAN_EXPORT lean_obj_res lean_raymath_Vector2_uset(lean_obj_arg v, size_t i, uin
     }
 }
 
+LEAN_EXPORT lean_obj_res lean_raymath_Vector3_unproject(b_lean_obj_arg source, b_lean_obj_arg projection, b_lean_obj_arg view) {
+    return lean_raylib_Vector3_to(Vector3Unproject(
+        lean_raylib_Vector3_from(source),
+        lean_raylib_Matrix_from(projection),
+        lean_raylib_Matrix_from(view)
+    ));
+}
+
 LEAN_EXPORT lean_obj_res lean_raymath_Vector3_uset(lean_obj_arg v, size_t i, uint32_t value) {
     if(lean_is_exclusive(v)) {
         lean_ctor_set(v, i, lean_box_uint32(value));

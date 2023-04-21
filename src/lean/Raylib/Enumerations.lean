@@ -1,6 +1,6 @@
 import Pod.UInt
 import Pod.Float
-import Raymath
+import Raymath.Core
 import Raylib.Util
 
 namespace Raylib

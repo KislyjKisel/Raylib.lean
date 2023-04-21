@@ -1,4 +1,4 @@
-import Raymath
+import Raymath.Core
 
 open Raymath
 

@@ -1,5 +1,5 @@
 import Pod.BytesView
-import Raymath
+import Raymath.Core
 import Raylib.Aliases
 import Raylib.Callbacks
 import Raylib.Enumerations
