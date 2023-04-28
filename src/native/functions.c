@@ -841,7 +841,16 @@ LEAN_EXPORT lean_obj_res lean_raylib__CompressData (size_t sz, b_lean_obj_arg da
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__CompressDataST (size_t sz, b_lean_obj_arg data, lean_obj_arg st) {
-    return lean_io_result_mk_ok(lean_raylib__CompressData(sz, data));
+    int compressedDataSize;
+    unsigned char* compressedData = CompressData(
+        lean_pod_BytesRef_unwrap(data),
+        sz,
+        &compressedDataSize
+    );
+    lean_object* compressedArray = lean_alloc_sarray(sizeof(uint8_t), compressedDataSize, compressedDataSize);
+    memcpy(lean_sarray_cptr(compressedArray), compressedData, compressedDataSize);
+    MemFree(compressedData);
+    return compressedArray;
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DecompressData (size_t sz, b_lean_obj_arg compData) {
@@ -870,7 +879,15 @@ LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64 (size_t sz, b_lean_obj_ar
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64ST (size_t sz, b_lean_obj_arg data, lean_obj_arg st) {
-    return lean_io_result_mk_ok(lean_raylib__EncodeDataBase64(sz, data));
+    int encodedDataSize;
+    char* encodedData = EncodeDataBase64(
+        lean_pod_BytesRef_unwrap(data),
+        sz,
+        &encodedDataSize
+    );
+    lean_object* encodedDataLean = lean_mk_string_from_bytes(encodedData, encodedDataSize);
+    MemFree(encodedData);
+    return encodedDataLean;
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DecodeDataBase64 (b_lean_obj_arg data) {
@@ -1983,11 +2000,11 @@ LEAN_EXPORT uint32_t lean_raylib__GetPixelColor (uint32_t format, b_lean_obj_arg
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetPixelColorST (uint32_t format, b_lean_obj_arg v, lean_obj_arg st) {
-    return lean_io_result_mk_ok(lean_raylib_Color_to(GetPixelColor(lean_pod_BytesView_unwrap(v)->ptr, format)));
+    return lean_io_result_mk_ok(lean_raylib_Color_to(GetPixelColor(lean_pod_BytesRef_unwrap(v), format)));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetPixelColorST (uint32_t format, b_lean_obj_arg v, uint32_t color, lean_obj_arg st) {
-    SetPixelColor(lean_pod_BytesView_unwrap(v)->ptr, lean_raylib_Color_from(color), format);
+    SetPixelColor(lean_pod_BytesRef_unwrap(v), lean_raylib_Color_from(color), format);
     return lean_io_result_mk_ok(lean_box(0));
 }
 

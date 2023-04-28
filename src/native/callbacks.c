@@ -36,7 +36,7 @@ static unsigned char* lean_raylib_LoadFileDataCallback_wrapper(const char* fileN
 static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void* data, unsigned int bytesToWrite) {
     assert(lean_raylib_SaveFileDataCallback_current != NULL);
     lean_object* fileName_box = lean_mk_string(fileName);
-    lean_object* view = lean_pod_BytesView_wrap(data, NULL);
+    lean_object* view = lean_pod_BytesRef_wrap(data);
     lean_inc_ref(lean_raylib_SaveFileDataCallback_current);
     // EST2.Result
     lean_object* success_iores = lean_apply_6(
@@ -133,7 +133,7 @@ static void lean_raylib_AudioStreamCallback_wrapper(ffi_cif *cif, void* ret, voi
     lean_object* callback = user_data;
     lean_inc_ref(callback);
     // vvv Segmentation fault on `lean_alloc_small`
-    lean_object* bv = lean_pod_BytesView_wrap(*(uint8_t**)args[0], NULL);
+    lean_object* bv = lean_pod_BytesRef_wrap(*(uint8_t**)args[0]);
     size_t frames = *(unsigned int*)args[1];
     lean_object* res = lean_apply_5(callback, lean_box(0), lean_box_usize(frames), bv, lean_box(0), lean_box(0));
     if(lean_ptr_tag(res) == 1) {
