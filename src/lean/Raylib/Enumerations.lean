@@ -1364,8 +1364,8 @@ def AudioSampleType.u32 := Subtype.mk 32 AudioSampleType.Is.u32
 def AudioSampleType.size : AudioSampleType → UInt32 := Subtype.val
 
 def AudioSampleType.alignment : AudioSampleType → Nat
-  | ⟨⟨8, _⟩, _⟩ => UInt8.alignment
-  | ⟨⟨16, _⟩, _⟩ => UInt16.alignment
-  | ⟨⟨32, _⟩, _⟩ => UInt32.alignment
+  | ⟨⟨8, _⟩, _⟩ => Pod.alignment UInt8
+  | ⟨⟨16, _⟩, _⟩ => Pod.alignment UInt16
+  | ⟨⟨32, _⟩, _⟩ => Pod.alignment UInt32
 
 end Raylib

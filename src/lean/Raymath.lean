@@ -6,20 +6,12 @@ open Pod (Float32)
 
 namespace Raymath
 
-theorem usize_size_ge_2_pow_32 : USize.size ≥ 2 ^ 32 :=
-  match usize_size_eq with
-    | Or.inl p => Nat.le_of_eq p.symm
-    | Or.inr p => Nat.le_of_lt $ Nat.lt_of_lt_of_eq (by decide) p.symm
-
-theorem mod_usize_size_refl (i : Nat) (h : i < 2^32) : i % USize.size = i :=
-  Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le h usize_size_ge_2_pow_32)
-
 def toUSizeInj {m} (n : Nat) (h₁ : n < m) (h₂ : m ≤ 2 ^ 32 := by decide) : USize :=
-  ⟨n, Nat.lt_of_lt_of_le h₁ $ Nat.le_trans h₂ usize_size_ge_2_pow_32⟩
+  ⟨n, Nat.lt_of_lt_of_le h₁ $ Nat.le_trans h₂ Pod.usize_size_ge_2_pow_32⟩
 
 theorem toUSizeInj_lt {m} (n : Nat) (h₁ : n < m) (h₂ : m < 2 ^ 32 := by decide) :
   toUSizeInj n h₁ (Nat.le_of_lt h₂) < m.toUSize :=
-  (Nat.lt_of_lt_of_eq h₁ $ Eq.symm $ mod_usize_size_refl m h₂)
+  (Nat.lt_of_lt_of_eq h₁ $ Eq.symm $ Pod.mod_usize_size_eq m h₂)
 
 end Raymath
 
@@ -105,7 +97,7 @@ export Raymath.Foreign.Vector3 (unproject)
 
 @[extern "lean_raymath_Vector_uget"]
 def uget (v : @& Vector3) (i : USize) («i<3uz» : i < 3) : Float32 :=
-  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» $ mod_usize_size_refl 3 (by decide)
+  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» $ Pod.mod_usize_size_eq 3 (by decide)
   match i, «↑i<3» with
     | ⟨0, _⟩, _ => v.x
     | ⟨1, _⟩, _ => v.y
@@ -117,7 +109,7 @@ def get (v : @& Vector3) (i : Fin 3) : Float32 :=
 
 @[extern "lean_raymath_Vector3_uset"]
 def uset (v : Vector3) (i : USize) («i<3uz» : i < 3) (value : Float32) : Vector3 :=
-  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» $ mod_usize_size_refl 3 (by decide)
+  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» $ Pod.mod_usize_size_eq 3 (by decide)
   match i, «↑i<3» with
     | ⟨0, _⟩, _ => { v with x := value }
     | ⟨1, _⟩, _ => { v with y := value }
@@ -152,7 +144,7 @@ export Raymath.Native.Vector4 (
 
 @[extern "lean_raymath_Vector_uget"]
 def uget (v : @& Vector4) (i : USize) («i<4uz» : i < 4) : Float32 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
   match i, «↑i<4» with
     | ⟨0, _⟩, _ => v.x
     | ⟨1, _⟩, _ => v.y
@@ -165,7 +157,7 @@ def get (v : @& Vector4) (i : Fin 4) : Float32 :=
 
 @[extern "lean_raymath_Vector4_uset"]
 def uset (v : Vector4) (i : USize) («i<4uz» : i < 4) (value : Float32) : Vector4 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
   match i, «↑i<4» with
     | ⟨0, _⟩, _ => { v with x := value }
     | ⟨1, _⟩, _ => { v with y := value }
@@ -200,7 +192,7 @@ export Raymath.Native.Matrix (
 
 @[extern "lean_raymath_Matrix_urow"]
 def urow (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
   match i, «↑i<4» with
     | ⟨0, _⟩, _ => .mk m.m0 m.m4 m.m8 m.m12
     | ⟨1, _⟩, _ => .mk m.m1 m.m5 m.m9 m.m13
@@ -213,7 +205,7 @@ def row (m : @& Matrix) (i : Nat) (h : i < 4) : Vector4 :=
 
 @[extern "lean_raymath_Matrix_ucolumn"]
 def ucolumn (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
   match i, «↑i<4» with
     | ⟨0, _⟩, _ => .mk m.m0 m.m1 m.m2 m.m3
     | ⟨1, _⟩, _ => .mk m.m4 m.m5 m.m6 m.m7
@@ -234,7 +226,7 @@ def get (m : @& Matrix) (i : Fin 4) (j : Fin 4) : Float32 := m.uget
 
 @[extern "lean_raymath_Matrix_usetRow"]
 def usetRow (m : Matrix) (i : USize) («i<4uz» : i < 4) (value : @& Vector4) : Matrix :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
   match i, «↑i<4» with
     | ⟨0, _⟩, _ => { m with m0 := value.x, m4 := value.y, m8 := value.z, m12 := value.w }
     | ⟨1, _⟩, _ => { m with m1 := value.x, m5 := value.y, m9 := value.z, m13 := value.w }
@@ -247,7 +239,7 @@ def setRow (m : Matrix) (i : Fin 4) (value : @& Vector4) : Matrix :=
 
 @[extern "lean_raymath_Matrix_usetColumn"]
 def usetColumn (m : Matrix) (i : USize) («i<4uz» : i < 4) (value : @& Vector4) : Matrix :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ mod_usize_size_refl 4 (by decide)
+  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
   match i, «↑i<4» with
     | ⟨0, _⟩, _ => { m with m0 := value.x, m1 := value.y, m2 := value.z, m3 := value.w }
     | ⟨1, _⟩, _ => { m with m4 := value.x, m5 := value.y, m6 := value.z, m7 := value.w }
