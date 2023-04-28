@@ -1,8 +1,14 @@
 import Lake
 open Lake DSL
 
+def podConfig : NameMap String := Id.run $ do
+  let mut cfg := NameMap.empty
+  if let some cc := get_config? cc then
+    cfg := cfg.insert `cc cc
+  cfg
+
 require Libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "master"
-require Pod from git "https://github.com/KislyjKisel/lean-pod" @ "main"
+require Pod from git "https://github.com/KislyjKisel/lean-pod" @ "main" with podConfig
 
 def packagesDir := defaultPackagesDir
 
