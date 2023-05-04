@@ -36,5 +36,11 @@ static inline lean_object* lean_mk_option_some(lean_object* value) {
 }
 
 static inline int lean_option_is_some(b_lean_obj_arg opt) {
-    return lean_ptr_tag(opt) == 1;
+    return lean_obj_tag(opt) == 1;
+}
+
+static inline void* lean_raylib_rlmemdup(void* src, size_t size) {
+    void* dst = RL_MALLOC(size);
+    memcpy(dst, src, size);
+    return dst;
 }

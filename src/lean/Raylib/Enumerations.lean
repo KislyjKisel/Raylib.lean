@@ -748,45 +748,40 @@ def rightTrigger : GamepadAxis := Subtype.mk 5 GamepadAxis.Is.rightTrigger
 
 /-! # Material map indices -/
 
-inductive MaterialMapIndex.Is : UInt32 -> Prop where
-  | albedo : MaterialMapIndex.Is 0
-  | metalness : MaterialMapIndex.Is 1
-  | normal : MaterialMapIndex.Is 2
-  | roughness : MaterialMapIndex.Is 3
-  | occlusion : MaterialMapIndex.Is 4
-  | emission : MaterialMapIndex.Is 5
-  | height : MaterialMapIndex.Is 6
-  | cubemap : MaterialMapIndex.Is 7
-  | irradiance : MaterialMapIndex.Is 8
-  | prefilter : MaterialMapIndex.Is 9
-  | brdf : MaterialMapIndex.Is 10
+def maxMaterialMaps := 12
 
-def MaterialMapIndex : Type := Subtype MaterialMapIndex.Is
+def MaterialMapIndex : Type := Subtype (· < maxMaterialMaps.toUInt32)
 
 namespace MaterialMapIndex
 
 /-- Albedo material (same as: diffuse) -/
-def albedo : MaterialMapIndex := Subtype.mk 0 MaterialMapIndex.Is.albedo
+def albedo : MaterialMapIndex := Subtype.mk 0 (by decide)
+/-- Diffuse material (same as: albedo) -/
+abbrev diffuse : MaterialMapIndex := albedo
 /-- Metalness material (same as: specular) -/
-def metalness : MaterialMapIndex := Subtype.mk 1 MaterialMapIndex.Is.metalness
+def metalness : MaterialMapIndex := Subtype.mk 1 (by decide)
+/-- Specular material (same as: metalness) -/
+abbrev specular : MaterialMapIndex := metalness
 /-- Normal material -/
-def normal : MaterialMapIndex := Subtype.mk 2 MaterialMapIndex.Is.normal
+def normal : MaterialMapIndex := Subtype.mk 2 (by decide)
 /-- Roughness material -/
-def roughness : MaterialMapIndex := Subtype.mk 3 MaterialMapIndex.Is.roughness
+def roughness : MaterialMapIndex := Subtype.mk 3 (by decide)
 /-- Ambient occlusion material -/
-def occlusion : MaterialMapIndex := Subtype.mk 4 MaterialMapIndex.Is.occlusion
+def occlusion : MaterialMapIndex := Subtype.mk 4 (by decide)
 /-- Emission material -/
-def emission : MaterialMapIndex := Subtype.mk 5 MaterialMapIndex.Is.emission
+def emission : MaterialMapIndex := Subtype.mk 5 (by decide)
 /-- Heightmap material -/
-def height : MaterialMapIndex := Subtype.mk 6 MaterialMapIndex.Is.height
+def height : MaterialMapIndex := Subtype.mk 6 (by decide)
 /-- Cubemap material (NOTE: Uses `GL_TEXTURE_CUBE_MAP`) -/
-def cubemap : MaterialMapIndex := Subtype.mk 7 MaterialMapIndex.Is.cubemap
+def cubemap : MaterialMapIndex := Subtype.mk 7 (by decide)
 /-- Irradiance material (NOTE: Uses `GL_TEXTURE_CUBE_MAP`) -/
-def irradiance : MaterialMapIndex := Subtype.mk 8 MaterialMapIndex.Is.irradiance
+def irradiance : MaterialMapIndex := Subtype.mk 8 (by decide)
 /-- Prefilter material (NOTE: Uses `GL_TEXTURE_CUBE_MAP`) -/
-def prefilter : MaterialMapIndex := Subtype.mk 9 MaterialMapIndex.Is.prefilter
+def prefilter : MaterialMapIndex := Subtype.mk 9 (by decide)
 /-- Brdf material -/
-def brdf : MaterialMapIndex := Subtype.mk 10 MaterialMapIndex.Is.brdf
+def brdf : MaterialMapIndex := Subtype.mk 10 (by decide)
+/-- Custom material -/
+def custom : MaterialMapIndex := Subtype.mk 11 (by decide)
 
 end MaterialMapIndex
 

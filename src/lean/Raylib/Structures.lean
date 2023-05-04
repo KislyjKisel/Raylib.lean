@@ -1,5 +1,7 @@
+import Pod.BytesView
 import Raymath.Core
 import Raylib.Enumerations
+import Raylib.Util.RangeMap
 
 open Pod (Float32)
 open Raymath (Vector2 Vector3 Vector4 Matrix)
@@ -123,11 +125,17 @@ opaque TextureRef.mipmaps (texture : @& TextureRef) : UInt32
 @[extern "lean_raylib__TextureRef_format"]
 opaque TextureRef.format (texture : @& TextureRef) : PixelFormat
 
-@[extern "lean_raylib__Texture_default"]
-private opaque Texture.default_ : Unit → Texture
+@[extern "lean_raylib__Texture_getEmpty"]
+private opaque Texture.getEmpty : Unit → Texture
+
+/-- null -/
+def Texture.empty : Texture := Texture.getEmpty ()
+
+@[extern "lean_raylib__Texture_getDefault"]
+private opaque Texture.getDefault : Unit → Texture
 
 /-- Texture used on shapes drawing (usually a white pixel) -/
-def Texture.default : Texture := Texture.default_ ()
+def Texture.default : Texture := Texture.getDefault ()
 
 
 /-! # Render texture -/
@@ -272,192 +280,94 @@ deriving Inhabited, Repr
 
 /-! # Mesh -/
 
--- opaque MeshPointed : NonemptyType
--- /-- Mesh, vertex data and vao/vbo -/
--- def Mesh : Type := MeshPointed.type
--- instance : Nonempty Mesh := MeshPointed.property
--- @[extern "lean_raylib__Mesh_mk"]
--- opaque Mesh.mk : Mesh
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | vertexCount: int -- Number of vertices stored in arrays
---   | triangleCount: int -- Number of triangles stored (indexed or not)
---   | vertices: float * -- Vertex position (XYZ - 3 components per vertex) (shader-location = 0)
---   | texcoords: float * -- Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1)
---   | texcoords2: float * -- Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5)
---   | normals: float * -- Vertex normals (XYZ - 3 components per vertex) (shader-location = 2)
---   | tangents: float * -- Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4)
---   | colors: unsigned char * -- Vertex colors (RGBA - 4 components per vertex) (shader-location = 3)
---   | indices: unsigned short * -- Vertex indices (in case vertex data comes indexed)
---   | animVertices: float * -- Animated vertex positions (after bones transformations)
---   | animNormals: float * -- Animated normals (after bones transformations)
---   | boneIds: unsigned char * -- Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning)
---   | boneWeights: float * -- Vertex bone weight, up to 4 bones influence by vertex (skinning)
---   | vaoId: unsigned int -- OpenGL Vertex Array Object id
---   | vboId: unsigned int * -- OpenGL Vertex Buffer Objects id (default vertex data)
--- -/
--- /-- Getter: Number of vertices stored in arrays -/
--- @[extern "lean_raylib__Mesh_vertexCount"]
--- opaque Mesh.vertexCount (self : @& Mesh) : Int32
--- /-- Setter: Number of vertices stored in arrays -/
--- @[extern "lean_raylib__Mesh_vertexCount_set"]
--- opaque Mesh.set_vertexCount (vertexCount : Int32) (self : Mesh) : Mesh
--- /-- Getter: Number of triangles stored (indexed or not) -/
--- @[extern "lean_raylib__Mesh_triangleCount"]
--- opaque Mesh.triangleCount (self : @& Mesh) : Int32
--- /-- Setter: Number of triangles stored (indexed or not) -/
--- @[extern "lean_raylib__Mesh_triangleCount_set"]
--- opaque Mesh.set_triangleCount (triangleCount : Int32) (self : Mesh) : Mesh
--- /-- Getter: Vertex position (XYZ - 3 components per vertex) (shader-location = 0) -/
--- @[extern "lean_raylib__Mesh_vertices"]
--- opaque Mesh.vertices (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex position (XYZ - 3 components per vertex) (shader-location = 0) -/
--- @[extern "lean_raylib__Mesh_vertices_set"]
--- opaque Mesh.set_vertices (vertices : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1) -/
--- @[extern "lean_raylib__Mesh_texcoords"]
--- opaque Mesh.texcoords (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1) -/
--- @[extern "lean_raylib__Mesh_texcoords_set"]
--- opaque Mesh.set_texcoords (texcoords : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5) -/
--- @[extern "lean_raylib__Mesh_texcoords2"]
--- opaque Mesh.texcoords2 (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5) -/
--- @[extern "lean_raylib__Mesh_texcoords2_set"]
--- opaque Mesh.set_texcoords2 (texcoords2 : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Vertex normals (XYZ - 3 components per vertex) (shader-location = 2) -/
--- @[extern "lean_raylib__Mesh_normals"]
--- opaque Mesh.normals (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex normals (XYZ - 3 components per vertex) (shader-location = 2) -/
--- @[extern "lean_raylib__Mesh_normals_set"]
--- opaque Mesh.set_normals (normals : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4) -/
--- @[extern "lean_raylib__Mesh_tangents"]
--- opaque Mesh.tangents (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4) -/
--- @[extern "lean_raylib__Mesh_tangents_set"]
--- opaque Mesh.set_tangents (tangents : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Vertex colors (RGBA - 4 components per vertex) (shader-location = 3) -/
--- @[extern "lean_raylib__Mesh_colors"]
--- opaque Mesh.colors (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex colors (RGBA - 4 components per vertex) (shader-location = 3) -/
--- @[extern "lean_raylib__Mesh_colors_set"]
--- opaque Mesh.set_colors (colors : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Vertex indices (in case vertex data comes indexed) -/
--- @[extern "lean_raylib__Mesh_indices"]
--- opaque Mesh.indices (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex indices (in case vertex data comes indexed) -/
--- @[extern "lean_raylib__Mesh_indices_set"]
--- opaque Mesh.set_indices (indices : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Animated vertex positions (after bones transformations) -/
+opaque MeshPointed : NonemptyType
+/-- Mesh, vertex data and vao/vbo -/
+def Mesh : Type := MeshPointed.type
+instance : Nonempty Mesh := MeshPointed.property
+
+@[extern "lean_raylib__Mesh_mkBv"]
+opaque Mesh.mkBv
+  (vertexCount : UInt32)
+  (vertices : @& Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32))
+  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (normals : @& (Option $ Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (tangents : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (colors : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
+  : Mesh
+
+/-- ∀ i j, indices[i][j] < vertexCount -/
+@[extern "lean_raylib__Mesh_mkIndexedBv"]
+opaque Mesh.mkIndexedBv
+  (vertexCount : UInt32) (triangleCount : UInt32)
+  (vertices : @& Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32))
+  (indices : @& Pod.BytesView (triangleCount.toUSize * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16))
+  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (normals : @& (Option $ Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (tangents : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (colors : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
+  : Mesh
+
+/-- Number of vertices stored in arrays -/
+@[extern "lean_raylib__Mesh_vertexCount"]
+opaque Mesh.vertexCount (self : @& Mesh) : UInt32
+
+/-- Number of triangles stored (indexed or not) -/
+@[extern "lean_raylib__Mesh_triangleCount"]
+opaque Mesh.triangleCount (self : @& Mesh) : UInt32
+
+/-- Vertex position (XYZ - 3 components per vertex) (shader-location = 0) -/
+@[extern "lean_raylib__Mesh_vertices"]
+opaque Mesh.vertices (self : Mesh) : Pod.BytesView (self.vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+
+/-- Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1) -/
+@[extern "lean_raylib__Mesh_texcoords"]
+opaque Mesh.texcoords (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
+
+/-- Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5) -/
+@[extern "lean_raylib__Mesh_texcoords2"]
+opaque Mesh.texcoords2 (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
+
+/-- Vertex normals (XYZ - 3 components per vertex) (shader-location = 2) -/
+@[extern "lean_raylib__Mesh_normals"]
+opaque Mesh.normals (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+
+/-- Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4) -/
+@[extern "lean_raylib__Mesh_tangents"]
+opaque Mesh.tangents (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+
+/-- Vertex colors (RGBA - 4 components per vertex) (shader-location = 3) -/
+@[extern "lean_raylib__Mesh_colors"]
+opaque Mesh.colors (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
+
+/-- Vertex indices (in case vertex data comes indexed) -/
+@[extern "lean_raylib__Mesh_indices"]
+opaque Mesh.indices (self : Mesh) : Option $ Pod.BytesView (self.triangleCount.toUSize * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16)
+
+-- /-- Animated vertex positions (after bones transformations) -/
 -- @[extern "lean_raylib__Mesh_animVertices"]
 -- opaque Mesh.animVertices (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Animated vertex positions (after bones transformations) -/
--- @[extern "lean_raylib__Mesh_animVertices_set"]
--- opaque Mesh.set_animVertices (animVertices : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Animated normals (after bones transformations) -/
+
+-- /-- Animated normals (after bones transformations) -/
 -- @[extern "lean_raylib__Mesh_animNormals"]
 -- opaque Mesh.animNormals (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Animated normals (after bones transformations) -/
--- @[extern "lean_raylib__Mesh_animNormals_set"]
--- opaque Mesh.set_animNormals (animNormals : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
+
+-- /-- Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
 -- @[extern "lean_raylib__Mesh_boneIds"]
 -- opaque Mesh.boneIds (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
--- @[extern "lean_raylib__Mesh_boneIds_set"]
--- opaque Mesh.set_boneIds (boneIds : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
+
+-- /-- Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
 -- @[extern "lean_raylib__Mesh_boneWeights"]
 -- opaque Mesh.boneWeights (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
--- @[extern "lean_raylib__Mesh_boneWeights_set"]
--- opaque Mesh.set_boneWeights (boneWeights : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: OpenGL Vertex Array Object id -/
--- @[extern "lean_raylib__Mesh_vaoId"]
--- opaque Mesh.vaoId (self : @& Mesh) : UInt32
--- /-- Setter: OpenGL Vertex Array Object id -/
--- @[extern "lean_raylib__Mesh_vaoId_set"]
--- opaque Mesh.set_vaoId (vaoId : UInt32) (self : Mesh) : Mesh
--- /-- Getter: OpenGL Vertex Buffer Objects id (default vertex data) -/
+
+/-- OpenGL Vertex Array Object id -/
+@[extern "lean_raylib__Mesh_vaoId"]
+opaque Mesh.vaoId (self : @& Mesh) : UInt32
+
+-- /-- OpenGL Vertex Buffer Objects id (default vertex data) -/
 -- @[extern "lean_raylib__Mesh_vboId"]
--- opaque Mesh.vboId (self : @& Mesh) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: OpenGL Vertex Buffer Objects id (default vertex data) -/
--- @[extern "lean_raylib__Mesh_vboId_set"]
--- opaque Mesh.set_vboId (vboId : Unit) (self : Mesh) : Mesh
--- /-
--- todo: ^^ struct setter ^^
--- -/
+-- opaque Mesh.vboId (self : @& Mesh) : [u32; 7]
 
 
 /-! # Shader -/
@@ -477,91 +387,51 @@ opaque Shader.locs (self : @& Shader) : Array UInt32
 @[extern "lean_raylib__Shader_defaultLoc"]
 opaque Shader.defaultLoc (self : @& Shader) (index : ShaderLocationIndex) : Option UInt32
 
+@[extern "lean_raylib__Shader_getDefault"]
+private opaque Shader.getDefault : Unit → Shader
 
-/-! # Material map -/
-
--- opaque MaterialMapPointed : NonemptyType
--- /-- MaterialMap -/
--- def MaterialMap : Type := MaterialMapPointed.type
--- instance : Nonempty MaterialMap := MaterialMapPointed.property
--- @[extern "lean_raylib__MaterialMap_mk"]
--- opaque MaterialMap.mk : MaterialMap
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | texture: Texture2D -- Material map texture
---   | color: Color -- Material map color
---   | value: float -- Material map value
--- -/
--- /-- Getter: Material map texture -/
--- @[extern "lean_raylib__MaterialMap_texture"]
--- opaque MaterialMap.texture (self : @& MaterialMap) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Material map texture -/
--- @[extern "lean_raylib__MaterialMap_texture_set"]
--- opaque MaterialMap.set_texture (texture : Unit) (self : MaterialMap) : MaterialMap
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Material map color -/
--- @[extern "lean_raylib__MaterialMap_color"]
--- opaque MaterialMap.color (self : @& MaterialMap) : Color
--- /-- Setter: Material map color -/
--- @[extern "lean_raylib__MaterialMap_color_set"]
--- opaque MaterialMap.set_color (color : Color) (self : MaterialMap) : MaterialMap
--- /-- Getter: Material map value -/
--- @[extern "lean_raylib__MaterialMap_value"]
--- opaque MaterialMap.value (self : @& MaterialMap) : Float32
--- /-- Setter: Material map value -/
--- @[extern "lean_raylib__MaterialMap_value_set"]
--- opaque MaterialMap.set_value (value : Float32) (self : MaterialMap) : MaterialMap
+def Shader.default : Shader := Shader.getDefault ()
 
 
 /-! # Material -/
 
--- opaque MaterialPointed : NonemptyType
--- /-- Material, includes shader and maps -/
--- def Material : Type := MaterialPointed.type
--- instance : Nonempty Material := MaterialPointed.property
--- @[extern "lean_raylib__Material_mk"]
--- opaque Material.mk : Material
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | shader: Shader -- Material shader
---   | maps: MaterialMap * -- Material maps array (MAX_MATERIAL_MAPS)
---   | params: float[4] -- Material generic parameters (if required)
--- -/
--- /-- Getter: Material shader -/
--- @[extern "lean_raylib__Material_shader"]
--- opaque Material.shader (self : @& Material) : Shader
--- /-- Setter: Material shader -/
--- @[extern "lean_raylib__Material_shader_set"]
--- opaque Material.set_shader (shader : Shader) (self : Material) : Material
--- /-- Getter: Material maps array (MAX_MATERIAL_MAPS) -/
--- @[extern "lean_raylib__Material_maps"]
--- opaque Material.maps (self : @& Material) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Material maps array (MAX_MATERIAL_MAPS) -/
--- @[extern "lean_raylib__Material_maps_set"]
--- opaque Material.set_maps (maps : Unit) (self : Material) : Material
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Material generic parameters (if required) -/
--- @[extern "lean_raylib__Material_params"]
--- opaque Material.params (self : @& Material) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Material generic parameters (if required) -/
--- @[extern "lean_raylib__Material_params_set"]
--- opaque Material.set_params (params : Unit) (self : Material) : Material
--- /-
--- todo: ^^ struct setter ^^
--- -/
+structure MaterialMap where
+  texture : Texture
+  color : Color
+  value : Float32
+deriving Nonempty
+
+def MaterialMap.empty : MaterialMap where
+  texture := Texture.empty
+  color := .mk 0
+  value := 0
+
+abbrev MaterialMapArray : Type := RangeMap 0 maxMaterialMaps.toUInt32 MaterialMap
+
+namespace MaterialMapArray
+
+def ofFn (f : MaterialMapIndex → MaterialMap) : MaterialMapArray :=
+  RangeMap.ofFn (by decide) (λ i h ↦ f ⟨i, h.2⟩)
+
+def get (a : MaterialMapArray) (i : MaterialMapIndex) : MaterialMap :=
+  RangeMap.get a i.val ⟨Nat.zero_le _, i.property⟩
+
+def set (a : MaterialMapArray) (i : MaterialMapIndex) (m : MaterialMap) : MaterialMapArray :=
+  RangeMap.set a i.val m ⟨Nat.zero_le _, i.property⟩
+
+end MaterialMapArray
+
+structure Material where
+  shader : Shader
+  maps : MaterialMapArray
+  param0 : Float32
+  param1 : Float32
+  param2 : Float32
+  param3 : Float32
+deriving Nonempty
+
+def Material.params (m : Material) : Vector4 :=
+  Vector4.mk m.param0 m.param1 m.param2 m.param3
 
 
 /-! # Transform -/

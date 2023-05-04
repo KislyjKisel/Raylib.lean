@@ -486,11 +486,11 @@ opaque loadFileData (fileName : @& String) : BaseIO ByteArray
 
 /-- Save data to file from byte array (write), returns true on success -/
 @[extern "lean_raylib__SaveFileData"]
-opaque saveFileData (fileName : @& String) {size} (data : @& Pod.BytesView size 1) : IO Bool
+opaque saveFileData (fileName : @& String) {size} (data : @& Pod.BytesView size 1) : BaseIO Bool
 
 /-- Export data to code (.h), returns true on success -/
 @[extern "lean_raylib__ExportDataAsCode"]
-opaque exportDataAsCode {size} (data : @& Pod.BytesView size 1) (fileName : @& String) : IO Bool
+opaque exportDataAsCode {size} (data : @& Pod.BytesView size 1) (fileName : @& String) : BaseIO Bool
 
 /-- Load text data from file (read), returns a ~~'\0' terminated~~ string -/
 @[extern "lean_raylib__LoadFileText"]
@@ -842,7 +842,7 @@ opaque drawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControl
 
 /-- Draw lines sequence -/
 @[extern "lean_raylib__DrawLineStrip"]
-opaque drawLineStrip (points : @& Array Vector2) (color : Color) : IO Unit
+opaque drawLineStrip (points : @& Array Vector2) (color : Color) : BaseIO Unit
 
 /-- Draw a color-filled circle -/
 @[extern "lean_raylib__DrawCircle"]
@@ -1647,15 +1647,14 @@ opaque drawBillboardRec (camera : @& Camera) (texture : @& Texture2DRef) (source
 @[extern "lean_raylib__DrawBillboardPro"]
 opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source : @& Rectangle) (position : @& Vector3) (up : @& Vector3) (size : @& Vector2) (origin : @& Vector2) (rotation : Float32) (tint : Color) : BaseIO Unit
 
--- /-- Upload mesh vertex data in GPU and provide VAO/VBO ids -/
--- @[extern "lean_raylib__UploadMesh"]
--- opaque uploadMesh : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | mesh : Mesh *
---   | dynamic : bool
--- -/
+/-- Create a mesh duplicate. Doesn't upload its data to GPU. Panics when the passed mesh is animated. -/
+@[extern "lean_raylib__MeshCopy"]
+opaque meshCopy (mesh : @& Mesh) : Mesh
+
+/-- Upload mesh vertex data in GPU and provide VAO/VBO ids -/
+@[extern "lean_raylib__UploadMesh"]
+opaque uploadMesh (mesh : Mesh) (dynamic : Bool) : BaseIO Mesh
+
 -- /-- Update mesh vertex data in GPU for a specific buffer index -/
 -- @[extern "lean_raylib__UpdateMeshBuffer"]
 -- opaque updateMeshBuffer : Unit -> Unit
@@ -1668,12 +1667,11 @@ opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source
 --   | dataSize : int
 --   | offset : int
 -- -/
--- /-- Unload mesh data from CPU and GPU -/
--- @[extern "lean_raylib__UnloadMesh"]
--- opaque unloadMesh (mesh : Mesh) : Unit
--- /-- Draw a 3d mesh with material and transform -/
--- @[extern "lean_raylib__DrawMesh"]
--- opaque drawMesh (mesh : Mesh) (material : Material) (transform : Matrix) : Unit
+
+/-- Draw a 3d mesh with material and transform -/
+@[extern "lean_raylib__DrawMesh"]
+opaque drawMesh (mesh : @& Mesh) (material : @& Material) (transform : @& Matrix) : BaseIO Unit
+
 -- /-- Draw multiple mesh instances with material and different transforms -/
 -- @[extern "lean_raylib__DrawMeshInstanced"]
 -- opaque drawMeshInstanced : Unit -> Unit
@@ -1685,53 +1683,63 @@ opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source
 --   | transforms : const Matrix *
 --   | instances : int
 -- -/
--- /-- Export mesh data to file, returns true on success -/
--- @[extern "lean_raylib__ExportMesh"]
--- opaque exportMesh (mesh : Mesh) (fileName : String) : Bool
--- /-- Compute mesh bounding box limits -/
--- @[extern "lean_raylib__GetMeshBoundingBox"]
--- opaque getMeshBoundingBox (mesh : Mesh) : BoundingBox
--- /-- Compute mesh tangents -/
--- @[extern "lean_raylib__GenMeshTangents"]
--- opaque genMeshTangents : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | mesh : Mesh *
--- -/
--- /-- Generate polygonal mesh -/
--- @[extern "lean_raylib__GenMeshPoly"]
--- opaque genMeshPoly (sides : Int32) (radius : Float32) : Mesh
--- /-- Generate plane mesh (with subdivisions) -/
--- @[extern "lean_raylib__GenMeshPlane"]
--- opaque genMeshPlane (width : Float32) (length : Float32) (resX : Int32) (resZ : Int32) : Mesh
--- /-- Generate cuboid mesh -/
--- @[extern "lean_raylib__GenMeshCube"]
--- opaque genMeshCube (width : Float32) (height : Float32) (length : Float32) : Mesh
--- /-- Generate sphere mesh (standard sphere) -/
--- @[extern "lean_raylib__GenMeshSphere"]
--- opaque genMeshSphere (radius : Float32) (rings : Int32) (slices : Int32) : Mesh
--- /-- Generate half-sphere mesh (no bottom cap) -/
--- @[extern "lean_raylib__GenMeshHemiSphere"]
--- opaque genMeshHemiSphere (radius : Float32) (rings : Int32) (slices : Int32) : Mesh
--- /-- Generate cylinder mesh -/
--- @[extern "lean_raylib__GenMeshCylinder"]
--- opaque genMeshCylinder (radius : Float32) (height : Float32) (slices : Int32) : Mesh
--- /-- Generate cone/pyramid mesh -/
--- @[extern "lean_raylib__GenMeshCone"]
--- opaque genMeshCone (radius : Float32) (height : Float32) (slices : Int32) : Mesh
--- /-- Generate torus mesh -/
--- @[extern "lean_raylib__GenMeshTorus"]
--- opaque genMeshTorus (radius : Float32) (size : Float32) (radSeg : Int32) (sides : Int32) : Mesh
--- /-- Generate trefoil knot mesh -/
--- @[extern "lean_raylib__GenMeshKnot"]
--- opaque genMeshKnot (radius : Float32) (size : Float32) (radSeg : Int32) (sides : Int32) : Mesh
--- /-- Generate heightmap mesh from image data -/
--- @[extern "lean_raylib__GenMeshHeightmap"]
--- opaque genMeshHeightmap (heightmap : Image) (size : Vector3) : Mesh
--- /-- Generate cubes-based map mesh from image data -/
--- @[extern "lean_raylib__GenMeshCubicmap"]
--- opaque genMeshCubicmap (cubicmap : Image) (cubeSize : Vector3) : Mesh
+
+/-- Export mesh data to file, returns true on success -/
+@[extern "lean_raylib__ExportMesh"]
+opaque exportMesh (mesh : @& Mesh) (fileName : @& String) : BaseIO Bool
+
+/-- Compute mesh bounding box limits -/
+@[extern "lean_raylib__GetMeshBoundingBox"]
+opaque getMeshBoundingBox (mesh : @& Mesh) : BoundingBox
+
+/-- Compute mesh tangents -/
+@[extern "lean_raylib__GenMeshTangents"]
+opaque genMeshTangents (mesh : Mesh) : Mesh
+
+/-- Generate polygonal mesh -/
+@[extern "lean_raylib__GenMeshPoly"]
+opaque genMeshPoly (sides : UInt32) (radius : Float32) : Mesh
+
+/-- Generate plane mesh (with subdivisions) -/
+@[extern "lean_raylib__GenMeshPlane"]
+opaque genMeshPlane (width : Float32) (length : Float32) (resX : UInt32) (resZ : UInt32) : Mesh
+
+/-- Generate cuboid mesh -/
+@[extern "lean_raylib__GenMeshCube"]
+opaque genMeshCube (width : Float32) (height : Float32) (length : Float32) : Mesh
+
+/-- Generate sphere mesh (standard sphere) -/
+@[extern "lean_raylib__GenMeshSphere"]
+opaque genMeshSphere (radius : Float32) (rings : UInt32) (slices : UInt32) : Mesh
+
+/-- Generate half-sphere mesh (no bottom cap) -/
+@[extern "lean_raylib__GenMeshHemiSphere"]
+opaque genMeshHemiSphere (radius : Float32) (rings : UInt32) (slices : UInt32) : Mesh
+
+/-- Generate cylinder mesh -/
+@[extern "lean_raylib__GenMeshCylinder"]
+opaque genMeshCylinder (radius : Float32) (height : Float32) (slices : UInt32) : Mesh
+
+/-- Generate cone/pyramid mesh -/
+@[extern "lean_raylib__GenMeshCone"]
+opaque genMeshCone (radius : Float32) (height : Float32) (slices : UInt32) : Mesh
+
+/-- Generate torus mesh -/
+@[extern "lean_raylib__GenMeshTorus"]
+opaque genMeshTorus (radius : Float32) (size : Float32) (radSeg : UInt32) (sides : UInt32) : Mesh
+
+/-- Generate trefoil knot mesh -/
+@[extern "lean_raylib__GenMeshKnot"]
+opaque genMeshKnot (radius : Float32) (size : Float32) (radSeg : UInt32) (sides : UInt32) : Mesh
+
+/-- Generate heightmap mesh from image data -/
+@[extern "lean_raylib__GenMeshHeightmap"]
+opaque genMeshHeightmap (heightmap : @& Image) (size : @& Vector3) : Mesh
+
+/-- Generate cubes-based map mesh from image data -/
+@[extern "lean_raylib__GenMeshCubicmap"]
+opaque genMeshCubicmap (cubicmap : @& Image) (cubeSize : @& Vector3) : Mesh
+
 -- /-- Load materials from model file -/
 -- @[extern "lean_raylib__LoadMaterials"]
 -- opaque loadMaterials : Unit -> Unit
@@ -1741,15 +1749,30 @@ opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source
 --   | fileName : const char *
 --   | materialCount : int *
 -- -/
--- /-- Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps) -/
--- @[extern "lean_raylib__LoadMaterialDefault"]
--- opaque loadMaterialDefault (_ : Unit) : Material
--- /-- Check if a material is ready -/
--- @[extern "lean_raylib__IsMaterialReady"]
--- opaque isMaterialReady (material : Material) : Bool
--- /-- Unload material from GPU memory (VRAM) -/
--- @[extern "lean_raylib__UnloadMaterial"]
--- opaque unloadMaterial (material : Material) : Unit
+
+/-- Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps) -/
+def loadMaterialDefault : Material where
+  shader := Shader.default
+  maps := .ofFn λ
+    | .diffuse => {
+      texture := Texture.default,
+      color := .fromRgba 255 255 255 255,
+      value := 0
+    }
+    | .specular => {
+      texture := Texture.empty,
+      color := .fromRgba 255 255 255 255,
+      value := 0
+    }
+    | _ => .empty
+  param0 := 0
+  param1 := 0
+  param2 := 0
+  param3 := 0
+
+/-- Check if a material is ready -/
+def isMaterialReady (material : Material) : Bool := isShaderReady material.shader
+
 -- /-- Set texture for a material map type (MATERIAL_MAP_DIFFUSE, MATERIAL_MAP_SPECULAR...) -/
 -- @[extern "lean_raylib__SetMaterialTexture"]
 -- opaque setMaterialTexture : Unit -> Unit
@@ -1818,9 +1841,9 @@ opaque getRayCollisionSphere (ray : @& Ray) (center : @& Vector3) (radius : Floa
 @[extern "lean_raylib__GetRayCollisionBox"]
 opaque getRayCollisionBox (ray : @& Ray) (box : @& BoundingBox) : RayCollision
 
--- /-- Get collision info between ray and mesh -/
--- @[extern "lean_raylib__GetRayCollisionMesh"]
--- opaque getRayCollisionMesh (ray : Ray) (mesh : Mesh) (transform : Matrix) : RayCollision
+/-- Get collision info between ray and mesh -/
+@[extern "lean_raylib__GetRayCollisionMesh"]
+opaque getRayCollisionMesh (ray : @& Ray) (mesh : @& Mesh) (transform : @& Matrix) : RayCollision
 
 /-- Get collision info between ray and triangle -/
 @[extern "lean_raylib__GetRayCollisionTriangle"]

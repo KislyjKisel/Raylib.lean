@@ -62,8 +62,19 @@ LEAN_EXPORT uint32_t lean_raylib__TextureRef_format(b_lean_obj_arg obj) {
     return lean_raylib_TextureRef_from(obj)->texture.format;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Texture_default() {
+LEAN_EXPORT lean_obj_res lean_raylib__Texture_getEmpty() {
     LET_BOX(Texture, texture, (Texture){0});
+    return lean_raylib_Texture_to(texture);
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__Texture_getDefault() {
+    LET_BOX_STRUCT(Texture, texture,
+        .id = rlGetTextureIdDefault(),
+        .width = 1,
+        .height = 1,
+        .mipmaps = 1,
+        .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
+    );
     return lean_raylib_Texture_to(texture);
 }
 
@@ -223,190 +234,230 @@ LEAN_EXPORT lean_obj_res lean_raylib__Font_recs(b_lean_obj_arg obj) {
 
 // # Mesh
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mk(uint32_t vertexCount, uint32_t triangleCount, /* float* */lean_obj_arg vertices, /* float* */lean_obj_arg texcoords, /* float* */lean_obj_arg texcoords2, /* float* */lean_obj_arg normals, /* float* */lean_obj_arg tangents, /* unsigned char* */lean_obj_arg colors, /* unsigned short* */lean_obj_arg indices, /* float* */lean_obj_arg animVertices, /* float* */lean_obj_arg animNormals, /* unsigned char* */lean_obj_arg boneIds, /* float* */lean_obj_arg boneWeights, uint32_t vaoId, /* unsigned int* */lean_obj_arg vboId) {
-//     LET_BOX_STRUCT(Mesh, result_,
-//         .vertexCount = vertexCount,
-//         .triangleCount = triangleCount,
-//         .vertices = /*todo: ptr?*/vertices,
-//         .texcoords = /*todo: ptr?*/texcoords,
-//         .texcoords2 = /*todo: ptr?*/texcoords2,
-//         .normals = /*todo: ptr?*/normals,
-//         .tangents = /*todo: ptr?*/tangents,
-//         .colors = /*todo: ptr?*/colors,
-//         .indices = /*todo: ptr?*/indices,
-//         .animVertices = /*todo: ptr?*/animVertices,
-//         .animNormals = /*todo: ptr?*/animNormals,
-//         .boneIds = /*todo: ptr?*/boneIds,
-//         .boneWeights = /*todo: ptr?*/boneWeights,
-//         .vaoId = vaoId,
-//         .vboId = /*todo: ptr?*/vboId
-//     );
-//     return lean_raylib_Mesh_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkBv(
+    uint32_t vertexCount,
+    b_lean_obj_arg vertices,
+    b_lean_obj_arg texcoords,
+    b_lean_obj_arg texcoords2,
+    b_lean_obj_arg normals,
+    b_lean_obj_arg tangents,
+    b_lean_obj_arg colors
+) {
+    Mesh mesh = {0};
+    mesh.vertexCount = vertexCount;
+    mesh.triangleCount = vertexCount / 3;
 
-// LEAN_EXPORT uint32_t lean_raylib__Mesh_vertexCount(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Mesh_from(obj)->vertexCount;
-//     return result_;
-// }
+    mesh.vertices = lean_raylib_rlmemdup(
+        lean_pod_BytesView_unwrap(vertices)->ptr,
+        sizeof(float[3]) * vertexCount
+    );
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_vertexCount_set(uint32_t vertexCount, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->vertexCount = vertexCount;
-//     return lean_raylib_Mesh_to(result_);
-// }
+    if(lean_option_is_some(texcoords)) {
+        mesh.texcoords = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(texcoords, 0))->ptr,
+            sizeof(float[2]) * vertexCount
+        );
+    }
+    if(lean_option_is_some(texcoords2)) {
+        mesh.texcoords2 = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(texcoords2, 0))->ptr,
+            sizeof(float[2]) * vertexCount
+        );
+    }
+    if(lean_option_is_some(normals)) {
+        mesh.normals = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(normals, 0))->ptr,
+            sizeof(float[3]) * vertexCount
+        );
+    }
+    if(lean_option_is_some(tangents)) {
+        mesh.tangents = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(tangents, 0))->ptr,
+            sizeof(float[4]) * vertexCount
+        );
+    }
+    if(lean_option_is_some(colors)) {
+        mesh.colors = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(colors, 0))->ptr,
+            sizeof(unsigned char[4]) * vertexCount
+        );
+    }
+    LET_BOX(Mesh, mesh_heap, mesh);
+    return lean_raylib_Mesh_to(mesh_heap);
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Mesh_triangleCount(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Mesh_from(obj)->triangleCount;
-//     return result_;
-// }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_triangleCount_set(uint32_t triangleCount, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->triangleCount = triangleCount;
-//     return lean_raylib_Mesh_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkIndexedBv(
+    uint32_t vertexCount,
+    uint32_t triangleCount,
+    b_lean_obj_arg vertices,
+    b_lean_obj_arg indices,
+    b_lean_obj_arg texcoords,
+    b_lean_obj_arg texcoords2,
+    b_lean_obj_arg normals,
+    b_lean_obj_arg tangents,
+    b_lean_obj_arg colors
+) {
+    Mesh mesh = {0};
+    void* indices_c = lean_pod_BytesView_unwrap(indices)->ptr;
+    #ifndef NDEBUG
+        for(size_t i = 0; i < 3 * triangleCount; ++i) {
+            uint16_t index;
+            memcpy(&index, indices_c + i * sizeof(uint16_t), sizeof(index));
+            if(index >= vertexCount) {
+                LET_BOX(Mesh, mesh_heap, mesh);
+                return lean_panic_fn(
+                    lean_raylib_Mesh_to(mesh_heap),
+                    lean_mk_string("Mesh index out of bounds")
+                );
+            }
+        }
+    #endif
+    mesh.vertexCount = vertexCount;
+    mesh.triangleCount = triangleCount;
 
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_vertices(b_lean_obj_arg obj) {
-//     float * result_ = lean_raylib_Mesh_from(obj)->vertices;
+    mesh.vertices = lean_raylib_rlmemdup(
+        lean_pod_BytesView_unwrap(vertices)->ptr,
+        sizeof(float[3]) * vertexCount
+    );
+    mesh.indices = lean_raylib_rlmemdup(
+        indices_c,
+        sizeof(uint16_t[3]) * triangleCount
+    );
+    if(lean_option_is_some(texcoords)) {
+        mesh.texcoords = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(texcoords, 0))->ptr,
+            sizeof(float[2]) * vertexCount
+        );
+    }
+    if(lean_option_is_some(texcoords2)) {
+        mesh.texcoords2 = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(texcoords2, 0))->ptr,
+            sizeof(float[2]) * vertexCount
+        );
+    }
+    if(lean_option_is_some(normals)) {
+        mesh.normals = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(normals, 0))->ptr,
+            sizeof(float[3]) * vertexCount
+        );
+    }
+    if(lean_option_is_some(tangents)) {
+        mesh.tangents = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(tangents, 0))->ptr,
+            sizeof(float[4]) * vertexCount
+        );
+    }
+    if(lean_option_is_some(colors)) {
+        mesh.colors = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(colors, 0))->ptr,
+            sizeof(unsigned char[4]) * vertexCount
+        );
+    }
+    LET_BOX(Mesh, mesh_heap, mesh);
+    return lean_raylib_Mesh_to(mesh_heap);
+}
+
+LEAN_EXPORT uint32_t lean_raylib__Mesh_vertexCount(b_lean_obj_arg mesh) {
+    return lean_raylib_Mesh_from(mesh)->vertexCount;
+}
+
+LEAN_EXPORT uint32_t lean_raylib__Mesh_triangleCount(b_lean_obj_arg mesh) {
+    return lean_raylib_Mesh_from(mesh)->triangleCount;
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__Mesh_vertices(lean_obj_arg mesh) {
+    float* vertices = lean_raylib_Mesh_from(mesh)->vertices;
+    return lean_pod_BytesView_wrap((char*)vertices, mesh);
+}
+
+LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_texcoords(b_lean_obj_arg mesh) {
+    float* texcoords = lean_raylib_Mesh_from(mesh)->texcoords;
+    if(texcoords == NULL) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)texcoords, mesh));
+    }
+}
+
+LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_texcoords2(b_lean_obj_arg mesh) {
+    float* texcoords2 = lean_raylib_Mesh_from(mesh)->texcoords2;
+    if(texcoords2 == NULL) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)texcoords2, mesh));
+    }
+}
+
+LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_normals(b_lean_obj_arg mesh) {
+    float* normals = lean_raylib_Mesh_from(mesh)->normals;
+    if(normals == NULL) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)normals, mesh));
+    }
+}
+
+LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_tangents(b_lean_obj_arg mesh) {
+    float* tangents = lean_raylib_Mesh_from(mesh)->tangents;
+    if(tangents == NULL) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)tangents, mesh));
+    }
+}
+
+LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_colors(b_lean_obj_arg mesh) {
+    unsigned char* colors = lean_raylib_Mesh_from(mesh)->colors;
+    if(colors == NULL) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)colors, mesh));
+    }
+}
+
+LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_indices(b_lean_obj_arg mesh) {
+    unsigned short* indices = lean_raylib_Mesh_from(mesh)->indices;
+    if(indices == NULL) {
+        return lean_mk_option_none();
+    }
+    else {
+        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)indices, mesh));
+    }
+}
+
+// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_animVertices(b_lean_obj_arg mesh) {
+//     float * result_ = lean_raylib_Mesh_from(mesh)->animVertices;
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_vertices_set(/* float* */lean_obj_arg vertices, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->vertices = /*todo: ptr?*/vertices;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_texcoords(b_lean_obj_arg obj) {
-//     float * result_ = lean_raylib_Mesh_from(obj)->texcoords;
+// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_animNormals(b_lean_obj_arg mesh) {
+//     float * result_ = lean_raylib_Mesh_from(mesh)->animNormals;
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_texcoords_set(/* float* */lean_obj_arg texcoords, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->texcoords = /*todo: ptr?*/texcoords;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_texcoords2(b_lean_obj_arg obj) {
-//     float * result_ = lean_raylib_Mesh_from(obj)->texcoords2;
+// LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__Mesh_boneIds(b_lean_obj_arg mesh) {
+//     unsigned char * result_ = lean_raylib_Mesh_from(mesh)->boneIds;
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_texcoords2_set(/* float* */lean_obj_arg texcoords2, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->texcoords2 = /*todo: ptr?*/texcoords2;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_normals(b_lean_obj_arg obj) {
-//     float * result_ = lean_raylib_Mesh_from(obj)->normals;
+// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_boneWeights(b_lean_obj_arg mesh) {
+//     float * result_ = lean_raylib_Mesh_from(mesh)->boneWeights;
 //     return /*todo: ptr?*/result_;
 // }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_normals_set(/* float* */lean_obj_arg normals, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->normals = /*todo: ptr?*/normals;
-//     return lean_raylib_Mesh_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Mesh_vaoId(b_lean_obj_arg mesh) {
+    return lean_raylib_Mesh_from(mesh)->vaoId;
+}
 
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_tangents(b_lean_obj_arg obj) {
-//     float * result_ = lean_raylib_Mesh_from(obj)->tangents;
+// LEAN_EXPORT /* unsigned int* */lean_obj_arg lean_raylib__Mesh_vboId(b_lean_obj_arg mesh) {
+//     unsigned int * result_ = lean_raylib_Mesh_from(mesh)->vboId;
 //     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_tangents_set(/* float* */lean_obj_arg tangents, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->tangents = /*todo: ptr?*/tangents;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__Mesh_colors(b_lean_obj_arg obj) {
-//     unsigned char * result_ = lean_raylib_Mesh_from(obj)->colors;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_colors_set(/* unsigned char* */lean_obj_arg colors, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->colors = /*todo: ptr?*/colors;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* unsigned short* */lean_obj_arg lean_raylib__Mesh_indices(b_lean_obj_arg obj) {
-//     unsigned short * result_ = lean_raylib_Mesh_from(obj)->indices;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_indices_set(/* unsigned short* */lean_obj_arg indices, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->indices = /*todo: ptr?*/indices;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_animVertices(b_lean_obj_arg obj) {
-//     float * result_ = lean_raylib_Mesh_from(obj)->animVertices;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_animVertices_set(/* float* */lean_obj_arg animVertices, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->animVertices = /*todo: ptr?*/animVertices;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_animNormals(b_lean_obj_arg obj) {
-//     float * result_ = lean_raylib_Mesh_from(obj)->animNormals;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_animNormals_set(/* float* */lean_obj_arg animNormals, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->animNormals = /*todo: ptr?*/animNormals;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__Mesh_boneIds(b_lean_obj_arg obj) {
-//     unsigned char * result_ = lean_raylib_Mesh_from(obj)->boneIds;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_boneIds_set(/* unsigned char* */lean_obj_arg boneIds, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->boneIds = /*todo: ptr?*/boneIds;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_boneWeights(b_lean_obj_arg obj) {
-//     float * result_ = lean_raylib_Mesh_from(obj)->boneWeights;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_boneWeights_set(/* float* */lean_obj_arg boneWeights, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->boneWeights = /*todo: ptr?*/boneWeights;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Mesh_vaoId(b_lean_obj_arg obj) {
-//     unsigned int result_ = lean_raylib_Mesh_from(obj)->vaoId;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_vaoId_set(uint32_t vaoId, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->vaoId = vaoId;
-//     return lean_raylib_Mesh_to(result_);
-// }
-
-// LEAN_EXPORT /* unsigned int* */lean_obj_arg lean_raylib__Mesh_vboId(b_lean_obj_arg obj) {
-//     unsigned int * result_ = lean_raylib_Mesh_from(obj)->vboId;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Mesh_vboId_set(/* unsigned int* */lean_obj_arg vboId, b_lean_obj_arg obj) {
-//     LET_BOX(Mesh, result_, *lean_raylib_Mesh_from(obj));
-//     result_->vboId = /*todo: ptr?*/vboId;
-//     return lean_raylib_Mesh_to(result_);
 // }
 
 
@@ -442,92 +493,16 @@ LEAN_EXPORT lean_obj_res lean_raylib__Shader_defaultLoc(b_lean_obj_arg shader, u
     }
 }
 
+LEAN_EXPORT lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg unit) {
+    LET_BOX_STRUCT(Shader, shader,
+        .id = rlGetShaderIdDefault(),
+        .locs = rlGetShaderLocsDefault()
+    );
+    return lean_raylib_Shader_to(shader);
+}
 
-// # Material map
 
-// LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_mk(lean_obj_arg texture, uint32_t color, uint32_t value) {
-//     LET_BOX_STRUCT(MaterialMap, result_,
-//         .texture = /*cast Texture2D to_lean?false*/(texture),
-//         .color = lean_raylib_Color_from(color),
-//         .value = lean_pod_Float32_fromBits(value)
-//     );
-//     return lean_raylib_MaterialMap_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_arg lean_raylib__MaterialMap_texture(b_lean_obj_arg obj) {
-//     Texture2D result_ = lean_raylib_MaterialMap_from(obj)->texture;
-//     return /*cast Texture2D to_lean?true*/(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_texture_set(lean_obj_arg texture, b_lean_obj_arg obj) {
-//     LET_BOX(MaterialMap, result_, *lean_raylib_MaterialMap_from(obj));
-//     result_->texture = /*cast Texture2D to_lean?false*/(texture);
-//     return lean_raylib_MaterialMap_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__MaterialMap_color(b_lean_obj_arg obj) {
-//     Color result_ = lean_raylib_MaterialMap_from(obj)->color;
-//     return lean_raylib_Color_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_color_set(uint32_t color, b_lean_obj_arg obj) {
-//     LET_BOX(MaterialMap, result_, *lean_raylib_MaterialMap_from(obj));
-//     result_->color = lean_raylib_Color_from(color);
-//     return lean_raylib_MaterialMap_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__MaterialMap_value(b_lean_obj_arg obj) {
-//     float result_ = lean_raylib_MaterialMap_from(obj)->value;
-//     return (double)result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__MaterialMap_value_set(uint32_t value, b_lean_obj_arg obj) {
-//     LET_BOX(MaterialMap, result_, *lean_raylib_MaterialMap_from(obj));
-//     result_->value = lean_pod_Float32_fromBits(value);
-//     return lean_raylib_MaterialMap_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Material_mk(lean_obj_arg shader, /* MaterialMap* */lean_obj_arg maps, /*float[4]*/lean_obj_arg params) {
-//     LET_BOX_STRUCT(Material, result_,
-//         .shader = lean_raylib_Shader_from(shader),
-//         .maps = /*todo: ptr?*/maps,
-//         .params = /*cast float[4] to_lean?false*/(params)
-//     );
-//     return lean_raylib_Material_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_arg lean_raylib__Material_shader(b_lean_obj_arg obj) {
-//     Shader result_ = lean_raylib_Material_from(obj)->shader;
-//     return lean_raylib_Shader_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Material_shader_set(lean_obj_arg shader, b_lean_obj_arg obj) {
-//     LET_BOX(Material, result_, *lean_raylib_Material_from(obj));
-//     result_->shader = lean_raylib_Shader_from(shader);
-//     return lean_raylib_Material_to(result_);
-// }
-
-// LEAN_EXPORT /* MaterialMap* */lean_obj_arg lean_raylib__Material_maps(b_lean_obj_arg obj) {
-//     MaterialMap * result_ = lean_raylib_Material_from(obj)->maps;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Material_maps_set(/* MaterialMap* */lean_obj_arg maps, b_lean_obj_arg obj) {
-//     LET_BOX(Material, result_, *lean_raylib_Material_from(obj));
-//     result_->maps = /*todo: ptr?*/maps;
-//     return lean_raylib_Material_to(result_);
-// }
-
-// LEAN_EXPORT /*float[4]*/lean_obj_arg lean_raylib__Material_params(b_lean_obj_arg obj) {
-//     float[4] result_ = lean_raylib_Material_from(obj)->params;
-//     return /*cast float[4] to_lean?true*/(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Material_params_set(/*float[4]*/lean_obj_arg params, b_lean_obj_arg obj) {
-//     LET_BOX(Material, result_, *lean_raylib_Material_from(obj));
-//     result_->params = /*cast float[4] to_lean?false*/(params);
-//     return lean_raylib_Material_to(result_);
-// }
+// # Transform
 
 // LEAN_EXPORT lean_obj_res lean_raylib__Transform_mk(lean_obj_arg translation, lean_obj_arg rotation, lean_obj_arg scale) {
 //     LET_BOX_STRUCT(Transform, result_,

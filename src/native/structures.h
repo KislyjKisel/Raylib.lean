@@ -275,17 +275,22 @@ static inline Camera2D lean_raylib_Camera2D_from (b_lean_obj_arg obj) {
 
 // # Mesh
 
-// static inline lean_object* lean_raylib_Mesh_to (Mesh const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static void lean_raylib_Mesh_finalize(void* mesh) {
+    UnloadMesh(*(Mesh*)mesh);
+    free(mesh);
+}
 
-// static inline Mesh const* lean_raylib_Mesh_from (b_lean_obj_arg obj) {
-//     return (Mesh const*) lean_get_external_data(obj);
-// }
+static inline lean_object* lean_raylib_Mesh_to (Mesh const* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Mesh_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline Mesh* lean_raylib_Mesh_from (b_lean_obj_arg obj) {
+    return (Mesh*) lean_get_external_data(obj);
+}
 
 
 // # Shader
@@ -307,32 +312,58 @@ static inline Shader const* lean_raylib_Shader_from (b_lean_obj_arg obj) {
     return (Shader const*) lean_get_external_data(obj);
 }
 
+lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg unit);
 
-// # Material map
 
-// static inline lean_object* lean_raylib_MaterialMap_to (MaterialMap const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+// # Material
 
-// static inline MaterialMap const* lean_raylib_MaterialMap_from (b_lean_obj_arg obj) {
-//     return (MaterialMap const*) lean_get_external_data(obj);
-// }
+// NOTE: Returned mmap contains pointers to data owned by the boxed mmap!
+static inline MaterialMap lean_raylib_MaterialMap_from (b_lean_obj_arg mmap_box) {
+    MaterialMap mmap;
+    mmap.texture = *lean_raylib_Texture_from(lean_ctor_get(mmap_box, 0));
+    mmap.color = lean_raylib_Color_from(lean_ctor_get(mmap_box, 1));
+    mmap.value = lean_pod_Float32_unbox(lean_ctor_get(mmap_box, 2));
+    return mmap;
+}
 
-// static inline lean_object* lean_raylib_Material_to (Material const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static inline lean_obj_res lean_raylib_MaterialMap_to (lean_obj_arg texture, Color color, float value) {
+    lean_object* mmap = lean_alloc_ctor(0, 3, 0);
+    lean_ctor_set(mmap, 0, texture);
+    lean_ctor_set(mmap, 1, lean_box_uint32(lean_raylib_Color_to(color)));
+    lean_ctor_set(mmap, 2, lean_pod_Float32_box(value));
+    return mmap;
+}
 
-// static inline Material const* lean_raylib_Material_from (b_lean_obj_arg obj) {
-//     return (Material const*) lean_get_external_data(obj);
-// }
+#define LEAN_RAYLIB_MAX_MATERIAL_MAPS 12 // todo: configure from lake (and pass to raylib)
+
+// NOTE: Returned material contains pointers to `out_mmaps` and to data owned by the boxed material!
+static inline Material lean_raylib_Material_from (b_lean_obj_arg material_box, MaterialMap* out_mmaps) {
+    Material material;
+    material.shader = *lean_raylib_Shader_from(lean_ctor_get(material_box, 0));
+    lean_object* mmaps = lean_ctor_get(material_box, 1);
+    for(size_t i = 0; i < LEAN_RAYLIB_MAX_MATERIAL_MAPS; ++i) {
+        out_mmaps[i] = lean_raylib_MaterialMap_from(lean_array_get_core(mmaps, i));
+    }
+    material.maps = out_mmaps;
+    material.params[0] = lean_pod_Float32_unbox(lean_ctor_get(material_box, 2));
+    material.params[1] = lean_pod_Float32_unbox(lean_ctor_get(material_box, 3));
+    material.params[2] = lean_pod_Float32_unbox(lean_ctor_get(material_box, 4));
+    material.params[3] = lean_pod_Float32_unbox(lean_ctor_get(material_box, 5));
+    return material;
+}
+
+static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_obj_arg mmaps, Vector4 params) {
+    lean_object* material = lean_alloc_ctor(0, 6, 0);
+    lean_ctor_set(material, 0, shader);
+    lean_ctor_set(material, 1, mmaps);
+    lean_ctor_set(material, 2, lean_pod_Float32_box(params.x));
+    lean_ctor_set(material, 3, lean_pod_Float32_box(params.y));
+    lean_ctor_set(material, 4, lean_pod_Float32_box(params.z));
+    lean_ctor_set(material, 5, lean_pod_Float32_box(params.w));
+    return material;
+}
+
+// # Transform
 
 // static inline lean_object* lean_raylib_Transform_to (Transform const* obj) {
 //     static lean_external_class* class_ = NULL;
