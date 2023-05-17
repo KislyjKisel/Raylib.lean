@@ -43,7 +43,7 @@ static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void*
         lean_box(0),
         fileName_box,
         lean_box_usize(bytesToWrite),
-        lean_box_usize(data),
+        lean_box_usize((size_t)data),
         lean_box(0),
         lean_box(0)
     );

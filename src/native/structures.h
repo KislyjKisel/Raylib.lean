@@ -321,7 +321,7 @@ lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg unit);
 static inline MaterialMap lean_raylib_MaterialMap_from (b_lean_obj_arg mmap_box) {
     MaterialMap mmap;
     mmap.texture = *lean_raylib_Texture_from(lean_ctor_get(mmap_box, 0));
-    mmap.color = lean_raylib_Color_from(lean_ctor_get(mmap_box, 1));
+    mmap.color = lean_raylib_Color_from(lean_unbox_uint32(lean_ctor_get(mmap_box, 1)));
     mmap.value = lean_pod_Float32_unbox(lean_ctor_get(mmap_box, 2));
     return mmap;
 }

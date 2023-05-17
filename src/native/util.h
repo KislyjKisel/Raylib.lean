@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdint.h>
+#include <string.h>
 #include <lean/lean.h>
 #include <raylib.h>
 

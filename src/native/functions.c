@@ -2000,7 +2000,9 @@ LEAN_EXPORT uint32_t lean_raylib__GetPixelColor (uint32_t format, b_lean_obj_arg
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetPixelColorST (uint32_t format, size_t br, lean_obj_arg st) {
-    return lean_io_result_mk_ok(lean_raylib_Color_to(GetPixelColor((void*)(br), format)));
+    return lean_io_result_mk_ok(lean_box_uint32(lean_raylib_Color_to(
+        GetPixelColor((void*)br, format)
+    )));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetPixelColorST (uint32_t format, size_t br, uint32_t color, lean_obj_arg st) {
@@ -2055,7 +2057,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (size_t sz, b_lean_obj_
         }
     }
     LET_BOX(Font, font, LoadFontFromMemory(
-        lean_string_cstr(fileType), data, sz, fontSize, fontChars_c, glyphCount
+        lean_string_cstr(fileType),
+        lean_pod_BytesView_unwrap(data)->ptr,
+        sz,
+        fontSize,
+        fontChars_c,
+        glyphCount
     ));
     free(fontChars_c);
     return lean_raylib_Font_to(font);
@@ -2398,7 +2405,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawMesh (b_lean_obj_arg mesh, b_lean_obj_
 //     return lean_io_result_mk_ok(lean_box(0));
 // }
 
-LEAN_EXPORT uint8_t lean_raylib__ExportMesh (b_lean_obj_arg mesh, b_lean_obj_arg fileName, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__ExportMesh (b_lean_obj_arg mesh, b_lean_obj_arg fileName, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(ExportMesh(*lean_raylib_Mesh_from(mesh), lean_string_cstr(fileName))));
 }
 
