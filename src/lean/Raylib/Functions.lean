@@ -305,11 +305,11 @@ opaque unloadVrStereoConfig (config : @& VrStereoConfig) : BaseIO Unit
 
 /-- Load shader from files and bind default locations -/
 @[extern "lean_raylib__LoadShader"]
-opaque loadShader (vsFileName : @& String) (fsFileName : @& String) : BaseIO Shader
+opaque loadShader (vsFileName : @& Option String) (fsFileName : @& Option String) : BaseIO Shader
 
 /-- Load shader from code strings and bind default locations -/
 @[extern "lean_raylib__LoadShaderFromMemory"]
-opaque loadShaderFromMemory (vsCode : @& String) (fsCode : @& String) : BaseIO Shader
+opaque loadShaderFromMemory (vsCode : @& Option String) (fsCode : @& Option String) : BaseIO Shader
 
 /-- Check if a shader is ready -/
 @[extern "lean_raylib__IsShaderReady"]

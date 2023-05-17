@@ -368,13 +368,29 @@ LEAN_EXPORT lean_obj_res lean_raylib__UnloadVrStereoConfig (b_lean_obj_arg confi
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (b_lean_obj_arg vsFileName, b_lean_obj_arg fsFileName, lean_obj_arg world) {
-    LET_BOX(Shader, shader, LoadShader(lean_string_cstr(vsFileName), lean_string_cstr(fsFileName)));
+LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (b_lean_obj_arg vsFileName_opt, b_lean_obj_arg fsFileName_opt, lean_obj_arg world) {
+    const char* vsFileName = NULL;
+    if(lean_option_is_some(vsFileName_opt)) {
+        vsFileName = lean_string_cstr(lean_ctor_get(vsFileName_opt, 0));
+    }
+    const char* fsFileName = NULL;
+    if(lean_option_is_some(fsFileName_opt)) {
+        vsFileName = lean_string_cstr(lean_ctor_get(fsFileName_opt, 0));
+    }
+    LET_BOX(Shader, shader, LoadShader(vsFileName, fsFileName));
     return lean_io_result_mk_ok(lean_raylib_Shader_to(shader));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (b_lean_obj_arg vsCode, b_lean_obj_arg fsCode, lean_obj_arg world) {
-    LET_BOX(Shader, shader, LoadShaderFromMemory(lean_string_cstr(vsCode), lean_string_cstr(fsCode)));
+LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (b_lean_obj_arg vsCode_opt, b_lean_obj_arg fsCode_opt, lean_obj_arg world) {
+    const char* vsCode = NULL;
+    if(lean_option_is_some(vsCode_opt)) {
+        vsCode = lean_string_cstr(lean_ctor_get(vsCode_opt, 0));
+    }
+    const char* fsCode = NULL;
+    if(lean_option_is_some(fsCode_opt)) {
+        vsCode = lean_string_cstr(lean_ctor_get(fsCode_opt, 0));
+    }
+    LET_BOX(Shader, shader, LoadShaderFromMemory(vsCode, fsCode));
     return lean_io_result_mk_ok(lean_raylib_Shader_to(shader));
 }
 
