@@ -375,7 +375,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (b_lean_obj_arg vsFileName_opt,
     }
     const char* fsFileName = NULL;
     if(lean_option_is_some(fsFileName_opt)) {
-        vsFileName = lean_string_cstr(lean_ctor_get(fsFileName_opt, 0));
+        fsFileName = lean_string_cstr(lean_ctor_get(fsFileName_opt, 0));
     }
     LET_BOX(Shader, shader, LoadShader(vsFileName, fsFileName));
     return lean_io_result_mk_ok(lean_raylib_Shader_to(shader));
@@ -388,7 +388,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (b_lean_obj_arg vsCod
     }
     const char* fsCode = NULL;
     if(lean_option_is_some(fsCode_opt)) {
-        vsCode = lean_string_cstr(lean_ctor_get(fsCode_opt, 0));
+        fsCode = lean_string_cstr(lean_ctor_get(fsCode_opt, 0));
     }
     LET_BOX(Shader, shader, LoadShaderFromMemory(vsCode, fsCode));
     return lean_io_result_mk_ok(lean_raylib_Shader_to(shader));
