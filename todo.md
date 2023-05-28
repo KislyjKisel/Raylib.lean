@@ -11,6 +11,6 @@
 
 * Optional usage of lean's alloc
 
-* Define PODs in Lean instead of using "external" objects
-
 * Debug configuration options
+
+* ST without result box allocation via custom no-error variant (-> EST, <-> ST)
