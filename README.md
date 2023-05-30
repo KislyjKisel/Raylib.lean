@@ -27,8 +27,9 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
   `"submodule"` (default) to compile from source using git submodules.
   `"system"` to find using `pkg-config` (uses hardcoded paths for the test executable).
   `"custom"` to not pass library or header directories to the compiler.
-* `cc`: c compiler invoked to compile ffi; `"cc"` by default.
-* `cflags`: additional flags passed to `cc`.
+* `cc`: c compiler invoked used to build native code.
+  By default uses (ordered by priority) `LEAN_CC`, the compiler provided by Lean toolchain or `cc`.
+* `cflags`: additional flags passed to the native code compiler.
 * `lflags`: additional flags used to link test executable.
 * `cmdout`: if present, print output of commands used when building submodule.
 * `libffi`: use `libffi`, required for some things to work, e.g, audio callback

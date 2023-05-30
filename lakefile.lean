@@ -66,7 +66,7 @@ lean_exe test {
 def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
   let oFile := pkg.irDir / "native" / (stem ++ ".o")
   let srcJob ← inputFile <| pkg.dir / "src" / "native" / (stem ++ ".c")
-  buildO (stem ++ ".c") oFile srcJob flags ((get_config? cc).getD "cc")
+  buildO (stem ++ ".c") oFile srcJob flags ((get_config? cc).getD (← getLeanCc).toString)
 
 def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m String := do
   let output ← IO.Process.output sa
@@ -152,6 +152,9 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
   | .none | .some "lean" => pure ()
   | .some "native" => flags := flags.push "-DLEAN_RAYLIB_ALLOC_NATIVE"
   | .some _ => error "Unknown `alloc` option value"
+
+  if (get_config? cc).isNone then
+    flags := flags ++ #["-I", ((← getLeanInstall).includeDir / "clang").toString]
 
   pure flags
 
