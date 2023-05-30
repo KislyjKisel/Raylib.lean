@@ -1,7 +1,7 @@
 import Pod.UInt
 import Pod.BytesRef
+import Raylib.Util.ST2
 import Raylib.Structures
-import Raylib.ST2
 
 namespace Raylib
 -- /-! # Callbacks -/
