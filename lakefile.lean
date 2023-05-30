@@ -11,6 +11,8 @@ def podConfig : NameMap String := Id.run $ do
   let mut cfg := NameMap.empty
   if let some cc := get_config? cc then
     cfg := cfg.insert `cc cc
+  if let some alloc := get_config? alloc then
+    cfg := cfg.insert `alloc alloc
   cfg
 
 require Libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "master" with libffiConfig
@@ -145,6 +147,11 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
         "-I",
         (dep.dir / "include").toString
       ]
+
+  match get_config? alloc with
+  | .none | .some "lean" => pure ()
+  | .some "native" => flags := flags.push "-DLEAN_RAYLIB_ALLOC_NATIVE"
+  | .some _ => error "Unknown `alloc` option value"
 
   pure flags
 

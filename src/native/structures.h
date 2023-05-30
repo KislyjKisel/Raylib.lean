@@ -58,7 +58,7 @@ static inline Image* lean_raylib_Image_from (b_lean_obj_arg obj) {
 
 static void lean_raylib_Image_finalize(void* image) {
     UnloadImage(*(Image*)image);
-    free(image);
+    lean_raylib_free(image);
 }
 
 static inline lean_object* lean_raylib_Image_to (Image const* obj) {
@@ -96,7 +96,7 @@ static void lean_raylib_TextureRef_foreach(void* textureRef, b_lean_obj_arg f) {
 
 static void lean_raylib_TextureRef_finalize(void* textureRef) {
     lean_dec(((lean_raylib_TextureRef*)textureRef)->owner);
-    free(textureRef);
+    lean_raylib_free(textureRef);
 }
 
 static inline lean_object* lean_raylib_TextureRef_alloc (Texture2D texture, lean_obj_arg owner) {
@@ -117,7 +117,7 @@ static inline lean_raylib_TextureRef const* lean_raylib_TextureRef_from (b_lean_
 
 static void lean_raylib_Texture_finalize(void* texture) {
     UnloadTexture(*(Texture*)texture);
-    free(texture);
+    lean_raylib_free(texture);
 }
 
 static inline lean_object* lean_raylib_Texture_to (Texture const* obj) {
@@ -137,7 +137,7 @@ static inline Texture* lean_raylib_Texture_from (b_lean_obj_arg obj) {
 
 static void lean_raylib_RenderTexture_finalize(void* texture) {
     UnloadRenderTexture(*(RenderTexture*)texture);
-    free(texture);
+    lean_raylib_free(texture);
 }
 
 static inline lean_object* lean_raylib_RenderTexture_to (RenderTexture const* obj) {
@@ -158,7 +158,7 @@ static inline RenderTexture const* lean_raylib_RenderTexture_from (b_lean_obj_ar
 static inline lean_object* lean_raylib_NPatchInfo_to (NPatchInfo const* obj) {
     static lean_external_class* class_ = NULL;
     if (class_ == NULL) {
-        class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+        class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
     }
     return lean_alloc_external(class_, (void*)obj);
 }
@@ -200,7 +200,7 @@ static inline NPatchInfo* lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
 
 static void lean_raylib_Font_finalize(void* font) {
     UnloadFont(*(Font*)font);
-    free(font);
+    lean_raylib_free(font);
 }
 
 static inline lean_object* lean_raylib_Font_to (Font const* obj) {
@@ -277,7 +277,7 @@ static inline Camera2D lean_raylib_Camera2D_from (b_lean_obj_arg obj) {
 
 static void lean_raylib_Mesh_finalize(void* mesh) {
     UnloadMesh(*(Mesh*)mesh);
-    free(mesh);
+    lean_raylib_free(mesh);
 }
 
 static inline lean_object* lean_raylib_Mesh_to (Mesh const* obj) {
@@ -297,7 +297,7 @@ static inline Mesh* lean_raylib_Mesh_from (b_lean_obj_arg obj) {
 
 static void lean_raylib_Shader_finalize(void* shader) {
     UnloadShader(*(Shader*)shader);
-    free(shader);
+    lean_raylib_free(shader);
 }
 
 static inline lean_object* lean_raylib_Shader_to (Shader const* obj) {
@@ -368,7 +368,7 @@ static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_ob
 // static inline lean_object* lean_raylib_Transform_to (Transform const* obj) {
 //     static lean_external_class* class_ = NULL;
 //     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+//         class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
 //     }
 //     return lean_alloc_external(class_, (void*)obj);
 // }
@@ -380,7 +380,7 @@ static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_ob
 // static inline lean_object* lean_raylib_BoneInfo_to (BoneInfo const* obj) {
 //     static lean_external_class* class_ = NULL;
 //     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+//         class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
 //     }
 //     return lean_alloc_external(class_, (void*)obj);
 // }
@@ -392,7 +392,7 @@ static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_ob
 // static inline lean_object* lean_raylib_Model_to (Model const* obj) {
 //     static lean_external_class* class_ = NULL;
 //     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+//         class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
 //     }
 //     return lean_alloc_external(class_, (void*)obj);
 // }
@@ -404,7 +404,7 @@ static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_ob
 // static inline lean_object* lean_raylib_ModelAnimation_to (ModelAnimation const* obj) {
 //     static lean_external_class* class_ = NULL;
 //     if (class_ == NULL) {
-//         class_ = lean_register_external_class(free, lean_raylib_default_foreach);
+//         class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
 //     }
 //     return lean_alloc_external(class_, (void*)obj);
 // }
@@ -491,7 +491,7 @@ static inline BoundingBox lean_raylib_BoundingBox_from (b_lean_obj_arg obj) {
 
 static void lean_raylib_Wave_finalize(void* wave) {
     UnloadWave(*(Wave*)wave);
-    free(wave);
+    lean_raylib_free(wave);
 }
 
 static inline lean_object* lean_raylib_Wave_to (Wave const* obj) {
@@ -525,7 +525,7 @@ static void lean_raylib_AudioStream_finalize(void* audioStream_v) {
         ffi_closure_free(audioStream->closure);
     }
 #endif
-    free(audioStream);
+    lean_raylib_free(audioStream);
 }
 
 static void lean_raylib_AudioStream_foreach(void* audioStream, b_lean_obj_arg f) {
@@ -544,7 +544,7 @@ static inline lean_object* lean_raylib_AudioStream_to (AudioStream stream, void*
     if (class_ == NULL) {
         class_ = lean_register_external_class(lean_raylib_AudioStream_finalize, lean_raylib_AudioStream_foreach);
     }
-    lean_raylib_AudioStream* stream_heap = malloc(sizeof(lean_raylib_AudioStream));
+    lean_raylib_AudioStream* stream_heap = lean_raylib_alloc(sizeof(lean_raylib_AudioStream));
     stream_heap->stream = stream;
 #ifdef LEAN_RAYLIB_LIBFFI
     stream_heap->closure = closure;
@@ -561,7 +561,7 @@ static inline lean_raylib_AudioStream* lean_raylib_AudioStream_from (b_lean_obj_
 
 static void lean_raylib_Sound_finalize(void* sound) {
     UnloadSound(*(Sound*)sound);
-    free(sound);
+    lean_raylib_free(sound);
 }
 
 static inline lean_object* lean_raylib_Sound_to (Sound const* obj) {
@@ -581,7 +581,7 @@ static inline Sound const* lean_raylib_Sound_from (b_lean_obj_arg obj) {
 
 static void lean_raylib_Music_finalize(void* music) {
     UnloadMusicStream(*(Music*)music);
-    free(music);
+    lean_raylib_free(music);
 }
 
 static inline lean_object* lean_raylib_Music_to (Music const* obj) {

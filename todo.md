@@ -9,8 +9,6 @@
 * Binary data retrieval from images, audio etc
   (opaque readonly buffer type? mb smth like a trait object)
 
-* Optional usage of lean's alloc
-
 * Debug configuration options
 
 * ST without result box allocation via custom no-error variant (-> EST, <-> ST)

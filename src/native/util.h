@@ -5,13 +5,15 @@
 #include <string.h>
 #include <lean/lean.h>
 #include <raylib.h>
+#include "include/raylib_lean.h"
 
+// Where in raylib `int` is used it is assumed to be the same with `int32_t` 
 #ifdef static_assert
     static_assert (sizeof(int) == 4, "`sizeof(int) != 4` unsupported");
 #endif
 
 #define LET_BOX(T, n, x)\
-    T* n = malloc(sizeof(T));\
+    T* n = lean_raylib_alloc(sizeof(T));\
     *n = x;
 
 #define LET_BOX_STRUCT(T, n, ...) LET_BOX(T, n, ((T){__VA_ARGS__}));
