@@ -154,7 +154,7 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
   | .some _ => error "Unknown `alloc` option value"
 
   if (get_config? cc).isNone then
-    flags := flags ++ #["-I", ((← getLeanInstall).includeDir / "clang").toString]
+    flags := flags ++ #["-I", ((← getLeanIncludeDir) / "clang").toString]
 
   pure flags
 

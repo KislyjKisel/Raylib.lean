@@ -368,7 +368,7 @@ LEAN_EXPORT uint32_t lean_raylib__Mesh_triangleCount(b_lean_obj_arg mesh) {
 
 LEAN_EXPORT lean_obj_res lean_raylib__Mesh_vertices(lean_obj_arg mesh) {
     float* vertices = lean_raylib_Mesh_from(mesh)->vertices;
-    return lean_pod_BytesView_wrap((char*)vertices, mesh);
+    return lean_pod_BytesView_wrap((unsigned char*)vertices, mesh);
 }
 
 LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_texcoords(b_lean_obj_arg mesh) {
@@ -377,7 +377,7 @@ LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_texcoords(b_lean_obj_arg mesh) {
         return lean_mk_option_none();
     }
     else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)texcoords, mesh));
+        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)texcoords, mesh));
     }
 }
 
@@ -387,7 +387,7 @@ LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_texcoords2(b_lean_obj_arg mesh) {
         return lean_mk_option_none();
     }
     else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)texcoords2, mesh));
+        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)texcoords2, mesh));
     }
 }
 
@@ -397,7 +397,7 @@ LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_normals(b_lean_obj_arg mesh) {
         return lean_mk_option_none();
     }
     else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)normals, mesh));
+        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)normals, mesh));
     }
 }
 
@@ -407,7 +407,7 @@ LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_tangents(b_lean_obj_arg mesh) {
         return lean_mk_option_none();
     }
     else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)tangents, mesh));
+        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)tangents, mesh));
     }
 }
 
@@ -417,7 +417,7 @@ LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_colors(b_lean_obj_arg mesh) {
         return lean_mk_option_none();
     }
     else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)colors, mesh));
+        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)colors, mesh));
     }
 }
 
@@ -427,7 +427,7 @@ LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_indices(b_lean_obj_arg mesh) {
         return lean_mk_option_none();
     }
     else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((char*)indices, mesh));
+        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)indices, mesh));
     }
 }
 

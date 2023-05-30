@@ -908,7 +908,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64ST (size_t sz, b_lean_obj_
 
 LEAN_EXPORT lean_obj_res lean_raylib__DecodeDataBase64 (b_lean_obj_arg data) {
     int decodedDataSize;
-    unsigned char * decodedData = DecodeDataBase64(lean_string_cstr(data), &decodedDataSize);
+    unsigned char* decodedData = DecodeDataBase64((unsigned char*)lean_string_cstr(data), &decodedDataSize);
     lean_object* decodedArray = lean_alloc_sarray(sizeof(uint8_t), decodedDataSize, decodedDataSize);
     memcpy(lean_sarray_cptr(decodedArray), decodedData, decodedDataSize);
     MemFree(decodedData);
@@ -2140,7 +2140,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTextPro (b_lean_obj_arg font, b_lean_o
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTextCodepoints (b_lean_obj_arg font, b_lean_obj_arg text, b_lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
-    DrawTextCodepoints(*lean_raylib_Font_from(font), (const uint32_t*)lean_string_cstr(text), lean_string_len(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+    DrawTextCodepoints(*lean_raylib_Font_from(font), (int*)lean_string_cstr(text), lean_string_len(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
 

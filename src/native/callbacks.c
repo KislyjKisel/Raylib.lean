@@ -181,7 +181,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint32_t st, b_lea
     }
 
     AudioCallback callback_c;
-    ffi_closure* callback_closure = (ffi_closure*)ffi_closure_alloc(sizeof(ffi_closure), &callback_c);
+    ffi_closure* callback_closure = (ffi_closure*)ffi_closure_alloc(sizeof(ffi_closure), (void**)&callback_c);
     if(!callback_closure) {
         lean_dec_ref(callback);
         return lean_mk_io_user_error(lean_mk_string("Closure allocation failed"));
