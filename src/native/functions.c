@@ -856,10 +856,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__CompressData (size_t sz, b_lean_obj_arg da
     return compressedArray;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__CompressDataST (size_t sz, size_t data, lean_obj_arg st) {
+LEAN_EXPORT lean_obj_res lean_raylib__CompressDataST (size_t sz, b_lean_obj_arg data, lean_obj_arg st) {
     int compressedDataSize;
     unsigned char* compressedData = CompressData(
-        (unsigned char*)(data),
+        lean_pod_BytesRef_unwrap(data),
         sz,
         &compressedDataSize
     );
@@ -894,10 +894,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64 (size_t sz, b_lean_obj_ar
     return encodedDataLean;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64ST (size_t sz, size_t data, lean_obj_arg st) {
+LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64ST (size_t sz, b_lean_obj_arg data, lean_obj_arg st) {
     int encodedDataSize;
     char* encodedData = EncodeDataBase64(
-        (unsigned char*)(data),
+        lean_pod_BytesRef_unwrap(data),
         sz,
         &encodedDataSize
     );
@@ -2015,14 +2015,14 @@ LEAN_EXPORT uint32_t lean_raylib__GetPixelColor (uint32_t format, b_lean_obj_arg
     return lean_raylib_Color_to(GetPixelColor(lean_pod_BytesView_unwrap(v)->ptr, format));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GetPixelColorST (uint32_t format, size_t br, lean_obj_arg st) {
+LEAN_EXPORT lean_obj_res lean_raylib__GetPixelColorST (uint32_t format, b_lean_obj_arg br, lean_obj_arg st) {
     return lean_io_result_mk_ok(lean_box_uint32(lean_raylib_Color_to(
-        GetPixelColor((void*)br, format)
+        GetPixelColor(lean_pod_BytesRef_unwrap(br), format)
     )));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__SetPixelColorST (uint32_t format, size_t br, uint32_t color, lean_obj_arg st) {
-    SetPixelColor((void*)(br), lean_raylib_Color_from(color), format);
+LEAN_EXPORT lean_obj_res lean_raylib__SetPixelColorST (uint32_t format, b_lean_obj_arg br, uint32_t color, lean_obj_arg st) {
+    SetPixelColor(lean_pod_BytesRef_unwrap(br), lean_raylib_Color_from(color), format);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
