@@ -8,6 +8,36 @@ open Raymath (Vector2 Vector3 Vector4 Matrix)
 
 namespace Raylib
 
+/-! # VaList -/
+
+opaque VaListPointed (σ : Type) : NonemptyType
+def VaList (σ : Type) : Type := (VaListPointed σ).type
+instance {σ} : Nonempty (VaList σ) := (VaListPointed σ).property
+
+inductive VaArg where
+-- Tag values are inspected by native code in `lean_raylib__VaList_next`
+| i32 | u32 | u64 | f64 | cstr
+
+def VaArg.type : VaArg → Type
+| i32 => Int32
+| u32 => UInt32
+| u64 => UInt64
+| f64 => Float
+| cstr => String
+
+instance {a : VaArg} : Inhabited a.type where
+  default := match a with
+  | .i32 => (default : Int32)
+  | .u32 => (default : UInt32)
+  | .u64 => (default : UInt64)
+  | .f64 => (default : Float)
+  | .cstr => (default : String)
+
+/-- **unsafe**: causes UB if called too many times or when called with an incorrect `VaArg` -/
+@[extern "lean_raylib__VaList_next"]
+opaque VaList.next {σ} (vl : @& VaList σ) (a : VaArg) : ST σ a.type
+
+
 /-! # Color -/
 
 /-- Color, 4 components, 8 bits per component -/

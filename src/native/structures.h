@@ -8,6 +8,25 @@
 #include <ffi.h>
 #endif
 
+// # VaList
+
+typedef struct {
+    va_list v;
+} lean_raylib_VaList;
+
+static inline lean_object* lean_raylib_VaList_to (lean_raylib_VaList* obj) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_default_finalize, lean_raylib_default_foreach);
+    }
+    return lean_alloc_external(class_, (void*)obj);
+}
+
+static inline lean_raylib_VaList* lean_raylib_VaList_from (b_lean_obj_arg obj) {
+    return (lean_raylib_VaList*) lean_get_external_data(obj);
+}
+
+
 // # Color
 
 static inline Color lean_raylib_Color_from(uint32_t color) {

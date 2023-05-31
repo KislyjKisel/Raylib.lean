@@ -16,16 +16,23 @@ static lean_object* lean_raylib_SaveFileTextCallback_current = NULL;
 static void lean_raylib_TraceLogCallback_wrapper(int logLevel, const char* text, va_list args) {
     assert(lean_raylib_TraceLogCallback_current != NULL);
     lean_inc_ref(lean_raylib_TraceLogCallback_current);
-    lean_object* success_iores = lean_apply_3(
+    lean_raylib_VaList args_wrapped;
+    va_copy(args_wrapped.v, args);
+    // EST2.Result
+    lean_object* result = lean_apply_6(
         lean_raylib_TraceLogCallback_current,
+        lean_box(0),
         lean_box_uint32(logLevel),
         lean_mk_string(text),
+        lean_raylib_VaList_to(&args_wrapped),
+        lean_box(0),
         lean_box(0)
     );
-    if(lean_io_result_is_error(success_iores)) {
-        lean_io_result_show_error(success_iores);
+    if(lean_ptr_tag(result) == 1) {
+        lean_io_result_show_error(result);
     }
-    lean_dec_ref(success_iores);
+    lean_dec_ref(result);
+    va_end(args_wrapped.v);
 }
 
 static unsigned char* lean_raylib_LoadFileDataCallback_wrapper(const char* fileName, unsigned int* bytesRead) {

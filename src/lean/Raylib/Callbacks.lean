@@ -5,11 +5,8 @@ import Raylib.Structures
 
 namespace Raylib
 
-/--
-Logging: Redirect trace log messages.
-NOTE: Ignores variadic arguments.
--/
-def TraceLogCallback : Type := TraceLogLevel → String → IO Unit
+/-- Logging: Redirect trace log messages -/
+def TraceLogCallback : Type 1 := {σ : Type} → TraceLogLevel → String → VaList σ → EST2 IO.Error σ IO.RealWorld Unit
 
 /-- FileIO: Load binary data -/
 def LoadFileDataCallback : Type := System.FilePath → IO ByteArray

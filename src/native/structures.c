@@ -3,6 +3,33 @@
 #include <rlgl.h>
 #include "structures.h"
 
+// # VaList
+
+LEAN_EXPORT lean_obj_res lean_raylib__VaList_next(b_lean_obj_arg vl, uint8_t typ, lean_obj_arg token) {
+    lean_object* value;
+    switch(typ) {
+        case 0:
+            value = lean_box_uint32((uint32_t)va_arg(lean_raylib_VaList_from(vl)->v, int32_t));
+            break;
+        case 1:
+            value = lean_box_uint32(va_arg(lean_raylib_VaList_from(vl)->v, uint32_t));
+            break;
+        case 2:
+            value = lean_box_uint64(va_arg(lean_raylib_VaList_from(vl)->v, uint64_t));
+            break;
+        case 3:
+            value = lean_box_float(va_arg(lean_raylib_VaList_from(vl)->v, double));
+            break;
+        case 4:
+            value = lean_mk_string(va_arg(lean_raylib_VaList_from(vl)->v, const char*));
+            break;
+        default:
+            lean_internal_panic_unreachable();
+    }
+    return lean_io_result_mk_ok(value);
+}
+
+
 // # Image
 
 LEAN_EXPORT lean_obj_res lean_raylib__Image_default(lean_obj_arg unit) {
