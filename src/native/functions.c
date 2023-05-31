@@ -884,7 +884,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__CompressDataST (size_t sz, b_lean_obj_arg 
     lean_object* compressedArray = lean_alloc_sarray(sizeof(uint8_t), compressedDataSize, compressedDataSize);
     memcpy(lean_sarray_cptr(compressedArray), compressedData, compressedDataSize);
     MemFree(compressedData);
-    return compressedArray;
+    return lean_io_result_mk_ok(compressedArray);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DecompressData (size_t sz, b_lean_obj_arg compData) {
@@ -921,7 +921,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64ST (size_t sz, b_lean_obj_
     );
     lean_object* encodedDataLean = lean_mk_string_from_bytes(encodedData, encodedDataSize);
     MemFree(encodedData);
-    return encodedDataLean;
+    return lean_io_result_mk_ok(encodedDataLean);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DecodeDataBase64 (b_lean_obj_arg data) {
