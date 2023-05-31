@@ -7,7 +7,6 @@ Partial [raylib](https://github.com/raysan5/raylib) `4.5.0` bindings for Lean4.
 * Meshes, models
 * Data array manip (ex. `UpdateSound`)
 * GlyphInfo
-* TraceLog
 
 ## Usage
 

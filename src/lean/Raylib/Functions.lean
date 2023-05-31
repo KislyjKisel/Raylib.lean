@@ -401,10 +401,14 @@ opaque takeScreenshot (fileName : String) : BaseIO Unit
 /-- Setup init configuration flags (view FLAGS) -/
 @[extern "lean_raylib__SetConfigFlags"]
 opaque setConfigFlags (flags : ConfigFlags) : BaseIO Unit
--- todo: Variadic/formatted TraceLog (note: impossible to forward C variadic safely)
-/-- Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...) -/
-@[extern "lean_raylib__TraceLog_s"]
-opaque traceLog' (logLevel : TraceLogLevel) (text : @& String) : BaseIO Unit
+
+/--
+Show trace log messages (`debug`, `info`, `warning`, `error`...).
+Throws error on strings containing `%` not followed by another `%`.
+May still cause UB when used with redirected TraceLog that uses variadic arguments.
+-/
+@[extern "lean_raylib__TraceLog"]
+opaque traceLog (logLevel : TraceLogLevel) (text : @& String) : IO Unit
 
 /-- Set the current threshold (minimum) log level -/
 @[extern "lean_raylib__SetTraceLogLevel"]
@@ -440,9 +444,9 @@ opaque setTraceLogLevel (logLevel : TraceLogLevel) : BaseIO Unit
 @[extern "lean_raylib__OpenURL"]
 opaque openURL (url : @& String) : BaseIO Unit
 
--- /-- Set custom trace log -/
--- @[extern "lean_raylib__SetTraceLogCallback"]
--- opaque setTraceLogCallback (callback : TraceLogCallback) : BaseIO Unit
+/-- Set custom trace log -/
+@[extern "lean_raylib__SetTraceLogCallback"]
+opaque setTraceLogCallback (callback : TraceLogCallback) : BaseIO Unit
 
 /-- Reset default trace log -/
 @[extern "lean_raylib__ResetTraceLogCallback"]

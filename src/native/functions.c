@@ -670,7 +670,25 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetConfigFlags (uint32_t flags, lean_obj_a
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__TraceLog_s (uint32_t logLevel, b_lean_obj_arg text, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__TraceLog (uint32_t logLevel, b_lean_obj_arg text, lean_obj_arg world) {
+    {
+        const char* s = lean_string_cstr(text);
+        while(*s != '\0') {
+            if(*s == '%') {
+                if(*(s + 1) == '%') {
+                    s += 2;
+                }
+                else {
+                    return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string(
+                        "Lean called TraceLog with text string containing non-literal conversion specification."
+                    )));
+                }
+            }
+            else {
+                ++s;
+            }
+        }
+    }
     TraceLog(logLevel, lean_string_cstr(text));
     return lean_io_result_mk_ok(lean_box(0));
 }

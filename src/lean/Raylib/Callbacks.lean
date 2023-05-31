@@ -4,16 +4,12 @@ import Raylib.Util.ST2
 import Raylib.Structures
 
 namespace Raylib
--- /-! # Callbacks -/
--- /-- Logging: Redirect trace log messages -/
--- def TraceLogCallback : Type := panic! "Untranslated"
--- /- todo: ^^ callback ^^
---   returns: void
---   params:
---   | logLevel : int
---   | text : const char *
---   | args : va_list
--- -/
+
+/--
+Logging: Redirect trace log messages.
+NOTE: Ignores variadic arguments.
+-/
+def TraceLogCallback : Type := TraceLogLevel → String → IO Unit
 
 /-- FileIO: Load binary data -/
 def LoadFileDataCallback : Type := System.FilePath → IO ByteArray

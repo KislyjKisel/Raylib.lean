@@ -13,11 +13,29 @@ static lean_object* lean_raylib_SaveFileDataCallback_current = NULL;
 static lean_object* lean_raylib_LoadFileTextCallback_current = NULL;
 static lean_object* lean_raylib_SaveFileTextCallback_current = NULL;
 
+static void lean_raylib_TraceLogCallback_wrapper(int logLevel, const char* text, va_list args) {
+    assert(lean_raylib_TraceLogCallback_current != NULL);
+    lean_inc_ref(lean_raylib_TraceLogCallback_current);
+    lean_object* success_iores = lean_apply_3(
+        lean_raylib_TraceLogCallback_current,
+        lean_box_uint32(logLevel),
+        lean_mk_string(text),
+        lean_box(0)
+    );
+    if(lean_io_result_is_error(success_iores)) {
+        lean_io_result_show_error(success_iores);
+    }
+    lean_dec_ref(success_iores);
+}
+
 static unsigned char* lean_raylib_LoadFileDataCallback_wrapper(const char* fileName, unsigned int* bytesRead) {
     assert(lean_raylib_LoadFileDataCallback_current != NULL);
-    lean_object* fileName_box = lean_mk_string(fileName);
     lean_inc_ref(lean_raylib_LoadFileDataCallback_current);
-    lean_object* bytes_iores = lean_apply_2(lean_raylib_LoadFileDataCallback_current, fileName_box, lean_box(0));
+    lean_object* bytes_iores = lean_apply_2(
+        lean_raylib_LoadFileDataCallback_current,
+        lean_mk_string(fileName),
+        lean_box(0)
+    );
     if(lean_io_result_is_error(bytes_iores)) {
         lean_io_result_show_error(bytes_iores);
         lean_dec_ref(bytes_iores);
@@ -35,13 +53,12 @@ static unsigned char* lean_raylib_LoadFileDataCallback_wrapper(const char* fileN
 
 static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void* data, unsigned int bytesToWrite) {
     assert(lean_raylib_SaveFileDataCallback_current != NULL);
-    lean_object* fileName_box = lean_mk_string(fileName);
     lean_inc_ref(lean_raylib_SaveFileDataCallback_current);
     // EST2.Result
     lean_object* success_iores = lean_apply_6(
         lean_raylib_SaveFileDataCallback_current,
         lean_box(0),
-        fileName_box,
+        lean_mk_string(fileName),
         lean_box_usize(bytesToWrite),
         lean_pod_BytesRef_wrap(data),
         lean_box(0),
@@ -65,9 +82,12 @@ static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void*
 
 static char* lean_raylib_LoadFileTextCallback_wrapper(const char* fileName) {
     assert(lean_raylib_LoadFileTextCallback_current != NULL);
-    lean_object* fileName_box = lean_mk_string(fileName);
     lean_inc_ref(lean_raylib_LoadFileTextCallback_current);
-    lean_object* text_iores = lean_apply_2(lean_raylib_LoadFileTextCallback_current, fileName_box, lean_box(0));
+    lean_object* text_iores = lean_apply_2(
+        lean_raylib_LoadFileTextCallback_current,
+        lean_mk_string(fileName),
+        lean_box(0)
+    );
     if(lean_io_result_is_error(text_iores)) {
         lean_io_result_show_error(text_iores);
         lean_dec_ref(text_iores);
@@ -84,10 +104,13 @@ static char* lean_raylib_LoadFileTextCallback_wrapper(const char* fileName) {
 
 static bool lean_raylib_SaveFileTextCallback_wrapper(const char* fileName, char* text) {
     assert(lean_raylib_SaveFileTextCallback_current != NULL);
-    lean_object* fileName_box = lean_mk_string(fileName);
-    lean_object* text_box = lean_mk_string(text);
     lean_inc_ref(lean_raylib_SaveFileTextCallback_current);
-    lean_object* success_iores = lean_apply_3(lean_raylib_SaveFileTextCallback_current, fileName_box, text_box, lean_box(0));
+    lean_object* success_iores = lean_apply_3(
+        lean_raylib_SaveFileTextCallback_current,
+        lean_mk_string(fileName),
+        lean_mk_string(text),
+        lean_box(0)
+    );
     if(lean_io_result_is_error(success_iores)) {
         lean_io_result_show_error(success_iores);
         lean_dec_ref(success_iores);
@@ -97,16 +120,6 @@ static bool lean_raylib_SaveFileTextCallback_wrapper(const char* fileName, char*
     bool success = lean_unbox(lean_io_result_get_value(success_iores));
     lean_dec_ref(success_iores);
     return success;
-}
-
-#define LEAN_RAYLIB_CALLBACK_RESET(action)\
-LEAN_EXPORT lean_obj_res lean_raylib__Reset##action##Callback (lean_obj_arg world) {\
-    Set##action##Callback(NULL);\
-    if(lean_raylib_##action##Callback_current != NULL) {\
-        lean_dec_ref(lean_raylib_##action##Callback_current);\
-        lean_raylib_##action##Callback_current = NULL;\
-    }\
-    return lean_io_result_mk_ok(lean_box(0));\
 }
 
 #define LEAN_RAYLIB_CALLBACK_SET_RESET(action)\
@@ -119,9 +132,16 @@ LEAN_EXPORT lean_obj_res lean_raylib__Set##action##Callback (lean_obj_arg callba
     Set##action##Callback(lean_raylib_##action##Callback_wrapper);\
     return lean_io_result_mk_ok(lean_box(0));\
 }\
-LEAN_RAYLIB_CALLBACK_RESET(action)
+LEAN_EXPORT lean_obj_res lean_raylib__Reset##action##Callback (lean_obj_arg world) {\
+    Set##action##Callback(NULL);\
+    if(lean_raylib_##action##Callback_current != NULL) {\
+        lean_dec_ref(lean_raylib_##action##Callback_current);\
+        lean_raylib_##action##Callback_current = NULL;\
+    }\
+    return lean_io_result_mk_ok(lean_box(0));\
+}
 
-LEAN_RAYLIB_CALLBACK_RESET(TraceLog);
+LEAN_RAYLIB_CALLBACK_SET_RESET(TraceLog);
 LEAN_RAYLIB_CALLBACK_SET_RESET(LoadFileData);
 LEAN_RAYLIB_CALLBACK_SET_RESET(SaveFileData);
 LEAN_RAYLIB_CALLBACK_SET_RESET(LoadFileText);
