@@ -466,6 +466,7 @@ def Material.params (m : Material) : Vector4 :=
 
 /-! # Transform -/
 
+/-- Transform, vertex transformation data -/
 structure Transform where
   translation : Vector3
   rotation : Quaternion
@@ -475,35 +476,12 @@ deriving Inhabited, Repr
 
 /-! # Bone info -/
 
--- opaque BoneInfoPointed : NonemptyType
--- /-- Bone, skeletal animation bone -/
--- def BoneInfo : Type := BoneInfoPointed.type
--- instance : Nonempty BoneInfo := BoneInfoPointed.property
--- @[extern "lean_raylib__BoneInfo_mk"]
--- opaque BoneInfo.mk : BoneInfo
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | name: char[32] -- Bone name
---   | parent: int -- Bone parent
--- -/
--- /-- Getter: Bone name -/
--- @[extern "lean_raylib__BoneInfo_name"]
--- opaque BoneInfo.name (self : @& BoneInfo) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Bone name -/
--- @[extern "lean_raylib__BoneInfo_name_set"]
--- opaque BoneInfo.set_name (name : Unit) (self : BoneInfo) : BoneInfo
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Bone parent -/
--- @[extern "lean_raylib__BoneInfo_parent"]
--- opaque BoneInfo.parent (self : @& BoneInfo) : Int32
--- /-- Setter: Bone parent -/
--- @[extern "lean_raylib__BoneInfo_parent_set"]
--- opaque BoneInfo.set_parent (parent : Int32) (self : BoneInfo) : BoneInfo
+/-- Bone, skeletal animation bone -/
+structure BoneInfo where
+  /-- Truncated if its byte size is greater than 31 -/
+  name : String
+  parent : Option UInt32
+deriving Inhabited, Repr
 
 
 /-! # Model -/

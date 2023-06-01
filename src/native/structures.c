@@ -529,37 +529,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg unit) {
 }
 
 
-// # BoneInfo
-
-// LEAN_EXPORT lean_obj_res lean_raylib__BoneInfo_mk(/*char[32]*/lean_obj_arg name, uint32_t parent) {
-//     LET_BOX_STRUCT(BoneInfo, result_,
-//         .name = /*cast char[32] to_lean?false*/(name),
-//         .parent = parent
-//     );
-//     return lean_raylib_BoneInfo_to(result_);
-// }
-
-// LEAN_EXPORT /*char[32]*/lean_obj_arg lean_raylib__BoneInfo_name(b_lean_obj_arg obj) {
-//     char[32] result_ = lean_raylib_BoneInfo_from(obj)->name;
-//     return /*cast char[32] to_lean?true*/(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__BoneInfo_name_set(/*char[32]*/lean_obj_arg name, b_lean_obj_arg obj) {
-//     LET_BOX(BoneInfo, result_, *lean_raylib_BoneInfo_from(obj));
-//     result_->name = /*cast char[32] to_lean?false*/(name);
-//     return lean_raylib_BoneInfo_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__BoneInfo_parent(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_BoneInfo_from(obj)->parent;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__BoneInfo_parent_set(uint32_t parent, b_lean_obj_arg obj) {
-//     LET_BOX(BoneInfo, result_, *lean_raylib_BoneInfo_from(obj));
-//     result_->parent = parent;
-//     return lean_raylib_BoneInfo_to(result_);
-// }
+// # Model
 
 // LEAN_EXPORT lean_obj_res lean_raylib__Model_mk(lean_obj_arg transform, uint32_t meshCount, uint32_t materialCount, /* Mesh* */lean_obj_arg meshes, /* Material* */lean_obj_arg materials, /* int* */lean_obj_arg meshMaterial, uint32_t boneCount, /* BoneInfo* */lean_obj_arg bones, /* Transform* */lean_obj_arg bindPose) {
 //     LET_BOX_STRUCT(Model, result_,

@@ -422,17 +422,44 @@ static inline Transform lean_raylib_Transform_from (b_lean_obj_arg obj) {
 
 // # BoneInfo
 
-// static inline lean_object* lean_raylib_BoneInfo_to (BoneInfo const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static inline void lean_raylib_BoneInfo_set_impl (b_lean_obj_arg obj, BoneInfo boneInfo) {
+    lean_ctor_set(obj, 0, lean_mk_string_from_bytes(boneInfo.name, sizeof(boneInfo.name)));
+    if (boneInfo.parent < 0) {
+        lean_ctor_set(obj, 1, lean_mk_option_none());
+    }
+    else {
+        lean_ctor_set(obj, 1, lean_mk_option_some(lean_box_uint32(boneInfo.parent)));
+    }
+}
 
-// static inline BoneInfo const* lean_raylib_BoneInfo_from (b_lean_obj_arg obj) {
-//     return (BoneInfo const*) lean_get_external_data(obj);
-// }
+static inline void lean_raylib_BoneInfo_set (b_lean_obj_arg obj, BoneInfo boneInfo) {
+    lean_dec_ref(lean_ctor_get(obj, 0));
+    lean_dec_ref(lean_ctor_get(obj, 1));
+    lean_raylib_BoneInfo_set_impl(obj, boneInfo);
+}
+
+static inline lean_object* lean_raylib_BoneInfo_to (BoneInfo boneInfo) {
+    lean_object* obj = lean_alloc_ctor(0, 2, 0);
+    lean_raylib_BoneInfo_set_impl(obj, boneInfo);
+    return obj;
+}
+
+static inline BoneInfo lean_raylib_BoneInfo_from (b_lean_obj_arg obj) {
+    lean_object* name = lean_ctor_get(obj, 0);
+    lean_object* parent = lean_ctor_get(obj, 1);
+    BoneInfo boneInfo;
+    strncpy(boneInfo.name, lean_string_cstr(name), sizeof(boneInfo.name));
+    if(lean_option_is_some(parent)) {
+        boneInfo.parent = (int)lean_unbox_uint32(lean_ctor_get(parent, 0));
+    }
+    else {
+        boneInfo.parent = -1;
+    }
+    return boneInfo;
+}
+
+
+// # Model
 
 // static inline lean_object* lean_raylib_Model_to (Model const* obj) {
 //     static lean_external_class* class_ = NULL;
