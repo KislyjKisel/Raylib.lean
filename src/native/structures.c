@@ -529,49 +529,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg unit) {
 }
 
 
-// # Transform
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Transform_mk(lean_obj_arg translation, lean_obj_arg rotation, lean_obj_arg scale) {
-//     LET_BOX_STRUCT(Transform, result_,
-//         .translation = lean_raylib_Vector3_from(translation),
-//         .rotation = /*cast Quaternion to_lean?false*/(rotation),
-//         .scale = lean_raylib_Vector3_from(scale)
-//     );
-//     return lean_raylib_Transform_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_arg lean_raylib__Transform_translation(b_lean_obj_arg obj) {
-//     Vector3 result_ = lean_raylib_Transform_from(obj)->translation;
-//     return lean_raylib_Vector3_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Transform_translation_set(lean_obj_arg translation, b_lean_obj_arg obj) {
-//     LET_BOX(Transform, result_, *lean_raylib_Transform_from(obj));
-//     result_->translation = lean_raylib_Vector3_from(translation);
-//     return lean_raylib_Transform_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_arg lean_raylib__Transform_rotation(b_lean_obj_arg obj) {
-//     Quaternion result_ = lean_raylib_Transform_from(obj)->rotation;
-//     return /*cast Quaternion to_lean?true*/(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Transform_rotation_set(lean_obj_arg rotation, b_lean_obj_arg obj) {
-//     LET_BOX(Transform, result_, *lean_raylib_Transform_from(obj));
-//     result_->rotation = /*cast Quaternion to_lean?false*/(rotation);
-//     return lean_raylib_Transform_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_arg lean_raylib__Transform_scale(b_lean_obj_arg obj) {
-//     Vector3 result_ = lean_raylib_Transform_from(obj)->scale;
-//     return lean_raylib_Vector3_to(result_);
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Transform_scale_set(lean_obj_arg scale, b_lean_obj_arg obj) {
-//     LET_BOX(Transform, result_, *lean_raylib_Transform_from(obj));
-//     result_->scale = lean_raylib_Vector3_from(scale);
-//     return lean_raylib_Transform_to(result_);
-// }
+// # BoneInfo
 
 // LEAN_EXPORT lean_obj_res lean_raylib__BoneInfo_mk(/*char[32]*/lean_obj_arg name, uint32_t parent) {
 //     LET_BOX_STRUCT(BoneInfo, result_,

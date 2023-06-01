@@ -4,7 +4,7 @@ import Raylib.Enumerations
 import Raylib.Util.RangeMap
 
 open Pod (Float32)
-open Raymath (Vector2 Vector3 Vector4 Matrix)
+open Raymath (Vector2 Vector3 Vector4 Matrix Quaternion)
 
 namespace Raylib
 
@@ -466,42 +466,11 @@ def Material.params (m : Material) : Vector4 :=
 
 /-! # Transform -/
 
--- opaque TransformPointed : NonemptyType
--- /-- Transform, vertex transformation data -/
--- def Transform : Type := TransformPointed.type
--- instance : Nonempty Transform := TransformPointed.property
--- @[extern "lean_raylib__Transform_mk"]
--- opaque Transform.mk : Transform
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | translation: Vector3 -- Translation
---   | rotation: Quaternion -- Rotation
---   | scale: Vector3 -- Scale
--- -/
--- /-- Getter: Translation -/
--- @[extern "lean_raylib__Transform_translation"]
--- opaque Transform.translation (self : @& Transform) : Vector3
--- /-- Setter: Translation -/
--- @[extern "lean_raylib__Transform_translation_set"]
--- opaque Transform.set_translation (translation : Vector3) (self : Transform) : Transform
--- /-- Getter: Rotation -/
--- @[extern "lean_raylib__Transform_rotation"]
--- opaque Transform.rotation (self : @& Transform) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Rotation -/
--- @[extern "lean_raylib__Transform_rotation_set"]
--- opaque Transform.set_rotation (rotation : Unit) (self : Transform) : Transform
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Scale -/
--- @[extern "lean_raylib__Transform_scale"]
--- opaque Transform.scale (self : @& Transform) : Vector3
--- /-- Setter: Scale -/
--- @[extern "lean_raylib__Transform_scale_set"]
--- opaque Transform.set_scale (scale : Vector3) (self : Transform) : Transform
+structure Transform where
+  translation : Vector3
+  rotation : Quaternion
+  scale : Vector3
+deriving Inhabited, Repr
 
 
 /-! # Bone info -/

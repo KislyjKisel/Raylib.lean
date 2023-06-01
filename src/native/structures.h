@@ -47,10 +47,10 @@ static inline uint32_t lean_raylib_Color_to(Color color) {
 // # Rectangle
 
 static inline void lean_raylib_Rectangle_set (b_lean_obj_arg obj, Rectangle r) {
-    lean_ctor_set(obj, 0, lean_box_uint32(lean_pod_Float32_toBits(r.x)));
-    lean_ctor_set(obj, 1, lean_box_uint32(lean_pod_Float32_toBits(r.y)));
-    lean_ctor_set(obj, 2, lean_box_uint32(lean_pod_Float32_toBits(r.width)));
-    lean_ctor_set(obj, 3, lean_box_uint32(lean_pod_Float32_toBits(r.height)));
+    lean_ctor_set(obj, 0, lean_pod_Float32_box(r.x));
+    lean_ctor_set(obj, 1, lean_pod_Float32_box(r.y));
+    lean_ctor_set(obj, 2, lean_pod_Float32_box(r.width));
+    lean_ctor_set(obj, 3, lean_pod_Float32_box(r.height));
 }
 
 static inline lean_object* lean_raylib_Rectangle_to (Rectangle r) {
@@ -194,7 +194,7 @@ static inline NPatchInfo* lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
 //     lean_ctor_set(obj, 1, lean_box_uint32(offsetX));
 //     lean_ctor_set(obj, 2, lean_box_uint32(offsetY));
 //     lean_ctor_set(obj, 3, lean_box_uint32(advanceX));
-//     lean_ctor_set(obj, 4, image);
+//     lean_ctor_set(obj, 4, image); // todo: lean_dec_ref(lean_ctor_get(obj, 4))
 // }
 
 // static inline lean_object* lean_raylib_GlyphInfo_to (GlyphInfo r) {
@@ -237,20 +237,24 @@ static inline Font const* lean_raylib_Font_from (b_lean_obj_arg obj) {
 
 // # Camera 3D
 
+static inline void lean_raylib_Camera3D_set_impl (b_lean_obj_arg obj, Camera3D cam) {
+    lean_ctor_set(obj, 0, lean_raylib_Vector3_to(cam.position));
+    lean_ctor_set(obj, 1, lean_raylib_Vector3_to(cam.target));
+    lean_ctor_set(obj, 2, lean_raylib_Vector3_to(cam.up));
+    lean_ctor_set(obj, 3, lean_pod_Float32_box(cam.fovy));
+    lean_ctor_set(obj, 4, lean_box_uint32(cam.projection));
+}
+
 static inline void lean_raylib_Camera3D_set (b_lean_obj_arg obj, Camera3D cam) {
     lean_dec_ref(lean_ctor_get(obj, 0));
-    lean_ctor_set(obj, 0, lean_raylib_Vector3_to(cam.position));
     lean_dec_ref(lean_ctor_get(obj, 1));
-    lean_ctor_set(obj, 1, lean_raylib_Vector3_to(cam.target));
     lean_dec_ref(lean_ctor_get(obj, 2));
-    lean_ctor_set(obj, 2, lean_raylib_Vector3_to(cam.up));
-    lean_ctor_set(obj, 3, lean_box_uint32(lean_pod_Float32_toBits(cam.fovy)));
-    lean_ctor_set(obj, 4, lean_box_uint32(cam.projection));
+    lean_raylib_Camera3D_set_impl(obj, cam);
 }
 
 static inline lean_object* lean_raylib_Camera3D_to (Camera3D cam) {
     lean_object* obj = lean_alloc_ctor(0, 5, 0);
-    lean_raylib_Camera3D_set(obj, cam);
+    lean_raylib_Camera3D_set_impl(obj, cam);
     return obj;
 }
 
@@ -267,18 +271,22 @@ static inline Camera3D lean_raylib_Camera3D_from (b_lean_obj_arg obj) {
 
 // # Camera 2D
 
+static inline void lean_raylib_Camera2D_set_impl (b_lean_obj_arg obj, Camera2D cam) {
+    lean_ctor_set(obj, 0, lean_raylib_Vector2_to(cam.offset));
+    lean_ctor_set(obj, 1, lean_raylib_Vector2_to(cam.target));
+    lean_ctor_set(obj, 2, lean_pod_Float32_box(cam.rotation));
+    lean_ctor_set(obj, 3, lean_pod_Float32_box(cam.zoom));
+}
+
 static inline void lean_raylib_Camera2D_set (b_lean_obj_arg obj, Camera2D cam) {
     lean_dec_ref(lean_ctor_get(obj, 0));
-    lean_ctor_set(obj, 0, lean_raylib_Vector2_to(cam.offset));
     lean_dec_ref(lean_ctor_get(obj, 1));
-    lean_ctor_set(obj, 1, lean_raylib_Vector2_to(cam.target));
-    lean_ctor_set(obj, 2, lean_box_uint32(lean_pod_Float32_toBits(cam.rotation)));
-    lean_ctor_set(obj, 3, lean_box_uint32(lean_pod_Float32_toBits(cam.zoom)));
+    lean_raylib_Camera2D_set_impl(obj, cam);
 }
 
 static inline lean_object* lean_raylib_Camera2D_to (Camera2D cam) {
     lean_object* obj = lean_alloc_ctor(0, 4, 0);
-    lean_raylib_Camera2D_set(obj, cam);
+    lean_raylib_Camera2D_set_impl(obj, cam);
     return obj;
 }
 
@@ -384,17 +392,35 @@ static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_ob
 
 // # Transform
 
-// static inline lean_object* lean_raylib_Transform_to (Transform const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+static inline void lean_raylib_Transform_set_impl (b_lean_obj_arg obj, Transform transform) {
+    lean_ctor_set(obj, 0, lean_raylib_Vector3_to(transform.translation));
+    lean_ctor_set(obj, 1, lean_raylib_Vector4_to(transform.rotation));
+    lean_ctor_set(obj, 2, lean_raylib_Vector3_to(transform.scale));
+}
 
-// static inline Transform const* lean_raylib_Transform_from (b_lean_obj_arg obj) {
-//     return (Transform const*) lean_get_external_data(obj);
-// }
+static inline void lean_raylib_Transform_set (b_lean_obj_arg obj, Transform transform) {
+    lean_dec_ref(lean_ctor_get(obj, 0));
+    lean_dec_ref(lean_ctor_get(obj, 1));
+    lean_dec_ref(lean_ctor_get(obj, 2));
+    lean_raylib_Transform_set_impl(obj, transform);
+}
+
+static inline lean_object* lean_raylib_Transform_to (Transform transform) {
+    lean_object* obj = lean_alloc_ctor(0, 3, 0);
+    lean_raylib_Transform_set_impl(obj, transform);
+    return obj;
+}
+
+static inline Transform lean_raylib_Transform_from (b_lean_obj_arg obj) {
+    Transform transform;
+    transform.translation = lean_raylib_Vector3_from(lean_ctor_get(obj, 0));
+    transform.rotation = lean_raylib_Vector4_from(lean_ctor_get(obj, 1));
+    transform.scale = lean_raylib_Vector3_from(lean_ctor_get(obj, 2));
+    return transform;
+}
+
+
+// # BoneInfo
 
 // static inline lean_object* lean_raylib_BoneInfo_to (BoneInfo const* obj) {
 //     static lean_external_class* class_ = NULL;
@@ -437,14 +463,15 @@ static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_ob
 
 static inline void lean_raylib_Ray_set (b_lean_obj_arg obj, Ray ray) {
     lean_dec_ref(lean_ctor_get(obj, 0));
-    lean_ctor_set(obj, 0, lean_raylib_Vector3_to(ray.position));
     lean_dec_ref(lean_ctor_get(obj, 1));
+    lean_ctor_set(obj, 0, lean_raylib_Vector3_to(ray.position));
     lean_ctor_set(obj, 1, lean_raylib_Vector3_to(ray.direction));
 }
 
-static inline lean_object* lean_raylib_Ray_to (Ray v) {
+static inline lean_object* lean_raylib_Ray_to (Ray ray) {
     lean_object* obj = lean_alloc_ctor(0, 2, 0);
-    lean_raylib_Ray_set(obj, v);
+    lean_ctor_set(obj, 0, lean_raylib_Vector3_to(ray.position));
+    lean_ctor_set(obj, 1, lean_raylib_Vector3_to(ray.direction));
     return obj;
 }
 
@@ -458,18 +485,22 @@ static inline Ray lean_raylib_Ray_from (b_lean_obj_arg obj) {
 
 // # Ray collision
 
-static inline void lean_raylib_RayCollision_set (b_lean_obj_arg obj, RayCollision rayCol) {
+static inline void lean_raylib_RayCollision_set_impl (b_lean_obj_arg obj, RayCollision rayCol) {
     lean_ctor_set(obj, 0, lean_box(rayCol.hit));
     lean_ctor_set(obj, 1, lean_pod_Float32_box(rayCol.distance));
-    lean_dec_ref(lean_ctor_get(obj, 2));
     lean_ctor_set(obj, 2, lean_raylib_Vector3_to(rayCol.point));
-    lean_dec_ref(lean_ctor_get(obj, 3));
     lean_ctor_set(obj, 3, lean_raylib_Vector3_to(rayCol.normal));
 }
 
-static inline lean_object* lean_raylib_RayCollision_to (RayCollision v) {
+static inline void lean_raylib_RayCollision_set (b_lean_obj_arg obj, RayCollision rayCol) {
+    lean_dec_ref(lean_ctor_get(obj, 2));
+    lean_dec_ref(lean_ctor_get(obj, 3));
+    lean_raylib_RayCollision_set_impl(obj, rayCol);
+}
+
+static inline lean_object* lean_raylib_RayCollision_to (RayCollision rayCol) {
     lean_object* obj = lean_alloc_ctor(0, 4, 0);
-    lean_raylib_RayCollision_set(obj, v);
+    lean_raylib_RayCollision_set_impl(obj, rayCol);
     return obj;
 }
 
@@ -494,7 +525,8 @@ static inline void lean_raylib_BoundingBox_set (b_lean_obj_arg obj, BoundingBox 
 
 static inline lean_object* lean_raylib_BoundingBox_to (BoundingBox bb) {
     lean_object* obj = lean_alloc_ctor(0, 2, 0);
-    lean_raylib_BoundingBox_set(obj, bb);
+    lean_ctor_set(obj, 0, lean_raylib_Vector3_to(bb.min));
+    lean_ctor_set(obj, 1, lean_raylib_Vector3_to(bb.max));
     return obj;
 }
 
@@ -618,7 +650,7 @@ static inline Music * lean_raylib_Music_from (b_lean_obj_arg obj) {
 
 // # Vr device info
 
-static inline void lean_raylib_VrDeviceInfo_set (b_lean_obj_arg obj, VrDeviceInfo* vrDeviceInfo) {
+static inline void lean_raylib_VrDeviceInfo_set_impl (b_lean_obj_arg obj, VrDeviceInfo* vrDeviceInfo) {
     lean_ctor_set(obj, 0, lean_box_uint32(vrDeviceInfo->hResolution));
     lean_ctor_set(obj, 1, lean_box_uint32(vrDeviceInfo->vResolution));
     lean_ctor_set(obj, 2, lean_pod_Float32_box(vrDeviceInfo->hScreenSize));
@@ -627,14 +659,12 @@ static inline void lean_raylib_VrDeviceInfo_set (b_lean_obj_arg obj, VrDeviceInf
     lean_ctor_set(obj, 5, lean_pod_Float32_box(vrDeviceInfo->eyeToScreenDistance));
     lean_ctor_set(obj, 6, lean_pod_Float32_box(vrDeviceInfo->lensSeparationDistance));
     lean_ctor_set(obj, 7, lean_pod_Float32_box(vrDeviceInfo->interpupillaryDistance));
-    lean_dec_ref(lean_ctor_get(obj, 8));
     Vector4 lensDistortionValues;
     lensDistortionValues.x = vrDeviceInfo->lensDistortionValues[0];
     lensDistortionValues.y = vrDeviceInfo->lensDistortionValues[1];
     lensDistortionValues.z = vrDeviceInfo->lensDistortionValues[2];
     lensDistortionValues.w = vrDeviceInfo->lensDistortionValues[3];
     lean_ctor_set(obj, 8, lean_raylib_Vector4_to(lensDistortionValues));
-    lean_dec_ref(lean_ctor_get(obj, 9));
     Vector4 chromaAbCorrection;
     chromaAbCorrection.x = vrDeviceInfo->chromaAbCorrection[0];
     chromaAbCorrection.y = vrDeviceInfo->chromaAbCorrection[1];
@@ -643,9 +673,15 @@ static inline void lean_raylib_VrDeviceInfo_set (b_lean_obj_arg obj, VrDeviceInf
     lean_ctor_set(obj, 9, lean_raylib_Vector4_to(chromaAbCorrection));
 }
 
+static inline void lean_raylib_VrDeviceInfo_set (b_lean_obj_arg obj, VrDeviceInfo* vrDeviceInfo) {
+    lean_dec_ref(lean_ctor_get(obj, 8));
+    lean_dec_ref(lean_ctor_get(obj, 9));
+    lean_raylib_VrDeviceInfo_set_impl(obj, vrDeviceInfo);
+}
+
 static inline lean_object* lean_raylib_VrDeviceInfo_to (VrDeviceInfo* vrDeviceInfo) {
     lean_object* obj = lean_alloc_ctor(0, 10, 0);
-    lean_raylib_VrDeviceInfo_set(obj, vrDeviceInfo);
+    lean_raylib_VrDeviceInfo_set_impl(obj, vrDeviceInfo);
     return obj;
 }
 
@@ -675,46 +711,54 @@ static inline VrDeviceInfo lean_raylib_VrDeviceInfo_from (b_lean_obj_arg obj) {
 
 // # Vr stereo config
 
-static inline void lean_raylib_VrStereoConfig_set (b_lean_obj_arg obj, VrStereoConfig* vrStereoConfig) {
+static inline void lean_raylib_VrStereoConfig_set_impl (b_lean_obj_arg obj, VrStereoConfig* vrStereoConfig) {
     lean_ctor_set(obj, 0, lean_raylib_Matrix_to(vrStereoConfig->projection[0]));
     lean_ctor_set(obj, 1, lean_raylib_Matrix_to(vrStereoConfig->projection[1]));
     lean_ctor_set(obj, 2, lean_raylib_Matrix_to(vrStereoConfig->viewOffset[0]));
     lean_ctor_set(obj, 3, lean_raylib_Matrix_to(vrStereoConfig->viewOffset[1]));
-    lean_dec_ref(lean_ctor_get(obj, 4));
     Vector2 leftLensCenter;
     leftLensCenter.x = vrStereoConfig->leftLensCenter[0];
     leftLensCenter.y = vrStereoConfig->leftLensCenter[1];
     lean_ctor_set(obj, 4, lean_raylib_Vector2_to(leftLensCenter));
-    lean_dec_ref(lean_ctor_get(obj, 5));
     Vector2 rightLensCenter;
     rightLensCenter.x = vrStereoConfig->rightLensCenter[0];
     rightLensCenter.y = vrStereoConfig->rightLensCenter[1];
     lean_ctor_set(obj, 5, lean_raylib_Vector2_to(rightLensCenter));
-    lean_dec_ref(lean_ctor_get(obj, 6));
     Vector2 leftScreenCenter;
     leftScreenCenter.x = vrStereoConfig->leftScreenCenter[0];
     leftScreenCenter.y = vrStereoConfig->leftScreenCenter[1];
     lean_ctor_set(obj, 6, lean_raylib_Vector2_to(leftScreenCenter));
-    lean_dec_ref(lean_ctor_get(obj, 7));
     Vector2 rightScreenCenter;
     rightScreenCenter.x = vrStereoConfig->rightScreenCenter[0];
     rightScreenCenter.y = vrStereoConfig->rightScreenCenter[1];
     lean_ctor_set(obj, 7, lean_raylib_Vector2_to(rightScreenCenter));
-    lean_dec_ref(lean_ctor_get(obj, 8));
     Vector2 scale;
     scale.x = vrStereoConfig->scale[0];
     scale.y = vrStereoConfig->scale[1];
     lean_ctor_set(obj, 8, lean_raylib_Vector2_to(scale));
-    lean_dec_ref(lean_ctor_get(obj, 9));
     Vector2 scaleIn;
     scaleIn.x = vrStereoConfig->scaleIn[0];
     scaleIn.y = vrStereoConfig->scaleIn[1];
     lean_ctor_set(obj, 9, lean_raylib_Vector2_to(scaleIn));
 }
 
+static inline void lean_raylib_VrStereoConfig_set (b_lean_obj_arg obj, VrStereoConfig* vrStereoConfig) {
+    lean_dec_ref(lean_ctor_get(obj, 0));
+    lean_dec_ref(lean_ctor_get(obj, 1));
+    lean_dec_ref(lean_ctor_get(obj, 2));
+    lean_dec_ref(lean_ctor_get(obj, 3));
+    lean_dec_ref(lean_ctor_get(obj, 4));
+    lean_dec_ref(lean_ctor_get(obj, 5));
+    lean_dec_ref(lean_ctor_get(obj, 6));
+    lean_dec_ref(lean_ctor_get(obj, 7));
+    lean_dec_ref(lean_ctor_get(obj, 8));
+    lean_dec_ref(lean_ctor_get(obj, 9));
+    lean_raylib_VrStereoConfig_set_impl(obj, vrStereoConfig);
+}
+
 static inline lean_object* lean_raylib_VrStereoConfig_to (VrStereoConfig* vrStereoConfig) {
     lean_object* obj = lean_alloc_ctor(0, 10, 0);
-    lean_raylib_VrStereoConfig_set(obj, vrStereoConfig);
+    lean_raylib_VrStereoConfig_set_impl(obj, vrStereoConfig);
     return obj;
 }
 
