@@ -1,4 +1,5 @@
 import Pod.BytesView
+import Pod.Buffer
 import Raymath.Core
 import Raylib.Aliases
 import Raylib.Callbacks
@@ -414,31 +415,19 @@ opaque traceLog (logLevel : TraceLogLevel) (text : @& String) : IO Unit
 @[extern "lean_raylib__SetTraceLogLevel"]
 opaque setTraceLogLevel (logLevel : TraceLogLevel) : BaseIO Unit
 
--- /-- Internal memory allocator -/
--- @[extern "lean_raylib__MemAlloc"]
--- opaque memAlloc : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void *
---   params:
---   | size : unsigned int
--- -/
--- /-- Internal memory reallocator -/
--- @[extern "lean_raylib__MemRealloc"]
--- opaque memRealloc : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void *
---   params:
---   | ptr : void *
---   | size : unsigned int
--- -/
--- /-- Internal memory free -/
--- @[extern "lean_raylib__MemFree"]
--- opaque memFree : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | ptr : void *
--- -/
+/--
+Internal memory allocator.
+NOTE: Initializes to zero by default.
+-/
+@[extern "lean_raylib__MemAlloc"]
+opaque memAlloc (size : USize) : Pod.Buffer size 1
+
+/--
+Internal memory reallocator.
+NOTE: Clones the buffer using `memAlloc` if it wasn't allocated using the same allocator or if it's shared.
+-/
+@[extern "lean_raylib__MemRealloc"]
+opaque memRealloc {size₁} (buf : Pod.Buffer size₁ 1) (size : USize) : Pod.Buffer size 1
 
 /-- Open URL with default system browser (if available) -/
 @[extern "lean_raylib__OpenURL"]

@@ -698,20 +698,28 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetTraceLogLevel (uint32_t logLevel, lean_
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT /* void* */lean_obj_arg lean_raylib__MemAlloc (uint32_t size, lean_obj_arg world) {
-//     void * result_ = MemAlloc(size);
-//     return /*todo: ptr?*/result_;
-// }
+// "error loading library, ... undefined symbol: MemFree", why?
+static void lean_raylib_MemFree(void* p) {
+    RL_FREE(p);
+}
 
-// LEAN_EXPORT /* void* */lean_obj_arg lean_raylib__MemRealloc (/* void* */lean_obj_arg ptr, uint32_t size, lean_obj_arg world) {
-//     void * result_ = MemRealloc(/*todo: ptr?*/ptr, size);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__MemAlloc (size_t size) {
+    return lean_pod_Buffer_wrap(MemAlloc(size), lean_raylib_MemFree);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__MemFree (/* void* */lean_obj_arg ptr, lean_obj_arg world) {
-//     MemFree(/*todo: ptr?*/ptr);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__MemRealloc (size_t size1, lean_obj_arg buf_box, size_t size) {
+    lean_pod_Buffer* buf_c = lean_pod_Buffer_unwrap(buf_box);
+    if(lean_is_exclusive(buf_box) && buf_c->free == lean_raylib_MemFree) {
+        buf_c->data = MemRealloc(buf_c->data, size);
+        return buf_box;
+    }
+    else {
+        void* data_res = MemAlloc(size);
+        memcpy(data_res, buf_c->data, size1 <= size ? size1 : size);
+        lean_dec_ref(buf_box);
+        return lean_pod_Buffer_wrap(data_res, lean_raylib_MemFree);
+    }
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__OpenURL (b_lean_obj_arg url, lean_obj_arg world) {
     OpenURL(lean_string_cstr(url));
