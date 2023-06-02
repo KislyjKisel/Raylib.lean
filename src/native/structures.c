@@ -268,7 +268,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkBv(
     b_lean_obj_arg texcoords2,
     b_lean_obj_arg normals,
     b_lean_obj_arg tangents,
-    b_lean_obj_arg colors
+    b_lean_obj_arg colors,
+    b_lean_obj_arg skinning
 ) {
     Mesh mesh = {0};
     mesh.vertexCount = vertexCount;
@@ -309,6 +310,25 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkBv(
             sizeof(unsigned char[4]) * vertexCount
         );
     }
+    if(lean_option_is_some(skinning) && mesh.normals != NULL) {
+        lean_object* skinning_val = lean_ctor_get(skinning, 0);
+        mesh.boneIds = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(skinning_val, 0))->ptr,
+            sizeof(unsigned char[4]) * vertexCount
+        );
+        mesh.boneWeights = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(skinning_val, 1))->ptr,
+            sizeof(float[4]) * vertexCount
+        );
+        mesh.animVertices = lean_raylib_rlmemdup(
+            mesh.vertices,
+            sizeof(float[3]) * vertexCount
+        );
+        mesh.animNormals = lean_raylib_rlmemdup(
+            mesh.normals,
+            sizeof(float[3]) * vertexCount
+        );
+    }
     LET_BOX(Mesh, mesh_heap, mesh);
     return lean_raylib_Mesh_to(mesh_heap);
 }
@@ -323,7 +343,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkIndexedBv(
     b_lean_obj_arg texcoords2,
     b_lean_obj_arg normals,
     b_lean_obj_arg tangents,
-    b_lean_obj_arg colors
+    b_lean_obj_arg colors,
+    b_lean_obj_arg skinning
 ) {
     Mesh mesh = {0};
     void* indices_c = lean_pod_BytesView_unwrap(indices)->ptr;
@@ -381,6 +402,25 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkIndexedBv(
             sizeof(unsigned char[4]) * vertexCount
         );
     }
+    if(lean_option_is_some(skinning) && mesh.normals != NULL) {
+        lean_object* skinning_val = lean_ctor_get(skinning, 0);
+        mesh.boneIds = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(skinning_val, 0))->ptr,
+            sizeof(unsigned char[4]) * vertexCount
+        );
+        mesh.boneWeights = lean_raylib_rlmemdup(
+            lean_pod_BytesView_unwrap(lean_ctor_get(skinning_val, 1))->ptr,
+            sizeof(float[4]) * vertexCount
+        );
+        mesh.animVertices = lean_raylib_rlmemdup(
+            mesh.vertices,
+            sizeof(float[3]) * vertexCount
+        );
+        mesh.animNormals = lean_raylib_rlmemdup(
+            mesh.normals,
+            sizeof(float[3]) * vertexCount
+        );
+    }
     LET_BOX(Mesh, mesh_heap, mesh);
     return lean_raylib_Mesh_to(mesh_heap);
 }
@@ -398,94 +438,35 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_vertices(lean_obj_arg mesh) {
     return lean_pod_BytesView_wrap((unsigned char*)vertices, mesh);
 }
 
-LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_texcoords(b_lean_obj_arg mesh) {
-    float* texcoords = lean_raylib_Mesh_from(mesh)->texcoords;
-    if(texcoords == NULL) {
-        return lean_mk_option_none();
-    }
-    else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)texcoords, mesh));
-    }
+#define LEAN_RAYLIB_MESH_VIEW_OPT(id, ty)\
+LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_##id(b_lean_obj_arg mesh) {\
+    ty * id = lean_raylib_Mesh_from(mesh)-> id;\
+    if(id == NULL) {\
+        return lean_mk_option_none();\
+    }\
+    else {\
+        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)id, mesh));\
+    }\
 }
 
-LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_texcoords2(b_lean_obj_arg mesh) {
-    float* texcoords2 = lean_raylib_Mesh_from(mesh)->texcoords2;
-    if(texcoords2 == NULL) {
-        return lean_mk_option_none();
-    }
-    else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)texcoords2, mesh));
-    }
-}
-
-LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_normals(b_lean_obj_arg mesh) {
-    float* normals = lean_raylib_Mesh_from(mesh)->normals;
-    if(normals == NULL) {
-        return lean_mk_option_none();
-    }
-    else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)normals, mesh));
-    }
-}
-
-LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_tangents(b_lean_obj_arg mesh) {
-    float* tangents = lean_raylib_Mesh_from(mesh)->tangents;
-    if(tangents == NULL) {
-        return lean_mk_option_none();
-    }
-    else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)tangents, mesh));
-    }
-}
-
-LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_colors(b_lean_obj_arg mesh) {
-    unsigned char* colors = lean_raylib_Mesh_from(mesh)->colors;
-    if(colors == NULL) {
-        return lean_mk_option_none();
-    }
-    else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)colors, mesh));
-    }
-}
-
-LEAN_EXPORT lean_obj_arg lean_raylib__Mesh_indices(b_lean_obj_arg mesh) {
-    unsigned short* indices = lean_raylib_Mesh_from(mesh)->indices;
-    if(indices == NULL) {
-        return lean_mk_option_none();
-    }
-    else {
-        return lean_mk_option_some(lean_pod_BytesView_wrap((unsigned char*)indices, mesh));
-    }
-}
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_animVertices(b_lean_obj_arg mesh) {
-//     float * result_ = lean_raylib_Mesh_from(mesh)->animVertices;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_animNormals(b_lean_obj_arg mesh) {
-//     float * result_ = lean_raylib_Mesh_from(mesh)->animNormals;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT /* unsigned char* */lean_obj_arg lean_raylib__Mesh_boneIds(b_lean_obj_arg mesh) {
-//     unsigned char * result_ = lean_raylib_Mesh_from(mesh)->boneIds;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT /* float* */lean_obj_arg lean_raylib__Mesh_boneWeights(b_lean_obj_arg mesh) {
-//     float * result_ = lean_raylib_Mesh_from(mesh)->boneWeights;
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_RAYLIB_MESH_VIEW_OPT(texcoords, float);
+LEAN_RAYLIB_MESH_VIEW_OPT(texcoords2, float);
+LEAN_RAYLIB_MESH_VIEW_OPT(normals, float);
+LEAN_RAYLIB_MESH_VIEW_OPT(tangents, float);
+LEAN_RAYLIB_MESH_VIEW_OPT(colors, unsigned char);
+LEAN_RAYLIB_MESH_VIEW_OPT(indices, unsigned short);
+LEAN_RAYLIB_MESH_VIEW_OPT(animVertices, float);
+LEAN_RAYLIB_MESH_VIEW_OPT(animNormals, float);
+LEAN_RAYLIB_MESH_VIEW_OPT(boneIds, unsigned char);
+LEAN_RAYLIB_MESH_VIEW_OPT(boneWeights, float);
 
 LEAN_EXPORT uint32_t lean_raylib__Mesh_vaoId(b_lean_obj_arg mesh) {
     return lean_raylib_Mesh_from(mesh)->vaoId;
 }
 
-// LEAN_EXPORT /* unsigned int* */lean_obj_arg lean_raylib__Mesh_vboId(b_lean_obj_arg mesh) {
-//     unsigned int * result_ = lean_raylib_Mesh_from(mesh)->vboId;
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Mesh_vboId(b_lean_obj_arg mesh, b_lean_obj_arg i) {
+    return lean_raylib_Mesh_from(mesh)->vboId[lean_usize_of_nat(i)];
+}
 
 
 // # Shader

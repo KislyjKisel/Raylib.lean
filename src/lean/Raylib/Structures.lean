@@ -315,6 +315,11 @@ opaque MeshPointed : NonemptyType
 def Mesh : Type := MeshPointed.type
 instance : Nonempty Mesh := MeshPointed.property
 
+structure Mesh.Skinning (vertexCount : UInt32) where
+  boneIds : Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
+  boneWeights : Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+
+/-- NOTE: Skinning requires normals and is ignored otherwise -/
 @[extern "lean_raylib__Mesh_mkBv"]
 opaque Mesh.mkBv
   (vertexCount : UInt32)
@@ -324,9 +329,13 @@ opaque Mesh.mkBv
   (normals : @& (Option $ Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
   (tangents : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
   (colors : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
+  (skinning : @& Option (Mesh.Skinning vertexCount))
   : Mesh
 
-/-- ∀ i j, indices[i][j] < vertexCount -/
+/--
+NOTE: If `∃ i j, indices[i][j] ≥ vertexCount` then rendering is UB; panics in debug builds.
+NOTE: Skinning requires normals and is ignored otherwise.
+-/
 @[extern "lean_raylib__Mesh_mkIndexedBv"]
 opaque Mesh.mkIndexedBv
   (vertexCount : UInt32) (triangleCount : UInt32)
@@ -337,6 +346,7 @@ opaque Mesh.mkIndexedBv
   (normals : @& (Option $ Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
   (tangents : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
   (colors : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
+  (skinning : @& Option (Mesh.Skinning vertexCount))
   : Mesh
 
 /-- Number of vertices stored in arrays -/
@@ -375,29 +385,29 @@ opaque Mesh.colors (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUS
 @[extern "lean_raylib__Mesh_indices"]
 opaque Mesh.indices (self : Mesh) : Option $ Pod.BytesView (self.triangleCount.toUSize * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16)
 
--- /-- Animated vertex positions (after bones transformations) -/
--- @[extern "lean_raylib__Mesh_animVertices"]
--- opaque Mesh.animVertices (self : @& Mesh) : Unit
+/-- Animated vertex positions (after bones transformations) -/
+@[extern "lean_raylib__Mesh_animVertices"]
+opaque Mesh.animVertices (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
--- /-- Animated normals (after bones transformations) -/
--- @[extern "lean_raylib__Mesh_animNormals"]
--- opaque Mesh.animNormals (self : @& Mesh) : Unit
+/-- Animated normals (after bones transformations) -/
+@[extern "lean_raylib__Mesh_animNormals"]
+opaque Mesh.animNormals (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
--- /-- Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
--- @[extern "lean_raylib__Mesh_boneIds"]
--- opaque Mesh.boneIds (self : @& Mesh) : Unit
+/-- Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
+@[extern "lean_raylib__Mesh_boneIds"]
+opaque Mesh.boneIds (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
 
--- /-- Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
--- @[extern "lean_raylib__Mesh_boneWeights"]
--- opaque Mesh.boneWeights (self : @& Mesh) : Unit
+/-- Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
+@[extern "lean_raylib__Mesh_boneWeights"]
+opaque Mesh.boneWeights (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- OpenGL Vertex Array Object id -/
 @[extern "lean_raylib__Mesh_vaoId"]
 opaque Mesh.vaoId (self : @& Mesh) : UInt32
 
--- /-- OpenGL Vertex Buffer Objects id (default vertex data) -/
--- @[extern "lean_raylib__Mesh_vboId"]
--- opaque Mesh.vboId (self : @& Mesh) : [u32; 7]
+/-- OpenGL Vertex Buffer Objects id (default vertex data) -/
+@[extern "lean_raylib__Mesh_vboId"]
+opaque Mesh.vboId (self : @& Mesh) (i : @& Fin 7) : UInt32
 
 
 /-! # Shader -/
@@ -819,6 +829,7 @@ structure VrStereoConfig where
   /-- VR distortion scale in -/
   scaleIn : Vector2
 deriving Inhabited, Repr
+
 
 /-! # Window handle -/
 
