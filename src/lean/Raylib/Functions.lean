@@ -420,14 +420,14 @@ Internal memory allocator.
 NOTE: Initializes to zero by default.
 -/
 @[extern "lean_raylib__MemAlloc"]
-opaque memAlloc (size : USize) : Pod.Buffer size 1
+opaque memAlloc (size : @& Nat) : Pod.Buffer size 1
 
 /--
 Internal memory reallocator.
 NOTE: Clones the buffer using `memAlloc` if it wasn't allocated using the same allocator or if it's shared.
 -/
 @[extern "lean_raylib__MemRealloc"]
-opaque memRealloc {size₁} (buf : Pod.Buffer size₁ 1) (size : USize) : Pod.Buffer size 1
+opaque memRealloc {size₁ : @& Nat} (buf : Pod.Buffer size₁ 1) (size : @& Nat) : Pod.Buffer size 1
 
 /-- Open URL with default system browser (if available) -/
 @[extern "lean_raylib__OpenURL"]
@@ -1400,15 +1400,15 @@ opaque getColor (hexValue : UInt32) : Color
 
 /-- Get Color from a source pixel pointer of certain format -/
 @[extern "lean_raylib__GetPixelColor"]
-opaque getPixelColor (format : PixelFormat) (view : @& Pod.BytesView format.bytesPerPixel.toUSize 1) : Color
+opaque getPixelColor (format : PixelFormat) (view : @& Pod.BytesView format.bytesPerPixel 1) : Color
 
 /-- Get Color from a source pixel pointer of certain format -/
 @[extern "lean_raylib__GetPixelColorST"]
-opaque getPixelColorST {σ} (format : PixelFormat) (ref : @& Pod.BytesRefImm σ format.bytesPerPixel.toUSize 1) : ST σ Color
+opaque getPixelColorST {σ} (format : PixelFormat) (ref : @& Pod.BytesRefImm σ format.bytesPerPixel 1) : ST σ Color
 
 /-- Set color formatted into destination pixel pointer -/
 @[extern "lean_raylib__SetPixelColorST"]
-opaque setPixelColorST {σ} (format : PixelFormat) (ref : @& Pod.BytesRefMut σ format.bytesPerPixel.toUSize 1) (color : Color) : ST σ Unit
+opaque setPixelColorST {σ} (format : PixelFormat) (ref : @& Pod.BytesRefMut σ format.bytesPerPixel 1) (color : Color) : ST σ Unit
 
 /-- Get pixel data size in bytes for certain format -/
 @[extern "lean_raylib__GetPixelDataSize"]

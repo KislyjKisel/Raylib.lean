@@ -316,19 +316,19 @@ def Mesh : Type := MeshPointed.type
 instance : Nonempty Mesh := MeshPointed.property
 
 structure Mesh.Skinning (vertexCount : UInt32) where
-  boneIds : Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
-  boneWeights : Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+  boneIds : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
+  boneWeights : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- NOTE: Skinning requires normals and is ignored otherwise -/
 @[extern "lean_raylib__Mesh_mkBv"]
 opaque Mesh.mkBv
   (vertexCount : UInt32)
-  (vertices : @& Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32))
-  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (normals : @& (Option $ Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (tangents : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (colors : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
+  (vertices : @& Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32))
+  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (normals : @& (Option $ Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (tangents : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (colors : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
   (skinning : @& Option (Mesh.Skinning vertexCount))
   : Mesh
 
@@ -339,13 +339,13 @@ NOTE: Skinning requires normals and is ignored otherwise.
 @[extern "lean_raylib__Mesh_mkIndexedBv"]
 opaque Mesh.mkIndexedBv
   (vertexCount : UInt32) (triangleCount : UInt32)
-  (vertices : @& Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32))
-  (indices : @& Pod.BytesView (triangleCount.toUSize * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16))
-  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (normals : @& (Option $ Pod.BytesView (vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (tangents : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (colors : @& (Option $ Pod.BytesView (vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
+  (vertices : @& Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32))
+  (indices : @& Pod.BytesView (triangleCount.toNat * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16))
+  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (normals : @& (Option $ Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (tangents : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
+  (colors : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
   (skinning : @& Option (Mesh.Skinning vertexCount))
   : Mesh
 
@@ -359,47 +359,47 @@ opaque Mesh.triangleCount (self : @& Mesh) : UInt32
 
 /-- Vertex position (XYZ - 3 components per vertex) (shader-location = 0) -/
 @[extern "lean_raylib__Mesh_vertices"]
-opaque Mesh.vertices (self : Mesh) : Pod.BytesView (self.vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.vertices (self : Mesh) : Pod.BytesView (self.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1) -/
 @[extern "lean_raylib__Mesh_texcoords"]
-opaque Mesh.texcoords (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.texcoords (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5) -/
 @[extern "lean_raylib__Mesh_texcoords2"]
-opaque Mesh.texcoords2 (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.texcoords2 (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex normals (XYZ - 3 components per vertex) (shader-location = 2) -/
 @[extern "lean_raylib__Mesh_normals"]
-opaque Mesh.normals (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.normals (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4) -/
 @[extern "lean_raylib__Mesh_tangents"]
-opaque Mesh.tangents (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.tangents (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex colors (RGBA - 4 components per vertex) (shader-location = 3) -/
 @[extern "lean_raylib__Mesh_colors"]
-opaque Mesh.colors (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
+opaque Mesh.colors (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
 
 /-- Vertex indices (in case vertex data comes indexed) -/
 @[extern "lean_raylib__Mesh_indices"]
-opaque Mesh.indices (self : Mesh) : Option $ Pod.BytesView (self.triangleCount.toUSize * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16)
+opaque Mesh.indices (self : Mesh) : Option $ Pod.BytesView (self.triangleCount.toNat * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16)
 
 /-- Animated vertex positions (after bones transformations) -/
 @[extern "lean_raylib__Mesh_animVertices"]
-opaque Mesh.animVertices (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.animVertices (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Animated normals (after bones transformations) -/
 @[extern "lean_raylib__Mesh_animNormals"]
-opaque Mesh.animNormals (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.animNormals (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
 @[extern "lean_raylib__Mesh_boneIds"]
-opaque Mesh.boneIds (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
+opaque Mesh.boneIds (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
 
 /-- Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
 @[extern "lean_raylib__Mesh_boneWeights"]
-opaque Mesh.boneWeights (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toUSize * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.boneWeights (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- OpenGL Vertex Array Object id -/
 @[extern "lean_raylib__Mesh_vaoId"]

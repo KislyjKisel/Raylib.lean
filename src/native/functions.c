@@ -703,11 +703,14 @@ static void lean_raylib_MemFree(void* p) {
     RL_FREE(p);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__MemAlloc (size_t size) {
+LEAN_EXPORT lean_obj_res lean_raylib__MemAlloc (b_lean_obj_arg size_nat) {
+    size_t size = lean_usize_of_nat(size_nat);
     return lean_pod_Buffer_wrap(MemAlloc(size), lean_raylib_MemFree);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__MemRealloc (size_t size1, lean_obj_arg buf_box, size_t size) {
+LEAN_EXPORT lean_obj_res lean_raylib__MemRealloc (b_lean_obj_arg size1_nat, lean_obj_arg buf_box, b_lean_obj_arg size_nat) {
+    size_t size1 = lean_usize_of_nat(size1_nat);
+    size_t size = lean_usize_of_nat(size_nat);
     lean_pod_Buffer* buf_c = lean_pod_Buffer_unwrap(buf_box);
     if(lean_is_exclusive(buf_box) && buf_c->free == lean_raylib_MemFree) {
         buf_c->data = MemRealloc(buf_c->data, size);
@@ -2174,11 +2177,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTextCodepoint (b_lean_obj_arg font, ui
     DrawTextCodepoint(*lean_raylib_Font_from(font), codepoint, lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_raylib_Color_from(tint));
     return lean_io_result_mk_ok(lean_box(0));
 }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawTextCodepoints (lean_obj_arg font, /* const int* */lean_obj_arg codepoints, uint32_t count, lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
-//     DrawTextCodepoints(*lean_raylib_Font_from(font), /*todo: ptr?*/codepoints, count, lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
 
 LEAN_EXPORT lean_obj_res lean_raylib__MeasureText (b_lean_obj_arg text, uint32_t fontSize, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box_uint32(MeasureText(lean_string_cstr(text), fontSize)));

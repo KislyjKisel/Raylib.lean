@@ -66,7 +66,7 @@ static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void*
         lean_raylib_SaveFileDataCallback_current,
         lean_box(0),
         lean_mk_string(fileName),
-        lean_box_usize(bytesToWrite),
+        lean_usize_to_nat(bytesToWrite),
         lean_pod_BytesRef_wrap(data),
         lean_box(0),
         lean_box(0)
@@ -163,7 +163,7 @@ static void lean_raylib_AudioStreamCallback_wrapper(ffi_cif *cif, void* ret, voi
     lean_object* res = lean_apply_5(
         callback,
         lean_box(0),
-        lean_box_usize(frames),
+        lean_usize_to_nat(frames),
         lean_pod_BytesRef_wrap(*(uint8_t**)args[0]),
         lean_box(0),
         lean_box(0)
