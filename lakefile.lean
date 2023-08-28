@@ -34,6 +34,7 @@ lean_lib Raylib
 lean_lib Raymath {
   precompileModules := true
 }
+lean_lib Raygui
 
 inductive RaylibSrc
   | System
@@ -138,6 +139,11 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
     | .Unknown name =>
       error s!"Unknown 'raylib' source: {name}"
 
+  flags := flags.append #[
+    "-I",
+    (pkg.dir / "raygui" / "src").toString
+  ]
+
   if (get_config? libffi).isSome then
     flags := flags.push "-DLEAN_RAYLIB_LIBFFI"
     match pkg.deps.find? λ dep ↦ dep.name == `libffi with
@@ -158,14 +164,6 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
 
   pure flags
 
-extern_lib «raymath-lean» (pkg : Package) := do
-  let name := nameToStaticLib "raymath-lean"
-  let flags ← bindingsCFlags pkg
-  let bindingsOFile ← buildBindingsO pkg flags "raymath"
-  buildStaticLib (pkg.libDir / name) #[
-    bindingsOFile
-  ]
-
 extern_lib «raylib-lean» (pkg : Package) := do
   let name := nameToStaticLib "raylib-lean"
   let flags ← bindingsCFlags pkg
@@ -178,6 +176,22 @@ extern_lib «raylib-lean» (pkg : Package) := do
     bindingsStructuresOFile,
     bindingsFunctionsOFile,
     bindingsCallbacksOFile
+  ]
+
+extern_lib «raymath-lean» (pkg : Package) := do
+  let name := nameToStaticLib "raymath-lean"
+  let flags ← bindingsCFlags pkg
+  let bindingsOFile ← buildBindingsO pkg flags "raymath"
+  buildStaticLib (pkg.libDir / name) #[
+    bindingsOFile
+  ]
+
+extern_lib «raygui-lean» (pkg : Package) := do
+  let name := nameToStaticLib "raygui-lean"
+  let flags ← bindingsCFlags pkg
+  let bindingsOFile ← buildBindingsO pkg flags "raygui"
+  buildStaticLib (pkg.libDir / name) #[
+    bindingsOFile
   ]
 
 script buildRL do
