@@ -1,0 +1,19 @@
+{"version": 5,
+ "packagesDir": "lake-packages",
+ "packages":
+ [{"git":
+   {"url": "https://github.com/KislyjKisel/libffi-lake",
+    "subDir?": null,
+    "rev": "0667d71ae9fc8dfe92a7c845f09ca9c75ef75c13",
+    "opts": {"disable": ""},
+    "name": "libffi",
+    "inputRev?": "master",
+    "inherited": false}},
+  {"git":
+   {"url": "https://github.com/KislyjKisel/lean-pod",
+    "subDir?": null,
+    "rev": "769ce42ab30d4657d3bad4cb15748115e42627df",
+    "opts": {},
+    "name": "pod",
+    "inputRev?": "main",
+    "inherited": false}}]}

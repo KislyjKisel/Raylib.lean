@@ -1,6 +1,8 @@
 import Pod.Float
+import Pod.ReadBytes
+import Pod.WriteBytes
 
-open Pod (Float32)
+open Pod (Float32 Storable ReadBytes WriteBytes byteSize alignment)
 
 namespace Raymath
 
@@ -17,6 +19,11 @@ structure Vector2 where
   x : Float32
   y : Float32
 deriving Inhabited, Repr
+
+instance : Storable Vector2 where
+  byteSize := 2 * byteSize Float32
+  alignment := alignment Float32
+  alignment_dvd_byteSize := by exists 2
 
 structure Vector3 where
   x : Float32
