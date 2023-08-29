@@ -15,8 +15,8 @@ def podConfig : NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require Libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "master" with libffiConfig
-require Pod from git "https://github.com/KislyjKisel/lean-pod" @ "main" with podConfig
+require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "master" with libffiConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "main" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -105,7 +105,7 @@ def buildRaylibSubmodule (printCmdOutput : Bool) : IO Unit := do
   }
   if printCmdOutput then IO.println cmakeBuildOutput
 
-def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
+def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String) := do
   let mut flags :=
     #["-I", (← getLeanIncludeDir).toString, "-fPIC"].append $
       splitArgStr $ (get_config? cflags).getD ""
@@ -164,33 +164,33 @@ def bindingsCFlags (pkg : Package) : IndexBuildM (Array String) := do
 
   pure flags
 
-extern_lib «raylib-lean» (pkg : Package) := do
+extern_lib «raylib-lean» (pkg : NPackage _package.name) := do
   let name := nameToStaticLib "raylib-lean"
   let flags ← bindingsCFlags pkg
   let bindingsEnumerationsOFile ← buildBindingsO pkg flags "enumerations"
   let bindingsStructuresOFile ← buildBindingsO pkg flags "structures"
   let bindingsFunctionsOFile ← buildBindingsO pkg flags "functions"
   let bindingsCallbacksOFile ← buildBindingsO pkg flags "callbacks"
-  buildStaticLib (pkg.libDir / name) #[
+  buildStaticLib (pkg.nativeLibDir / name) #[
     bindingsEnumerationsOFile,
     bindingsStructuresOFile,
     bindingsFunctionsOFile,
     bindingsCallbacksOFile
   ]
 
-extern_lib «raymath-lean» (pkg : Package) := do
+extern_lib «raymath-lean» (pkg : NPackage _package.name) := do
   let name := nameToStaticLib "raymath-lean"
   let flags ← bindingsCFlags pkg
   let bindingsOFile ← buildBindingsO pkg flags "raymath"
-  buildStaticLib (pkg.libDir / name) #[
+  buildStaticLib (pkg.nativeLibDir / name) #[
     bindingsOFile
   ]
 
-extern_lib «raygui-lean» (pkg : Package) := do
+extern_lib «raygui-lean» (pkg : NPackage _package.name) := do
   let name := nameToStaticLib "raygui-lean"
   let flags ← bindingsCFlags pkg
   let bindingsOFile ← buildBindingsO pkg flags "raygui"
-  buildStaticLib (pkg.libDir / name) #[
+  buildStaticLib (pkg.nativeLibDir / name) #[
     bindingsOFile
   ]
 
