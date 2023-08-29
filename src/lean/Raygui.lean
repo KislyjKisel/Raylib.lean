@@ -509,7 +509,7 @@ opaque getState : BaseIO State
 
 /-- Set gui custom font (global state) -/
 @[extern "lean_raygui__GuiSetFont"]
-opaque setFont (font : Raylib.Font) : BaseIO Unit
+opaque setFont (font : @& Raylib.Font) : BaseIO Unit
 
 /-- Get gui custom font (global state) -/
 @[extern "lean_raygui__GuiGetFont"]
@@ -593,7 +593,7 @@ opaque tabBar (bounds : @& Rectangle) (text : @& Array String) (active : UInt32)
 
 /-- Scroll Panel control. Returns new scroll, view.  -/
 @[extern "lean_raygui__GuiScrollPanel"]
-opaque scrollPanel (bounds : @& Rectangle) (text : @& String) (content : @& Rectangle) (scroll : Vector2) (view : @& Rectangle) : BaseIO (Vector2 × @& Rectangle)
+opaque scrollPanel (bounds : @& Rectangle) (text : @& String) (content : @& Rectangle) (scroll : Vector2) (view : Rectangle) : BaseIO (Vector2 × Rectangle)
 
 
 /-! ### Basic controls -/
@@ -645,7 +645,7 @@ opaque valueBox (bounds : @& Rectangle) (text : @& String) (value minValue maxVa
 
 /-- Text Box control, updates input text -/
 @[extern "lean_raygui__GuiTextBox"]
-opaque textBox (bounds : @& Rectangle) (text : String) (textSize : UInt32) (editMode : Bool) : BaseIO (Bool × String)
+opaque textBox (bounds : @& Rectangle) (text : @& String) (textSize : UInt32) (editMode : Bool) : BaseIO (Bool × String)
 
 
 /-- Slider control, returns selected value -/
@@ -654,11 +654,11 @@ opaque slider (bounds : @& Rectangle) (textLeft : @& String) (textRight : @& Str
 
 /-- Slider Bar control, returns selected value -/
 @[extern "lean_raygui__GuiSliderBar"]
-opaque sliderBar (bounds : @& Rectangle) (textLeft : @& String) (textRight : @& String) (value minValue maxValue : Float32) : BaseIO UInt32
+opaque sliderBar (bounds : @& Rectangle) (textLeft : @& String) (textRight : @& String) (value minValue maxValue : Float32) : BaseIO Float32
 
 /-- Progress Bar control, shows current progress value -/
 @[extern "lean_raygui__GuiProgressBar"]
-opaque progressBar (bounds : @& Rectangle) (textLeft : @& String) (textRight : @& String) (value minValue maxValue : Float32) : BaseIO UInt32
+opaque progressBar (bounds : @& Rectangle) (textLeft : @& String) (textRight : @& String) (value minValue maxValue : Float32) : BaseIO Float32
 
 /-- Status Bar control, shows info text -/
 @[extern "lean_raygui__GuiStatusBar"]
@@ -689,7 +689,7 @@ opaque messageBox (bounds : @& Rectangle) (title message buttons : @& String) : 
 
 /-- Text Input Box control, ask for text, supports secret -/
 @[extern "lean_raygui__GuiTextInputBox"]
-opaque textInputBox (bounds : @& Rectangle) (title message buttons : @& String) (text : String) (textMaxSize : UInt32) (secretViewActive : Bool) : BaseIO (Option UInt32 × String × Bool)
+opaque textInputBox (bounds : @& Rectangle) (title message buttons text : @& String) (textMaxSize : UInt32) (secretViewActive : Bool) : BaseIO (Option UInt32 × String × Bool)
 
 /-- Color Picker control (multiple color controls) -/
 @[extern "lean_raygui__GuiColorPicker"]
