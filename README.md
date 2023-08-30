@@ -1,6 +1,6 @@
 # Raylib.lean
 
-Partial [raylib](https://github.com/raysan5/raylib) `4.5.0` bindings for Lean4.
+Partial Lean4 bindings to [raylib](https://github.com/raysan5/raylib) `4.5.0`, including Raymath and Raygui.
 
 ## Not implemented
 
@@ -12,7 +12,7 @@ Partial [raylib](https://github.com/raysan5/raylib) `4.5.0` bindings for Lean4.
 
 Add this to `lakefile.lean`:
 ```
-require Raylib from git
+require raylib from git
   "https://github.com/KislyjKisel/Raylib.lean.git" @ "main"
 ```
 
