@@ -13,7 +13,12 @@ Partial Lean4 bindings to [raylib](https://github.com/raysan5/raylib) `4.5.0`, i
 Add this to `lakefile.lean`:
 ```
 require raylib from git
-  "https://github.com/KislyjKisel/Raylib.lean.git" @ "main"
+  "https://github.com/KislyjKisel/Raylib.lean" @ "main"
+```
+
+To the `lean_exe` target add:
+```
+moreLinkArgs := #["-Llake-packages/raylib/raylib/build/raylib", "-lraylib"]
 ```
 
 Then run `lake update`.
