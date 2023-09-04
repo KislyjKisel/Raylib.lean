@@ -1,7 +1,10 @@
 import Pod.UInt
+import Pod.Int
 import Pod.Float
 import Raymath.Core
 import Raylib.Util
+
+open Pod (Int32)
 
 namespace Raylib
 

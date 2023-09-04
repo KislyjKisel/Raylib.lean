@@ -3,7 +3,7 @@ import Raymath.Core
 import Raylib.Enumerations
 import Raylib.Util.RangeMap
 
-open Pod (Float32)
+open Pod (Float32 Int32)
 open Raymath (Vector2 Vector3 Vector4 Matrix Quaternion)
 
 namespace Raylib

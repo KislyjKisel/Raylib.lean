@@ -7,7 +7,7 @@ import Raylib.Enumerations
 import Raylib.Structures
 import Raylib.Util
 
-open Pod (Float32)
+open Pod (Float32 Int32)
 open Raymath (Vector2 Vector3 Vector4 Matrix)
 
 namespace Raylib
