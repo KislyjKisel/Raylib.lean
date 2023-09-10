@@ -86,7 +86,7 @@ LEAN_EXPORT lean_obj_res lean_raygui__GuiSetTooltip(b_lean_obj_arg tooltip, lean
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raygui__GuiIconText(uint32_t iconId, b_lean_obj_arg text, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raygui__GuiIconText(uint8_t iconId, b_lean_obj_arg text, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_mk_string(GuiIconText(iconId, lean_string_cstr(text))));
 }
 
@@ -100,7 +100,7 @@ LEAN_EXPORT lean_obj_res lean_raygui__GuiLoadIcons(b_lean_obj_arg fileName, lean
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raygui__GuiDrawIcon(uint32_t iconId, uint32_t posX, uint32_t posY, uint32_t pixelSize, uint32_t color, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raygui__GuiDrawIcon(uint8_t iconId, uint32_t posX, uint32_t posY, uint32_t pixelSize, uint32_t color, lean_obj_arg world) {
     GuiDrawIcon(iconId, posX, posY, pixelSize, lean_raylib_Color_from(color));
     return lean_io_result_mk_ok(lean_box(0));
 }
