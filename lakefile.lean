@@ -64,10 +64,10 @@ lean_exe test {
     pure args
 }
 
-def buildBindingsO (pkg : Package) (flags : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
+def buildBindingsO (pkg : Package) (weakArgs traceArgs : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
   let oFile := pkg.irDir / "native" / (stem ++ ".o")
   let srcJob ← inputFile <| pkg.dir / "src" / "native" / (stem ++ ".c")
-  buildO (stem ++ ".c") oFile srcJob flags ((get_config? cc).getD (← getLeanCc).toString)
+  buildO (stem ++ ".c") oFile srcJob weakArgs traceArgs ((get_config? cc).getD (← getLeanCc).toString)
 
 def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m String := do
   let output ← IO.Process.output sa
@@ -105,15 +105,14 @@ def buildRaylibSubmodule (printCmdOutput : Bool) : IO Unit := do
   }
   if printCmdOutput then IO.println cmakeBuildOutput
 
-def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String) := do
-  let mut flags :=
-    #["-I", (← getLeanIncludeDir).toString, "-fPIC"].append $
-      splitArgStr $ (get_config? cflags).getD ""
+def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String × Array String) := do
+  let mut weakArgs := #["-I", (← getLeanIncludeDir).toString]
+  let mut traceArgs := #["-fPIC"].append $ splitArgStr $ (get_config? cflags).getD ""
 
   match pkg.deps.find? λ dep ↦ dep.name == `pod with
     | none => error "Missing dependency 'Pod'"
     | some pod =>
-      flags := flags ++ #[
+      weakArgs := weakArgs ++ #[
         "-I",
         (pod.dir / "src" / "native" / "include").toString
       ]
@@ -122,14 +121,14 @@ def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String) :
 
   match raylibSrc with
     | .System =>
-      flags := flags.push $ ← tryRunProcess {
+      traceArgs := traceArgs.push $ ← tryRunProcess {
         cmd := "pkg-config"
         args := #["--cflags", "raylib"]
       }
 
     | .Submodule => do
       buildRaylibSubmodule printCmdOutput
-      flags := flags.append #[
+      traceArgs := traceArgs.append #[
         "-I",
         (pkg.dir / "raylib" / "build" / "raylib" / "include").toString
       ]
@@ -139,38 +138,33 @@ def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String) :
     | .Unknown name =>
       error s!"Unknown 'raylib' source: {name}"
 
-  flags := flags.append #[
-    "-I",
-    (pkg.dir / "raygui" / "src").toString
-  ]
-
   if (get_config? libffi).isSome then
-    flags := flags.push "-DLEAN_RAYLIB_LIBFFI"
+    traceArgs := traceArgs.push "-DLEAN_RAYLIB_LIBFFI"
     match pkg.deps.find? λ dep ↦ dep.name == `libffi with
     | none => error "Missing dependency 'Libffi'"
     | some dep =>
-      flags := flags ++ #[
+      weakArgs := weakArgs ++ #[
         "-I",
         (dep.dir / "include").toString
       ]
 
   match get_config? alloc with
   | .none | .some "lean" => pure ()
-  | .some "native" => flags := flags.push "-DLEAN_RAYLIB_ALLOC_NATIVE"
+  | .some "native" => traceArgs := traceArgs.push "-DLEAN_RAYLIB_ALLOC_NATIVE"
   | .some _ => error "Unknown `alloc` option value"
 
   if (get_config? cc).isNone then
-    flags := flags ++ #["-I", ((← getLeanIncludeDir) / "clang").toString]
+    weakArgs := weakArgs ++ #["-I", ((← getLeanIncludeDir) / "clang").toString]
 
-  pure flags
+  pure (weakArgs, traceArgs)
 
 extern_lib «raylib-lean» (pkg : NPackage _package.name) := do
   let name := nameToStaticLib "raylib-lean"
-  let flags ← bindingsCFlags pkg
-  let bindingsEnumerationsOFile ← buildBindingsO pkg flags "enumerations"
-  let bindingsStructuresOFile ← buildBindingsO pkg flags "structures"
-  let bindingsFunctionsOFile ← buildBindingsO pkg flags "functions"
-  let bindingsCallbacksOFile ← buildBindingsO pkg flags "callbacks"
+  let (weakArgs, traceArgs) ← bindingsCFlags pkg
+  let bindingsEnumerationsOFile ← buildBindingsO pkg weakArgs traceArgs "enumerations"
+  let bindingsStructuresOFile ← buildBindingsO pkg weakArgs traceArgs "structures"
+  let bindingsFunctionsOFile ← buildBindingsO pkg weakArgs traceArgs "functions"
+  let bindingsCallbacksOFile ← buildBindingsO pkg weakArgs traceArgs "callbacks"
   buildStaticLib (pkg.nativeLibDir / name) #[
     bindingsEnumerationsOFile,
     bindingsStructuresOFile,
@@ -180,16 +174,20 @@ extern_lib «raylib-lean» (pkg : NPackage _package.name) := do
 
 extern_lib «raymath-lean» (pkg : NPackage _package.name) := do
   let name := nameToStaticLib "raymath-lean"
-  let flags ← bindingsCFlags pkg
-  let bindingsOFile ← buildBindingsO pkg flags "raymath"
+  let (weakArgs, traceArgs) ← bindingsCFlags pkg
+  let bindingsOFile ← buildBindingsO pkg weakArgs traceArgs "raymath"
   buildStaticLib (pkg.nativeLibDir / name) #[
     bindingsOFile
   ]
 
 extern_lib «raygui-lean» (pkg : NPackage _package.name) := do
   let name := nameToStaticLib "raygui-lean"
-  let flags ← bindingsCFlags pkg
-  let bindingsOFile ← buildBindingsO pkg flags "raygui"
+  let (weakArgs, traceArgs) ← bindingsCFlags pkg
+  let weakArgs := weakArgs.append #[
+    "-I",
+    (pkg.dir / "raygui" / "src").toString
+  ]
+  let bindingsOFile ← buildBindingsO pkg weakArgs traceArgs "raygui"
   buildStaticLib (pkg.nativeLibDir / name) #[
     bindingsOFile
   ]

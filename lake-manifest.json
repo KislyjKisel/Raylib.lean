@@ -1,4 +1,4 @@
-{"version": 5,
+{"version": 6,
  "packagesDir": "lake-packages",
  "packages":
  [{"git":
@@ -12,8 +12,9 @@
   {"git":
    {"url": "https://github.com/KislyjKisel/lean-pod",
     "subDir?": null,
-    "rev": "05dd8e86524bf28e5f78c80adf62c76e1ab3c7e5",
+    "rev": "c1bcf9277cf62fe91a2d77ee405791726f63d348",
     "opts": {},
     "name": "pod",
     "inputRev?": "main",
-    "inherited": false}}]}
+    "inherited": false}}],
+ "name": "raylib"}
