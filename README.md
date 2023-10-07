@@ -42,9 +42,11 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
   `"lean"` (default) means using the allocator Lean uses.
   `"native"` to use `malloc` and `free` instead.
 
+There are also [options to customize raylib build](options.md).
+
 ### Scripts
 
-* `buildRL`: build only raylib submodule, useful for updating headers when changing C code.
+* `buildSubmodule`: (re)build raylib submodule.
 
 ## Example
 
