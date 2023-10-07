@@ -96,6 +96,16 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
     "-DWITH_PIC=ON",
     "-DBUILD_EXAMPLES=OFF"
   ]
+  if let some extGlfw := get_config? externalGlfw then
+    let values := #["OFF", "ON", "IF_POSSIBLE"]
+    if values.contains extGlfw
+      then cmakeBuildArgs := cmakeBuildArgs.push s!"-DUSE_EXTERNAL_GLFW={extGlfw}"
+      else error s!"Invalid config option value: externalGlfw={extGlfw}; expected one of {values}"
+  if let some platform := get_config? platform then
+    let platforms := #["Desktop", "Web", "Android", "Rapberry Pi"]
+    if platforms.contains platform
+      then cmakeBuildArgs := cmakeBuildArgs.push s!"\"-DPLATFORM={platform}\""
+      else error s!"Invalid config option value: platform={platform}; expected one of {platforms}"
   if let some oglVer := get_config? opengl then
     let oglVers := #["OFF", "4.3", "3.3", "2.1", "1.1", "ES 2.0"]
     if oglVers.contains oglVer

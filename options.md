@@ -7,6 +7,8 @@ To do this run lake script `buildSubmodule`.
 
 | **Config Key**     | **CMake Option**             |
 |:------------------:|:----------------------------:|
+| `externalGlfw`     | `USE_EXTERNAL_GLFW`          |
+| `platform`         | `PLATFORM`                   |
 | `opengl`           | `OPENGL_VERSION`             |
 | `wayland`          | `USE_WAYLAND`                |
 | `macosFatlib`      | `MACOS_FATLIB`               |
