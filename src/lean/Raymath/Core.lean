@@ -1,8 +1,6 @@
 import Pod.Float
-import Pod.ReadBytes
-import Pod.WriteBytes
 
-open Pod (Float32 Storable ReadBytes WriteBytes byteSize alignment)
+open Pod (Float32 Storable)
 
 namespace Raymath
 
@@ -21,8 +19,8 @@ structure Vector2 where
 deriving Inhabited, Repr
 
 instance : Storable Vector2 where
-  byteSize := 2 * byteSize Float32
-  alignment := alignment Float32
+  byteSize := 2 * Storable.byteSize Float32
+  alignment := Storable.alignment Float32
   alignment_dvd_byteSize := by exists 2
 
 structure Vector3 where
@@ -30,6 +28,11 @@ structure Vector3 where
   y : Float32
   z : Float32
 deriving Inhabited, Repr
+
+instance : Storable Vector3 where
+  byteSize := 3 * Storable.byteSize Float32
+  alignment := Storable.alignment Float32
+  alignment_dvd_byteSize := by exists 3
 
 structure Vector4 where
   x : Float32
@@ -40,6 +43,11 @@ deriving Inhabited, Repr
 
 /-- Quaternion, 4 components (Vector4 alias) -/
 abbrev Quaternion := Vector4
+
+instance : Storable Vector4 where
+  byteSize := 4 * Storable.byteSize Float32
+  alignment := Storable.alignment Float32
+  alignment_dvd_byteSize := by exists 4
 
 /--
 Matrix type (OpenGL style 4x4 - right handed, column major).
@@ -81,5 +89,10 @@ structure Matrix where
   m11 : Float32
   m15 : Float32
 deriving Inhabited, Repr
+
+instance : Storable Matrix where
+  byteSize := 16 * Storable.byteSize Float32
+  alignment := Storable.alignment Float32
+  alignment_dvd_byteSize := by exists 16
 
 end Raymath

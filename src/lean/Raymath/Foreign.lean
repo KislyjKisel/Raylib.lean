@@ -1,4 +1,5 @@
 import Pod.Float
+import Pod.Instances
 import Raymath.Core
 
 open Pod (Float32)
@@ -10,6 +11,11 @@ abbrev Vector3 : Type := Raymath.Vector3
 abbrev Vector4 : Type := Raymath.Vector4
 abbrev Matrix : Type := Raymath.Matrix
 abbrev Quaternion : Type := Raymath.Quaternion
+
+#pod_c_rwbytes_instance Raymath.Vector2
+#pod_c_rwbytes_instance Raymath.Vector3
+#pod_c_rwbytes_instance Raymath.Vector4
+#pod_c_rwbytes_instance Raymath.Matrix
 
 namespace Vector3
 

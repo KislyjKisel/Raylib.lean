@@ -3,6 +3,11 @@
 #include <lean_pod.h>
 #include "include/raymath_lean.h"
 
+LEAN_POD_RWBYTES_INST(Raymath_Vector2, Vector2, lean_object*, lean_raylib_Vector2_to, lean_raylib_Vector2_to, lean_raylib_Vector2_from)
+LEAN_POD_RWBYTES_INST(Raymath_Vector3, Vector3, lean_object*, lean_raylib_Vector3_to, lean_raylib_Vector3_to, lean_raylib_Vector3_from)
+LEAN_POD_RWBYTES_INST(Raymath_Vector4, Vector4, lean_object*, lean_raylib_Vector4_to, lean_raylib_Vector4_to, lean_raylib_Vector4_from)
+LEAN_POD_RWBYTES_INST(Raymath_Matrix, Matrix, lean_object*, lean_raylib_Matrix_to, lean_raylib_Matrix_to, lean_raylib_Matrix_from)
+
 LEAN_EXPORT uint32_t lean_raymath_Vector_uget(b_lean_obj_arg v, size_t i) {
     return lean_unbox_uint32(lean_ctor_get(v, i));
 }
