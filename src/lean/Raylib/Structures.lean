@@ -316,19 +316,19 @@ def Mesh : Type := MeshPointed.type
 instance : Nonempty Mesh := MeshPointed.property
 
 structure Mesh.Skinning (vertexCount : UInt32) where
-  boneIds : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
-  boneWeights : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+  boneIds : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) 1
+  boneWeights : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) 1
 
 /-- NOTE: Skinning requires normals and is ignored otherwise -/
 @[extern "lean_raylib__Mesh_mkBv"]
 opaque Mesh.mkBv
   (vertexCount : UInt32)
-  (vertices : @& Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32))
-  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (normals : @& (Option $ Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (tangents : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (colors : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
+  (vertices : @& Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) 1)
+  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) 1))
+  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) 1))
+  (normals : @& (Option $ Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) 1))
+  (tangents : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) 1))
+  (colors : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) 1))
   (skinning : @& Option (Mesh.Skinning vertexCount))
   : Mesh
 
@@ -339,13 +339,13 @@ NOTE: Skinning requires normals and is ignored otherwise.
 @[extern "lean_raylib__Mesh_mkIndexedBv"]
 opaque Mesh.mkIndexedBv
   (vertexCount : UInt32) (triangleCount : UInt32)
-  (vertices : @& Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32))
-  (indices : @& Pod.BytesView (triangleCount.toNat * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16))
-  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (normals : @& (Option $ Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (tangents : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)))
-  (colors : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)))
+  (vertices : @& Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) 1)
+  (indices : @& Pod.BytesView (triangleCount.toNat * 3 * Pod.byteSize UInt16) 1)
+  (texcoords : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) 1))
+  (texcoords2 : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) 1))
+  (normals : @& (Option $ Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) 1))
+  (tangents : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) 1))
+  (colors : @& (Option $ Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) 1))
   (skinning : @& Option (Mesh.Skinning vertexCount))
   : Mesh
 
