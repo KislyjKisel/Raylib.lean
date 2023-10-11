@@ -1596,33 +1596,37 @@ opaque drawRay (ray : @& Ray) (color : Color) : BaseIO Unit
 @[extern "lean_raylib__DrawGrid"]
 opaque drawGrid (slices : UInt32) (spacing : Float32) : BaseIO Unit
 
--- /-- Load model from files (meshes and materials) -/
--- @[extern "lean_raylib__LoadModel"]
--- opaque loadModel (fileName : String) : Model
--- /-- Load model from generated mesh (default material) -/
--- @[extern "lean_raylib__LoadModelFromMesh"]
--- opaque loadModelFromMesh (mesh : Mesh) : Model
--- /-- Check if a model is ready -/
--- @[extern "lean_raylib__IsModelReady"]
--- opaque isModelReady (model : Model) : Bool
--- /-- Unload model (including meshes) from memory (RAM and/or VRAM) -/
--- @[extern "lean_raylib__UnloadModel"]
--- opaque unloadModel (model : Model) : Unit
--- /-- Compute model bounding box limits (considers all meshes) -/
--- @[extern "lean_raylib__GetModelBoundingBox"]
--- opaque getModelBoundingBox (model : Model) : BoundingBox
--- /-- Draw a model (with texture if set) -/
--- @[extern "lean_raylib__DrawModel"]
--- opaque drawModel (model : Model) (position : Vector3) (scale : Float32) (tint : Color) : Unit
--- /-- Draw a model with extended parameters -/
--- @[extern "lean_raylib__DrawModelEx"]
--- opaque drawModelEx (model : Model) (position : Vector3) (rotationAxis : Vector3) (rotationAngle : Float32) (scale : Vector3) (tint : Color) : Unit
--- /-- Draw a model wires (with texture if set) -/
--- @[extern "lean_raylib__DrawModelWires"]
--- opaque drawModelWires (model : Model) (position : Vector3) (scale : Float32) (tint : Color) : Unit
--- /-- Draw a model wires (with texture if set) with extended parameters -/
--- @[extern "lean_raylib__DrawModelWiresEx"]
--- opaque drawModelWiresEx (model : Model) (position : Vector3) (rotationAxis : Vector3) (rotationAngle : Float32) (scale : Vector3) (tint : Color) : Unit
+/-- Load model from files (meshes and materials) -/
+@[extern "lean_raylib__LoadModel"]
+opaque loadModel (fileName : @& String) : BaseIO Model
+
+/-- Load model from generated mesh (default material) -/
+@[extern "lean_raylib__LoadModelFromMesh"]
+opaque loadModelFromMesh (mesh : Mesh) : Model
+
+/-- Check if a model is ready -/
+@[extern "lean_raylib__IsModelReady"]
+opaque isModelReady (model : @& Model) : Bool
+
+/-- Compute model bounding box limits (considers all meshes) -/
+@[extern "lean_raylib__GetModelBoundingBox"]
+opaque getModelBoundingBox (model : @& Model) : BoundingBox
+
+/-- Draw a model (with texture if set) -/
+@[extern "lean_raylib__DrawModel"]
+opaque drawModel (model : @& Model) (position : @& Vector3) (scale : Float32) (tint : Color) : BaseIO Unit
+
+/-- Draw a model with extended parameters -/
+@[extern "lean_raylib__DrawModelEx"]
+opaque drawModelEx (model : @& Model) (position : @& Vector3) (rotationAxis : @& Vector3) (rotationAngle : Float32) (scale : @& Vector3) (tint : Color) : BaseIO Unit
+
+/-- Draw a model wires (with texture if set) -/
+@[extern "lean_raylib__DrawModelWires"]
+opaque drawModelWires (model : @& Model) (position : @& Vector3) (scale : Float32) (tint : Color) : BaseIO Unit
+
+/-- Draw a model wires (with texture if set) with extended parameters -/
+@[extern "lean_raylib__DrawModelWiresEx"]
+opaque drawModelWiresEx (model : @& Model) (position : @& Vector3) (rotationAxis : @& Vector3) (rotationAngle : Float32) (scale : @& Vector3) (tint : Color) : BaseIO Unit
 
 /-- Draw bounding box (wires) -/
 @[extern "lean_raylib__DrawBoundingBox"]
@@ -1640,7 +1644,7 @@ opaque drawBillboardRec (camera : @& Camera) (texture : @& Texture2DRef) (source
 @[extern "lean_raylib__DrawBillboardPro"]
 opaque drawBillboardPro (camera : @& Camera) (texture : @& Texture2DRef) (source : @& Rectangle) (position : @& Vector3) (up : @& Vector3) (size : @& Vector2) (origin : @& Vector2) (rotation : Float32) (tint : Color) : BaseIO Unit
 
-/-- Create a mesh duplicate. Doesn't upload its data to GPU. Panics when the passed mesh is animated. -/
+/-- Create a mesh duplicate. Doesn't upload its data to GPU. -/
 @[extern "lean_raylib__MeshCopy"]
 opaque meshCopy (mesh : @& Mesh) : Mesh
 
@@ -1743,49 +1747,9 @@ opaque genMeshCubicmap (cubicmap : @& Image) (cubeSize : @& Vector3) : Mesh
 --   | materialCount : int *
 -- -/
 
-/-- Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps) -/
-def loadMaterialDefault : Material where
-  shader := Shader.default
-  maps := .ofFn λ
-    | .diffuse => {
-      texture := Texture.default,
-      color := .fromRgba 255 255 255 255,
-      value := 0
-    }
-    | .specular => {
-      texture := Texture.empty,
-      color := .fromRgba 255 255 255 255,
-      value := 0
-    }
-    | _ => .empty
-  param0 := 0
-  param1 := 0
-  param2 := 0
-  param3 := 0
-
 /-- Check if a material is ready -/
 def isMaterialReady (material : Material) : Bool := isShaderReady material.shader
 
--- /-- Set texture for a material map type (MATERIAL_MAP_DIFFUSE, MATERIAL_MAP_SPECULAR...) -/
--- @[extern "lean_raylib__SetMaterialTexture"]
--- opaque setMaterialTexture : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | material : Material *
---   | mapType : int
---   | texture : Texture2D
--- -/
--- /-- Set material for a mesh -/
--- @[extern "lean_raylib__SetModelMeshMaterial"]
--- opaque setModelMeshMaterial : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | model : Model *
---   | meshId : int
---   | materialId : int
--- -/
 -- /-- Load model animations from file -/
 -- @[extern "lean_raylib__LoadModelAnimations"]
 -- opaque loadModelAnimations : Unit -> Unit

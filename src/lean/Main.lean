@@ -11,6 +11,12 @@ def windowHeight : UInt32 := 600
 def mouseSensitivity : Float32 := 1 / 200
 def moveSpeed : Float32 := 0.15
 
+inductive TestModel where
+| cube (m : Mesh)
+| model (m : Model)
+
+set_option compiler.extract_closed false
+
 def main : IO Unit := do
   setConfigFlags .vsyncHint
   initWindow windowWidth windowHeight "Hello, Raylib-Lean"
@@ -30,6 +36,53 @@ def main : IO Unit := do
   setMousePosition (Int32.mk (windowWidth / 2)) (Int32.mk (windowHeight / 2))
   let mut lastMousePosition ← getMousePosition
 
+  let shader ← loadShaderFromMemory
+    (some "
+      #version 330
+      uniform mat4 mvp;
+      uniform mat4 matNormal;
+      in vec3 vertexPosition;
+      in vec3 vertexNormal;
+      in vec4 vertexColor;
+      out vec3 fragNormal;
+      out vec4 fragColor;
+      void main(){
+        fragColor = vertexColor;
+        fragNormal = normalize((matNormal * vec4(vertexNormal, 1.0)).xyz);
+        gl_Position = mvp * vec4(vertexPosition, 1.0);
+      }
+    ")
+    (some "
+      #version 330
+      uniform vec4 colDiffuse;
+      in vec4 fragColor;
+      in vec3 fragNormal;
+      out vec4 finalColor;
+      void main() {
+        finalColor = fragColor * colDiffuse * max(dot(normalize(fragNormal), normalize(vec3(1, 1, -1))), 0.5);
+      }
+    ")
+
+  let material : Material := {
+    shader
+    maps := .ofFn λ m ↦
+      match m with
+      | .diffuse => {
+        texture := .default
+      }
+      | _ => .empty
+  }
+  let modelPath : System.FilePath := "teapot.obj"
+  let model ← if ← modelPath.pathExists
+    then do
+      let model ← loadModel modelPath.toString
+      let model := if h: 0 < model.materialCount
+        then model.setMaterial 0 material h
+        else model
+      pure $ TestModel.model model
+    else
+      pure $ .cube $ genMeshCube 1.0 1.0 1.0
+
   repeat do
     beginDrawing
     clearBackground .raywhite
@@ -37,7 +90,12 @@ def main : IO Unit := do
     let _ ← Raygui.button {x := 100, y := 10, width := 100, height := 50} "Click me"
     beginMode3D cam3d
 
-    drawCube (Vector3.mk 0 0 5) 3 3 3 .red
+    let modelPos := Vector3.mk 0 0 5
+    match model with
+    | .model m =>
+      drawModel m modelPos 1.0 .maroon
+    | .cube m =>
+      drawMesh m material Matrix.identity
 
     endMode3D
     endDrawing

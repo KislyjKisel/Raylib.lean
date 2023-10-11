@@ -3,6 +3,77 @@
 #include <rlgl.h>
 #include "structures.h"
 
+lean_object* lean_raylib_Image_empty;
+lean_object* lean_raylib_Texture_default;
+lean_object* lean_raylib_Texture_empty;
+lean_object* lean_raylib_Shader_default;
+lean_object* lean_raylib_Material_default;
+
+LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
+    {
+        LET_BOX_STRUCT(Image, emptyImage,
+            .data = NULL,
+            .width = 0,
+            .height = 0,
+            .mipmaps = 1,
+            .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
+        );
+        lean_raylib_Image_empty = lean_raylib_Image_to(emptyImage);
+        lean_mark_persistent(lean_raylib_Image_empty);
+    }
+    {
+        LET_BOX_STRUCT(Texture, defaultTexture,
+            .id = rlGetTextureIdDefault(),
+            .width = 1,
+            .height = 1,
+            .mipmaps = 1,
+            .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
+        );
+        lean_raylib_Texture_default = lean_raylib_Texture_to(defaultTexture);
+        lean_mark_persistent(lean_raylib_Texture_default);
+    }
+    {
+        LET_BOX(Texture, emptyTexture, (Texture){0});
+        lean_raylib_Texture_empty = lean_raylib_Texture_to(emptyTexture);
+        lean_mark_persistent(lean_raylib_Texture_empty);
+    }
+    {
+        LET_BOX_STRUCT(Shader, defaultShader,
+            .id = rlGetShaderIdDefault(),
+            .locs = rlGetShaderLocsDefault()
+        );
+        lean_raylib_Shader_default = lean_raylib_Shader_to(defaultShader);
+        lean_mark_persistent(lean_raylib_Shader_default);
+    }
+    {
+        lean_object* mmaps = lean_alloc_array(LEAN_RAYLIB_MAX_MATERIAL_MAPS, LEAN_RAYLIB_MAX_MATERIAL_MAPS);
+        lean_array_set_core(
+            mmaps,
+            MATERIAL_MAP_DIFFUSE, // 0
+            lean_raylib_MaterialMap_to(lean_raylib_Texture_default, WHITE, 0.0f)
+        );
+        lean_array_set_core(
+            mmaps,
+            MATERIAL_MAP_SPECULAR, // 1
+            lean_raylib_MaterialMap_to(lean_raylib_Texture_empty, WHITE, 0.0f)
+        );
+        for (size_t i = 2; i < LEAN_RAYLIB_MAX_MATERIAL_MAPS; ++i) {
+            lean_array_set_core(
+                mmaps,
+                i,
+                lean_raylib_MaterialMap_to(lean_raylib_Texture_empty, BLANK, 0.0f)
+            );
+        }
+        lean_raylib_Material_default = lean_raylib_Material_to(
+            lean_raylib_Shader_default,
+            mmaps,
+            (Vector4) { .x = 0, .y = 0, .z = 0, .w = 0 }
+        );
+        lean_mark_persistent(lean_raylib_Material_default);
+    }
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
 // # VaList
 
 LEAN_EXPORT lean_obj_res lean_raylib__VaList_next(b_lean_obj_arg vl, uint8_t typ, lean_obj_arg token) {
@@ -32,17 +103,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__VaList_next(b_lean_obj_arg vl, uint8_t typ
 
 // # Image
 
-LEAN_EXPORT lean_obj_res lean_raylib__Image_default(lean_obj_arg unit) {
-    LET_BOX_STRUCT(Image, image,
-        .data = NULL,
-        .width = 0,
-        .height = 0,
-        .mipmaps = 1,
-        .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
-    );
-    return lean_raylib_Image_to(image);
-}
-
 LEAN_EXPORT uint32_t lean_raylib__Image_width(b_lean_obj_arg obj) {
     return lean_raylib_Image_from(obj)->width;
 }
@@ -57,6 +117,10 @@ LEAN_EXPORT uint32_t lean_raylib__Image_mipmaps(b_lean_obj_arg obj) {
 
 LEAN_EXPORT uint32_t lean_raylib__Image_format(b_lean_obj_arg obj) {
     return lean_raylib_Image_from(obj)->format;
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__Image_getEmpty(lean_obj_arg unit) {
+    return lean_raylib_Image_empty;
 }
 
 
@@ -89,20 +153,13 @@ LEAN_EXPORT uint32_t lean_raylib__TextureRef_format(b_lean_obj_arg obj) {
     return lean_raylib_TextureRef_from(obj)->texture.format;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Texture_getEmpty() {
-    LET_BOX(Texture, texture, (Texture){0});
-    return lean_raylib_Texture_to(texture);
+LEAN_EXPORT lean_obj_res lean_raylib__Texture_getEmpty(lean_obj_arg unit) {
+    return lean_raylib_Texture_empty;
+
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Texture_getDefault() {
-    LET_BOX_STRUCT(Texture, texture,
-        .id = rlGetTextureIdDefault(),
-        .width = 1,
-        .height = 1,
-        .mipmaps = 1,
-        .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
-    );
-    return lean_raylib_Texture_to(texture);
+LEAN_EXPORT lean_obj_res lean_raylib__Texture_getDefault(lean_obj_arg unit) {
+    return lean_raylib_Texture_default;
 }
 
 
@@ -502,129 +559,118 @@ LEAN_EXPORT lean_obj_res lean_raylib__Shader_defaultLoc(b_lean_obj_arg shader, u
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg unit) {
-    LET_BOX_STRUCT(Shader, shader,
-        .id = rlGetShaderIdDefault(),
-        .locs = rlGetShaderLocsDefault()
-    );
-    return lean_raylib_Shader_to(shader);
+    return lean_raylib_Shader_default;
+}
+
+
+// # Material
+
+LEAN_EXPORT lean_obj_res lean_raylib__Material_getDefault(lean_obj_arg unit) {
+    return lean_raylib_Material_default;
 }
 
 
 // # Model
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_mk(lean_obj_arg transform, uint32_t meshCount, uint32_t materialCount, /* Mesh* */lean_obj_arg meshes, /* Material* */lean_obj_arg materials, /* int* */lean_obj_arg meshMaterial, uint32_t boneCount, /* BoneInfo* */lean_obj_arg bones, /* Transform* */lean_obj_arg bindPose) {
-//     LET_BOX_STRUCT(Model, result_,
-//         .transform = lean_raylib_Matrix_from(transform),
-//         .meshCount = meshCount,
-//         .materialCount = materialCount,
-//         .meshes = /*todo: ptr?*/meshes,
-//         .materials = /*todo: ptr?*/materials,
-//         .meshMaterial = /*todo: ptr?*/meshMaterial,
-//         .boneCount = boneCount,
-//         .bones = /*todo: ptr?*/bones,
-//         .bindPose = /*todo: ptr?*/bindPose
-//     );
-//     return lean_raylib_Model_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Model_mk(
+    b_lean_obj_arg transform, lean_obj_arg materials, lean_obj_arg meshes,
+    b_lean_obj_arg bones, b_lean_obj_arg bindPose
+) {
+    lean_raylib_Model lmodel;
+    lmodel.materials = materials;
+    lmodel.meshes = meshes;
+    lmodel.model.transform = lean_raylib_Matrix_from(transform);
+    lmodel.model.meshCount = lean_array_size(meshes);
+    lmodel.model.materialCount = lean_array_size(materials);
+    lmodel.model.meshes = RL_MALLOC(lmodel.model.meshCount * sizeof(Mesh));
+    lmodel.model.meshMaterial = RL_MALLOC(lmodel.model.meshCount * sizeof(int));
+    for (size_t i = 0; i < lmodel.model.meshCount; ++i) {
+        lean_object* meshXmatIdx = lean_array_get_core(meshes, i);
+        lmodel.model.meshes[i] = *lean_raylib_Mesh_from(lean_ctor_get(meshXmatIdx, 0));
+        lmodel.model.meshMaterial[i] = lean_usize_of_nat(lean_ctor_get(meshXmatIdx, 1));
+    }
+    lmodel.model.materials = RL_MALLOC(lmodel.model.materialCount * sizeof(Material));
+    for (size_t i = 0; i < lmodel.model.materialCount; ++i) {
+        lmodel.model.materials[i] = lean_raylib_Material_from(
+            lean_array_get_core(meshes, i),
+            RL_MALLOC(LEAN_RAYLIB_MAX_MATERIAL_MAPS)
+        );
+    }
+    lmodel.model.boneCount = lean_array_size(bones);
+    lmodel.model.bones = RL_MALLOC(lmodel.model.boneCount * sizeof(BoneInfo));
+    lmodel.model.bindPose = RL_MALLOC(lmodel.model.boneCount * sizeof(Transform));
+    for (size_t i = 0; i < lmodel.model.boneCount; ++i) {
+        lmodel.model.bones[i] = lean_raylib_BoneInfo_from(
+            lean_array_get_core(bones, i)
+        );
+        lmodel.model.bindPose[i] = lean_raylib_Transform_from(
+            lean_array_get_core(bindPose, i)
+        );
+    }
+    return lean_raylib_Model_to(lmodel);
+}
 
-// LEAN_EXPORT lean_obj_arg lean_raylib__Model_transform(b_lean_obj_arg obj) {
-//     Matrix result_ = lean_raylib_Model_from(obj)->transform;
-//     return lean_raylib_Matrix_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Model_transform(b_lean_obj_arg model) {
+    return lean_raylib_Matrix_to(lean_raylib_Model_from(model)->model.transform);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_transform_set(lean_obj_arg transform, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->transform = lean_raylib_Matrix_from(transform);
-//     return lean_raylib_Model_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Model_setTransform(b_lean_obj_arg matrix, lean_obj_arg model) {
+    Matrix matrixVal = lean_raylib_Matrix_from(matrix);
+    if (LEAN_LIKELY(lean_is_exclusive(model))) {
+        lean_raylib_Model_from(model)->model.transform = matrixVal;
+        return model;
+    }
+    else {
+        lean_raylib_Model modelCopy = lean_raylib_Model_clone(lean_raylib_Model_from(model));
+        modelCopy.model.transform = matrixVal;
+        lean_dec_ref(model);
+        return lean_raylib_Model_to(modelCopy);
+    }
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Model_meshCount(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Model_from(obj)->meshCount;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Model_meshCount(b_lean_obj_arg model) {
+    return lean_raylib_Model_from(model)->model.meshCount;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_meshCount_set(uint32_t meshCount, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->meshCount = meshCount;
-//     return lean_raylib_Model_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__Model_materialCount(b_lean_obj_arg model) {
+    return lean_raylib_Model_from(model)->model.materialCount;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__Model_materialCount(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Model_from(obj)->materialCount;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__Model_boneCount(b_lean_obj_arg model) {
+    return lean_raylib_Model_from(model)->model.boneCount;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_materialCount_set(uint32_t materialCount, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->materialCount = materialCount;
-//     return lean_raylib_Model_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Model_bone(b_lean_obj_arg model, uint32_t i) {
+    return lean_raylib_BoneInfo_to(lean_raylib_Model_from(model)->model.bones[i]);
+}
 
-// LEAN_EXPORT /* Mesh* */lean_obj_arg lean_raylib__Model_meshes(b_lean_obj_arg obj) {
-//     Mesh * result_ = lean_raylib_Model_from(obj)->meshes;
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Model_bindPose(b_lean_obj_arg model, uint32_t i) {
+    return lean_raylib_Transform_to(lean_raylib_Model_from(model)->model.bindPose[i]);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_meshes_set(/* Mesh* */lean_obj_arg meshes, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->meshes = /*todo: ptr?*/meshes;
-//     return lean_raylib_Model_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Model_getMaterial(b_lean_obj_arg model, uint32_t i) {
+    lean_object* mat = lean_array_get_core(lean_raylib_Model_from(model)->materials, i);
+    lean_inc_ref(mat);
+    return mat;
+}
 
-// LEAN_EXPORT /* Material* */lean_obj_arg lean_raylib__Model_materials(b_lean_obj_arg obj) {
-//     Material * result_ = lean_raylib_Model_from(obj)->materials;
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__Model_setMaterial(lean_obj_arg model, uint32_t i, lean_obj_arg mat) {
+    if(LEAN_LIKELY(lean_is_exclusive(model))) {
+        lean_raylib_Model* modelC = lean_raylib_Model_from(model);
+        modelC->materials = lean_array_uset(modelC->materials, i, mat);
+        modelC->model.materials[i] = lean_raylib_Material_from(mat, modelC->model.materials[i].maps);
+        return model;
+    }
+    else {
+        lean_raylib_Model modelCopy = lean_raylib_Model_clone(lean_raylib_Model_from(model));
+        modelCopy.materials = lean_array_uset(modelCopy.materials, i, mat);
+        modelCopy.model.materials[i] = lean_raylib_Material_from(mat, modelCopy.model.materials[i].maps);
+        lean_dec_ref(model);
+        return lean_raylib_Model_to(modelCopy);
+    }
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_materials_set(/* Material* */lean_obj_arg materials, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->materials = /*todo: ptr?*/materials;
-//     return lean_raylib_Model_to(result_);
-// }
-
-// LEAN_EXPORT /* int* */lean_obj_arg lean_raylib__Model_meshMaterial(b_lean_obj_arg obj) {
-//     int * result_ = lean_raylib_Model_from(obj)->meshMaterial;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_meshMaterial_set(/* int* */lean_obj_arg meshMaterial, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->meshMaterial = /*todo: ptr?*/meshMaterial;
-//     return lean_raylib_Model_to(result_);
-// }
-
-// LEAN_EXPORT uint32_t lean_raylib__Model_boneCount(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_Model_from(obj)->boneCount;
-//     return result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_boneCount_set(uint32_t boneCount, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->boneCount = boneCount;
-//     return lean_raylib_Model_to(result_);
-// }
-
-// LEAN_EXPORT /* BoneInfo* */lean_obj_arg lean_raylib__Model_bones(b_lean_obj_arg obj) {
-//     BoneInfo * result_ = lean_raylib_Model_from(obj)->bones;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_bones_set(/* BoneInfo* */lean_obj_arg bones, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->bones = /*todo: ptr?*/bones;
-//     return lean_raylib_Model_to(result_);
-// }
-
-// LEAN_EXPORT /* Transform* */lean_obj_arg lean_raylib__Model_bindPose(b_lean_obj_arg obj) {
-//     Transform * result_ = lean_raylib_Model_from(obj)->bindPose;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__Model_bindPose_set(/* Transform* */lean_obj_arg bindPose, b_lean_obj_arg obj) {
-//     LET_BOX(Model, result_, *lean_raylib_Model_from(obj));
-//     result_->bindPose = /*todo: ptr?*/bindPose;
-//     return lean_raylib_Model_to(result_);
-// }
+// # ModelAnimation
 
 // LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_mk(uint32_t boneCount, uint32_t frameCount, /* BoneInfo* */lean_obj_arg bones, /* Transform ** */lean_obj_arg framePoses) {
 //     LET_BOX_STRUCT(ModelAnimation, result_,

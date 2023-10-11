@@ -2,6 +2,7 @@
 
 #include <lean_pod.h>
 #include "util.h"
+#include <rlgl.h>
 #include "include/raymath_lean.h"
 
 #ifdef LEAN_RAYLIB_LIBFFI
@@ -98,6 +99,8 @@ static inline lean_obj_res lean_raylib_Image_exclusive(lean_obj_arg image_box) {
     return image_copy_box;
 }
 
+extern lean_object* lean_raylib_Image_empty;
+
 
 // # Texture
 
@@ -135,7 +138,9 @@ static inline lean_raylib_TextureRef const* lean_raylib_TextureRef_from (b_lean_
 }
 
 static void lean_raylib_Texture_finalize(void* texture) {
-    UnloadTexture(*(Texture*)texture);
+    if(((Texture*)texture)->id != rlGetTextureIdDefault()) { // todo: test if needed
+        UnloadTexture(*(Texture*)texture);
+    }
     lean_raylib_free(texture);
 }
 
@@ -150,6 +155,9 @@ static inline lean_object* lean_raylib_Texture_to (Texture const* obj) {
 static inline Texture* lean_raylib_Texture_from (b_lean_obj_arg obj) {
     return (Texture*) lean_get_external_data(obj);
 }
+
+extern lean_object* lean_raylib_Texture_default;
+extern lean_object* lean_raylib_Texture_empty;
 
 
 // # Render texture
@@ -307,7 +315,7 @@ static void lean_raylib_Mesh_finalize(void* mesh) {
     lean_raylib_free(mesh);
 }
 
-static inline lean_object* lean_raylib_Mesh_to (Mesh const* obj) {
+static inline lean_object* lean_raylib_Mesh_to (Mesh* obj) {
     static lean_external_class* class_ = NULL;
     if (class_ == NULL) {
         class_ = lean_register_external_class(lean_raylib_Mesh_finalize, lean_raylib_default_foreach);
@@ -317,6 +325,44 @@ static inline lean_object* lean_raylib_Mesh_to (Mesh const* obj) {
 
 static inline Mesh* lean_raylib_Mesh_from (b_lean_obj_arg obj) {
     return (Mesh*) lean_get_external_data(obj);
+}
+
+static inline Mesh lean_raylib_Mesh_clone(Mesh* meshSrc) {
+    Mesh mesh = *meshSrc;
+    mesh.vertices = lean_raylib_rlmemdup(mesh.vertices, sizeof(float[3]) * mesh.vertexCount);
+    if(mesh.texcoords != NULL) {
+        mesh.texcoords = lean_raylib_rlmemdup(mesh.texcoords, sizeof(float[2]) * mesh.vertexCount);
+    }
+    if(mesh.texcoords2 != NULL) {
+        mesh.texcoords2 = lean_raylib_rlmemdup(mesh.texcoords2, sizeof(float[2]) * mesh.vertexCount);
+    }
+    if(mesh.normals != NULL) {
+        mesh.normals = lean_raylib_rlmemdup(mesh.normals, sizeof(float[3]) * mesh.vertexCount);
+    }
+    if(mesh.tangents != NULL) {
+        mesh.tangents = lean_raylib_rlmemdup(mesh.tangents, sizeof(float[4]) * mesh.vertexCount);
+    }
+    if(mesh.colors != NULL) {
+        mesh.colors = lean_raylib_rlmemdup(mesh.colors, sizeof(unsigned char[4]) * mesh.vertexCount);
+    }
+    if(mesh.indices != NULL) {
+        mesh.indices = lean_raylib_rlmemdup(mesh.indices, sizeof(unsigned short[3]) * mesh.triangleCount);
+    }
+    if(mesh.boneIds != NULL) {
+        mesh.boneIds = lean_raylib_rlmemdup(mesh.boneIds, sizeof(unsigned char[4]) * mesh.vertexCount);
+    }
+    if(mesh.boneWeights != NULL) {
+        mesh.boneWeights = lean_raylib_rlmemdup(mesh.boneWeights, sizeof(float[4]) * mesh.vertexCount);
+    }
+    if(mesh.animVertices != NULL) {
+        mesh.animVertices = lean_raylib_rlmemdup(mesh.animVertices, sizeof(float[3]) * mesh.vertexCount);
+    }
+    if(mesh.animNormals != NULL) {
+        mesh.animNormals = lean_raylib_rlmemdup(mesh.animNormals, sizeof(float[3]) * mesh.vertexCount);
+    }
+    mesh.vaoId = 0;
+    mesh.vboId = NULL;
+    return mesh;
 }
 
 
@@ -339,7 +385,7 @@ static inline Shader const* lean_raylib_Shader_from (b_lean_obj_arg obj) {
     return (Shader const*) lean_get_external_data(obj);
 }
 
-lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg unit);
+extern lean_object* lean_raylib_Shader_default;
 
 
 // # Material
@@ -361,7 +407,8 @@ static inline lean_obj_res lean_raylib_MaterialMap_to (lean_obj_arg texture, Col
     return mmap;
 }
 
-#define LEAN_RAYLIB_MAX_MATERIAL_MAPS 12 // todo: configure from lake (and pass to raylib)
+// todo: configure from lake (and pass to raylib (config.h - MAX_MATERIAL_MAPS))
+#define LEAN_RAYLIB_MAX_MATERIAL_MAPS 12
 
 // NOTE: Returned material contains pointers to `out_mmaps` and to data owned by the boxed material!
 static inline Material lean_raylib_Material_from (b_lean_obj_arg material_box, MaterialMap* out_mmaps) {
@@ -389,6 +436,9 @@ static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_ob
     lean_ctor_set(material, 5, lean_pod_Float32_box(params.w));
     return material;
 }
+
+extern lean_object* lean_raylib_Material_default;
+
 
 // # Transform
 
@@ -461,17 +511,82 @@ static inline BoneInfo lean_raylib_BoneInfo_from (b_lean_obj_arg obj) {
 
 // # Model
 
-// static inline lean_object* lean_raylib_Model_to (Model const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+typedef struct {
+    lean_object* materials; // Array Material
+    lean_object* meshes; // Array (Mesh x Fin materials.size)
+    Model model;
+} lean_raylib_Model;
 
-// static inline Model const* lean_raylib_Model_from (b_lean_obj_arg obj) {
-//     return (Model const*) lean_get_external_data(obj);
-// }
+static void lean_raylib_Model_finalize(void* model_v) {
+    lean_raylib_Model* model = model_v;
+    lean_dec_ref(model->meshes);
+    lean_dec_ref(model->materials);
+    for (size_t i = 0; i < model->model.materialCount; ++i) {
+        RL_FREE(model->model.materials[i].maps);
+    }
+    RL_FREE(model->model.meshes);
+    RL_FREE(model->model.materials);
+    RL_FREE(model->model.meshMaterial);
+    RL_FREE(model->model.bones);
+    RL_FREE(model->model.bindPose);
+    lean_raylib_free(model_v);
+}
+
+static void lean_raylib_Model_foreach(void* model_v, b_lean_obj_arg f) {
+    lean_raylib_Model* model = model_v;
+    lean_inc_ref_n(f, 2);
+    lean_inc_ref(model->meshes);
+    lean_inc_ref(model->materials);
+    lean_apply_1(f, model->meshes);
+    lean_apply_1(f, model->materials);
+}
+
+static inline lean_object* lean_raylib_Model_to (lean_raylib_Model model) {
+    static lean_external_class* class_ = NULL;
+    if (class_ == NULL) {
+        class_ = lean_register_external_class(lean_raylib_Model_finalize, lean_raylib_Model_foreach);
+    }
+    LET_BOX(lean_raylib_Model, modelBoxed, model);
+    return lean_alloc_external(class_, (void*)modelBoxed);
+}
+
+static inline lean_raylib_Model* lean_raylib_Model_from (b_lean_obj_arg obj) {
+    return (lean_raylib_Model*)lean_get_external_data(obj);
+}
+
+static inline lean_raylib_Model lean_raylib_Model_clone(lean_raylib_Model* modelSrc) {
+    lean_raylib_Model modelDst;
+    lean_inc_ref(modelSrc->meshes);
+    lean_inc_ref(modelSrc->materials);
+    modelDst.meshes = modelSrc->meshes;
+    modelDst.materials = modelSrc->materials;
+    modelDst.model.transform = modelSrc->model.transform;
+    modelDst.model.meshCount = modelSrc->model.meshCount;
+    modelDst.model.meshes = RL_MALLOC(modelDst.model.meshCount * sizeof(Mesh));
+    for (size_t i = 0; i < modelDst.model.meshCount; ++i) {
+        modelDst.model.meshes[i] = lean_raylib_Mesh_clone(&modelSrc->model.meshes[i]);
+    }
+    modelDst.model.materialCount = modelSrc->model.materialCount;
+    modelDst.model.materials = RL_MALLOC(modelDst.model.materialCount * sizeof(Material));
+    for (size_t i = 0; i < modelDst.model.materialCount; ++i) {
+        memcpy(&modelDst.model.materials[i].params, &modelSrc->model.materials[i].params, sizeof(modelDst.model.materials[i].params));
+        modelDst.model.materials[i].shader = modelSrc->model.materials[i].shader;
+        modelDst.model.materials[i].maps = RL_MALLOC(LEAN_RAYLIB_MAX_MATERIAL_MAPS * sizeof(MaterialMap));
+        memcpy(
+            &modelDst.model.materials[i].maps,
+            &modelSrc->model.materials[i].maps,
+            LEAN_RAYLIB_MAX_MATERIAL_MAPS * sizeof(MaterialMap)
+        );
+    }
+    modelDst.model.meshMaterial = lean_raylib_rlmemdup(modelSrc->model.meshMaterial, modelDst.model.meshCount * sizeof(int));
+    modelDst.model.boneCount = modelSrc->model.boneCount;
+    modelDst.model.bones = lean_raylib_rlmemdup(modelSrc->model.bones, modelDst.model.boneCount * sizeof(BoneInfo));
+    modelDst.model.bindPose = lean_raylib_rlmemdup(modelSrc->model.bindPose, modelDst.model.boneCount * sizeof(Transform));
+    return modelDst;
+}
+
+
+// # ModelAnimation
 
 // static inline lean_object* lean_raylib_ModelAnimation_to (ModelAnimation const* obj) {
 //     static lean_external_class* class_ = NULL;

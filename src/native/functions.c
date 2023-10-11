@@ -1,6 +1,7 @@
 #include <string.h>
 #include "util.h"
 #include "structures.h"
+#include <stdio.h>
 
 LEAN_EXPORT lean_obj_res lean_raylib__InitWindow (uint32_t width, uint32_t height, lean_obj_arg title, lean_obj_arg world) {
     InitWindow(width, height, strdup(lean_string_cstr(title)));
@@ -2314,50 +2315,112 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawGrid (uint32_t slices, uint32_t spacin
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadModel (/* const char* */lean_obj_arg fileName, lean_obj_arg world) {
-//     Model result_ = LoadModel(lean_string_cstr(fileName));
-//     return lean_raylib_Model_to(result_);
-// }
+#include <inttypes.h>
 
-// LEAN_EXPORT lean_obj_res lean_raylib__LoadModelFromMesh (lean_obj_arg mesh, lean_obj_arg world) {
-//     Model result_ = LoadModelFromMesh(lean_raylib_Mesh_from(mesh));
-//     return lean_raylib_Model_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadModel (b_lean_obj_arg fileName, lean_obj_arg world) {
+    lean_raylib_Model model;
+    model.model = LoadModel(lean_string_cstr(fileName));
+    model.meshes = lean_alloc_array(model.model.meshCount, model.model.meshCount);
+    for (size_t i = 0; i < model.model.meshCount; ++i) {
+        lean_object* meshXmatIdx = lean_alloc_ctor(0, 2, 0);
+        LET_BOX(Mesh, mesh, model.model.meshes[i]);
+        printf("The mesh! %lu\n", (uint64_t)mesh);
+        lean_ctor_set(meshXmatIdx, 0, lean_raylib_Mesh_to(mesh));
+        lean_ctor_set(meshXmatIdx, 1, lean_uint32_to_nat(model.model.meshMaterial[i]));
+        lean_array_set_core(model.meshes, i, meshXmatIdx);
+    }
+    model.materials = lean_alloc_array(model.model.materialCount, model.model.materialCount);
+    printf("MESHES: %" PRIu64 "\nMATS: %" PRIu64 "\n", (uint64_t)model.meshes, (uint64_t)model.materials);
+    for (size_t i = 0; i < model.model.materialCount; ++i) {
+        Material* mat = &model.model.materials[i];
+        Vector4 params = {
+            .x = mat->params[0],
+            .y = mat->params[1],
+            .z = mat->params[2],
+            .w = mat->params[3]
+        };
+        lean_object* mmaps = lean_alloc_array(LEAN_RAYLIB_MAX_MATERIAL_MAPS, LEAN_RAYLIB_MAX_MATERIAL_MAPS);
+        for (size_t j = 0; j < LEAN_RAYLIB_MAX_MATERIAL_MAPS; ++j) {
+            MaterialMap* mmap = &mat->maps[j];
+            LET_BOX(Texture, texture, mmap->texture);
+            lean_array_set_core(mmaps, j, lean_raylib_MaterialMap_to(
+                lean_raylib_Texture_to(texture),
+                mmap->color,
+                mmap->value
+            ));
+        }
+        lean_array_set_core(
+            model.materials,
+            i,
+            lean_raylib_Material_to(lean_raylib_Shader_default, mmaps, params)
+        );
+    }
+    return lean_io_result_mk_ok(lean_raylib_Model_to(model));
+}
 
-// LEAN_EXPORT uint8_t lean_raylib__IsModelReady (lean_obj_arg model, lean_obj_arg world) {
-//     bool result_ = IsModelReady(lean_raylib_Model_from(model));
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadModelFromMesh (lean_obj_arg mesh) {
+    lean_raylib_Model model;
+    model.model = LoadModelFromMesh(*lean_raylib_Mesh_from(mesh));
+    model.meshes = lean_alloc_array(1, 1);
+    lean_array_set_core(model.meshes, 0, mesh);
+    model.materials = lean_alloc_array(1, 1);
+    lean_array_set_core(model.materials, 0, lean_raylib_Material_default);
+    return lean_raylib_Model_to(model);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadModel (lean_obj_arg model, lean_obj_arg world) {
-//     UnloadModel(lean_raylib_Model_from(model));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsModelReady (b_lean_obj_arg model) {
+    return IsModelReady(lean_raylib_Model_from(model)->model);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetModelBoundingBox (lean_obj_arg model, lean_obj_arg world) {
-//     BoundingBox result_ = GetModelBoundingBox(lean_raylib_Model_from(model));
-//     return lean_raylib_BoundingBox_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetModelBoundingBox (b_lean_obj_arg model) {
+    return lean_raylib_BoundingBox_to(
+        GetModelBoundingBox(lean_raylib_Model_from(model)->model)
+    );
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawModel (lean_obj_arg model, lean_obj_arg position, uint32_t scale, uint32_t tint, lean_obj_arg world) {
-//     DrawModel(lean_raylib_Model_from(model), lean_raylib_Vector3_from(position), lean_pod_Float32_fromBits(scale), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawModel (b_lean_obj_arg model, b_lean_obj_arg position, uint32_t scale, uint32_t tint, lean_obj_arg world) {
+    DrawModel(
+        lean_raylib_Model_from(model)->model,
+        lean_raylib_Vector3_from(position),
+        lean_pod_Float32_fromBits(scale),
+        lean_raylib_Color_from(tint)
+    );
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawModelEx (lean_obj_arg model, lean_obj_arg position, lean_obj_arg rotationAxis, uint32_t rotationAngle, lean_obj_arg scale, uint32_t tint, lean_obj_arg world) {
-//     DrawModelEx(lean_raylib_Model_from(model), lean_raylib_Vector3_from(position), lean_raylib_Vector3_from(rotationAxis), lean_pod_Float32_fromBits(rotationAngle), lean_raylib_Vector3_from(scale), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawModelEx (b_lean_obj_arg model, b_lean_obj_arg position, b_lean_obj_arg rotationAxis, uint32_t rotationAngle, b_lean_obj_arg scale, uint32_t tint, lean_obj_arg world) {
+    DrawModelEx(
+        lean_raylib_Model_from(model)->model,
+        lean_raylib_Vector3_from(position),
+        lean_raylib_Vector3_from(rotationAxis),
+        lean_pod_Float32_fromBits(rotationAngle),
+        lean_raylib_Vector3_from(scale),
+        lean_raylib_Color_from(tint)
+    );
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawModelWires (lean_obj_arg model, lean_obj_arg position, uint32_t scale, uint32_t tint, lean_obj_arg world) {
-//     DrawModelWires(lean_raylib_Model_from(model), lean_raylib_Vector3_from(position), lean_pod_Float32_fromBits(scale), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawModelWires (b_lean_obj_arg model, b_lean_obj_arg position, uint32_t scale, uint32_t tint, lean_obj_arg world) {
+    DrawModelWires(
+        lean_raylib_Model_from(model)->model,
+        lean_raylib_Vector3_from(position),
+        lean_pod_Float32_fromBits(scale),
+        lean_raylib_Color_from(tint)
+    );
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawModelWiresEx (lean_obj_arg model, lean_obj_arg position, lean_obj_arg rotationAxis, uint32_t rotationAngle, lean_obj_arg scale, uint32_t tint, lean_obj_arg world) {
-//     DrawModelWiresEx(lean_raylib_Model_from(model), lean_raylib_Vector3_from(position), lean_raylib_Vector3_from(rotationAxis), lean_pod_Float32_fromBits(rotationAngle), lean_raylib_Vector3_from(scale), lean_raylib_Color_from(tint));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawModelWiresEx (b_lean_obj_arg model, b_lean_obj_arg position, b_lean_obj_arg rotationAxis, uint32_t rotationAngle, b_lean_obj_arg scale, uint32_t tint, lean_obj_arg world) {
+    DrawModelWiresEx(
+        lean_raylib_Model_from(model)->model,
+        lean_raylib_Vector3_from(position),
+        lean_raylib_Vector3_from(rotationAxis),
+        lean_pod_Float32_fromBits(rotationAngle),
+        lean_raylib_Vector3_from(scale),
+        lean_raylib_Color_from(tint)
+    );
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawBoundingBox (b_lean_obj_arg box, uint32_t color, lean_obj_arg world) {
     DrawBoundingBox(lean_raylib_BoundingBox_from(box), lean_raylib_Color_from(color));
@@ -2379,41 +2442,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawBillboardPro (b_lean_obj_arg camera, b
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__MeshCopy(b_lean_obj_arg mesh_old_box) {
-    Mesh mesh = *lean_raylib_Mesh_from(mesh_old_box);
-    if(mesh.animVertices != NULL ||
-        mesh.animNormals != NULL ||
-        mesh.boneIds != NULL ||
-        mesh.boneWeights != NULL) {
-        LET_BOX(Mesh, zeroed, (Mesh){0});
-        return lean_io_result_mk_ok(lean_panic_fn(
-            lean_raylib_Mesh_to(zeroed),
-            lean_mk_string("Can't copy animated mesh")
-        ));
-    }
-    mesh.vertices = lean_raylib_rlmemdup(mesh.vertices, sizeof(float[3]) * mesh.vertexCount);
-    if(mesh.texcoords != NULL) {
-        mesh.texcoords = lean_raylib_rlmemdup(mesh.texcoords, sizeof(float[2]) * mesh.vertexCount);
-    }
-    if(mesh.texcoords2 != NULL) {
-        mesh.texcoords2 = lean_raylib_rlmemdup(mesh.texcoords2, sizeof(float[2]) * mesh.vertexCount);
-    }
-    if(mesh.normals != NULL) {
-        mesh.normals = lean_raylib_rlmemdup(mesh.normals, sizeof(float[3]) * mesh.vertexCount);
-    }
-    if(mesh.tangents != NULL) {
-        mesh.tangents = lean_raylib_rlmemdup(mesh.tangents, sizeof(float[4]) * mesh.vertexCount);
-    }
-    if(mesh.colors != NULL) {
-        mesh.colors = lean_raylib_rlmemdup(mesh.colors, sizeof(unsigned char[4]) * mesh.vertexCount);
-    }
-    if(mesh.indices != NULL) {
-        mesh.indices = lean_raylib_rlmemdup(mesh.indices, sizeof(unsigned short[3]) * mesh.triangleCount);
-    }
-    mesh.vaoId = 0;
-    mesh.vboId = NULL;
-    LET_BOX(Mesh, mesh_new_heap, mesh);
-    return lean_raylib_Mesh_to(mesh_new_heap);
+LEAN_EXPORT lean_obj_res lean_raylib__MeshCopy(b_lean_obj_arg mesh_old) {
+    LET_BOX(Mesh, mesh_new, lean_raylib_Mesh_clone(lean_raylib_Mesh_from(mesh_old)));
+    return lean_raylib_Mesh_to(mesh_new);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UploadMesh (lean_obj_arg mesh, uint8_t dynamic, lean_obj_arg world) {
@@ -2524,16 +2555,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCubicmap (b_lean_obj_arg cubicmap, 
 // LEAN_EXPORT /* Material* */lean_obj_arg lean_raylib__LoadMaterials (/* const char* */lean_obj_arg fileName, /* int* */lean_obj_arg materialCount, lean_obj_arg world) {
 //     Material * result_ = LoadMaterials(lean_string_cstr(fileName), /*todo: ptr?*/materialCount);
 //     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetMaterialTexture (/* Material* */lean_obj_arg material, uint32_t mapType, lean_obj_arg texture, lean_obj_arg world) {
-//     SetMaterialTexture(/*todo: ptr?*/material, mapType, /*cast Texture2D to_lean?false*/(texture));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__SetModelMeshMaterial (/* Model* */lean_obj_arg model, uint32_t meshId, uint32_t materialId) {
-//     SetModelMeshMaterial(/*todo: ptr?*/model, meshId, materialId);
-//     return lean_io_result_mk_ok(lean_box(0));
 // }
 
 // LEAN_EXPORT /* ModelAnimation* */lean_obj_arg lean_raylib__LoadModelAnimations (/* const char* */lean_obj_arg fileName, /* unsigned int* */lean_obj_arg animCount, lean_obj_arg world) {

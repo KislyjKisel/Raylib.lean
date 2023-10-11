@@ -4,7 +4,7 @@ Partial Lean4 bindings to [raylib](https://github.com/raysan5/raylib) `4.5.0`, i
 
 ## Not implemented
 
-* Meshes, models
+* ModelAnimation
 * Data array manip (ex. `UpdateSound`)
 * GlyphInfo
 

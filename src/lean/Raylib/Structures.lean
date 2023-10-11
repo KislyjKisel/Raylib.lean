@@ -8,6 +8,11 @@ open Raymath (Vector2 Vector3 Vector4 Matrix Quaternion)
 
 namespace Raylib
 
+@[extern "lean_raylib_initialize_Structures"] private
+opaque «initialize» : BaseIO Unit
+
+builtin_initialize «initialize»
+
 /-! # VaList -/
 
 opaque VaListPointed (σ : Type) : NonemptyType
@@ -101,24 +106,26 @@ opaque ImagePointed : NonemptyType
 def Image : Type := ImagePointed.type
 instance : Nonempty Image := ImagePointed.property
 
-@[extern "lean_raylib__Image_default"]
-opaque Image.empty (_ : Unit) : Image
-
-/-- Getter: Image base width -/
+/-- Image base width -/
 @[extern "lean_raylib__Image_width"]
 opaque Image.width (self : @& Image) : UInt32
 
-/-- Getter: Image base height -/
+/-- Image base height -/
 @[extern "lean_raylib__Image_height"]
 opaque Image.height (self : @& Image) : UInt32
 
-/-- Getter: Mipmap levels, 1 by default -/
+/-- Mipmap levels, 1 by default -/
 @[extern "lean_raylib__Image_mipmaps"]
 opaque Image.mipmaps (self : @& Image) : UInt32
 
-/-- Getter: Data format (PixelFormat type) -/
+/-- Data format (PixelFormat type) -/
 @[extern "lean_raylib__Image_format"]
 opaque Image.format (self : @& Image) : PixelFormat
+
+@[extern "lean_raylib__Image_getEmpty"]
+private opaque Image.getEmpty : Unit → Image
+
+def Image.empty : Image := Image.getEmpty ()
 
 
 /-! # Texture -/
@@ -437,14 +444,13 @@ def Shader.default : Shader := Shader.getDefault ()
 
 structure MaterialMap where
   texture : Texture
-  color : Color
-  value : Float32
+  color : Color := .mk 0xFFFFFFFF
+  value : Float32 := 0
 deriving Nonempty
 
 def MaterialMap.empty : MaterialMap where
   texture := Texture.empty
   color := .mk 0
-  value := 0
 
 abbrev MaterialMapArray : Type := RangeMap 0 maxMaterialMaps.toUInt32 MaterialMap
 
@@ -464,14 +470,19 @@ end MaterialMapArray
 structure Material where
   shader : Shader
   maps : MaterialMapArray
-  param0 : Float32
-  param1 : Float32
-  param2 : Float32
-  param3 : Float32
+  param0 : Float32 := .zero
+  param1 : Float32 := .zero
+  param2 : Float32 := .zero
+  param3 : Float32 := .zero
 deriving Nonempty
 
 def Material.params (m : Material) : Vector4 :=
   Vector4.mk m.param0 m.param1 m.param2 m.param3
+
+@[extern "lean_raylib__Material_getDefault"]
+private opaque Material.getDefault : Unit → Material
+
+def Material.default : Material := Material.getDefault ()
 
 
 /-! # Transform -/
@@ -496,108 +507,53 @@ deriving Inhabited, Repr
 
 /-! # Model -/
 
--- opaque ModelPointed : NonemptyType
--- /-- Model, meshes, materials and animation data -/
--- def Model : Type := ModelPointed.type
--- instance : Nonempty Model := ModelPointed.property
--- @[extern "lean_raylib__Model_mk"]
--- opaque Model.mk : Model
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | transform: Matrix -- Local transform matrix
---   | meshCount: int -- Number of meshes
---   | materialCount: int -- Number of materials
---   | meshes: Mesh * -- Meshes array
---   | materials: Material * -- Materials array
---   | meshMaterial: int * -- Mesh material number
---   | boneCount: int -- Number of bones
---   | bones: BoneInfo * -- Bones information (skeleton)
---   | bindPose: Transform * -- Bones base transformation (pose)
--- -/
--- /-- Getter: Local transform matrix -/
--- @[extern "lean_raylib__Model_transform"]
--- opaque Model.transform (self : @& Model) : Matrix
--- /-- Setter: Local transform matrix -/
--- @[extern "lean_raylib__Model_transform_set"]
--- opaque Model.set_transform (transform : Matrix) (self : Model) : Model
--- /-- Getter: Number of meshes -/
--- @[extern "lean_raylib__Model_meshCount"]
--- opaque Model.meshCount (self : @& Model) : Int32
--- /-- Setter: Number of meshes -/
--- @[extern "lean_raylib__Model_meshCount_set"]
--- opaque Model.set_meshCount (meshCount : Int32) (self : Model) : Model
--- /-- Getter: Number of materials -/
--- @[extern "lean_raylib__Model_materialCount"]
--- opaque Model.materialCount (self : @& Model) : Int32
--- /-- Setter: Number of materials -/
--- @[extern "lean_raylib__Model_materialCount_set"]
--- opaque Model.set_materialCount (materialCount : Int32) (self : Model) : Model
--- /-- Getter: Meshes array -/
--- @[extern "lean_raylib__Model_meshes"]
--- opaque Model.meshes (self : @& Model) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Meshes array -/
--- @[extern "lean_raylib__Model_meshes_set"]
--- opaque Model.set_meshes (meshes : Unit) (self : Model) : Model
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Materials array -/
--- @[extern "lean_raylib__Model_materials"]
--- opaque Model.materials (self : @& Model) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Materials array -/
--- @[extern "lean_raylib__Model_materials_set"]
--- opaque Model.set_materials (materials : Unit) (self : Model) : Model
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Mesh material number -/
--- @[extern "lean_raylib__Model_meshMaterial"]
--- opaque Model.meshMaterial (self : @& Model) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Mesh material number -/
--- @[extern "lean_raylib__Model_meshMaterial_set"]
--- opaque Model.set_meshMaterial (meshMaterial : Unit) (self : Model) : Model
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Number of bones -/
--- @[extern "lean_raylib__Model_boneCount"]
--- opaque Model.boneCount (self : @& Model) : Int32
--- /-- Setter: Number of bones -/
--- @[extern "lean_raylib__Model_boneCount_set"]
--- opaque Model.set_boneCount (boneCount : Int32) (self : Model) : Model
--- /-- Getter: Bones information (skeleton) -/
--- @[extern "lean_raylib__Model_bones"]
--- opaque Model.bones (self : @& Model) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Bones information (skeleton) -/
--- @[extern "lean_raylib__Model_bones_set"]
--- opaque Model.set_bones (bones : Unit) (self : Model) : Model
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Bones base transformation (pose) -/
--- @[extern "lean_raylib__Model_bindPose"]
--- opaque Model.bindPose (self : @& Model) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Bones base transformation (pose) -/
--- @[extern "lean_raylib__Model_bindPose_set"]
--- opaque Model.set_bindPose (bindPose : Unit) (self : Model) : Model
--- /-
--- todo: ^^ struct setter ^^
--- -/
+opaque ModelPointed : NonemptyType
+/-- Model, meshes, materials and animation data created with raylib's functions -/
+def Model : Type := ModelPointed.type
+instance : Nonempty Model := ModelPointed.property
+
+@[extern "lean_raylib__Model_mk"]
+opaque Model.mk
+  (transform : @& Matrix)
+  (materials : Array Material)
+  (meshes : Array (Mesh × Fin materials.size))
+  (bones : @& Array BoneInfo)
+  (bindPose : @& { a : Array Transform // a.size = bones.size })
+  : Model
+
+/-- Local transform matrix -/
+@[extern "lean_raylib__Model_transform"]
+opaque Model.transform (model : @& Model) : Matrix
+
+/-- Set local transform matrix -/
+@[extern "lean_raylib__Model_setTransform"]
+opaque Model.setTransform (transform : @& Matrix) (model : Model) : Model
+
+/-- Number of meshes -/
+@[extern "lean_raylib__Model_meshCount"]
+opaque Model.meshCount (model : @& Model) : UInt32
+
+/-- Number of materials -/
+@[extern "lean_raylib__Model_materialCount"]
+opaque Model.materialCount (model : @& Model) : UInt32
+
+/-- Number of bones -/
+@[extern "lean_raylib__Model_boneCount"]
+opaque Model.boneCount (model : @& Model) : UInt32
+
+/-- Bone information (skeleton) -/
+@[extern "lean_raylib__Model_bone"]
+opaque Model.bone (model : @& Model) (i : UInt32) (h : i < model.boneCount) : BoneInfo
+
+/-- Bone base transformation (pose) -/
+@[extern "lean_raylib__Model_bindPose"]
+opaque Model.bindPose (model : @& Model) (i : UInt32) (h : i < model.boneCount) : Transform
+
+@[extern "lean_raylib__Model_getMaterial"]
+opaque Model.getMaterial (model : @& Model) (i : UInt32) (h : i < model.materialCount) : Material
+
+@[extern "lean_raylib__Model_setMaterial"]
+opaque Model.setMaterial (model : Model) (i : UInt32) (mat : Material) (h : i < model.materialCount) : Model
 
 
 /-! # Model animation -/
