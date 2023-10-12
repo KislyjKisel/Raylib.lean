@@ -514,6 +514,8 @@ static inline BoneInfo lean_raylib_BoneInfo_from (b_lean_obj_arg obj) {
 typedef struct {
     lean_object* materials; // Array Material
     lean_object* meshes; // Array (Mesh x Fin materials.size)
+    uint32_t meshesCapacity;
+    uint32_t materialsCapacity;
     Model model;
 } lean_raylib_Model;
 
@@ -561,13 +563,13 @@ static inline lean_raylib_Model lean_raylib_Model_clone(lean_raylib_Model* model
     modelDst.meshes = modelSrc->meshes;
     modelDst.materials = modelSrc->materials;
     modelDst.model.transform = modelSrc->model.transform;
-    modelDst.model.meshCount = modelSrc->model.meshCount;
-    modelDst.model.meshes = RL_MALLOC(modelDst.model.meshCount * sizeof(Mesh));
+    modelDst.meshesCapacity = modelDst.model.meshCount = modelSrc->model.meshCount;
+    modelDst.model.meshes = RL_MALLOC(modelDst.meshesCapacity * sizeof(Mesh));
     for (size_t i = 0; i < modelDst.model.meshCount; ++i) {
         modelDst.model.meshes[i] = lean_raylib_Mesh_clone(&modelSrc->model.meshes[i]);
     }
-    modelDst.model.materialCount = modelSrc->model.materialCount;
-    modelDst.model.materials = RL_MALLOC(modelDst.model.materialCount * sizeof(Material));
+    modelDst.materialsCapacity = modelDst.model.materialCount = modelSrc->model.materialCount;
+    modelDst.model.materials = RL_MALLOC(modelDst.materialsCapacity * sizeof(Material));
     for (size_t i = 0; i < modelDst.model.materialCount; ++i) {
         memcpy(&modelDst.model.materials[i].params, &modelSrc->model.materials[i].params, sizeof(modelDst.model.materials[i].params));
         modelDst.model.materials[i].shader = modelSrc->model.materials[i].shader;
@@ -578,7 +580,8 @@ static inline lean_raylib_Model lean_raylib_Model_clone(lean_raylib_Model* model
             LEAN_RAYLIB_MAX_MATERIAL_MAPS * sizeof(MaterialMap)
         );
     }
-    modelDst.model.meshMaterial = lean_raylib_rlmemdup(modelSrc->model.meshMaterial, modelDst.model.meshCount * sizeof(int));
+    modelDst.model.meshMaterial = RL_MALLOC(modelDst.meshesCapacity * sizeof(int));
+    memcpy(modelDst.model.meshMaterial, modelSrc->model.meshMaterial, modelDst.model.meshCount * sizeof(int));
     modelDst.model.boneCount = modelSrc->model.boneCount;
     modelDst.model.bones = lean_raylib_rlmemdup(modelSrc->model.bones, modelDst.model.boneCount * sizeof(BoneInfo));
     modelDst.model.bindPose = lean_raylib_rlmemdup(modelSrc->model.bindPose, modelDst.model.boneCount * sizeof(Transform));

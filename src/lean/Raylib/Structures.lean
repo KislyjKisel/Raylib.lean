@@ -535,7 +535,8 @@ opaque Model.meshCount (model : @& Model) : UInt32
 
 /-- Number of materials -/
 @[extern "lean_raylib__Model_materialCount"]
-opaque Model.materialCount (model : @& Model) : UInt32
+opaque Model.materialCount (model : @& Model) : { i : UInt32 // 0 < i ∨ model.meshCount = 0 } :=
+  .mk 1 (Or.inl Nat.zero_lt_one)
 
 /-- Number of bones -/
 @[extern "lean_raylib__Model_boneCount"]
@@ -549,11 +550,59 @@ opaque Model.bone (model : @& Model) (i : UInt32) (h : i < model.boneCount) : Bo
 @[extern "lean_raylib__Model_bindPose"]
 opaque Model.bindPose (model : @& Model) (i : UInt32) (h : i < model.boneCount) : Transform
 
-@[extern "lean_raylib__Model_getMaterial"]
-opaque Model.getMaterial (model : @& Model) (i : UInt32) (h : i < model.materialCount) : Material
+@[extern "lean_raylib__Model_material"]
+opaque Model.material (model : @& Model) (i : UInt32) (h : i < model.materialCount) : Material
+
+def Model.material? (model : Model) (i : UInt32) : Option Material :=
+  if h: i < model.materialCount
+    then some $ material model i h
+    else none
 
 @[extern "lean_raylib__Model_setMaterial"]
 opaque Model.setMaterial (model : Model) (i : UInt32) (mat : Material) (h : i < model.materialCount) : Model
+
+def Model.setMaterial? (model : Model) (i : UInt32) (mat : Material) : Model :=
+  if h: i < model.materialCount
+    then setMaterial model i mat h
+    else model
+
+@[extern "lean_raylib__Model_addMaterial"]
+opaque Model.addMaterial (model : Model) (mat : Material) : Model
+
+@[extern "lean_raylib__Model_removeMaterial"]
+opaque Model.removeMaterial (model : Model) (i : UInt32)
+  (h₁ : i < model.materialCount) (h₂ : 1 < model.materialCount.1) : Model
+
+def Model.removeMaterial? (model : Model) (i : UInt32) : Model :=
+  if h: i < model.materialCount ∧ 1 < model.materialCount.1
+    then removeMaterial model i h.1 h.2
+    else model
+
+@[extern "lean_raylib__Model_meshMaterial"]
+opaque Model.meshMaterial (model : @& Model) (i : UInt32) (h : i < model.meshCount) :
+  { j : UInt32 // j < model.materialCount } :=
+    .mk 0 $ by
+      have := Nat.zero_lt_of_lt h
+      cases model.materialCount.2
+      assumption
+      case inr h =>
+        rewrite [h] at this
+        contradiction
+
+def Model.meshMaterial? (model : @& Model) (i : UInt32) :
+  Option { j : UInt32 // j < model.materialCount } :=
+    if h: i < model.meshCount
+      then some $ model.meshMaterial i h
+      else none
+
+@[extern "lean_raylib__Model_setMeshMaterial"]
+opaque Model.setMeshMaterial (model : Model) (i j : UInt32)
+  (h₁ : i < model.meshCount) (h₂ : j < model.materialCount) : Model
+
+def Model.setMeshMaterial? (model : Model) (i j : UInt32) : Model :=
+  if h: i < model.meshCount ∧ j < model.materialCount
+    then setMeshMaterial model i j h.1 h.2
+    else model
 
 
 /-! # Model animation -/

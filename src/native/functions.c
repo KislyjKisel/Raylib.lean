@@ -2317,6 +2317,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawGrid (uint32_t slices, uint32_t spacin
 LEAN_EXPORT lean_obj_res lean_raylib__LoadModel (b_lean_obj_arg fileName, lean_obj_arg world) {
     lean_raylib_Model model;
     model.model = LoadModel(lean_string_cstr(fileName));
+    model.meshesCapacity = model.model.meshCount;
+    model.materialsCapacity = model.model.materialCount;
     model.meshes = lean_alloc_array(model.model.meshCount, model.model.meshCount);
     for (size_t i = 0; i < model.model.meshCount; ++i) {
         lean_object* meshXmatIdx = lean_alloc_ctor(0, 2, 0);

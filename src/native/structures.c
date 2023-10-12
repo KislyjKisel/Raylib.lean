@@ -580,20 +580,20 @@ LEAN_EXPORT lean_obj_res lean_raylib__Model_mk(
     lmodel.materials = materials;
     lmodel.meshes = meshes;
     lmodel.model.transform = lean_raylib_Matrix_from(transform);
-    lmodel.model.meshCount = lean_array_size(meshes);
-    lmodel.model.materialCount = lean_array_size(materials);
-    lmodel.model.meshes = RL_MALLOC(lmodel.model.meshCount * sizeof(Mesh));
-    lmodel.model.meshMaterial = RL_MALLOC(lmodel.model.meshCount * sizeof(int));
+    lmodel.meshesCapacity = lmodel.model.meshCount = lean_array_size(meshes);
+    lmodel.materialsCapacity = lmodel.model.materialCount = lean_array_size(materials);
+    lmodel.model.meshes = RL_MALLOC(lmodel.meshesCapacity * sizeof(Mesh));
+    lmodel.model.meshMaterial = RL_MALLOC(lmodel.meshesCapacity * sizeof(int));
     for (size_t i = 0; i < lmodel.model.meshCount; ++i) {
         lean_object* meshXmatIdx = lean_array_get_core(meshes, i);
         lmodel.model.meshes[i] = *lean_raylib_Mesh_from(lean_ctor_get(meshXmatIdx, 0));
         lmodel.model.meshMaterial[i] = lean_usize_of_nat(lean_ctor_get(meshXmatIdx, 1));
     }
-    lmodel.model.materials = RL_MALLOC(lmodel.model.materialCount * sizeof(Material));
+    lmodel.model.materials = RL_MALLOC(lmodel.materialsCapacity * sizeof(Material));
     for (size_t i = 0; i < lmodel.model.materialCount; ++i) {
         lmodel.model.materials[i] = lean_raylib_Material_from(
-            lean_array_get_core(meshes, i),
-            RL_MALLOC(LEAN_RAYLIB_MAX_MATERIAL_MAPS)
+            lean_array_get_core(materials, i),
+            RL_MALLOC(LEAN_RAYLIB_MAX_MATERIAL_MAPS * sizeof(MaterialMap))
         );
     }
     lmodel.model.boneCount = lean_array_size(bones);
@@ -648,7 +648,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Model_bindPose(b_lean_obj_arg model, uint3
     return lean_raylib_Transform_to(lean_raylib_Model_from(model)->model.bindPose[i]);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Model_getMaterial(b_lean_obj_arg model, uint32_t i) {
+LEAN_EXPORT lean_obj_res lean_raylib__Model_material(b_lean_obj_arg model, uint32_t i) {
     lean_object* mat = lean_array_get_core(lean_raylib_Model_from(model)->materials, i);
     lean_inc_ref(mat);
     return mat;
@@ -669,6 +669,68 @@ LEAN_EXPORT lean_obj_res lean_raylib__Model_setMaterial(lean_obj_arg model, uint
         return lean_raylib_Model_to(modelCopy);
     }
 }
+
+LEAN_EXPORT lean_obj_res lean_raylib__Model_addMaterial(lean_obj_arg model, lean_obj_arg mat) {
+    if(LEAN_UNLIKELY(!lean_is_exclusive(model))) {
+        lean_raylib_Model modelCopy = lean_raylib_Model_clone(lean_raylib_Model_from(model));
+        lean_dec_ref(model);
+        model = lean_raylib_Model_to(modelCopy);
+    }
+    lean_raylib_Model* modelC = lean_raylib_Model_from(model);
+    modelC->materials = lean_array_push(modelC->materials, mat);
+    if (modelC->model.materialCount >= modelC->materialsCapacity) {
+        Material* mats = RL_MALLOC(modelC->materialsCapacity * 2 * sizeof(Material));
+        memcpy(mats, modelC->model.materials, modelC->model.materialCount * sizeof(Material));
+        RL_FREE(modelC->model.materials);
+        modelC->model.materials = mats;
+    }
+    MaterialMap* newMmaps = RL_MALLOC(LEAN_RAYLIB_MAX_MATERIAL_MAPS * sizeof(MaterialMap));
+    modelC->model.materials[modelC->model.materialCount] = lean_raylib_Material_from(mat, newMmaps);
+    modelC->model.materialCount += 1;
+    return model;
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__Model_removeMaterial(lean_obj_arg model, uint32_t i) {
+    if(LEAN_UNLIKELY(!lean_is_exclusive(model))) {
+        lean_raylib_Model modelCopy = lean_raylib_Model_clone(lean_raylib_Model_from(model));
+        lean_dec_ref(model);
+        model = lean_raylib_Model_to(modelCopy);
+    }
+    lean_raylib_Model* modelC = lean_raylib_Model_from(model);
+    for (size_t j = 0; j < modelC->model.meshCount; ++j) {
+        if (modelC->model.meshMaterial[j] == i) {
+            modelC->model.meshMaterial[j] = 0;
+        }
+    }
+    modelC->materials = lean_ensure_exclusive_array(modelC->materials);
+    modelC->model.materialCount -= 1;
+    lean_dec_ref(lean_array_get_core(modelC->materials, i));
+    RL_FREE(modelC->model.materials[i].maps);
+    for (size_t j = i; j < modelC->model.materialCount; ++j) {
+        lean_array_set_core(modelC->materials, j, lean_array_get_core(modelC->materials, j + 1));
+        modelC->model.materials[j] = modelC->model.materials[j + 1];
+    }
+    return model;
+}
+
+LEAN_EXPORT uint32_t lean_raylib__Model_meshMaterial(b_lean_obj_arg model, uint32_t i) {
+    return lean_raylib_Model_from(model)->model.meshMaterial[i];
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__Model_setMeshMaterial(lean_obj_arg model, uint32_t i, uint32_t j) {
+    if(LEAN_LIKELY(lean_is_exclusive(model))) {
+        lean_raylib_Model* modelC = lean_raylib_Model_from(model);
+        modelC->model.meshMaterial[i] = j;
+        return model;
+    }
+    else {
+        lean_raylib_Model modelCopy = lean_raylib_Model_clone(lean_raylib_Model_from(model));
+        modelCopy.model.meshMaterial[i] = j;
+        lean_dec_ref(model);
+        return lean_raylib_Model_to(modelCopy);
+    }
+}
+
 
 // # ModelAnimation
 

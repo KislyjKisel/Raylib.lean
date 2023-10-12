@@ -76,10 +76,7 @@ def main : IO Unit := do
   let model ← if ← modelPath.pathExists
     then do
       let model ← loadModel modelPath.toString
-      let model := if h: 0 < model.materialCount
-        then model.setMaterial 0 material h
-        else model
-      pure $ TestModel.model model
+      pure $ TestModel.model $ model.setMaterial? 0 material
     else
       pure $ .cube $ genMeshCube 1.0 1.0 1.0
 
