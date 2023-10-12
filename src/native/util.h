@@ -39,7 +39,7 @@ static inline lean_object* lean_mk_option_some(lean_object* value) {
 }
 
 static inline int lean_option_is_some(b_lean_obj_arg opt) {
-    return lean_obj_tag(opt) == 1;
+    return !lean_is_scalar(opt);
 }
 
 static inline void* lean_raylib_rlmemdup(void* src, size_t size) {
