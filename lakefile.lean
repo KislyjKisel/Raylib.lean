@@ -64,11 +64,6 @@ lean_exe test {
     pure args
 }
 
-def buildBindingsO (pkg : Package) (weakArgs traceArgs : Array String) (stem : String) : IndexBuildM (BuildJob FilePath) := do
-  let oFile := pkg.irDir / "native" / (stem ++ ".o")
-  let srcJob ← inputFile <| pkg.dir / "src" / "native" / (stem ++ ".c")
-  buildO (stem ++ ".c") oFile srcJob weakArgs traceArgs ((get_config? cc).getD (← getLeanCc).toString)
-
 def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m String := do
   let output ← IO.Process.output sa
   if output.exitCode ≠ 0 then
@@ -237,8 +232,24 @@ extern_lib «raylib-lean» pkg := do
     "enumerations", "structures", "functions", "callbacks",
     "raymath", "raygui"
   ]
+  let bindingsHeaders := #[
+    "structures", "util", "include/raylib_lean", "include/raymath_lean"
+  ]
+  let nativeSrcDir := pkg.dir / "src" / "native"
+  let objectFileDir := pkg.irDir / "native"
+  let headerFile (h : String) : FilePath := nativeSrcDir / (h ++ ".h")
+  let extraTrace ← mixTraceArray <$> (bindingsHeaders.mapM $ computeTrace ∘ headerFile)
   buildStaticLib (pkg.nativeLibDir / name)
-    (← bindingsSources.mapM $ buildBindingsO pkg weakArgs traceArgs)
+    (← bindingsSources.mapM λ stem ↦ do
+      buildO
+        (stem ++ ".c")
+        (objectFileDir / (stem ++ ".o"))
+        (← inputFile $ nativeSrcDir / (stem ++ ".c"))
+        weakArgs traceArgs
+        ((get_config? cc).getD
+        (← getLeanCc).toString)
+        (pure extraTrace)
+    )
 
 script buildSubmodule do
   buildRaylibSubmodule true
