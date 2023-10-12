@@ -1,7 +1,6 @@
 #include <string.h>
 #include "util.h"
 #include "structures.h"
-#include <stdio.h>
 
 LEAN_EXPORT lean_obj_res lean_raylib__InitWindow (uint32_t width, uint32_t height, lean_obj_arg title, lean_obj_arg world) {
     InitWindow(width, height, strdup(lean_string_cstr(title)));
@@ -2315,8 +2314,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawGrid (uint32_t slices, uint32_t spacin
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-#include <inttypes.h>
-
 LEAN_EXPORT lean_obj_res lean_raylib__LoadModel (b_lean_obj_arg fileName, lean_obj_arg world) {
     lean_raylib_Model model;
     model.model = LoadModel(lean_string_cstr(fileName));
@@ -2324,13 +2321,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadModel (b_lean_obj_arg fileName, lean_o
     for (size_t i = 0; i < model.model.meshCount; ++i) {
         lean_object* meshXmatIdx = lean_alloc_ctor(0, 2, 0);
         LET_BOX(Mesh, mesh, model.model.meshes[i]);
-        printf("The mesh! %lu\n", (uint64_t)mesh);
         lean_ctor_set(meshXmatIdx, 0, lean_raylib_Mesh_to(mesh));
         lean_ctor_set(meshXmatIdx, 1, lean_uint32_to_nat(model.model.meshMaterial[i]));
         lean_array_set_core(model.meshes, i, meshXmatIdx);
     }
     model.materials = lean_alloc_array(model.model.materialCount, model.model.materialCount);
-    printf("MESHES: %" PRIu64 "\nMATS: %" PRIu64 "\n", (uint64_t)model.meshes, (uint64_t)model.materials);
     for (size_t i = 0; i < model.model.materialCount; ++i) {
         Material* mat = &model.model.materials[i];
         Vector4 params = {
