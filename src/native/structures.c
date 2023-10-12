@@ -3,6 +3,7 @@
 #include <rlgl.h>
 #include "structures.h"
 
+lean_external_class* lean_raylib_Context_class;
 lean_external_class* lean_raylib_VaList_class;
 lean_external_class* lean_raylib_Image_class;
 lean_external_class* lean_raylib_TextureRef_class;
@@ -18,11 +19,12 @@ lean_external_class* lean_raylib_Music_class;
 lean_external_class* lean_raylib_AudioStream_class;
 lean_external_class* lean_raylib_WindowHandle_class;
 
-lean_object* lean_raylib_Shader_default;
-lean_object* lean_raylib_Material_default;
 lean_object* lean_raylib_Image_empty;
-lean_object* lean_raylib_Texture_default;
 lean_object* lean_raylib_Texture_empty;
+
+static void lean_raylib_Context_finalize(void* ctx) {
+    CloseWindow();
+}
 
 static void lean_raylib_Image_finalize(void* image) {
     UnloadImage(*(Image*)image);
@@ -41,9 +43,13 @@ static void lean_raylib_TextureRef_finalize(void* textureRef) {
     lean_raylib_free(textureRef);
 }
 
-static void lean_raylib_Texture_finalize(void* texture) {
-    if(((Texture*)texture)->id != rlGetTextureIdDefault()) { // todo: test if needed
-        UnloadTexture(*(Texture*)texture);
+static void lean_raylib_Texture_finalize(void* texture_v) {
+    lean_raylib_Texture* texture = texture_v;
+    if(texture->texture.id != rlGetTextureIdDefault()) { // todo: test if needed
+        UnloadTexture(texture->texture);
+    }
+    if (texture->ctx != NULL) {
+        lean_dec_ref(texture->ctx);
     }
     lean_raylib_free(texture);
 }
@@ -58,13 +64,17 @@ static void lean_raylib_Font_finalize(void* font) {
     lean_raylib_free(font);
 }
 
-static void lean_raylib_Mesh_finalize(void* mesh) {
-    UnloadMesh(*(Mesh*)mesh);
+static void lean_raylib_Mesh_finalize(void* mesh_v) {
+    lean_raylib_Mesh* mesh = mesh_v;
+    UnloadMesh(mesh->mesh);
+    lean_dec_ref(mesh->ctx);
     lean_raylib_free(mesh);
 }
 
-static void lean_raylib_Shader_finalize(void* shader) {
-    UnloadShader(*(Shader*)shader);
+static void lean_raylib_Shader_finalize(void* shader_v) {
+    lean_raylib_Shader* shader = shader_v;
+    UnloadShader(shader->shader);
+    lean_dec_ref(shader->ctx);
     lean_raylib_free(shader);
 }
 
@@ -131,12 +141,14 @@ static void lean_raylib_Music_finalize(void* music) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
-    {
-        lean_raylib_VaList_class = lean_register_external_class(
-            lean_raylib_default_finalize,
-            lean_raylib_default_foreach
-        );
-    }
+    lean_raylib_Context_class = lean_register_external_class(
+        lean_raylib_Context_finalize,
+        lean_raylib_default_foreach
+    );
+    lean_raylib_VaList_class = lean_register_external_class(
+        lean_raylib_default_finalize,
+        lean_raylib_default_foreach
+    );
     {
         lean_raylib_Image_class = lean_register_external_class(
             lean_raylib_Image_finalize,
@@ -161,17 +173,7 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
             lean_raylib_Texture_finalize,
             lean_raylib_default_foreach
         );
-        LET_BOX_STRUCT(Texture, defaultTexture,
-            .id = rlGetTextureIdDefault(),
-            .width = 1,
-            .height = 1,
-            .mipmaps = 1,
-            .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
-        );
-        lean_raylib_Texture_default = lean_raylib_Texture_to(defaultTexture);
-        lean_mark_persistent(lean_raylib_Texture_default);
-        LET_BOX(Texture, emptyTexture, (Texture){0});
-        lean_raylib_Texture_empty = lean_raylib_Texture_to(emptyTexture);
+        lean_raylib_Texture_empty = lean_raylib_Texture_to((Texture) {0}, NULL);
         lean_mark_persistent(lean_raylib_Texture_empty);
     }
     lean_raylib_RenderTexture_class = lean_register_external_class(
@@ -186,44 +188,10 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
         lean_raylib_Mesh_finalize,
         lean_raylib_default_foreach
     );
-    {
-        lean_raylib_Shader_class = lean_register_external_class(
-            lean_raylib_Shader_finalize,
-            lean_raylib_default_foreach
-        );
-        LET_BOX_STRUCT(Shader, defaultShader,
-            .id = rlGetShaderIdDefault(),
-            .locs = rlGetShaderLocsDefault()
-        );
-        lean_raylib_Shader_default = lean_raylib_Shader_to(defaultShader);
-        lean_mark_persistent(lean_raylib_Shader_default);
-    }
-    {
-        lean_object* mmaps = lean_alloc_array(LEAN_RAYLIB_MAX_MATERIAL_MAPS, LEAN_RAYLIB_MAX_MATERIAL_MAPS);
-        lean_array_set_core(
-            mmaps,
-            MATERIAL_MAP_DIFFUSE, // 0
-            lean_raylib_MaterialMap_to(lean_raylib_Texture_default, WHITE, 0.0f)
-        );
-        lean_array_set_core(
-            mmaps,
-            MATERIAL_MAP_SPECULAR, // 1
-            lean_raylib_MaterialMap_to(lean_raylib_Texture_empty, WHITE, 0.0f)
-        );
-        for (size_t i = 2; i < LEAN_RAYLIB_MAX_MATERIAL_MAPS; ++i) {
-            lean_array_set_core(
-                mmaps,
-                i,
-                lean_raylib_MaterialMap_to(lean_raylib_Texture_empty, BLANK, 0.0f)
-            );
-        }
-        lean_raylib_Material_default = lean_raylib_Material_to(
-            lean_raylib_Shader_default,
-            mmaps,
-            (Vector4) { .x = 0, .y = 0, .z = 0, .w = 0 }
-        );
-        lean_mark_persistent(lean_raylib_Material_default);
-    }
+    lean_raylib_Shader_class = lean_register_external_class(
+        lean_raylib_Shader_finalize,
+        lean_raylib_default_foreach
+    );
     lean_raylib_Model_class = lean_register_external_class(
         lean_raylib_Model_finalize,
         lean_raylib_Model_foreach
@@ -332,11 +300,19 @@ LEAN_EXPORT uint32_t lean_raylib__TextureRef_format(b_lean_obj_arg obj) {
 
 LEAN_EXPORT lean_obj_res lean_raylib__Texture_getEmpty(lean_obj_arg unit) {
     return lean_raylib_Texture_empty;
-
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Texture_getDefault(lean_obj_arg unit) {
-    return lean_raylib_Texture_default;
+LEAN_EXPORT lean_obj_res lean_raylib__Texture_getDefault(lean_obj_arg ctx) {
+    return lean_raylib_Texture_to(
+        (Texture){
+            .id = rlGetTextureIdDefault(),
+            .width = 1,
+            .height = 1,
+            .mipmaps = 1,
+            .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
+        },
+        ctx
+    );
 }
 
 
@@ -496,6 +472,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Font_recs(b_lean_obj_arg obj) {
 // # Mesh
 
 LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkBv(
+    lean_obj_arg ctx,
     uint32_t vertexCount,
     b_lean_obj_arg vertices,
     b_lean_obj_arg texcoords,
@@ -563,12 +540,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkBv(
             sizeof(float[3]) * vertexCount
         );
     }
-    LET_BOX(Mesh, mesh_heap, mesh);
-    return lean_raylib_Mesh_to(mesh_heap);
+    return lean_raylib_Mesh_to(mesh, ctx);
 }
 
 
 LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkIndexedBv(
+    lean_obj_arg ctx,
     uint32_t vertexCount,
     uint32_t triangleCount,
     b_lean_obj_arg vertices,
@@ -587,9 +564,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkIndexedBv(
             uint16_t index;
             memcpy(&index, indices_c + i * sizeof(uint16_t), sizeof(index));
             if(index >= vertexCount) {
-                LET_BOX(Mesh, mesh_heap, mesh);
                 return lean_panic_fn(
-                    lean_raylib_Mesh_to(mesh_heap),
+                    lean_raylib_Mesh_to(mesh, ctx),
                     lean_mk_string("Mesh index out of bounds")
                 );
             }
@@ -655,8 +631,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkIndexedBv(
             sizeof(float[3]) * vertexCount
         );
     }
-    LET_BOX(Mesh, mesh_heap, mesh);
-    return lean_raylib_Mesh_to(mesh_heap);
+    return lean_raylib_Mesh_to(mesh, ctx);
 }
 
 LEAN_EXPORT uint32_t lean_raylib__Mesh_vertexCount(b_lean_obj_arg mesh) {
@@ -735,15 +710,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__Shader_defaultLoc(b_lean_obj_arg shader, u
     }
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg unit) {
-    return lean_raylib_Shader_default;
-}
-
-
-// # Material
-
-LEAN_EXPORT lean_obj_res lean_raylib__Material_getDefault(lean_obj_arg unit) {
-    return lean_raylib_Material_default;
+LEAN_EXPORT lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg ctx) {
+    return lean_raylib_Shader_to(
+        (Shader) {
+            .id = rlGetShaderIdDefault(),
+            .locs = rlGetShaderLocsDefault()
+        },
+        ctx
+    );
 }
 
 

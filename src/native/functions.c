@@ -4,15 +4,15 @@
 
 LEAN_EXPORT lean_obj_res lean_raylib__InitWindow (uint32_t width, uint32_t height, lean_obj_arg title, lean_obj_arg world) {
     InitWindow(width, height, strdup(lean_string_cstr(title)));
-    return lean_io_result_mk_ok(lean_box(0));
+    return lean_io_result_mk_ok(lean_raylib_Context_new());
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__WindowShouldClose (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(WindowShouldClose()));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__CloseWindow (lean_obj_arg world) {
-    CloseWindow();
+LEAN_EXPORT lean_obj_res lean_raylib__CloseWindow (lean_obj_arg ctx, lean_obj_arg world) {
+    lean_dec_ref(ctx);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -368,7 +368,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__UnloadVrStereoConfig (b_lean_obj_arg confi
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (b_lean_obj_arg vsFileName_opt, b_lean_obj_arg fsFileName_opt, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (
+    lean_obj_arg ctx, b_lean_obj_arg vsFileName_opt, b_lean_obj_arg fsFileName_opt, lean_obj_arg world
+) {
     const char* vsFileName = NULL;
     if(lean_option_is_some(vsFileName_opt)) {
         vsFileName = lean_string_cstr(lean_ctor_get(vsFileName_opt, 0));
@@ -377,11 +379,15 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadShader (b_lean_obj_arg vsFileName_opt,
     if(lean_option_is_some(fsFileName_opt)) {
         fsFileName = lean_string_cstr(lean_ctor_get(fsFileName_opt, 0));
     }
-    LET_BOX(Shader, shader, LoadShader(vsFileName, fsFileName));
-    return lean_io_result_mk_ok(lean_raylib_Shader_to(shader));
+    return lean_io_result_mk_ok(lean_raylib_Shader_to(
+        LoadShader(vsFileName, fsFileName),
+        ctx
+    ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (b_lean_obj_arg vsCode_opt, b_lean_obj_arg fsCode_opt, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (
+    lean_obj_arg ctx, b_lean_obj_arg vsCode_opt, b_lean_obj_arg fsCode_opt, lean_obj_arg world
+) {
     const char* vsCode = NULL;
     if(lean_option_is_some(vsCode_opt)) {
         vsCode = lean_string_cstr(lean_ctor_get(vsCode_opt, 0));
@@ -390,8 +396,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (b_lean_obj_arg vsCod
     if(lean_option_is_some(fsCode_opt)) {
         fsCode = lean_string_cstr(lean_ctor_get(fsCode_opt, 0));
     }
-    LET_BOX(Shader, shader, LoadShaderFromMemory(vsCode, fsCode));
-    return lean_io_result_mk_ok(lean_raylib_Shader_to(shader));
+    return lean_io_result_mk_ok(lean_raylib_Shader_to(
+        LoadShaderFromMemory(vsCode, fsCode),
+        ctx
+    ));
 }
 
 LEAN_EXPORT uint8_t lean_raylib__IsShaderReady (b_lean_obj_arg shader) {
@@ -1878,19 +1886,25 @@ LEAN_EXPORT lean_obj_res lean_raylib__ImageDrawTextEx (lean_obj_arg image_old_bo
     return image_res_box;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadTexture (b_lean_obj_arg fileName, lean_obj_arg world) {
-    LET_BOX(Texture2D, texture, LoadTexture(lean_string_cstr(fileName)));
-    return lean_io_result_mk_ok(lean_raylib_Texture_to(texture));
+LEAN_EXPORT lean_obj_res lean_raylib__LoadTexture (lean_obj_arg ctx, b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_raylib_Texture_to(
+        LoadTexture(lean_string_cstr(fileName)),
+        ctx
+    ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureFromImage (b_lean_obj_arg image) {
-    LET_BOX(Texture2D, texture, LoadTextureFromImage(*lean_raylib_Image_from(image)));
-    return lean_raylib_Texture_to(texture);
+LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureFromImage (lean_obj_arg ctx, b_lean_obj_arg image) {
+    return lean_raylib_Texture_to(
+        LoadTextureFromImage(*lean_raylib_Image_from(image)),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureCubemap (b_lean_obj_arg image, uint32_t layout) {
-    LET_BOX(TextureCubemap, texture, LoadTextureCubemap(*lean_raylib_Image_from(image), layout));
-    return lean_raylib_Texture_to(texture);
+LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureCubemap (lean_obj_arg ctx, b_lean_obj_arg image, uint32_t layout) {
+    return lean_raylib_Texture_to(
+        LoadTextureCubemap(*lean_raylib_Image_from(image), layout),
+        ctx
+    );
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__LoadRenderTexture (uint32_t width, uint32_t height, lean_obj_arg world) {
@@ -1922,11 +1936,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__GenTextureMipmaps (lean_obj_arg texture_ol
         texture_res_box = texture_old_box;
     }
     else {
-        Image image = LoadImageFromTexture(*lean_raylib_Texture_from(texture_old_box));
-        LET_BOX(Texture, texture_res, LoadTextureFromImage(image));
+        lean_raylib_Texture* texture = lean_get_external_data(texture_old_box);
+        Image image = LoadImageFromTexture(texture->texture);
+        lean_inc_ref(texture->ctx);
+        texture_res_box = lean_raylib_Texture_to(LoadTextureFromImage(image), texture->ctx);
         UnloadImage(image);
         lean_dec_ref(texture_old_box);
-        texture_res_box = lean_raylib_Texture_to(texture_res);
     }
     GenTextureMipmaps(lean_raylib_Texture_from(texture_res_box));
     return texture_old_box;
@@ -2314,42 +2329,46 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawGrid (uint32_t slices, uint32_t spacin
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadModel (b_lean_obj_arg fileName, lean_obj_arg world) {
+static lean_obj_res lean_raylib_Material_own (Material* mat, lean_obj_arg ctx) {
+    Vector4 params = {
+        .x = mat->params[0],
+        .y = mat->params[1],
+        .z = mat->params[2],
+        .w = mat->params[3]
+    };
+    lean_object* mmaps = lean_alloc_array(LEAN_RAYLIB_MAX_MATERIAL_MAPS, LEAN_RAYLIB_MAX_MATERIAL_MAPS);
+    lean_inc_ref_n(ctx, LEAN_RAYLIB_MAX_MATERIAL_MAPS);
+    for (size_t j = 0; j < LEAN_RAYLIB_MAX_MATERIAL_MAPS; ++j) {
+        MaterialMap* mmap = &mat->maps[j];
+        lean_array_set_core(mmaps, j, lean_raylib_MaterialMap_to(
+            lean_raylib_Texture_to(mmap->texture, ctx),
+            mmap->color,
+            mmap->value
+        ));
+    }
+    return lean_raylib_Material_to(lean_raylib__Shader_getDefault(ctx), mmaps, params);
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__LoadModel (b_lean_obj_arg ctx, b_lean_obj_arg fileName, lean_obj_arg world) {
     lean_raylib_Model model;
     model.model = LoadModel(lean_string_cstr(fileName));
     model.meshesCapacity = model.model.meshCount;
     model.materialsCapacity = model.model.materialCount;
     model.meshes = lean_alloc_array(model.model.meshCount, model.model.meshCount);
+    // per each mesh + material(->shader)
+    lean_inc_ref_n(ctx, model.model.meshCount + model.model.materialCount);
     for (size_t i = 0; i < model.model.meshCount; ++i) {
         lean_object* meshXmatIdx = lean_alloc_ctor(0, 2, 0);
-        LET_BOX(Mesh, mesh, model.model.meshes[i]);
-        lean_ctor_set(meshXmatIdx, 0, lean_raylib_Mesh_to(mesh));
+        lean_ctor_set(meshXmatIdx, 0, lean_raylib_Mesh_to(model.model.meshes[i], ctx));
         lean_ctor_set(meshXmatIdx, 1, lean_uint32_to_nat(model.model.meshMaterial[i]));
         lean_array_set_core(model.meshes, i, meshXmatIdx);
     }
     model.materials = lean_alloc_array(model.model.materialCount, model.model.materialCount);
     for (size_t i = 0; i < model.model.materialCount; ++i) {
-        Material* mat = &model.model.materials[i];
-        Vector4 params = {
-            .x = mat->params[0],
-            .y = mat->params[1],
-            .z = mat->params[2],
-            .w = mat->params[3]
-        };
-        lean_object* mmaps = lean_alloc_array(LEAN_RAYLIB_MAX_MATERIAL_MAPS, LEAN_RAYLIB_MAX_MATERIAL_MAPS);
-        for (size_t j = 0; j < LEAN_RAYLIB_MAX_MATERIAL_MAPS; ++j) {
-            MaterialMap* mmap = &mat->maps[j];
-            LET_BOX(Texture, texture, mmap->texture);
-            lean_array_set_core(mmaps, j, lean_raylib_MaterialMap_to(
-                lean_raylib_Texture_to(texture),
-                mmap->color,
-                mmap->value
-            ));
-        }
         lean_array_set_core(
             model.materials,
             i,
-            lean_raylib_Material_to(lean_raylib_Shader_default, mmaps, params)
+            lean_raylib_Material_own(&model.model.materials[i], ctx)
         );
     }
     return lean_io_result_mk_ok(lean_raylib_Model_to(model));
@@ -2361,7 +2380,13 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadModelFromMesh (lean_obj_arg mesh) {
     model.meshes = lean_alloc_array(1, 1);
     lean_array_set_core(model.meshes, 0, mesh);
     model.materials = lean_alloc_array(1, 1);
-    lean_array_set_core(model.materials, 0, lean_raylib_Material_default);
+    lean_object* ctx = ((lean_raylib_Mesh*)lean_get_external_data(mesh))->ctx;
+    lean_inc_ref(ctx);
+    lean_array_set_core(
+        model.materials,
+        0,
+        lean_raylib_Material_own(&model.model.materials[0], ctx)
+    );
     return lean_raylib_Model_to(model);
 }
 
@@ -2439,9 +2464,13 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawBillboardPro (b_lean_obj_arg camera, b
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__MeshCopy(b_lean_obj_arg mesh_old) {
-    LET_BOX(Mesh, mesh_new, lean_raylib_Mesh_clone(lean_raylib_Mesh_from(mesh_old)));
-    return lean_raylib_Mesh_to(mesh_new);
+LEAN_EXPORT lean_obj_res lean_raylib__MeshCopy(b_lean_obj_arg mesh) {
+    lean_object* ctx = ((lean_raylib_Mesh*)lean_get_external_data(mesh))->ctx;
+    lean_inc_ref(ctx);
+    return lean_raylib_Mesh_to(
+        lean_raylib_Mesh_clone(lean_raylib_Mesh_from(mesh)),
+        ctx
+    );
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UploadMesh (lean_obj_arg mesh, uint8_t dynamic, lean_obj_arg world) {
@@ -2494,59 +2523,81 @@ LEAN_EXPORT lean_obj_res lean_raylib__GenMeshTangents (lean_obj_arg mesh) {
     }
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshPoly (uint32_t sides, uint32_t radius) {
-    LET_BOX(Mesh, mesh, GenMeshPoly(sides, lean_pod_Float32_fromBits(radius)));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshPoly (lean_obj_arg ctx, uint32_t sides, uint32_t radius) {
+    return lean_raylib_Mesh_to(
+        GenMeshPoly(sides, lean_pod_Float32_fromBits(radius)),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshPlane (uint32_t width, uint32_t length, uint32_t resX, uint32_t resZ) {
-    LET_BOX(Mesh, mesh, GenMeshPlane(lean_pod_Float32_fromBits(width), lean_pod_Float32_fromBits(length), resX, resZ));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshPlane (lean_obj_arg ctx, uint32_t width, uint32_t length, uint32_t resX, uint32_t resZ) {
+    return lean_raylib_Mesh_to(
+        GenMeshPlane(lean_pod_Float32_fromBits(width), lean_pod_Float32_fromBits(length), resX, resZ),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCube (uint32_t width, uint32_t height, uint32_t length) {
-    LET_BOX(Mesh, mesh, GenMeshCube(lean_pod_Float32_fromBits(width), lean_pod_Float32_fromBits(height), lean_pod_Float32_fromBits(length)));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCube (lean_obj_arg ctx, uint32_t width, uint32_t height, uint32_t length) {
+    return lean_raylib_Mesh_to(
+        GenMeshCube(lean_pod_Float32_fromBits(width), lean_pod_Float32_fromBits(height), lean_pod_Float32_fromBits(length)),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshSphere (uint32_t radius, uint32_t rings, uint32_t slices) {
-    LET_BOX(Mesh, mesh, GenMeshSphere(lean_pod_Float32_fromBits(radius), rings, slices));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshSphere (lean_obj_arg ctx, uint32_t radius, uint32_t rings, uint32_t slices) {
+    return lean_raylib_Mesh_to(
+        GenMeshSphere(lean_pod_Float32_fromBits(radius), rings, slices),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshHemiSphere (uint32_t radius, uint32_t rings, uint32_t slices) {
-    LET_BOX(Mesh, mesh, GenMeshHemiSphere(lean_pod_Float32_fromBits(radius), rings, slices));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshHemiSphere (lean_obj_arg ctx, uint32_t radius, uint32_t rings, uint32_t slices) {
+    return lean_raylib_Mesh_to(
+        GenMeshHemiSphere(lean_pod_Float32_fromBits(radius), rings, slices),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCylinder (uint32_t radius, uint32_t height, uint32_t slices) {
-    LET_BOX(Mesh, mesh, GenMeshCylinder(lean_pod_Float32_fromBits(radius), lean_pod_Float32_fromBits(height), slices));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCylinder (lean_obj_arg ctx, uint32_t radius, uint32_t height, uint32_t slices) {
+    return lean_raylib_Mesh_to(
+        GenMeshCylinder(lean_pod_Float32_fromBits(radius), lean_pod_Float32_fromBits(height), slices),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCone (uint32_t radius, uint32_t height, uint32_t slices) {
-    LET_BOX(Mesh, mesh, GenMeshCone(lean_pod_Float32_fromBits(radius), lean_pod_Float32_fromBits(height), slices));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCone (lean_obj_arg ctx, uint32_t radius, uint32_t height, uint32_t slices) {
+    return lean_raylib_Mesh_to(
+        GenMeshCone(lean_pod_Float32_fromBits(radius), lean_pod_Float32_fromBits(height), slices),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshTorus (uint32_t radius, uint32_t size, uint32_t radSeg, uint32_t sides) {
-    LET_BOX(Mesh, mesh, GenMeshTorus(lean_pod_Float32_fromBits(radius), lean_pod_Float32_fromBits(size), radSeg, sides));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshTorus (lean_obj_arg ctx, uint32_t radius, uint32_t size, uint32_t radSeg, uint32_t sides) {
+    return lean_raylib_Mesh_to(
+        GenMeshTorus(lean_pod_Float32_fromBits(radius), lean_pod_Float32_fromBits(size), radSeg, sides),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshKnot (uint32_t radius, uint32_t size, uint32_t radSeg, uint32_t sides) {
-    LET_BOX(Mesh, mesh, GenMeshKnot(lean_pod_Float32_fromBits(radius), lean_pod_Float32_fromBits(size), radSeg, sides));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshKnot (lean_obj_arg ctx, uint32_t radius, uint32_t size, uint32_t radSeg, uint32_t sides) {
+    return lean_raylib_Mesh_to(
+        GenMeshKnot(lean_pod_Float32_fromBits(radius), lean_pod_Float32_fromBits(size), radSeg, sides),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshHeightmap (b_lean_obj_arg heightmap, lean_obj_arg size) {
-    LET_BOX(Mesh, mesh, GenMeshHeightmap(*lean_raylib_Image_from(heightmap), lean_raylib_Vector3_from(size)));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshHeightmap (lean_obj_arg ctx, b_lean_obj_arg heightmap, lean_obj_arg size) {
+    return lean_raylib_Mesh_to(
+        GenMeshHeightmap(*lean_raylib_Image_from(heightmap), lean_raylib_Vector3_from(size)),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCubicmap (b_lean_obj_arg cubicmap, lean_obj_arg cubeSize) {
-    LET_BOX(Mesh, mesh, GenMeshCubicmap(*lean_raylib_Image_from(cubicmap), lean_raylib_Vector3_from(cubeSize)));
-    return lean_raylib_Mesh_to(mesh);
+LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCubicmap (lean_obj_arg ctx, b_lean_obj_arg cubicmap, lean_obj_arg cubeSize) {
+    return lean_raylib_Mesh_to(
+        GenMeshCubicmap(*lean_raylib_Image_from(cubicmap), lean_raylib_Vector3_from(cubeSize)),
+        ctx
+    );
 }
 
 // LEAN_EXPORT /* Material* */lean_obj_arg lean_raylib__LoadMaterials (/* const char* */lean_obj_arg fileName, /* int* */lean_obj_arg materialCount, lean_obj_arg world) {

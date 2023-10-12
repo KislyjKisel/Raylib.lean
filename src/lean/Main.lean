@@ -15,11 +15,9 @@ inductive TestModel where
 | cube (m : Mesh)
 | model (m : Model)
 
-set_option compiler.extract_closed false
-
 def main : IO Unit := do
   setConfigFlags .vsyncHint
-  initWindow windowWidth windowHeight "Hello, Raylib-Lean"
+  let rlctx ← initWindow windowWidth windowHeight "Hello, Raylib-Lean"
   initAudioDevice
   setExitKey .null
 
@@ -36,7 +34,7 @@ def main : IO Unit := do
   setMousePosition (Int32.mk (windowWidth / 2)) (Int32.mk (windowHeight / 2))
   let mut lastMousePosition ← getMousePosition
 
-  let shader ← loadShaderFromMemory
+  let shader ← loadShaderFromMemory rlctx
     (some "
       #version 330
       uniform mat4 mvp;
@@ -68,17 +66,17 @@ def main : IO Unit := do
     maps := .ofFn λ m ↦
       match m with
       | .diffuse => {
-        texture := .default
+        texture := .getDefault rlctx
       }
       | _ => .empty
   }
   let modelPath : System.FilePath := "teapot.obj"
   let model ← if ← modelPath.pathExists
     then do
-      let model ← loadModel modelPath.toString
+      let model ← loadModel rlctx modelPath.toString
       pure $ TestModel.model $ model.setMaterial? 0 material
     else
-      pure $ .cube $ genMeshCube 1.0 1.0 1.0
+      pure $ .cube $ genMeshCube rlctx 1.0 1.0 1.0
 
   repeat do
     beginDrawing
@@ -131,4 +129,4 @@ def main : IO Unit := do
 
   -- stopAudioStream audioStream -- keep reference alive
   closeAudioDevice
-  closeWindow
+  closeWindow rlctx

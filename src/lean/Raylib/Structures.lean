@@ -13,6 +13,13 @@ opaque «initialize» : BaseIO Unit
 
 builtin_initialize «initialize»
 
+/-! # Context -/
+
+opaque ContextPointed : NonemptyType
+def Context : Type := ContextPointed.type
+instance : Nonempty Context := ContextPointed.property
+
+
 /-! # VaList -/
 
 opaque VaListPointed (σ : Type) : NonemptyType
@@ -168,11 +175,9 @@ private opaque Texture.getEmpty : Unit → Texture
 /-- null -/
 def Texture.empty : Texture := Texture.getEmpty ()
 
-@[extern "lean_raylib__Texture_getDefault"]
-private opaque Texture.getDefault : Unit → Texture
-
 /-- Texture used on shapes drawing (usually a white pixel) -/
-def Texture.default : Texture := Texture.getDefault ()
+@[extern "lean_raylib__Texture_getDefault"]
+opaque Texture.getDefault (ctx : Context) : Texture
 
 
 /-! # Render texture -/
@@ -329,6 +334,7 @@ structure Mesh.Skinning (vertexCount : UInt32) where
 /-- NOTE: Skinning requires normals and is ignored otherwise -/
 @[extern "lean_raylib__Mesh_mkBv"]
 opaque Mesh.mkBv
+  (ctx : Context)
   (vertexCount : UInt32)
   (vertices : @& Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) 1)
   (texcoords : @& (Option $ Pod.BytesView (vertexCount.toNat * 2 * Pod.byteSize Float32) 1))
@@ -345,6 +351,7 @@ NOTE: Skinning requires normals and is ignored otherwise.
 -/
 @[extern "lean_raylib__Mesh_mkIndexedBv"]
 opaque Mesh.mkIndexedBv
+  (ctx : Context)
   (vertexCount : UInt32) (triangleCount : UInt32)
   (vertices : @& Pod.BytesView (vertexCount.toNat * 3 * Pod.byteSize Float32) 1)
   (indices : @& Pod.BytesView (triangleCount.toNat * 3 * Pod.byteSize UInt16) 1)
@@ -435,9 +442,7 @@ opaque Shader.locs (self : @& Shader) : Array UInt32
 opaque Shader.defaultLoc (self : @& Shader) (index : ShaderLocationIndex) : Option UInt32
 
 @[extern "lean_raylib__Shader_getDefault"]
-private opaque Shader.getDefault : Unit → Shader
-
-def Shader.default : Shader := Shader.getDefault ()
+opaque Shader.getDefault (ctx : Context) : Shader
 
 
 /-! # Material -/
@@ -479,10 +484,16 @@ deriving Nonempty
 def Material.params (m : Material) : Vector4 :=
   Vector4.mk m.param0 m.param1 m.param2 m.param3
 
-@[extern "lean_raylib__Material_getDefault"]
-private opaque Material.getDefault : Unit → Material
-
-def Material.default : Material := Material.getDefault ()
+def Material.getDefault (ctx : Context) : Material where
+  shader := Shader.getDefault ctx
+  maps := .ofFn λ
+    | .diffuse => {
+      texture := .getDefault ctx
+    }
+    | .specular => {
+      texture := .empty
+    }
+    | _ => .empty
 
 
 /-! # Transform -/

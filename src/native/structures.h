@@ -9,6 +9,15 @@
 #include <ffi.h>
 #endif
 
+// # Context
+
+extern lean_external_class* lean_raylib_Context_class;
+
+static inline lean_obj_res lean_raylib_Context_new () {
+    return lean_alloc_external(lean_raylib_Context_class, NULL);
+}
+
+
 // # VaList
 
 typedef struct {
@@ -99,9 +108,13 @@ typedef struct {
     Texture texture;
 } lean_raylib_TextureRef;
 
+typedef struct {
+    Texture texture;
+    lean_object* ctx; // NULLABLE
+} lean_raylib_Texture;
+
 extern lean_external_class* lean_raylib_TextureRef_class;
 extern lean_external_class* lean_raylib_Texture_class;
-extern lean_object* lean_raylib_Texture_default;
 extern lean_object* lean_raylib_Texture_empty;
 
 static inline lean_object* lean_raylib_TextureRef_alloc (Texture2D texture, lean_obj_arg owner) {
@@ -116,8 +129,12 @@ static inline lean_raylib_TextureRef const* lean_raylib_TextureRef_from (b_lean_
     return (lean_raylib_TextureRef const*) lean_get_external_data(obj);
 }
 
-static inline lean_object* lean_raylib_Texture_to (Texture const* obj) {
-    return lean_alloc_external(lean_raylib_Texture_class, (void*)obj);
+static inline lean_object* lean_raylib_Texture_to (Texture texture, lean_obj_arg ctx) {
+    LET_BOX_STRUCT(lean_raylib_Texture, textureWctx,
+        .texture = texture,
+        .ctx = ctx
+    );
+    return lean_alloc_external(lean_raylib_Texture_class, (void*)textureWctx);
 }
 
 static inline Texture* lean_raylib_Texture_from (b_lean_obj_arg obj) {
@@ -261,10 +278,19 @@ static inline Camera2D lean_raylib_Camera2D_from (b_lean_obj_arg obj) {
 
 // # Mesh
 
+typedef struct {
+    Mesh mesh;
+    lean_object* ctx;
+} lean_raylib_Mesh;
+
 extern lean_external_class* lean_raylib_Mesh_class;
 
-static inline lean_object* lean_raylib_Mesh_to (Mesh* obj) {
-    return lean_alloc_external(lean_raylib_Mesh_class, (void*)obj);
+static inline lean_object* lean_raylib_Mesh_to (Mesh mesh, lean_obj_arg ctx) {
+    LET_BOX_STRUCT(lean_raylib_Mesh, meshWctx,
+        .mesh = mesh,
+        .ctx = ctx
+    );
+    return lean_alloc_external(lean_raylib_Mesh_class, (void*)meshWctx);
 }
 
 static inline Mesh* lean_raylib_Mesh_from (b_lean_obj_arg obj) {
@@ -312,16 +338,26 @@ static inline Mesh lean_raylib_Mesh_clone(Mesh* meshSrc) {
 
 // # Shader
 
+typedef struct {
+    Shader shader;
+    lean_object* ctx;
+} lean_raylib_Shader;
+
 extern lean_external_class* lean_raylib_Shader_class;
-extern lean_object* lean_raylib_Shader_default;
 
-static inline lean_object* lean_raylib_Shader_to (Shader const* obj) {
-    return lean_alloc_external(lean_raylib_Shader_class, (void*)obj);
+static inline lean_object* lean_raylib_Shader_to (Shader shader, lean_obj_arg ctx) {
+    LET_BOX_STRUCT(lean_raylib_Shader, shaderWctx,
+        .shader = shader,
+        .ctx = ctx
+    );
+    return lean_alloc_external(lean_raylib_Shader_class, (void*)shaderWctx);
 }
 
-static inline Shader const* lean_raylib_Shader_from (b_lean_obj_arg obj) {
-    return (Shader const*) lean_get_external_data(obj);
+static inline Shader* lean_raylib_Shader_from (b_lean_obj_arg obj) {
+    return (Shader*) lean_get_external_data(obj);
 }
+
+lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg ctx);
 
 
 // # Material
@@ -372,8 +408,6 @@ static inline lean_obj_res lean_raylib_Material_to (lean_obj_arg shader, lean_ob
     lean_ctor_set(material, 5, lean_pod_Float32_box(params.w));
     return material;
 }
-
-extern lean_object* lean_raylib_Material_default;
 
 
 // # Transform

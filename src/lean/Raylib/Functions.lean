@@ -14,15 +14,19 @@ namespace Raylib
 
 /-- Initialize window and OpenGL context -/
 @[extern "lean_raylib__InitWindow"]
-opaque initWindow (width : UInt32) (height : UInt32) (title : String) : BaseIO Unit
+opaque initWindow (width : UInt32) (height : UInt32) (title : String) : IO Context
 
-/-- Check if KEY_ESCAPE pressed or Close icon pressed -/
+/-- Check if `KeyboardKey.escape` pressed or Close icon pressed -/
 @[extern "lean_raylib__WindowShouldClose"]
 opaque windowShouldClose : BaseIO Bool
 
-/-- Close window and unload OpenGL context -/
+/--
+Close window and unload OpenGL context.
+If there are any values that need the context to be destroyed,
+nothing happens until their finalization.
+-/
 @[extern "lean_raylib__CloseWindow"]
-opaque closeWindow : BaseIO Unit
+opaque closeWindow (ctx : Context) : BaseIO Unit
 
 /-- Check if window has been initialized successfully -/
 @[extern "lean_raylib__IsWindowReady"]
@@ -306,11 +310,11 @@ opaque unloadVrStereoConfig (config : @& VrStereoConfig) : BaseIO Unit
 
 /-- Load shader from files and bind default locations -/
 @[extern "lean_raylib__LoadShader"]
-opaque loadShader (vsFileName : @& Option String) (fsFileName : @& Option String) : BaseIO Shader
+opaque loadShader (ctx : Context) (vsFileName : @& Option String) (fsFileName : @& Option String) : BaseIO Shader
 
 /-- Load shader from code strings and bind default locations -/
 @[extern "lean_raylib__LoadShaderFromMemory"]
-opaque loadShaderFromMemory (vsCode : @& Option String) (fsCode : @& Option String) : BaseIO Shader
+opaque loadShaderFromMemory (ctx : Context) (vsCode : @& Option String) (fsCode : @& Option String) : BaseIO Shader
 
 /-- Check if a shader is ready -/
 @[extern "lean_raylib__IsShaderReady"]
@@ -1272,15 +1276,15 @@ opaque imageDrawTextEx (dst : Image) (font : @& Font) (text : @& String) (positi
 
 /-- Load texture from file into GPU memory (VRAM) -/
 @[extern "lean_raylib__LoadTexture"]
-opaque loadTexture (fileName : @& String) : BaseIO Texture2D
+opaque loadTexture (ctx : Context) (fileName : @& String) : BaseIO Texture2D
 
 /-- Load texture from image data -/
 @[extern "lean_raylib__LoadTextureFromImage"]
-opaque loadTextureFromImage (image : @& Image) : Texture2D
+opaque loadTextureFromImage (ctx : Context) (image : @& Image) : Texture2D
 
 /-- Load cubemap from image, multiple image cubemap layouts supported -/
 @[extern "lean_raylib__LoadTextureCubemap"]
-opaque loadTextureCubemap (image : @& Image) (layout : CubemapLayout) : TextureCubemap
+opaque loadTextureCubemap (ctx : Context) (image : @& Image) (layout : CubemapLayout) : TextureCubemap
 
 /-- Load texture for rendering (framebuffer) -/
 @[extern "lean_raylib__LoadRenderTexture"]
@@ -1598,7 +1602,7 @@ opaque drawGrid (slices : UInt32) (spacing : Float32) : BaseIO Unit
 
 /-- Load model from files (meshes and materials) -/
 @[extern "lean_raylib__LoadModel"]
-opaque loadModel (fileName : @& String) : BaseIO Model
+opaque loadModel (ctx : @& Context) (fileName : @& String) : BaseIO Model
 
 /-- Load model from generated mesh (default material) -/
 @[extern "lean_raylib__LoadModelFromMesh"]
@@ -1695,47 +1699,47 @@ opaque genMeshTangents (mesh : Mesh) : Mesh
 
 /-- Generate polygonal mesh -/
 @[extern "lean_raylib__GenMeshPoly"]
-opaque genMeshPoly (sides : UInt32) (radius : Float32) : Mesh
+opaque genMeshPoly (ctx : Context) (sides : UInt32) (radius : Float32) : Mesh
 
 /-- Generate plane mesh (with subdivisions) -/
 @[extern "lean_raylib__GenMeshPlane"]
-opaque genMeshPlane (width : Float32) (length : Float32) (resX : UInt32) (resZ : UInt32) : Mesh
+opaque genMeshPlane (ctx : Context) (width : Float32) (length : Float32) (resX : UInt32) (resZ : UInt32) : Mesh
 
 /-- Generate cuboid mesh -/
 @[extern "lean_raylib__GenMeshCube"]
-opaque genMeshCube (width : Float32) (height : Float32) (length : Float32) : Mesh
+opaque genMeshCube (ctx : Context) (width : Float32) (height : Float32) (length : Float32) : Mesh
 
 /-- Generate sphere mesh (standard sphere) -/
 @[extern "lean_raylib__GenMeshSphere"]
-opaque genMeshSphere (radius : Float32) (rings : UInt32) (slices : UInt32) : Mesh
+opaque genMeshSphere (ctx : Context) (radius : Float32) (rings : UInt32) (slices : UInt32) : Mesh
 
 /-- Generate half-sphere mesh (no bottom cap) -/
 @[extern "lean_raylib__GenMeshHemiSphere"]
-opaque genMeshHemiSphere (radius : Float32) (rings : UInt32) (slices : UInt32) : Mesh
+opaque genMeshHemiSphere (ctx : Context) (radius : Float32) (rings : UInt32) (slices : UInt32) : Mesh
 
 /-- Generate cylinder mesh -/
 @[extern "lean_raylib__GenMeshCylinder"]
-opaque genMeshCylinder (radius : Float32) (height : Float32) (slices : UInt32) : Mesh
+opaque genMeshCylinder (ctx : Context) (radius : Float32) (height : Float32) (slices : UInt32) : Mesh
 
 /-- Generate cone/pyramid mesh -/
 @[extern "lean_raylib__GenMeshCone"]
-opaque genMeshCone (radius : Float32) (height : Float32) (slices : UInt32) : Mesh
+opaque genMeshCone (ctx : Context) (radius : Float32) (height : Float32) (slices : UInt32) : Mesh
 
 /-- Generate torus mesh -/
 @[extern "lean_raylib__GenMeshTorus"]
-opaque genMeshTorus (radius : Float32) (size : Float32) (radSeg : UInt32) (sides : UInt32) : Mesh
+opaque genMeshTorus (ctx : Context) (radius : Float32) (size : Float32) (radSeg : UInt32) (sides : UInt32) : Mesh
 
 /-- Generate trefoil knot mesh -/
 @[extern "lean_raylib__GenMeshKnot"]
-opaque genMeshKnot (radius : Float32) (size : Float32) (radSeg : UInt32) (sides : UInt32) : Mesh
+opaque genMeshKnot (ctx : Context) (radius : Float32) (size : Float32) (radSeg : UInt32) (sides : UInt32) : Mesh
 
 /-- Generate heightmap mesh from image data -/
 @[extern "lean_raylib__GenMeshHeightmap"]
-opaque genMeshHeightmap (heightmap : @& Image) (size : @& Vector3) : Mesh
+opaque genMeshHeightmap (ctx : Context) (heightmap : @& Image) (size : @& Vector3) : Mesh
 
 /-- Generate cubes-based map mesh from image data -/
 @[extern "lean_raylib__GenMeshCubicmap"]
-opaque genMeshCubicmap (cubicmap : @& Image) (cubeSize : @& Vector3) : Mesh
+opaque genMeshCubicmap (ctx : Context) (cubicmap : @& Image) (cubeSize : @& Vector3) : Mesh
 
 -- /-- Load materials from model file -/
 -- @[extern "lean_raylib__LoadMaterials"]
