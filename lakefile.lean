@@ -226,39 +226,19 @@ def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String ×
 
   pure (weakArgs, traceArgs)
 
-extern_lib «raylib-lean» (pkg : NPackage _package.name) := do
+extern_lib «raylib-lean» pkg := do
   let name := nameToStaticLib "raylib-lean"
-  let (weakArgs, traceArgs) ← bindingsCFlags pkg
-  let bindingsEnumerationsOFile ← buildBindingsO pkg weakArgs traceArgs "enumerations"
-  let bindingsStructuresOFile ← buildBindingsO pkg weakArgs traceArgs "structures"
-  let bindingsFunctionsOFile ← buildBindingsO pkg weakArgs traceArgs "functions"
-  let bindingsCallbacksOFile ← buildBindingsO pkg weakArgs traceArgs "callbacks"
-  buildStaticLib (pkg.nativeLibDir / name) #[
-    bindingsEnumerationsOFile,
-    bindingsStructuresOFile,
-    bindingsFunctionsOFile,
-    bindingsCallbacksOFile
-  ]
-
-extern_lib «raymath-lean» (pkg : NPackage _package.name) := do
-  let name := nameToStaticLib "raymath-lean"
-  let (weakArgs, traceArgs) ← bindingsCFlags pkg
-  let bindingsOFile ← buildBindingsO pkg weakArgs traceArgs "raymath"
-  buildStaticLib (pkg.nativeLibDir / name) #[
-    bindingsOFile
-  ]
-
-extern_lib «raygui-lean» (pkg : NPackage _package.name) := do
-  let name := nameToStaticLib "raygui-lean"
   let (weakArgs, traceArgs) ← bindingsCFlags pkg
   let weakArgs := weakArgs.append #[
     "-I",
     (pkg.dir / "raygui" / "src").toString
   ]
-  let bindingsOFile ← buildBindingsO pkg weakArgs traceArgs "raygui"
-  buildStaticLib (pkg.nativeLibDir / name) #[
-    bindingsOFile
+  let bindingsSources := #[
+    "enumerations", "structures", "functions", "callbacks",
+    "raymath", "raygui"
   ]
+  buildStaticLib (pkg.nativeLibDir / name)
+    (← bindingsSources.mapM $ buildBindingsO pkg weakArgs traceArgs)
 
 script buildSubmodule do
   buildRaylibSubmodule true
