@@ -15,12 +15,10 @@ typedef struct {
     va_list v;
 } lean_raylib_VaList;
 
+extern lean_external_class* lean_raylib_VaList_class;
+
 static inline lean_object* lean_raylib_VaList_to (lean_raylib_VaList* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_default_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_VaList_class, (void*)obj);
 }
 
 static inline lean_raylib_VaList* lean_raylib_VaList_from (b_lean_obj_arg obj) {
@@ -72,21 +70,15 @@ static inline Rectangle lean_raylib_Rectangle_from (b_lean_obj_arg obj) {
 
 // # Image
 
+extern lean_external_class* lean_raylib_Image_class;
+extern lean_object* lean_raylib_Image_empty;
+
 static inline Image* lean_raylib_Image_from (b_lean_obj_arg obj) {
     return (Image*) lean_get_external_data(obj);
 }
 
-static void lean_raylib_Image_finalize(void* image) {
-    UnloadImage(*(Image*)image);
-    lean_raylib_free(image);
-}
-
 static inline lean_object* lean_raylib_Image_to (Image const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Image_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_Image_class, (void*)obj);
 }
 
 static inline lean_obj_res lean_raylib_Image_exclusive(lean_obj_arg image_box) {
@@ -99,8 +91,6 @@ static inline lean_obj_res lean_raylib_Image_exclusive(lean_obj_arg image_box) {
     return image_copy_box;
 }
 
-extern lean_object* lean_raylib_Image_empty;
-
 
 // # Texture
 
@@ -109,70 +99,38 @@ typedef struct {
     Texture texture;
 } lean_raylib_TextureRef;
 
-static void lean_raylib_TextureRef_foreach(void* textureRef, b_lean_obj_arg f) {
-    lean_object* owner = ((lean_raylib_TextureRef*)textureRef)->owner;
-    lean_inc_ref(f);
-    lean_inc(owner);
-    lean_apply_1(f, owner);
-}
-
-static void lean_raylib_TextureRef_finalize(void* textureRef) {
-    lean_dec(((lean_raylib_TextureRef*)textureRef)->owner);
-    lean_raylib_free(textureRef);
-}
+extern lean_external_class* lean_raylib_TextureRef_class;
+extern lean_external_class* lean_raylib_Texture_class;
+extern lean_object* lean_raylib_Texture_default;
+extern lean_object* lean_raylib_Texture_empty;
 
 static inline lean_object* lean_raylib_TextureRef_alloc (Texture2D texture, lean_obj_arg owner) {
     LET_BOX_STRUCT(lean_raylib_TextureRef, textureRef,
         .texture = texture,
         .owner = owner,
     );
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_TextureRef_finalize, lean_raylib_TextureRef_foreach);
-    }
-    return lean_alloc_external(class_, textureRef);
+    return lean_alloc_external(lean_raylib_TextureRef_class, textureRef);
 }
 
 static inline lean_raylib_TextureRef const* lean_raylib_TextureRef_from (b_lean_obj_arg obj) {
     return (lean_raylib_TextureRef const*) lean_get_external_data(obj);
 }
 
-static void lean_raylib_Texture_finalize(void* texture) {
-    if(((Texture*)texture)->id != rlGetTextureIdDefault()) { // todo: test if needed
-        UnloadTexture(*(Texture*)texture);
-    }
-    lean_raylib_free(texture);
-}
-
 static inline lean_object* lean_raylib_Texture_to (Texture const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Texture_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_Texture_class, (void*)obj);
 }
 
 static inline Texture* lean_raylib_Texture_from (b_lean_obj_arg obj) {
     return (Texture*) lean_get_external_data(obj);
 }
 
-extern lean_object* lean_raylib_Texture_default;
-extern lean_object* lean_raylib_Texture_empty;
-
 
 // # Render texture
 
-static void lean_raylib_RenderTexture_finalize(void* texture) {
-    UnloadRenderTexture(*(RenderTexture*)texture);
-    lean_raylib_free(texture);
-}
+extern lean_external_class* lean_raylib_RenderTexture_class;
 
 static inline lean_object* lean_raylib_RenderTexture_to (RenderTexture const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_RenderTexture_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_RenderTexture_class, (void*)obj);
 }
 
 static inline RenderTexture const* lean_raylib_RenderTexture_from (b_lean_obj_arg obj) {
@@ -225,17 +183,10 @@ static inline NPatchInfo* lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
 
 // # Font
 
-static void lean_raylib_Font_finalize(void* font) {
-    UnloadFont(*(Font*)font);
-    lean_raylib_free(font);
-}
+extern lean_external_class* lean_raylib_Font_class;
 
 static inline lean_object* lean_raylib_Font_to (Font const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Font_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_Font_class, (void*)obj);
 }
 
 static inline Font const* lean_raylib_Font_from (b_lean_obj_arg obj) {
@@ -310,17 +261,10 @@ static inline Camera2D lean_raylib_Camera2D_from (b_lean_obj_arg obj) {
 
 // # Mesh
 
-static void lean_raylib_Mesh_finalize(void* mesh) {
-    UnloadMesh(*(Mesh*)mesh);
-    lean_raylib_free(mesh);
-}
+extern lean_external_class* lean_raylib_Mesh_class;
 
 static inline lean_object* lean_raylib_Mesh_to (Mesh* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Mesh_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_Mesh_class, (void*)obj);
 }
 
 static inline Mesh* lean_raylib_Mesh_from (b_lean_obj_arg obj) {
@@ -368,24 +312,16 @@ static inline Mesh lean_raylib_Mesh_clone(Mesh* meshSrc) {
 
 // # Shader
 
-static void lean_raylib_Shader_finalize(void* shader) {
-    UnloadShader(*(Shader*)shader);
-    lean_raylib_free(shader);
-}
+extern lean_external_class* lean_raylib_Shader_class;
+extern lean_object* lean_raylib_Shader_default;
 
 static inline lean_object* lean_raylib_Shader_to (Shader const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Shader_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_Shader_class, (void*)obj);
 }
 
 static inline Shader const* lean_raylib_Shader_from (b_lean_obj_arg obj) {
     return (Shader const*) lean_get_external_data(obj);
 }
-
-extern lean_object* lean_raylib_Shader_default;
 
 
 // # Material
@@ -519,37 +455,11 @@ typedef struct {
     Model model;
 } lean_raylib_Model;
 
-static void lean_raylib_Model_finalize(void* model_v) {
-    lean_raylib_Model* model = model_v;
-    lean_dec_ref(model->meshes);
-    lean_dec_ref(model->materials);
-    for (size_t i = 0; i < model->model.materialCount; ++i) {
-        RL_FREE(model->model.materials[i].maps);
-    }
-    RL_FREE(model->model.meshes);
-    RL_FREE(model->model.materials);
-    RL_FREE(model->model.meshMaterial);
-    RL_FREE(model->model.bones);
-    RL_FREE(model->model.bindPose);
-    lean_raylib_free(model_v);
-}
-
-static void lean_raylib_Model_foreach(void* model_v, b_lean_obj_arg f) {
-    lean_raylib_Model* model = model_v;
-    lean_inc_ref_n(f, 2);
-    lean_inc_ref(model->meshes);
-    lean_inc_ref(model->materials);
-    lean_apply_1(f, model->meshes);
-    lean_apply_1(f, model->materials);
-}
+extern lean_external_class* lean_raylib_Model_class;
 
 static inline lean_object* lean_raylib_Model_to (lean_raylib_Model model) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Model_finalize, lean_raylib_Model_foreach);
-    }
     LET_BOX(lean_raylib_Model, modelBoxed, model);
-    return lean_alloc_external(class_, (void*)modelBoxed);
+    return lean_alloc_external(lean_raylib_Model_class, (void*)modelBoxed);
 }
 
 static inline lean_raylib_Model* lean_raylib_Model_from (b_lean_obj_arg obj) {
@@ -685,17 +595,10 @@ static inline BoundingBox lean_raylib_BoundingBox_from (b_lean_obj_arg obj) {
 
 // # Wave
 
-static void lean_raylib_Wave_finalize(void* wave) {
-    UnloadWave(*(Wave*)wave);
-    lean_raylib_free(wave);
-}
+extern lean_external_class* lean_raylib_Wave_class;
 
 static inline lean_object* lean_raylib_Wave_to (Wave const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Wave_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_Wave_class, (void*)obj);
 }
 
 static inline Wave* lean_raylib_Wave_from (b_lean_obj_arg obj) {
@@ -712,40 +615,15 @@ typedef struct {
 #endif
 } lean_raylib_AudioStream;
 
-static void lean_raylib_AudioStream_finalize(void* audioStream_v) {
-    lean_raylib_AudioStream* audioStream = audioStream_v;
-    UnloadAudioStream(audioStream->stream);
-#ifdef LEAN_RAYLIB_LIBFFI
-    if (audioStream->closure != NULL) {
-        lean_dec_ref(audioStream->closure->user_data);
-        ffi_closure_free(audioStream->closure);
-    }
-#endif
-    lean_raylib_free(audioStream);
-}
-
-static void lean_raylib_AudioStream_foreach(void* audioStream, b_lean_obj_arg f) {
-#ifdef LEAN_RAYLIB_LIBFFI
-    if (((lean_raylib_AudioStream*)audioStream)->closure != NULL) {
-        lean_inc_ref(f);
-        lean_object* callback = ((lean_raylib_AudioStream*)audioStream)->closure->user_data;
-        lean_inc(callback);
-        lean_apply_1(f, callback);
-    }
-#endif
-}
+extern lean_external_class* lean_raylib_AudioStream_class;
 
 static inline lean_object* lean_raylib_AudioStream_to (AudioStream stream, void* closure) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_AudioStream_finalize, lean_raylib_AudioStream_foreach);
-    }
     lean_raylib_AudioStream* stream_heap = lean_raylib_alloc(sizeof(lean_raylib_AudioStream));
     stream_heap->stream = stream;
 #ifdef LEAN_RAYLIB_LIBFFI
     stream_heap->closure = closure;
 #endif
-    return lean_alloc_external(class_, (void*)stream_heap);
+    return lean_alloc_external(lean_raylib_AudioStream_class, (void*)stream_heap);
 }
 
 static inline lean_raylib_AudioStream* lean_raylib_AudioStream_from (b_lean_obj_arg obj) {
@@ -755,17 +633,10 @@ static inline lean_raylib_AudioStream* lean_raylib_AudioStream_from (b_lean_obj_
 
 // # Sound
 
-static void lean_raylib_Sound_finalize(void* sound) {
-    UnloadSound(*(Sound*)sound);
-    lean_raylib_free(sound);
-}
+extern lean_external_class* lean_raylib_Sound_class;
 
 static inline lean_object* lean_raylib_Sound_to (Sound const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Sound_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_Sound_class, (void*)obj);
 }
 
 static inline Sound const* lean_raylib_Sound_from (b_lean_obj_arg obj) {
@@ -775,17 +646,10 @@ static inline Sound const* lean_raylib_Sound_from (b_lean_obj_arg obj) {
 
 // # Music
 
-static void lean_raylib_Music_finalize(void* music) {
-    UnloadMusicStream(*(Music*)music);
-    lean_raylib_free(music);
-}
+extern lean_external_class* lean_raylib_Music_class;
 
 static inline lean_object* lean_raylib_Music_to (Music const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_Music_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+    return lean_alloc_external(lean_raylib_Music_class, (void*)obj);
 }
 
 static inline Music * lean_raylib_Music_from (b_lean_obj_arg obj) {
@@ -937,10 +801,8 @@ static inline VrStereoConfig lean_raylib_VrStereoConfig_from (b_lean_obj_arg obj
 
 // # Window Handle
 
+extern lean_external_class* lean_raylib_WindowHandle_class;
+
 static inline lean_object* lean_raylib_WindowHandle_box (void* handle) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_default_finalize, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, handle);
+    return lean_alloc_external(lean_raylib_WindowHandle_class, handle);
 }

@@ -3,14 +3,145 @@
 #include <rlgl.h>
 #include "structures.h"
 
+lean_external_class* lean_raylib_VaList_class;
+lean_external_class* lean_raylib_Image_class;
+lean_external_class* lean_raylib_TextureRef_class;
+lean_external_class* lean_raylib_Texture_class;
+lean_external_class* lean_raylib_RenderTexture_class;
+lean_external_class* lean_raylib_Font_class;
+lean_external_class* lean_raylib_Mesh_class;
+lean_external_class* lean_raylib_Shader_class;
+lean_external_class* lean_raylib_Model_class;
+lean_external_class* lean_raylib_Wave_class;
+lean_external_class* lean_raylib_Sound_class;
+lean_external_class* lean_raylib_Music_class;
+lean_external_class* lean_raylib_AudioStream_class;
+lean_external_class* lean_raylib_WindowHandle_class;
+
+lean_object* lean_raylib_Shader_default;
+lean_object* lean_raylib_Material_default;
 lean_object* lean_raylib_Image_empty;
 lean_object* lean_raylib_Texture_default;
 lean_object* lean_raylib_Texture_empty;
-lean_object* lean_raylib_Shader_default;
-lean_object* lean_raylib_Material_default;
+
+static void lean_raylib_Image_finalize(void* image) {
+    UnloadImage(*(Image*)image);
+    lean_raylib_free(image);
+}
+
+static void lean_raylib_TextureRef_foreach(void* textureRef, b_lean_obj_arg f) {
+    lean_object* owner = ((lean_raylib_TextureRef*)textureRef)->owner;
+    lean_inc_ref(f);
+    lean_inc(owner);
+    lean_apply_1(f, owner);
+}
+
+static void lean_raylib_TextureRef_finalize(void* textureRef) {
+    lean_dec(((lean_raylib_TextureRef*)textureRef)->owner);
+    lean_raylib_free(textureRef);
+}
+
+static void lean_raylib_Texture_finalize(void* texture) {
+    if(((Texture*)texture)->id != rlGetTextureIdDefault()) { // todo: test if needed
+        UnloadTexture(*(Texture*)texture);
+    }
+    lean_raylib_free(texture);
+}
+
+static void lean_raylib_RenderTexture_finalize(void* texture) {
+    UnloadRenderTexture(*(RenderTexture*)texture);
+    lean_raylib_free(texture);
+}
+
+static void lean_raylib_Font_finalize(void* font) {
+    UnloadFont(*(Font*)font);
+    lean_raylib_free(font);
+}
+
+static void lean_raylib_Mesh_finalize(void* mesh) {
+    UnloadMesh(*(Mesh*)mesh);
+    lean_raylib_free(mesh);
+}
+
+static void lean_raylib_Shader_finalize(void* shader) {
+    UnloadShader(*(Shader*)shader);
+    lean_raylib_free(shader);
+}
+
+static void lean_raylib_Model_finalize(void* model_v) {
+    lean_raylib_Model* model = model_v;
+    lean_dec_ref(model->meshes);
+    lean_dec_ref(model->materials);
+    for (size_t i = 0; i < model->model.materialCount; ++i) {
+        RL_FREE(model->model.materials[i].maps);
+    }
+    RL_FREE(model->model.meshes);
+    RL_FREE(model->model.materials);
+    RL_FREE(model->model.meshMaterial);
+    RL_FREE(model->model.bones);
+    RL_FREE(model->model.bindPose);
+    lean_raylib_free(model_v);
+}
+
+static void lean_raylib_Model_foreach(void* model_v, b_lean_obj_arg f) {
+    lean_raylib_Model* model = model_v;
+    lean_inc_ref_n(f, 2);
+    lean_inc_ref(model->meshes);
+    lean_inc_ref(model->materials);
+    lean_apply_1(f, model->meshes);
+    lean_apply_1(f, model->materials);
+}
+
+static void lean_raylib_Wave_finalize(void* wave) {
+    UnloadWave(*(Wave*)wave);
+    lean_raylib_free(wave);
+}
+
+static void lean_raylib_AudioStream_finalize(void* audioStream_v) {
+    lean_raylib_AudioStream* audioStream = audioStream_v;
+    UnloadAudioStream(audioStream->stream);
+#ifdef LEAN_RAYLIB_LIBFFI
+    if (audioStream->closure != NULL) {
+        lean_dec_ref(audioStream->closure->user_data);
+        ffi_closure_free(audioStream->closure);
+    }
+#endif
+    lean_raylib_free(audioStream);
+}
+
+static void lean_raylib_AudioStream_foreach(void* audioStream, b_lean_obj_arg f) {
+#ifdef LEAN_RAYLIB_LIBFFI
+    if (((lean_raylib_AudioStream*)audioStream)->closure != NULL) {
+        lean_inc_ref(f);
+        lean_object* callback = ((lean_raylib_AudioStream*)audioStream)->closure->user_data;
+        lean_inc(callback);
+        lean_apply_1(f, callback);
+    }
+#endif
+}
+
+static void lean_raylib_Sound_finalize(void* sound) {
+    UnloadSound(*(Sound*)sound);
+    lean_raylib_free(sound);
+}
+
+static void lean_raylib_Music_finalize(void* music) {
+    UnloadMusicStream(*(Music*)music);
+    lean_raylib_free(music);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
     {
+        lean_raylib_VaList_class = lean_register_external_class(
+            lean_raylib_default_finalize,
+            lean_raylib_default_foreach
+        );
+    }
+    {
+        lean_raylib_Image_class = lean_register_external_class(
+            lean_raylib_Image_finalize,
+            lean_raylib_default_foreach
+        );
         LET_BOX_STRUCT(Image, emptyImage,
             .data = NULL,
             .width = 0,
@@ -22,6 +153,14 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
         lean_mark_persistent(lean_raylib_Image_empty);
     }
     {
+        lean_raylib_TextureRef_class = lean_register_external_class(
+            lean_raylib_TextureRef_finalize,
+            lean_raylib_TextureRef_foreach
+        );
+        lean_raylib_Texture_class = lean_register_external_class(
+            lean_raylib_Texture_finalize,
+            lean_raylib_default_foreach
+        );
         LET_BOX_STRUCT(Texture, defaultTexture,
             .id = rlGetTextureIdDefault(),
             .width = 1,
@@ -31,13 +170,27 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
         );
         lean_raylib_Texture_default = lean_raylib_Texture_to(defaultTexture);
         lean_mark_persistent(lean_raylib_Texture_default);
-    }
-    {
         LET_BOX(Texture, emptyTexture, (Texture){0});
         lean_raylib_Texture_empty = lean_raylib_Texture_to(emptyTexture);
         lean_mark_persistent(lean_raylib_Texture_empty);
     }
+    lean_raylib_RenderTexture_class = lean_register_external_class(
+        lean_raylib_RenderTexture_finalize,
+        lean_raylib_default_foreach
+    );
+    lean_raylib_Font_class = lean_register_external_class(
+        lean_raylib_Font_finalize,
+        lean_raylib_default_foreach
+    );
+    lean_raylib_Mesh_class = lean_register_external_class(
+        lean_raylib_Mesh_finalize,
+        lean_raylib_default_foreach
+    );
     {
+        lean_raylib_Shader_class = lean_register_external_class(
+            lean_raylib_Shader_finalize,
+            lean_raylib_default_foreach
+        );
         LET_BOX_STRUCT(Shader, defaultShader,
             .id = rlGetShaderIdDefault(),
             .locs = rlGetShaderLocsDefault()
@@ -71,6 +224,30 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
         );
         lean_mark_persistent(lean_raylib_Material_default);
     }
+    lean_raylib_Model_class = lean_register_external_class(
+        lean_raylib_Model_finalize,
+        lean_raylib_Model_foreach
+    );
+    lean_raylib_Wave_class = lean_register_external_class(
+        lean_raylib_Wave_finalize,
+        lean_raylib_default_foreach
+    );
+    lean_raylib_AudioStream_class = lean_register_external_class(
+        lean_raylib_AudioStream_finalize,
+        lean_raylib_AudioStream_foreach
+    );
+    lean_raylib_Sound_class = lean_register_external_class(
+        lean_raylib_Sound_finalize,
+        lean_raylib_default_foreach
+    );
+    lean_raylib_Music_class = lean_register_external_class(
+        lean_raylib_Music_finalize,
+        lean_raylib_default_foreach
+    );
+    lean_raylib_WindowHandle_class = lean_register_external_class(
+        lean_raylib_default_finalize,
+        lean_raylib_default_foreach
+    );
     return lean_io_result_mk_ok(lean_box(0));
 }
 
