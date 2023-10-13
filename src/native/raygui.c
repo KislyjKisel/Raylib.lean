@@ -47,9 +47,8 @@ LEAN_EXPORT lean_obj_res lean_raygui__GuiSetFont(b_lean_obj_arg font, lean_obj_a
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raygui__GuiGetFont(lean_obj_arg world) {
-    LET_BOX(Font, font, GuiGetFont());
-    return lean_io_result_mk_ok(lean_raylib_Font_to(font));
+LEAN_EXPORT lean_obj_res lean_raygui__GuiGetFont(lean_obj_arg ctx, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_raylib_Font_to(GuiGetFont(), ctx));
 }
 
 LEAN_EXPORT lean_obj_res lean_raygui__GuiSetStyle(uint32_t control, uint32_t property, uint32_t value, lean_obj_arg world) {

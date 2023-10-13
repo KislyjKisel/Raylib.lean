@@ -473,9 +473,12 @@ opaque getState : BaseIO State
 @[extern "lean_raygui__GuiSetFont"]
 opaque setFont (font : @& Raylib.Font) : BaseIO Unit
 
-/-- Get gui custom font (global state) -/
+/--
+Get gui custom font (global state).
+(todo: check if gui font may be unloaded more than once)
+-/
 @[extern "lean_raygui__GuiGetFont"]
-opaque getFont : BaseIO Raylib.Font
+opaque getFont (ctx : Raylib.Context) : BaseIO Raylib.Font
 
 /-- Set one style property -/
 @[extern "lean_raygui__GuiSetStyle"]

@@ -1907,9 +1907,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadTextureCubemap (lean_obj_arg ctx, b_le
     );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadRenderTexture (uint32_t width, uint32_t height, lean_obj_arg world) {
-    LET_BOX(RenderTexture2D, rt, LoadRenderTexture(width, height));
-    return lean_io_result_mk_ok(lean_raylib_RenderTexture_to(rt));
+LEAN_EXPORT lean_obj_res lean_raylib__LoadRenderTexture (lean_obj_arg ctx, uint32_t width, uint32_t height, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_raylib_RenderTexture_to(
+        LoadRenderTexture(width, height),
+        ctx
+    ));
 }
 
 LEAN_EXPORT uint8_t lean_raylib__IsTextureReady (b_lean_obj_arg textureRef) {
@@ -2081,17 +2083,18 @@ LEAN_EXPORT uint32_t lean_raylib__GetPixelDataSize (uint32_t width, uint32_t hei
     return GetPixelDataSize(width, height, format);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__GetFontDefault (b_lean_obj_arg unit, lean_obj_arg world) {
-    LET_BOX(Font, font, GetFontDefault());
-    return lean_io_result_mk_ok(lean_raylib_Font_to(font));
+LEAN_EXPORT lean_obj_res lean_raylib__GetFontDefault (lean_obj_arg ctx, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_raylib_Font_to(GetFontDefault(), ctx));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadFont (b_lean_obj_arg fileName, lean_obj_arg world) {
-    LET_BOX(Font, font, LoadFont(lean_string_cstr(fileName)));
-    return lean_io_result_mk_ok(lean_raylib_Font_to(font));
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFont (lean_obj_arg ctx, b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_raylib_Font_to(
+        LoadFont(lean_string_cstr(fileName)),
+        ctx
+    ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadFontEx (b_lean_obj_arg fileName, uint32_t fontSize, b_lean_obj_arg fontChars_opt, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFontEx (lean_obj_arg ctx, b_lean_obj_arg fileName, uint32_t fontSize, b_lean_obj_arg fontChars_opt, lean_obj_arg world) {
     size_t glyphCount = 0;
     int* fontChars_c = NULL;
     if(lean_option_is_some(fontChars_opt)) {
@@ -2102,17 +2105,19 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFontEx (b_lean_obj_arg fileName, uint3
             fontChars_c[i] = lean_unbox_uint32(lean_array_get_core(fontChars_arr, i));
         }
     }
-    LET_BOX(Font, font, LoadFontEx(lean_string_cstr(fileName), fontSize, fontChars_c, glyphCount));
+    Font font = LoadFontEx(lean_string_cstr(fileName), fontSize, fontChars_c, glyphCount);
     free(fontChars_c);
-    return lean_io_result_mk_ok(lean_raylib_Font_to(font));
+    return lean_io_result_mk_ok(lean_raylib_Font_to(font, ctx));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromImage (b_lean_obj_arg image, uint32_t key, uint32_t firstChar) {
-    LET_BOX(Font, font, LoadFontFromImage(*lean_raylib_Image_from(image), lean_raylib_Color_from(key), firstChar));
-    return lean_raylib_Font_to(font);
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromImage (lean_obj_arg ctx, b_lean_obj_arg image, uint32_t key, uint32_t firstChar) {
+    return lean_raylib_Font_to(
+        LoadFontFromImage(*lean_raylib_Image_from(image), lean_raylib_Color_from(key), firstChar),
+        ctx
+    );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (size_t sz, b_lean_obj_arg fileType, b_lean_obj_arg data, uint32_t fontSize, b_lean_obj_arg fontChars_opt) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (size_t sz, lean_obj_arg ctx, b_lean_obj_arg fileType, b_lean_obj_arg data, uint32_t fontSize, b_lean_obj_arg fontChars_opt) {
     size_t glyphCount = 0;
     int* fontChars_c = NULL;
     if(lean_option_is_some(fontChars_opt)) {
@@ -2123,16 +2128,16 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (size_t sz, b_lean_obj_
             fontChars_c[i] = lean_unbox_uint32(lean_array_get_core(fontChars_arr, i));
         }
     }
-    LET_BOX(Font, font, LoadFontFromMemory(
+    Font font = LoadFontFromMemory(
         lean_string_cstr(fileType),
         lean_pod_BytesView_unwrap(data)->ptr,
         sz,
         fontSize,
         fontChars_c,
         glyphCount
-    ));
+    );
     free(fontChars_c);
-    return lean_raylib_Font_to(font);
+    return lean_raylib_Font_to(font, ctx);
 }
 
 LEAN_EXPORT uint8_t lean_raylib__IsFontReady (lean_obj_arg font) {
@@ -2733,14 +2738,18 @@ LEAN_EXPORT uint8_t lean_raylib__IsWaveReady (b_lean_obj_arg wave) {
     return IsWaveReady(*lean_raylib_Wave_from(wave));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadSound (b_lean_obj_arg fileName, lean_obj_arg world) {
-    LET_BOX(Sound, sound, LoadSound(lean_string_cstr(fileName)));
-    return lean_io_result_mk_ok(lean_raylib_Sound_to(sound));
+LEAN_EXPORT lean_obj_res lean_raylib__LoadSound (lean_obj_arg ctx, b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_raylib_Sound_to(
+        LoadSound(lean_string_cstr(fileName)),
+        ctx
+    ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadSoundFromWave (b_lean_obj_arg wave) {
-    LET_BOX(Sound, sound, LoadSoundFromWave(*lean_raylib_Wave_from(wave)));
-    return lean_raylib_Sound_to(sound);
+LEAN_EXPORT lean_obj_res lean_raylib__LoadSoundFromWave (lean_obj_arg ctx, b_lean_obj_arg wave) {
+    return lean_raylib_Sound_to(
+        LoadSoundFromWave(*lean_raylib_Wave_from(wave)),
+        ctx
+    );
 }
 
 LEAN_EXPORT uint8_t lean_raylib__IsSoundReady (b_lean_obj_arg sound) {
@@ -2843,18 +2852,22 @@ LEAN_EXPORT lean_obj_arg lean_raylib__LoadWaveSamples (lean_obj_arg wave_box, le
     return lean_io_result_mk_ok(samples_box);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStream (b_lean_obj_arg fileName, lean_obj_arg world) {
-    LET_BOX(Music, music, LoadMusicStream(lean_string_cstr(fileName)));
-    return lean_io_result_mk_ok(lean_raylib_Music_to(music));
+LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStream (lean_obj_arg ctx, b_lean_obj_arg fileName, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_raylib_Music_to(
+        LoadMusicStream(lean_string_cstr(fileName)),
+        ctx
+    ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStreamFromMemory (b_lean_obj_arg fileType, b_lean_obj_arg data, lean_obj_arg world) {
-    LET_BOX(Music, music, LoadMusicStreamFromMemory(
-        lean_string_cstr(fileType),
-        lean_sarray_cptr(data),
-        lean_sarray_size(data)
-    ));
-    return lean_raylib_Music_to(music);
+LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStreamFromMemory (lean_obj_arg ctx, b_lean_obj_arg fileType, b_lean_obj_arg data, lean_obj_arg world) {
+    return lean_raylib_Music_to(
+        LoadMusicStreamFromMemory(
+            lean_string_cstr(fileType),
+            lean_sarray_cptr(data),
+            lean_sarray_size(data)
+        ),
+        ctx
+    );
 }
 
 LEAN_EXPORT uint8_t lean_raylib__IsMusicReady (b_lean_obj_arg music) {
@@ -2922,9 +2935,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetMusicTimePlayed (b_lean_obj_arg music, 
     ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (uint32_t sampleRate, uint32_t sampleSize, uint32_t channels, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (lean_obj_arg ctx, uint32_t sampleRate, uint32_t sampleSize, uint32_t channels, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_raylib_AudioStream_to(
         LoadAudioStream(sampleRate, sampleSize, channels),
+        ctx,
         NULL
     ));
 }

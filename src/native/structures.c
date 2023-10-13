@@ -54,14 +54,41 @@ static void lean_raylib_Texture_finalize(void* texture_v) {
     lean_raylib_free(texture);
 }
 
-static void lean_raylib_RenderTexture_finalize(void* texture) {
-    UnloadRenderTexture(*(RenderTexture*)texture);
+static void lean_raylib_Texture_foreach(void* texture_v, b_lean_obj_arg f) {
+    lean_raylib_Texture* texture = texture_v;
+    if (texture->ctx != NULL) {
+        lean_inc_ref(f);
+        lean_inc_ref(texture->ctx);
+        lean_apply_1(f, texture->ctx);
+    }
+}
+
+static void lean_raylib_RenderTexture_finalize(void* texture_v) {
+    lean_raylib_RenderTexture* texture = texture_v;
+    UnloadRenderTexture(texture->texture);
+    lean_dec_ref(texture->ctx);
     lean_raylib_free(texture);
 }
 
-static void lean_raylib_Font_finalize(void* font) {
-    UnloadFont(*(Font*)font);
+static void lean_raylib_RenderTexture_foreach(void* texture_v, b_lean_obj_arg f) {
+    lean_raylib_RenderTexture* texture = texture_v;
+    lean_inc_ref(f);
+    lean_inc_ref(texture->ctx);
+    lean_apply_1(f, texture->ctx);
+}
+
+static void lean_raylib_Font_finalize(void* font_v) {
+    lean_raylib_Font* font = font_v;
+    UnloadFont(font->font);
+    lean_dec_ref(font->ctx);
     lean_raylib_free(font);
+}
+
+static void lean_raylib_Font_foreach(void* font_v, b_lean_obj_arg f) {
+    lean_raylib_Font* font = font_v;
+    lean_inc_ref(f);
+    lean_inc_ref(font->ctx);
+    lean_apply_1(f, font->ctx);
 }
 
 static void lean_raylib_Mesh_finalize(void* mesh_v) {
@@ -71,11 +98,25 @@ static void lean_raylib_Mesh_finalize(void* mesh_v) {
     lean_raylib_free(mesh);
 }
 
+static void lean_raylib_Mesh_foreach(void* mesh_v, b_lean_obj_arg f) {
+    lean_raylib_Mesh* mesh = mesh_v;
+    lean_inc_ref(f);
+    lean_inc_ref(mesh->ctx);
+    lean_apply_1(f, mesh->ctx);
+}
+
 static void lean_raylib_Shader_finalize(void* shader_v) {
     lean_raylib_Shader* shader = shader_v;
     UnloadShader(shader->shader);
     lean_dec_ref(shader->ctx);
     lean_raylib_free(shader);
+}
+
+static void lean_raylib_Shader_foreach(void* shader_v, b_lean_obj_arg f) {
+    lean_raylib_Shader* shader = shader_v;
+    lean_inc_ref(f);
+    lean_inc_ref(shader->ctx);
+    lean_apply_1(f, shader->ctx);
 }
 
 static void lean_raylib_Model_finalize(void* model_v) {
@@ -116,27 +157,36 @@ static void lean_raylib_AudioStream_finalize(void* audioStream_v) {
         ffi_closure_free(audioStream->closure);
     }
 #endif
+    lean_dec_ref(audioStream->ctx);
     lean_raylib_free(audioStream);
 }
 
-static void lean_raylib_AudioStream_foreach(void* audioStream, b_lean_obj_arg f) {
+static void lean_raylib_AudioStream_foreach(void* audioStream_v, b_lean_obj_arg f) {
+    lean_raylib_AudioStream* audioStream = audioStream_v;
+    lean_inc_ref(f);
+    lean_inc_ref(audioStream->ctx);
+    lean_apply_1(f, audioStream->ctx);
 #ifdef LEAN_RAYLIB_LIBFFI
-    if (((lean_raylib_AudioStream*)audioStream)->closure != NULL) {
+    if (audioStream->closure != NULL) {
         lean_inc_ref(f);
-        lean_object* callback = ((lean_raylib_AudioStream*)audioStream)->closure->user_data;
+        lean_object* callback = audioStream->closure->user_data;
         lean_inc(callback);
         lean_apply_1(f, callback);
     }
 #endif
 }
 
-static void lean_raylib_Sound_finalize(void* sound) {
-    UnloadSound(*(Sound*)sound);
+static void lean_raylib_Sound_finalize(void* sound_v) {
+    lean_raylib_Sound* sound = sound_v;
+    UnloadSound(sound->sound);
+    lean_dec_ref(sound->ctx);
     lean_raylib_free(sound);
 }
 
-static void lean_raylib_Music_finalize(void* music) {
-    UnloadMusicStream(*(Music*)music);
+static void lean_raylib_Music_finalize(void* music_v) {
+    lean_raylib_Music* music = music_v;
+    UnloadMusicStream(music->music);
+    lean_dec_ref(music->ctx);
     lean_raylib_free(music);
 }
 
@@ -171,26 +221,26 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
         );
         lean_raylib_Texture_class = lean_register_external_class(
             lean_raylib_Texture_finalize,
-            lean_raylib_default_foreach
+            lean_raylib_Texture_foreach
         );
         lean_raylib_Texture_empty = lean_raylib_Texture_to((Texture) {0}, NULL);
         lean_mark_persistent(lean_raylib_Texture_empty);
     }
     lean_raylib_RenderTexture_class = lean_register_external_class(
         lean_raylib_RenderTexture_finalize,
-        lean_raylib_default_foreach
+        lean_raylib_RenderTexture_foreach
     );
     lean_raylib_Font_class = lean_register_external_class(
         lean_raylib_Font_finalize,
-        lean_raylib_default_foreach
+        lean_raylib_Font_foreach
     );
     lean_raylib_Mesh_class = lean_register_external_class(
         lean_raylib_Mesh_finalize,
-        lean_raylib_default_foreach
+        lean_raylib_Mesh_foreach
     );
     lean_raylib_Shader_class = lean_register_external_class(
         lean_raylib_Shader_finalize,
-        lean_raylib_default_foreach
+        lean_raylib_Shader_foreach
     );
     lean_raylib_Model_class = lean_register_external_class(
         lean_raylib_Model_finalize,
@@ -892,7 +942,7 @@ LEAN_EXPORT uint32_t lean_raylib__Music_sampleSize(b_lean_obj_arg music) {
     return lean_raylib_Music_from(music)->stream.sampleSize;
 }
 
-LEAN_EXPORT uint32_t lean_raylib__Music_chanels(b_lean_obj_arg music) {
+LEAN_EXPORT uint32_t lean_raylib__Music_channels(b_lean_obj_arg music) {
     return lean_raylib_Music_from(music)->stream.channels;
 }
 
@@ -900,17 +950,11 @@ LEAN_EXPORT uint32_t lean_raylib__Music_frameCount(b_lean_obj_arg music) {
     return lean_raylib_Music_from(music)->frameCount;
 }
 
-LEAN_EXPORT uint8_t lean_raylib__Music_looping(b_lean_obj_arg music) {
-    return lean_raylib_Music_from(music)->looping;
+LEAN_EXPORT lean_obj_res lean_raylib__Music_looping(b_lean_obj_arg music, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(lean_raylib_Music_from(music)->looping));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Music_looping_set(uint8_t looping, lean_obj_arg music) {
-    if(LEAN_LIKELY(lean_is_exclusive(music))) {
-        lean_raylib_Music_from(music)->looping = looping;
-        return music;
-    }
-    LET_BOX(Music, music_new, *lean_raylib_Music_from(music));
-    lean_dec_ref(music);
-    music_new->looping = looping;
-    return lean_raylib_Music_to(music_new);
+LEAN_EXPORT lean_obj_res lean_raylib__Music_looping_set(uint8_t looping, b_lean_obj_arg music, lean_obj_arg world) {
+    lean_raylib_Music_from(music)->looping = looping;
+    return lean_io_result_mk_ok(lean_box(0));
 }

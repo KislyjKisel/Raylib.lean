@@ -1288,7 +1288,7 @@ opaque loadTextureCubemap (ctx : Context) (image : @& Image) (layout : CubemapLa
 
 /-- Load texture for rendering (framebuffer) -/
 @[extern "lean_raylib__LoadRenderTexture"]
-opaque loadRenderTexture (width : UInt32) (height : UInt32) : BaseIO RenderTexture2D
+opaque loadRenderTexture (ctx : Context) (width : UInt32) (height : UInt32) : BaseIO RenderTexture2D
 
 /-- Check if a texture is ready -/
 @[extern "lean_raylib__IsTextureReady"]
@@ -1420,26 +1420,26 @@ opaque getPixelDataSize (width : UInt32) (height : UInt32) (format : PixelFormat
 
 /-- Get the default Font -/
 @[extern "lean_raylib__GetFontDefault"]
-opaque getFontDefault : BaseIO Font
+opaque getFontDefault (ctx : Context) : BaseIO Font
 
 /-- Load font from file into GPU memory (VRAM) -/
 @[extern "lean_raylib__LoadFont"]
-opaque loadFont (fileName : @& String) : BaseIO Font
+opaque loadFont (ctx : Context) (fileName : @& String) : BaseIO Font
 
 /-- Load font from file with extended parameters, use `none` for `fontChars` to load the default character set -/
 @[extern "lean_raylib__LoadFontEx"]
-opaque loadFontEx (fileName : @& String) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : BaseIO Font
+opaque loadFontEx (ctx : Context) (fileName : @& String) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : BaseIO Font
 
 /-- Load font from Image (XNA style) -/
 @[extern "lean_raylib__LoadFontFromImage"]
-opaque loadFontFromImage (image : @& Image) (key : Color) (firstChar : Char) : Font
+opaque loadFontFromImage (ctx : Context) (image : @& Image) (key : Color) (firstChar : Char) : Font
 
 /--
 Load font from memory buffer, fileType refers to extension: i.e. '.ttf'.
 NOTE: data size isn't checked and may cause UB.
 -/
 @[extern "lean_raylib__LoadFontFromMemory"]
-opaque loadFontFromMemory {size} (fileType : @& String) (data : @& Pod.BytesView size 1) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : Font
+opaque loadFontFromMemory {size} (ctx : Context) (fileType : @& String) (data : @& Pod.BytesView size 1) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : Font
 
 /-- Check if a font is ready -/
 @[extern "lean_raylib__IsFontReady"]
@@ -1844,11 +1844,11 @@ opaque isWaveReady (wave : @& Wave) : Bool
 
 /-- Load sound from file -/
 @[extern "lean_raylib__LoadSound"]
-opaque loadSound (fileName : @& String) : BaseIO Sound
+opaque loadSound (ctx : Context) (fileName : @& String) : BaseIO Sound
 
 /-- Load sound from wave data -/
 @[extern "lean_raylib__LoadSoundFromWave"]
-opaque loadSoundFromWave (wave : @& Wave) : Sound
+opaque loadSoundFromWave (ctx : Context) (wave : @& Wave) : Sound
 
 /-- Checks if a sound is ready -/
 @[extern "lean_raylib__IsSoundReady"]
@@ -1926,12 +1926,12 @@ opaque loadWaveSamples (wave : @& Wave) : BaseIO (Array Float32)
 
 /-- Load music stream from file -/
 @[extern "lean_raylib__LoadMusicStream"]
-opaque loadMusicStream (fileName : @& String) : BaseIO Music
+opaque loadMusicStream (ctx : Context) (fileName : @& String) : BaseIO Music
 
 /-- Load music stream from data -/
 -- IO: calls TraceLog
 @[extern "lean_raylib__LoadMusicStreamFromMemory"]
-opaque loadMusicStreamFromMemory (fileType : @& String) (data : @& ByteArray) : BaseIO Music
+opaque loadMusicStreamFromMemory (ctx : Context) (fileType : @& String) (data : @& ByteArray) : BaseIO Music
 
 /-- Checks if a music stream is ready -/
 @[extern "lean_raylib__IsMusicReady"]
@@ -1986,9 +1986,8 @@ opaque getMusicTimeLength (music : @& Music) : Float32
 opaque getMusicTimePlayed (music : @& Music) : BaseIO Float
 
 /-- Load audio stream (to stream raw audio pcm data) -/
--- IO: TraceLog + tracking
 @[extern "lean_raylib__LoadAudioStream"]
-opaque loadAudioStream (sampleRate : UInt32) (sampleType : AudioSampleType) (channels : UInt32) : BaseIO (AudioStream sampleType)
+opaque loadAudioStream (ctx : Context) (sampleRate : UInt32) (sampleType : AudioSampleType) (channels : UInt32) : BaseIO (AudioStream sampleType)
 
 /-- Checks if an audio stream is ready -/
 @[extern "lean_raylib__IsAudioStreamReady"]

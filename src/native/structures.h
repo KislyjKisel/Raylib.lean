@@ -144,10 +144,19 @@ static inline Texture* lean_raylib_Texture_from (b_lean_obj_arg obj) {
 
 // # Render texture
 
+typedef struct {
+    RenderTexture texture;
+    lean_object* ctx;
+} lean_raylib_RenderTexture;
+
 extern lean_external_class* lean_raylib_RenderTexture_class;
 
-static inline lean_object* lean_raylib_RenderTexture_to (RenderTexture const* obj) {
-    return lean_alloc_external(lean_raylib_RenderTexture_class, (void*)obj);
+static inline lean_object* lean_raylib_RenderTexture_to (RenderTexture texture, lean_obj_arg ctx) {
+    LET_BOX_STRUCT(lean_raylib_RenderTexture, rtWctx,
+        .texture = texture,
+        .ctx = ctx
+    );
+    return lean_alloc_external(lean_raylib_RenderTexture_class, (void*)rtWctx);
 }
 
 static inline RenderTexture const* lean_raylib_RenderTexture_from (b_lean_obj_arg obj) {
@@ -220,10 +229,19 @@ static inline NPatchInfo lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
 
 // # Font
 
+typedef struct {
+    Font font;
+    lean_object* ctx;
+} lean_raylib_Font;
+
 extern lean_external_class* lean_raylib_Font_class;
 
-static inline lean_object* lean_raylib_Font_to (Font const* obj) {
-    return lean_alloc_external(lean_raylib_Font_class, (void*)obj);
+static inline lean_object* lean_raylib_Font_to (Font font, lean_obj_arg ctx) {
+    LET_BOX_STRUCT(lean_raylib_Font, fontWctx,
+        .font = font,
+        .ctx = ctx
+    );
+    return lean_alloc_external(lean_raylib_Font_class, (void*)fontWctx);
 }
 
 static inline Font const* lean_raylib_Font_from (b_lean_obj_arg obj) {
@@ -664,6 +682,7 @@ static inline Wave* lean_raylib_Wave_from (b_lean_obj_arg obj) {
 
 typedef struct {
     AudioStream stream;
+    lean_object* ctx;
 #ifdef LEAN_RAYLIB_LIBFFI
     ffi_closure* closure; // NULLABLE
 #endif
@@ -671,9 +690,10 @@ typedef struct {
 
 extern lean_external_class* lean_raylib_AudioStream_class;
 
-static inline lean_object* lean_raylib_AudioStream_to (AudioStream stream, void* closure) {
+static inline lean_object* lean_raylib_AudioStream_to (AudioStream stream, lean_obj_arg ctx, void* closure) {
     lean_raylib_AudioStream* stream_heap = lean_raylib_alloc(sizeof(lean_raylib_AudioStream));
     stream_heap->stream = stream;
+    stream_heap->ctx = ctx;
 #ifdef LEAN_RAYLIB_LIBFFI
     stream_heap->closure = closure;
 #endif
@@ -687,10 +707,19 @@ static inline lean_raylib_AudioStream* lean_raylib_AudioStream_from (b_lean_obj_
 
 // # Sound
 
+typedef struct {
+    Sound sound;
+    lean_object* ctx;
+} lean_raylib_Sound;
+
 extern lean_external_class* lean_raylib_Sound_class;
 
-static inline lean_object* lean_raylib_Sound_to (Sound const* obj) {
-    return lean_alloc_external(lean_raylib_Sound_class, (void*)obj);
+static inline lean_object* lean_raylib_Sound_to (Sound sound, lean_obj_arg ctx) {
+    LET_BOX_STRUCT(lean_raylib_Sound, soundWctx,
+        .sound = sound,
+        .ctx = ctx
+    );
+    return lean_alloc_external(lean_raylib_Sound_class, (void*)soundWctx);
 }
 
 static inline Sound const* lean_raylib_Sound_from (b_lean_obj_arg obj) {
@@ -700,10 +729,19 @@ static inline Sound const* lean_raylib_Sound_from (b_lean_obj_arg obj) {
 
 // # Music
 
+typedef struct {
+    Music music;
+    lean_object* ctx;
+} lean_raylib_Music;
+
 extern lean_external_class* lean_raylib_Music_class;
 
-static inline lean_object* lean_raylib_Music_to (Music const* obj) {
-    return lean_alloc_external(lean_raylib_Music_class, (void*)obj);
+static inline lean_object* lean_raylib_Music_to (Music music, lean_obj_arg ctx) {
+    LET_BOX_STRUCT(lean_raylib_Music, musicWctx,
+        .music = music,
+        .ctx = ctx
+    );
+    return lean_alloc_external(lean_raylib_Music_class, (void*)musicWctx);
 }
 
 static inline Music * lean_raylib_Music_from (b_lean_obj_arg obj) {

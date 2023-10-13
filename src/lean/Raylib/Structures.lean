@@ -749,23 +749,28 @@ def Music : Type := MusicPointed.type
 instance : Nonempty Music := MusicPointed.property
 
 /-- Getter: Frequency (samples per second) -/
-@[extern "lean_raylib__Sound_sampleRate"]
+@[extern "lean_raylib__Music_sampleRate"]
 opaque Music.sampleRate (music : @& Music) : UInt32
-/-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
-@[extern "lean_raylib__Sound_sampleSize"]
+
+/-- Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
+@[extern "lean_raylib__Music_sampleSize"]
 opaque Music.sampleSize (music : @& Music) : UInt32
-/-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
-@[extern "lean_raylib__Sound_channels"]
+
+/-- Number of channels (1-mono, 2-stereo, ...) -/
+@[extern "lean_raylib__Music_channels"]
 opaque Music.channels (music : @& Music) : UInt32
-/-- Getter: Total number of frames (considering channels) -/
+
+/-- Total number of frames (considering channels) -/
 @[extern "lean_raylib__Music_frameCount"]
 opaque Music.frameCount (music : @& Music) : UInt32
-/-- Getter: Music looping enable -/
+
+/-- Music looping enable -/
 @[extern "lean_raylib__Music_looping"]
-opaque Music.looping (music : @& Music) : Bool
-/-- Setter: Music looping enable -/
+opaque Music.looping (music : @& Music) : BaseIO Bool
+
+/-- Set music looping enable -/
 @[extern "lean_raylib__Music_looping_set"]
-opaque Music.set_looping (looping : Bool) (music : Music) : Music
+opaque Music.setLooping (looping : Bool) (music : @& Music) : BaseIO Unit
 
 
 /-! # Vr device info -/
