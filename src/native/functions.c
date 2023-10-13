@@ -2763,10 +2763,12 @@ LEAN_EXPORT uint8_t lean_raylib__IsSoundReady (b_lean_obj_arg sound) {
     return IsSoundReady(*lean_raylib_Sound_from(sound));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UpdateSound (lean_obj_arg sound, /* const void* */lean_obj_arg data, uint32_t sampleCount, lean_obj_arg world) {
-//     UpdateSound(lean_raylib_Sound_from(sound), /*todo: ptr?*/data, sampleCount);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateSound (b_lean_obj_arg soundObj, uint32_t frameCount, b_lean_obj_arg data, lean_obj_arg world) {
+    Sound* sound = lean_raylib_Sound_from (soundObj);
+    UpdateSound(*sound, lean_pod_BytesView_unwrap(data)->ptr, frameCount);
+    sound->frameCount = frameCount;
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__ExportWave (b_lean_obj_arg wave, b_lean_obj_arg fileName, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(

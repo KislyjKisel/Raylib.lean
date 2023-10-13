@@ -1848,16 +1848,14 @@ opaque loadSoundFromWave (ctx : Context) (wave : @& Wave) : Sound
 @[extern "lean_raylib__IsSoundReady"]
 opaque isSoundReady (sound : @& Sound) : Bool
 
--- /-- Update sound buffer with new data -/
--- @[extern "lean_raylib__UpdateSound"]
--- opaque updateSound : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | sound : Sound
---   | data : const void *
---   | sampleCount : int
--- -/
+/-- Update sound buffer with new data -/
+@[extern "lean_raylib__UpdateSound"]
+opaque updateSound (sound : @& Sound) (frameCount : UInt32)
+  (h : frameCount ≤ sound.frameCount)
+  (data : @& Pod.BytesView
+    (frameCount.toNat * sound.channels.toNat * (sound.sampleSize.toNat / 8))
+    1
+  ) : BaseIO Unit
 
 /-- Export wave data to file, returns true on success -/
 @[extern "lean_raylib__ExportWave"]

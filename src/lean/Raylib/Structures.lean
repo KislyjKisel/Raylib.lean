@@ -728,18 +728,21 @@ opaque SoundPointed : NonemptyType
 def Sound : Type := SoundPointed.type
 instance : Nonempty Sound := SoundPointed.property
 
-/-- Getter: Frequency (samples per second) -/
+/-- Frequency (samples per second) -/
 @[extern "lean_raylib__Sound_sampleRate"]
 opaque Sound.sampleRate (sound : @& Sound) : UInt32
-/-- Getter: Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
+
+/-- Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
 @[extern "lean_raylib__Sound_sampleSize"]
 opaque Sound.sampleSize (sound : @& Sound) : UInt32
-/-- Getter: Number of channels (1-mono, 2-stereo, ...) -/
+
+/-- Number of channels (1-mono, 2-stereo, ...) -/
 @[extern "lean_raylib__Sound_channels"]
 opaque Sound.channels (sound : @& Sound) : UInt32
-/-- Getter: Total number of frames (considering channels) -/
+
+/-- Total number of frames (considering channels) -/
 @[extern "lean_raylib__Sound_frameCount"]
-opaque Sound.frameCount (sound : @& Sound) : UInt32
+opaque Sound.frameCount (sound : @& Sound) : BaseIO UInt32
 
 /-! # Music -/
 
