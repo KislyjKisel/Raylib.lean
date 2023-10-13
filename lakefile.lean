@@ -25,7 +25,7 @@ package raylib {
   packagesDir := packagesDir
   moreLeanArgs := #["-DautoImplicit=false"] ++
     if (get_config? libffi).isSome
-      then #[s!"--load-dynlib=./{packagesDir}/Libffi/lib/libffi.so"] -- why not automatic?
+      then #[s!"--load-dynlib=./{packagesDir}/libffi/lib/libffi.so"] -- why not automatic?
       else #[]
   moreServerArgs := #["-DautoImplicit=false"]
 }

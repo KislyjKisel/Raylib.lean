@@ -21,7 +21,7 @@ def main : IO Unit := do
   initAudioDevice
   setExitKey .null
 
-  -- let audioStream ← loadAudioStream 44100 .u16 1
+  -- let audioStream ← loadAudioStream rlctx 44100 .u16 1
   -- setMasterVolume 0.5
   -- setAudioStreamCallback audioStream λ frames data ↦ do
   --   EST2.lift₂ $ IO.println "Audio callback called"
