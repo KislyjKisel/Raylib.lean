@@ -1983,7 +1983,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTexturePro (b_lean_obj_arg textureRef,
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTextureNPatch (b_lean_obj_arg texture, b_lean_obj_arg nPatchInfo, b_lean_obj_arg dest, b_lean_obj_arg origin, uint32_t rotation, uint32_t tint, lean_obj_arg world) {
-    DrawTextureNPatch(*lean_raylib_Texture_from(texture), *lean_raylib_NPatchInfo_from(nPatchInfo), lean_raylib_Rectangle_from(dest), lean_raylib_Vector2_from(origin), lean_pod_Float32_fromBits(rotation), lean_raylib_Color_from(tint));
+    DrawTextureNPatch(
+        *lean_raylib_Texture_from(texture),
+        lean_raylib_NPatchInfo_from(nPatchInfo),
+        lean_raylib_Rectangle_from(dest),
+        lean_raylib_Vector2_from(origin),
+        lean_pod_Float32_fromBits(rotation),
+        lean_raylib_Color_from(tint)
+    );
     return lean_io_result_mk_ok(lean_box(0));
 }
 

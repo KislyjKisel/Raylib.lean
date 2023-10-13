@@ -197,51 +197,26 @@ opaque RenderTexture.texture (rt : RenderTexture) : TextureRef
 
 /-! # NPatch info -/
 
-opaque NPatchInfoPointed : NonemptyType
 /-- NPatchInfo, n-patch layout info -/
-def NPatchInfo : Type := NPatchInfoPointed.type
-instance : Nonempty NPatchInfo := NPatchInfoPointed.property
-
-@[extern "lean_raylib__NPatchInfo_mk"]
-opaque NPatchInfo.mk (source : @& Rectangle) (left : UInt32) (top : UInt32)
-  (right : UInt32) (bottom : UInt32) (layout : NPatchLayout) : NPatchInfo
-
-/-- Getter: Texture source rectangle -/
-@[extern "lean_raylib__NPatchInfo_source"]
-opaque NPatchInfo.source (npatchInfo : @& NPatchInfo) : Rectangle
-/-- Setter: Texture source rectangle -/
-@[extern "lean_raylib__NPatchInfo_source_set"]
-opaque NPatchInfo.set_source (source : Rectangle) (npatchInfo : NPatchInfo) : NPatchInfo
-/-- Getter: Left border offset -/
-@[extern "lean_raylib__NPatchInfo_left"]
-opaque NPatchInfo.left (npatchInfo : @& NPatchInfo) : UInt32
-/-- Setter: Left border offset -/
-@[extern "lean_raylib__NPatchInfo_left_set"]
-opaque NPatchInfo.set_left (left : UInt32) (npatchInfo : NPatchInfo) : NPatchInfo
-/-- Getter: Top border offset -/
-@[extern "lean_raylib__NPatchInfo_top"]
-opaque NPatchInfo.top (npatchInfo : @& NPatchInfo) : UInt32
-/-- Setter: Top border offset -/
-@[extern "lean_raylib__NPatchInfo_top_set"]
-opaque NPatchInfo.set_top (top : UInt32) (npatchInfo : NPatchInfo) : NPatchInfo
-/-- Getter: Right border offset -/
-@[extern "lean_raylib__NPatchInfo_right"]
-opaque NPatchInfo.right (npatchInfo : @& NPatchInfo) : UInt32
-/-- Setter: Right border offset -/
-@[extern "lean_raylib__NPatchInfo_right_set"]
-opaque NPatchInfo.set_right (right : UInt32) (npatchInfo : NPatchInfo) : NPatchInfo
-/-- Getter: Bottom border offset -/
-@[extern "lean_raylib__NPatchInfo_bottom"]
-opaque NPatchInfo.bottom (npatchInfo : @& NPatchInfo) : UInt32
-/-- Setter: Bottom border offset -/
-@[extern "lean_raylib__NPatchInfo_bottom_set"]
-opaque NPatchInfo.set_bottom (bottom : UInt32) (npatchInfo : NPatchInfo) : NPatchInfo
-/-- Getter: Layout of the n-patch: 3x3, 1x3 or 3x1 -/
-@[extern "lean_raylib__NPatchInfo_layout"]
-opaque NPatchInfo.layout (npatchInfo : @& NPatchInfo) : NPatchLayout
-/-- Setter: Layout of the n-patch: 3x3, 1x3 or 3x1 -/
-@[extern "lean_raylib__NPatchInfo_layout_set"]
-opaque NPatchInfo.set_layout (layout : NPatchLayout) (npatchInfo : NPatchInfo) : NPatchInfo
+structure NPatchInfo where
+  /-- Texture source rectangle (x) -/
+  sourceX : Float32
+  /-- Texture source rectangle (y) -/
+  sourceY : Float32
+  /-- Texture source rectangle (width) -/
+  sourceWidth : Float32
+  /-- Texture source rectangle (height) -/
+  sourceHeight : Float32
+  /-- Left border offset -/
+  left : UInt32
+  /-- Top border offset -/
+  top : UInt32
+  /-- Right border offset -/
+  right : UInt32
+  /-- Bottom border offset -/
+  bottom : UInt32
+  /-- Layout of the n-patch: 3x3, 1x3 or 3x1 -/
+  layout : NPatchLayout
 
 
 /-! # Glyph info -/

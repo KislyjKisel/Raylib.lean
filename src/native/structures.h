@@ -69,10 +69,10 @@ static inline lean_object* lean_raylib_Rectangle_to (Rectangle r) {
 
 static inline Rectangle lean_raylib_Rectangle_from (b_lean_obj_arg obj) {
     Rectangle r;
-    r.x = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 0)));
-    r.y = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 1)));
-    r.width = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 2)));
-    r.height = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 3)));
+    r.x = lean_pod_Float32_unbox(lean_ctor_get(obj, 0));
+    r.y = lean_pod_Float32_unbox(lean_ctor_get(obj, 1));
+    r.width = lean_pod_Float32_unbox(lean_ctor_get(obj, 2));
+    r.height = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
     return r;
 }
 
@@ -157,16 +157,36 @@ static inline RenderTexture const* lean_raylib_RenderTexture_from (b_lean_obj_ar
 
 // # NPatch info
 
-static inline lean_object* lean_raylib_NPatchInfo_to (NPatchInfo const* obj) {
-    static lean_external_class* class_ = NULL;
-    if (class_ == NULL) {
-        class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
-    }
-    return lean_alloc_external(class_, (void*)obj);
+static inline void lean_raylib_NPatchInfo_set (b_lean_obj_arg obj, NPatchInfo npi) {
+    lean_ctor_set(obj, 0, lean_pod_Float32_box(npi.source.x));
+    lean_ctor_set(obj, 1, lean_pod_Float32_box(npi.source.y));
+    lean_ctor_set(obj, 2, lean_pod_Float32_box(npi.source.width));
+    lean_ctor_set(obj, 3, lean_pod_Float32_box(npi.source.height));
+    lean_ctor_set(obj, 4, lean_box_uint32(npi.left));
+    lean_ctor_set(obj, 5, lean_box_uint32(npi.top));
+    lean_ctor_set(obj, 6, lean_box_uint32(npi.right));
+    lean_ctor_set(obj, 7, lean_box_uint32(npi.bottom));
+    lean_ctor_set(obj, 8, lean_box_uint32(npi.layout));
 }
 
-static inline NPatchInfo* lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
-    return (NPatchInfo*) lean_get_external_data(obj);
+static inline lean_obj_res lean_raylib_NPatchInfo_to (NPatchInfo npi) {
+    lean_object* obj = lean_alloc_ctor(0, 9, 0);
+    lean_raylib_NPatchInfo_set(obj, npi);
+    return obj;
+}
+
+static inline NPatchInfo lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
+    NPatchInfo r;
+    r.source.x = lean_pod_Float32_unbox(lean_ctor_get(obj, 0));
+    r.source.y = lean_pod_Float32_unbox(lean_ctor_get(obj, 1));
+    r.source.width = lean_pod_Float32_unbox(lean_ctor_get(obj, 2));
+    r.source.height = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
+    r.left = lean_unbox_uint32(lean_ctor_get(obj, 4));
+    r.top = lean_unbox_uint32(lean_ctor_get(obj, 5));
+    r.right = lean_unbox_uint32(lean_ctor_get(obj, 6));
+    r.bottom = lean_unbox_uint32(lean_ctor_get(obj, 7));
+    r.layout = lean_unbox_uint32(lean_ctor_get(obj, 8));
+    return r;
 }
 
 
@@ -239,7 +259,7 @@ static inline Camera3D lean_raylib_Camera3D_from (b_lean_obj_arg obj) {
     cam.position = lean_raylib_Vector3_from(lean_ctor_get(obj, 0));
     cam.target = lean_raylib_Vector3_from(lean_ctor_get(obj, 1));
     cam.up = lean_raylib_Vector3_from(lean_ctor_get(obj, 2));
-    cam.fovy = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 3)));
+    cam.fovy = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
     cam.projection = lean_unbox_uint32(lean_ctor_get(obj, 4));
     return cam;
 }
@@ -270,8 +290,8 @@ static inline Camera2D lean_raylib_Camera2D_from (b_lean_obj_arg obj) {
     Camera2D cam;
     cam.offset = lean_raylib_Vector2_from(lean_ctor_get(obj, 0));
     cam.target = lean_raylib_Vector2_from(lean_ctor_get(obj, 1));
-    cam.rotation = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 2)));
-    cam.zoom = lean_pod_Float32_fromBits(lean_unbox_uint32(lean_ctor_get(obj, 3)));
+    cam.rotation = lean_pod_Float32_unbox(lean_ctor_get(obj, 2));
+    cam.zoom = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
     return cam;
 }
 
