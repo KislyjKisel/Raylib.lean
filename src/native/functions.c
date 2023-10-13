@@ -2505,21 +2505,70 @@ LEAN_EXPORT lean_obj_res lean_raylib__UploadMesh (lean_obj_arg mesh, uint8_t dyn
     }
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UpdateMeshBuffer (lean_obj_arg mesh, uint32_t index, /* const void* */lean_obj_arg data, uint32_t dataSize, uint32_t offset, lean_obj_arg world) {
-//     UpdateMeshBuffer(lean_raylib_Mesh_from(mesh), index, /*todo: ptr?*/data, dataSize, offset);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateMeshBuffer (lean_obj_arg mesh, b_lean_obj_arg i, b_lean_obj_arg n, b_lean_obj_arg data, uint32_t offset, lean_obj_arg world) {
+    if (LEAN_UNLIKELY(!lean_is_exclusive(mesh))) {
+        lean_raylib_Mesh* meshWctx = lean_get_external_data(mesh);
+        Mesh meshCopy = lean_raylib_Mesh_clone(&meshWctx->mesh);
+        lean_object* ctx = meshWctx->ctx;
+        lean_inc_ref(ctx);
+        lean_dec_ref(mesh);
+        UploadMesh(&meshCopy, true);
+        mesh = lean_raylib_Mesh_to(meshCopy, ctx);
+    }
+    UpdateMeshBuffer(
+        *lean_raylib_Mesh_from(mesh),
+        lean_usize_of_nat(i),
+        lean_pod_BytesView_unwrap(data)->ptr,
+        lean_usize_of_nat(n),
+        offset
+    );
+    return lean_io_result_mk_ok(mesh);
+}
 
-LEAN_EXPORT lean_obj_res lean_raylib__DrawMesh (b_lean_obj_arg mesh, b_lean_obj_arg material, b_lean_obj_arg transform, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__DrawMesh (
+    b_lean_obj_arg mesh, b_lean_obj_arg material, b_lean_obj_arg transform, lean_obj_arg world
+) {
     MaterialMap mmaps[LEAN_RAYLIB_MAX_MATERIAL_MAPS]; // 4KB
-    DrawMesh(*lean_raylib_Mesh_from(mesh), lean_raylib_Material_from(material, mmaps), lean_raylib_Matrix_from(transform));
+    DrawMesh(
+        *lean_raylib_Mesh_from(mesh),
+        lean_raylib_Material_from(material, mmaps),
+        lean_raylib_Matrix_from(transform)
+    );
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__DrawMeshInstanced (lean_obj_arg mesh, lean_obj_arg material, /* const Matrix* */lean_obj_arg transforms, uint32_t instances, lean_obj_arg world) {
-//     DrawMeshInstanced(lean_raylib_Mesh_from(mesh), lean_raylib_Material_from(material), /*todo: ptr?*/transforms, instances);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__DrawMeshInstanced (
+    b_lean_obj_arg mesh, b_lean_obj_arg material, b_lean_obj_arg transforms, lean_obj_arg world
+) {
+    MaterialMap mmaps[LEAN_RAYLIB_MAX_MATERIAL_MAPS]; // 4KB
+    size_t instances = lean_array_size(transforms);
+    Matrix* transformsC = RL_MALLOC(instances * sizeof(Matrix));
+    for (size_t i = 0; i < instances; ++i) {
+        transformsC[i] = lean_raylib_Matrix_from(lean_array_get_core(transforms, i));
+    }
+    DrawMeshInstanced(
+        *lean_raylib_Mesh_from(mesh),
+        lean_raylib_Material_from(material, mmaps),
+        transformsC,
+        instances
+    );
+    RL_FREE(transformsC);
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__DrawMeshInstancedBv (
+    b_lean_obj_arg mesh, b_lean_obj_arg material, b_lean_obj_arg n,
+    b_lean_obj_arg transforms, lean_obj_arg world
+) {
+    MaterialMap mmaps[LEAN_RAYLIB_MAX_MATERIAL_MAPS]; // 4KB
+    DrawMeshInstanced(
+        *lean_raylib_Mesh_from(mesh),
+        lean_raylib_Material_from(material, mmaps),
+        (Matrix*)lean_pod_BytesView_unwrap(transforms)->ptr,
+        lean_usize_of_nat(n)
+    );
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__ExportMesh (b_lean_obj_arg mesh, b_lean_obj_arg fileName, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(ExportMesh(*lean_raylib_Mesh_from(mesh), lean_string_cstr(fileName))));

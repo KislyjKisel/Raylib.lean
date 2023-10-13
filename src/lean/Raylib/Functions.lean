@@ -1652,34 +1652,25 @@ opaque meshCopy (mesh : @& Mesh) : Mesh
 @[extern "lean_raylib__UploadMesh"]
 opaque uploadMesh (mesh : Mesh) (dynamic : Bool) : BaseIO Mesh
 
--- /-- Update mesh vertex data in GPU for a specific buffer index -/
--- @[extern "lean_raylib__UpdateMeshBuffer"]
--- opaque updateMeshBuffer : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | mesh : Mesh
---   | index : int
---   | data : const void *
---   | dataSize : int
---   | offset : int
--- -/
+/-- Update mesh vertex data in GPU for a specific buffer index -/
+@[extern "lean_raylib__UpdateMeshBuffer"]
+opaque updateMeshBuffer (mesh : Mesh)
+  (i : @& Fin Mesh.maxVertexBuffers)
+  {n : @& Nat} (data : @& Pod.BytesView n 1) (offset : UInt32)
+  (h : offset.toNat + n ≤ Mesh.bufferSize mesh.vertexCount.toNat mesh.triangleCount.toNat i) : BaseIO Mesh
 
 /-- Draw a 3d mesh with material and transform -/
 @[extern "lean_raylib__DrawMesh"]
 opaque drawMesh (mesh : @& Mesh) (material : @& Material) (transform : @& Matrix) : BaseIO Unit
 
--- /-- Draw multiple mesh instances with material and different transforms -/
--- @[extern "lean_raylib__DrawMeshInstanced"]
--- opaque drawMeshInstanced : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | mesh : Mesh
---   | material : Material
---   | transforms : const Matrix *
---   | instances : int
--- -/
+/-- Draw multiple mesh instances with material and different transforms -/
+@[extern "lean_raylib__DrawMeshInstanced"]
+opaque drawMeshInstanced (mesh : @& Mesh) (material : @& Material) (transforms : @& Array Matrix) : BaseIO Unit
+
+/-- Draw multiple mesh instances with material and different transforms -/
+@[extern "lean_raylib__DrawMeshInstancedBv"]
+opaque drawMeshInstancedBv (mesh : @& Mesh) (material : @& Material) (n : @& Nat)
+  (transforms : @& Pod.BytesView (n * Pod.byteSize Matrix) (Pod.alignment Matrix)) : BaseIO Unit
 
 /-- Export mesh data to file, returns true on success -/
 @[extern "lean_raylib__ExportMesh"]

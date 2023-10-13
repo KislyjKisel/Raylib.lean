@@ -306,6 +306,18 @@ structure Mesh.Skinning (vertexCount : UInt32) where
   boneIds : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) 1
   boneWeights : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) 1
 
+/-- `MAX_MESH_VERTEX_BUFFERS` -/
+abbrev Mesh.maxVertexBuffers : Nat := 7
+
+def Mesh.bufferSize (vertexCount triangleCount : Nat) : Fin Mesh.maxVertexBuffers → Nat
+| ⟨0, _⟩ => vertexCount * 3 * Pod.byteSize Float32
+| ⟨1, _⟩ => vertexCount * 2 * Pod.byteSize Float32
+| ⟨2, _⟩ => vertexCount * 3 * Pod.byteSize Float32
+| ⟨3, _⟩ => vertexCount * 4
+| ⟨4, _⟩ => vertexCount * 4 * Pod.byteSize Float32
+| ⟨5, _⟩ => vertexCount * 2 * Pod.byteSize Float32
+| ⟨6, _⟩ => triangleCount * 3 * Pod.byteSize UInt16
+
 /-- NOTE: Skinning requires normals and is ignored otherwise -/
 @[extern "lean_raylib__Mesh_mkBv"]
 opaque Mesh.mkBv
@@ -396,7 +408,7 @@ opaque Mesh.vaoId (self : @& Mesh) : UInt32
 
 /-- OpenGL Vertex Buffer Objects id (default vertex data) -/
 @[extern "lean_raylib__Mesh_vboId"]
-opaque Mesh.vboId (self : @& Mesh) (i : @& Fin 7) : UInt32
+opaque Mesh.vboId (self : @& Mesh) (i : @& Fin Mesh.maxVertexBuffers) : UInt32
 
 
 /-! # Shader -/
