@@ -13,6 +13,7 @@ lean_external_class* lean_raylib_Font_class;
 lean_external_class* lean_raylib_Mesh_class;
 lean_external_class* lean_raylib_Shader_class;
 lean_external_class* lean_raylib_Model_class;
+lean_external_class* lean_raylib_ModelAnimation_class;
 lean_external_class* lean_raylib_Wave_class;
 lean_external_class* lean_raylib_Sound_class;
 lean_external_class* lean_raylib_Music_class;
@@ -143,6 +144,11 @@ static void lean_raylib_Model_foreach(void* model_v, b_lean_obj_arg f) {
     lean_apply_1(f, model->materials);
 }
 
+static void lean_raylib_ModelAnimation_finalize(void* anim_v) {
+    UnloadModelAnimation(*(ModelAnimation*)anim_v);
+    lean_raylib_free(anim_v);
+}
+
 static void lean_raylib_Wave_finalize(void* wave) {
     UnloadWave(*(Wave*)wave);
     lean_raylib_free(wave);
@@ -183,11 +189,25 @@ static void lean_raylib_Sound_finalize(void* sound_v) {
     lean_raylib_free(sound);
 }
 
+static void lean_raylib_Sound_foreach(void* sound_v, b_lean_obj_arg f) {
+    lean_raylib_Sound* sound = sound_v;
+    lean_inc_ref(f);
+    lean_inc_ref(sound->ctx);
+    lean_apply_1(f, sound->ctx);
+}
+
 static void lean_raylib_Music_finalize(void* music_v) {
     lean_raylib_Music* music = music_v;
     UnloadMusicStream(music->music);
     lean_dec_ref(music->ctx);
     lean_raylib_free(music);
+}
+
+static void lean_raylib_Music_foreach(void* music_v, b_lean_obj_arg f) {
+    lean_raylib_Music* music = music_v;
+    lean_inc_ref(f);
+    lean_inc_ref(music->ctx);
+    lean_apply_1(f, music->ctx);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
@@ -246,6 +266,10 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
         lean_raylib_Model_finalize,
         lean_raylib_Model_foreach
     );
+    lean_raylib_ModelAnimation_class = lean_register_external_class(
+        lean_raylib_ModelAnimation_finalize,
+        lean_raylib_default_foreach
+    );
     lean_raylib_Wave_class = lean_register_external_class(
         lean_raylib_Wave_finalize,
         lean_raylib_default_foreach
@@ -256,11 +280,11 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
     );
     lean_raylib_Sound_class = lean_register_external_class(
         lean_raylib_Sound_finalize,
-        lean_raylib_default_foreach
+        lean_raylib_Sound_foreach
     );
     lean_raylib_Music_class = lean_register_external_class(
         lean_raylib_Music_finalize,
-        lean_raylib_default_foreach
+        lean_raylib_Music_foreach
     );
     lean_raylib_WindowHandle_class = lean_register_external_class(
         lean_raylib_default_finalize,
@@ -824,59 +848,54 @@ LEAN_EXPORT lean_obj_res lean_raylib__Model_setMeshMaterial(lean_obj_arg model, 
 
 // # ModelAnimation
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_mk(uint32_t boneCount, uint32_t frameCount, /* BoneInfo* */lean_obj_arg bones, /* Transform ** */lean_obj_arg framePoses) {
-//     LET_BOX_STRUCT(ModelAnimation, result_,
-//         .boneCount = boneCount,
-//         .frameCount = frameCount,
-//         .bones = /*todo: ptr?*/bones,
-//         .framePoses = /*todo: ptr?*/framePoses
-//     );
-//     return lean_raylib_ModelAnimation_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_mk(b_lean_obj_arg bones, b_lean_obj_arg framePoses) {
+    ModelAnimation anim;
+    anim.boneCount = lean_array_size(bones);
+    anim.frameCount = lean_array_size(framePoses);
+    anim.bones = RL_MALLOC(anim.boneCount * sizeof(BoneInfo));
+    for (size_t i = 0; i < anim.boneCount; ++i) {
+        anim.bones[i] = lean_raylib_BoneInfo_from(lean_array_get_core(bones, i));
+    }
+    anim.framePoses = RL_MALLOC(anim.frameCount * sizeof(Transform*));
+    for (size_t i = 0; i < anim.frameCount; ++i) {
+        lean_object* framePose = lean_array_get_core(framePoses, i);
+        anim.framePoses[i] = RL_MALLOC(anim.boneCount * sizeof(Transform));
+        for (size_t j = 0; j < anim.boneCount; ++j) {
+            anim.framePoses[i][j] = lean_raylib_Transform_from(lean_array_get_core(framePose, j));
+        }
+    }
+    return lean_raylib_ModelAnimation_to(anim);
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ModelAnimation_boneCount(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_ModelAnimation_from(obj)->boneCount;
-//     return result_;
-// }
+LEAN_EXPORT uint32_t lean_raylib__ModelAnimation_boneCount(b_lean_obj_arg anim) {
+    return lean_raylib_ModelAnimation_from(anim)->boneCount;
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_boneCount_set(uint32_t boneCount, b_lean_obj_arg obj) {
-//     LET_BOX(ModelAnimation, result_, *lean_raylib_ModelAnimation_from(obj));
-//     result_->boneCount = boneCount;
-//     return lean_raylib_ModelAnimation_to(result_);
-// }
+LEAN_EXPORT uint32_t lean_raylib__ModelAnimation_frameCount(b_lean_obj_arg anim) {
+    return lean_raylib_ModelAnimation_from(anim)->frameCount;
+}
 
-// LEAN_EXPORT uint32_t lean_raylib__ModelAnimation_frameCount(b_lean_obj_arg obj) {
-//     int result_ = lean_raylib_ModelAnimation_from(obj)->frameCount;
-//     return result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_bone(b_lean_obj_arg anim, uint32_t i) {
+    return lean_raylib_BoneInfo_to(lean_raylib_ModelAnimation_from(anim)->bones[i]);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_frameCount_set(uint32_t frameCount, b_lean_obj_arg obj) {
-//     LET_BOX(ModelAnimation, result_, *lean_raylib_ModelAnimation_from(obj));
-//     result_->frameCount = frameCount;
-//     return lean_raylib_ModelAnimation_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_setBone(lean_obj_arg anim, uint32_t i, b_lean_obj_arg bone) {
+    anim = lean_raylib_ModelAnimation_ensure_exclusive(anim);
+    lean_raylib_ModelAnimation_from(anim)->bones[i] = lean_raylib_BoneInfo_from(bone);
+    return anim;
+}
 
-// LEAN_EXPORT /* BoneInfo* */lean_obj_arg lean_raylib__ModelAnimation_bones(b_lean_obj_arg obj) {
-//     BoneInfo * result_ = lean_raylib_ModelAnimation_from(obj)->bones;
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_framePose(b_lean_obj_arg obj, uint32_t i, uint32_t j) {
+    return lean_raylib_Transform_to(lean_raylib_ModelAnimation_from(obj)->framePoses[i][j]);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_bones_set(/* BoneInfo* */lean_obj_arg bones, b_lean_obj_arg obj) {
-//     LET_BOX(ModelAnimation, result_, *lean_raylib_ModelAnimation_from(obj));
-//     result_->bones = /*todo: ptr?*/bones;
-//     return lean_raylib_ModelAnimation_to(result_);
-// }
-
-// LEAN_EXPORT /* Transform ** */lean_obj_arg lean_raylib__ModelAnimation_framePoses(b_lean_obj_arg obj) {
-//     Transform * * result_ = lean_raylib_ModelAnimation_from(obj)->framePoses;
-//     return /*todo: ptr?*/result_;
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_framePoses_set(/* Transform ** */lean_obj_arg framePoses, b_lean_obj_arg obj) {
-//     LET_BOX(ModelAnimation, result_, *lean_raylib_ModelAnimation_from(obj));
-//     result_->framePoses = /*todo: ptr?*/framePoses;
-//     return lean_raylib_ModelAnimation_to(result_);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_setFramePose(
+    lean_obj_arg anim, uint32_t i, uint32_t j, b_lean_obj_arg t
+) {
+    anim = lean_raylib_ModelAnimation_ensure_exclusive(anim);
+    lean_raylib_ModelAnimation_from(anim)->framePoses[i][j] = lean_raylib_Transform_from(t);
+    return anim;
+}
 
 
 // # Wave

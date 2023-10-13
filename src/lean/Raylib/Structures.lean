@@ -605,55 +605,60 @@ def Model.setMeshMaterial? (model : Model) (i j : UInt32) : Model :=
 
 /-! # Model animation -/
 
--- opaque ModelAnimationPointed : NonemptyType
--- /-- ModelAnimation -/
--- def ModelAnimation : Type := ModelAnimationPointed.type
--- instance : Nonempty ModelAnimation := ModelAnimationPointed.property
--- @[extern "lean_raylib__ModelAnimation_mk"]
--- opaque ModelAnimation.mk : ModelAnimation
--- /- todo: ^^ struct constructor ^^
---   fields:
---   | boneCount: int -- Number of bones
---   | frameCount: int -- Number of animation frames
---   | bones: BoneInfo * -- Bones information (skeleton)
---   | framePoses: Transform * * -- Poses array by frame
--- -/
--- /-- Getter: Number of bones -/
--- @[extern "lean_raylib__ModelAnimation_boneCount"]
--- opaque ModelAnimation.boneCount (self : @& ModelAnimation) : Int32
--- /-- Setter: Number of bones -/
--- @[extern "lean_raylib__ModelAnimation_boneCount_set"]
--- opaque ModelAnimation.set_boneCount (boneCount : Int32) (self : ModelAnimation) : ModelAnimation
--- /-- Getter: Number of animation frames -/
--- @[extern "lean_raylib__ModelAnimation_frameCount"]
--- opaque ModelAnimation.frameCount (self : @& ModelAnimation) : Int32
--- /-- Setter: Number of animation frames -/
--- @[extern "lean_raylib__ModelAnimation_frameCount_set"]
--- opaque ModelAnimation.set_frameCount (frameCount : Int32) (self : ModelAnimation) : ModelAnimation
--- /-- Getter: Bones information (skeleton) -/
--- @[extern "lean_raylib__ModelAnimation_bones"]
--- opaque ModelAnimation.bones (self : @& ModelAnimation) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Bones information (skeleton) -/
--- @[extern "lean_raylib__ModelAnimation_bones_set"]
--- opaque ModelAnimation.set_bones (bones : Unit) (self : ModelAnimation) : ModelAnimation
--- /-
--- todo: ^^ struct setter ^^
--- -/
--- /-- Getter: Poses array by frame -/
--- @[extern "lean_raylib__ModelAnimation_framePoses"]
--- opaque ModelAnimation.framePoses (self : @& ModelAnimation) : Unit
--- /-
--- todo: ^^ struct getter ^^
--- -/
--- /-- Setter: Poses array by frame -/
--- @[extern "lean_raylib__ModelAnimation_framePoses_set"]
--- opaque ModelAnimation.set_framePoses (framePoses : Unit) (self : ModelAnimation) : ModelAnimation
--- /-
--- todo: ^^ struct setter ^^
--- -/
+opaque ModelAnimationPointed : NonemptyType
+def ModelAnimation : Type := ModelAnimationPointed.type
+instance : Nonempty ModelAnimation := ModelAnimationPointed.property
+
+@[extern "lean_raylib__ModelAnimation_mk"]
+opaque ModelAnimation.mk (bones : @& Array BoneInfo)
+  (framePoses : @& Array { a : Array Transform // a.size = bones.size }) : ModelAnimation
+
+/-- Number of bones -/
+@[extern "lean_raylib__ModelAnimation_boneCount"]
+opaque ModelAnimation.boneCount (anim : @& ModelAnimation) : UInt32
+
+/-- Number of animation frames -/
+@[extern "lean_raylib__ModelAnimation_frameCount"]
+opaque ModelAnimation.frameCount (anim : @& ModelAnimation) : UInt32
+
+/-- Bone information (skeleton) -/
+@[extern "lean_raylib__ModelAnimation_bone"]
+opaque ModelAnimation.bone (anim : @& ModelAnimation) (i : UInt32) (h : i < anim.boneCount) : BoneInfo
+
+def ModelAnimation.bone? (anim : ModelAnimation) (i : UInt32) : Option BoneInfo :=
+  if h: i < anim.boneCount
+    then some $ bone anim i h
+    else none
+
+/-- Set bone information (skeleton) -/
+@[extern "lean_raylib__ModelAnimation_setBone"]
+opaque ModelAnimation.setBone (anim : ModelAnimation) (i : UInt32) (bone : @& BoneInfo)
+  (h : i < anim.boneCount) : ModelAnimation
+
+def ModelAnimation.setBone? (anim : ModelAnimation) (i : UInt32) (bone : BoneInfo) : ModelAnimation :=
+  if h: i < anim.boneCount
+    then setBone anim i bone h
+    else anim
+
+/-- Pose bone transform -/
+@[extern "lean_raylib__ModelAnimation_framePose"]
+opaque ModelAnimation.framePose (anim : @& ModelAnimation) (i j : UInt32)
+  (h₁ : i < anim.frameCount) (h₂ : j < anim.boneCount) : Transform
+
+def ModelAnimation.framePose? (anim : ModelAnimation) (i j : UInt32) : Option Transform :=
+  if h: i < anim.frameCount ∧ j < anim.boneCount
+    then some $ framePose anim i j h.1 h.2
+    else none
+
+/-- Set pose bone transform -/
+@[extern "lean_raylib__ModelAnimation_setFramePose"]
+opaque ModelAnimation.setFramePose (anim : ModelAnimation) (i j : UInt32) (t : @& Transform)
+  (h₁ : i < anim.frameCount) (h₂ : j < anim.boneCount) : ModelAnimation
+
+def ModelAnimation.setFramePose? (anim : ModelAnimation) (i j : UInt32) (t : Transform) : ModelAnimation :=
+  if h: i < anim.frameCount ∧ j < anim.boneCount
+    then setFramePose anim i j t h.1 h.2
+    else anim
 
 
 /-! # Ray -/

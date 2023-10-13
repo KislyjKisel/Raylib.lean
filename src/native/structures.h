@@ -373,6 +373,17 @@ static inline Mesh lean_raylib_Mesh_clone(Mesh* meshSrc) {
     return mesh;
 }
 
+static inline lean_obj_res lean_raylib_Mesh_ensure_exclusive(lean_obj_arg meshObj) {
+    if (LEAN_LIKELY(lean_is_exclusive(meshObj))) {
+        return meshObj;
+    }
+    lean_raylib_Mesh* mesh = lean_get_external_data(meshObj);
+    lean_inc_ref(mesh->ctx);
+    lean_object* meshNew = lean_raylib_Mesh_to(lean_raylib_Mesh_clone(&mesh->mesh), mesh->ctx);
+    lean_dec_ref(meshObj);
+    return meshNew;
+}
+
 
 // # Shader
 
@@ -538,6 +549,7 @@ static inline lean_raylib_Model* lean_raylib_Model_from (b_lean_obj_arg obj) {
     return (lean_raylib_Model*)lean_get_external_data(obj);
 }
 
+// New model references the same (Lean) meshes and materials
 static inline lean_raylib_Model lean_raylib_Model_clone(lean_raylib_Model* modelSrc) {
     lean_raylib_Model modelDst;
     lean_inc_ref(modelSrc->meshes);
@@ -546,10 +558,7 @@ static inline lean_raylib_Model lean_raylib_Model_clone(lean_raylib_Model* model
     modelDst.materials = modelSrc->materials;
     modelDst.model.transform = modelSrc->model.transform;
     modelDst.meshesCapacity = modelDst.model.meshCount = modelSrc->model.meshCount;
-    modelDst.model.meshes = RL_MALLOC(modelDst.meshesCapacity * sizeof(Mesh));
-    for (size_t i = 0; i < modelDst.model.meshCount; ++i) {
-        modelDst.model.meshes[i] = lean_raylib_Mesh_clone(&modelSrc->model.meshes[i]);
-    }
+    modelDst.model.meshes = lean_raylib_rlmemdup(modelSrc->model.meshes, modelDst.meshesCapacity * sizeof(Mesh));
     modelDst.materialsCapacity = modelDst.model.materialCount = modelSrc->model.materialCount;
     modelDst.model.materials = RL_MALLOC(modelDst.materialsCapacity * sizeof(Material));
     for (size_t i = 0; i < modelDst.model.materialCount; ++i) {
@@ -573,17 +582,33 @@ static inline lean_raylib_Model lean_raylib_Model_clone(lean_raylib_Model* model
 
 // # ModelAnimation
 
-// static inline lean_object* lean_raylib_ModelAnimation_to (ModelAnimation const* obj) {
-//     static lean_external_class* class_ = NULL;
-//     if (class_ == NULL) {
-//         class_ = lean_register_external_class(lean_raylib_free, lean_raylib_default_foreach);
-//     }
-//     return lean_alloc_external(class_, (void*)obj);
-// }
+extern lean_external_class* lean_raylib_ModelAnimation_class;
 
-// static inline ModelAnimation const* lean_raylib_ModelAnimation_from (b_lean_obj_arg obj) {
-//     return (ModelAnimation const*) lean_get_external_data(obj);
-// }
+static inline lean_object* lean_raylib_ModelAnimation_to (ModelAnimation anim) {
+    LET_BOX(ModelAnimation, animBox, anim);
+    return lean_alloc_external(lean_raylib_ModelAnimation_class, (void*)animBox);
+}
+
+static inline ModelAnimation* lean_raylib_ModelAnimation_from (b_lean_obj_arg obj) {
+    return (ModelAnimation*) lean_get_external_data(obj);
+}
+
+static inline lean_obj_res lean_raylib_ModelAnimation_ensure_exclusive(lean_obj_arg animObj) {
+    if(LEAN_LIKELY(lean_is_exclusive(animObj))) {
+        return animObj;
+    }
+    ModelAnimation animNew;
+    ModelAnimation* animOld = lean_raylib_ModelAnimation_from(animObj);
+    animNew.boneCount = animOld->boneCount;
+    animNew.frameCount = animOld->frameCount;
+    animNew.bones = lean_raylib_rlmemdup(animOld->bones, animNew.boneCount * sizeof(BoneInfo));
+    animNew.framePoses = RL_MALLOC(animNew.frameCount * sizeof(Transform*));
+    for (size_t i = 0; i < animNew.frameCount; ++i) {
+        animNew.framePoses[i] = lean_raylib_rlmemdup(animOld->framePoses[i], animNew.boneCount * sizeof(Transform));
+    }
+    lean_dec_ref(animObj);
+    return lean_raylib_ModelAnimation_to(animNew);
+}
 
 
 // # Ray

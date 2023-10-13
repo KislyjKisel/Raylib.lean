@@ -1735,33 +1735,17 @@ opaque loadMaterials (ctx : @& Context) (fileName : @& String) : Array Material
 /-- Check if a material is ready -/
 def isMaterialReady (material : Material) : Bool := isShaderReady material.shader
 
--- /-- Load model animations from file -/
--- @[extern "lean_raylib__LoadModelAnimations"]
--- opaque loadModelAnimations : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: ModelAnimation *
---   params:
---   | fileName : const char *
---   | animCount : unsigned int *
--- -/
--- /-- Update model animation pose -/
--- @[extern "lean_raylib__UpdateModelAnimation"]
--- opaque updateModelAnimation (model : Model) (anim : ModelAnimation) (frame : Int32) : Unit
--- /-- Unload animation data -/
--- @[extern "lean_raylib__UnloadModelAnimation"]
--- opaque unloadModelAnimation (anim : ModelAnimation) : Unit
--- /-- Unload animation array data -/
--- @[extern "lean_raylib__UnloadModelAnimations"]
--- opaque unloadModelAnimations : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | animations : ModelAnimation *
---   | count : unsigned int
--- -/
--- /-- Check model animation skeleton match -/
--- @[extern "lean_raylib__IsModelAnimationValid"]
--- opaque isModelAnimationValid (model : Model) (anim : ModelAnimation) : Bool
+/-- Load model animations from file -/
+@[extern "lean_raylib__LoadModelAnimations"]
+opaque loadModelAnimations (fileName : @& String) : BaseIO (Array ModelAnimation)
+
+/-- Update model animation pose -/
+@[extern "lean_raylib__UpdateModelAnimation"]
+opaque updateModelAnimation (model : Model) (anim : @& ModelAnimation) (frame : UInt32) : BaseIO Model
+
+/-- Check model animation skeleton match -/
+@[extern "lean_raylib__IsModelAnimationValid"]
+opaque isModelAnimationValid (model : @& Model) (anim : @& ModelAnimation) : Bool
 
 /-- Check collision between two spheres -/
 @[extern "lean_raylib__CheckCollisionSpheres"]

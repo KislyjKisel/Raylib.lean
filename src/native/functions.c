@@ -2506,14 +2506,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__UploadMesh (lean_obj_arg mesh, uint8_t dyn
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateMeshBuffer (lean_obj_arg mesh, b_lean_obj_arg i, b_lean_obj_arg n, b_lean_obj_arg data, uint32_t offset, lean_obj_arg world) {
-    if (LEAN_UNLIKELY(!lean_is_exclusive(mesh))) {
-        lean_raylib_Mesh* meshWctx = lean_get_external_data(mesh);
-        Mesh meshCopy = lean_raylib_Mesh_clone(&meshWctx->mesh);
-        lean_object* ctx = meshWctx->ctx;
-        lean_inc_ref(ctx);
-        lean_dec_ref(mesh);
-        UploadMesh(&meshCopy, true);
-        mesh = lean_raylib_Mesh_to(meshCopy, ctx);
+    mesh = lean_raylib_Mesh_ensure_exclusive(mesh);
+    lean_raylib_Mesh* meshC = lean_get_external_data(mesh);
+    if (meshC->mesh.vaoId == 0 || meshC->mesh.vboId == NULL) {
+        UploadMesh(&meshC->mesh, true);
     }
     UpdateMeshBuffer(
         *lean_raylib_Mesh_from(mesh),
@@ -2680,30 +2676,46 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadMaterials (b_lean_obj_arg ctx, b_lean_
     return lean_io_result_mk_ok(lmats);
 }
 
-// LEAN_EXPORT /* ModelAnimation* */lean_obj_arg lean_raylib__LoadModelAnimations (/* const char* */lean_obj_arg fileName, /* unsigned int* */lean_obj_arg animCount, lean_obj_arg world) {
-//     ModelAnimation * result_ = LoadModelAnimations(lean_string_cstr(fileName), /*todo: ptr?*/animCount);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadModelAnimations (b_lean_obj_arg fileName, lean_obj_arg world) {
+    unsigned int animCount;
+    ModelAnimation* anims = LoadModelAnimations(lean_string_cstr(fileName), &animCount);
+    lean_object* lanims = lean_alloc_array(animCount, animCount);
+    for (size_t i = 0; i < animCount; ++i) {
+        lean_array_set_core(lanims, i, lean_raylib_ModelAnimation_to(anims[i]));
+    }
+    RL_FREE(anims);
+    return lean_io_result_mk_ok(lanims);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UpdateModelAnimation (lean_obj_arg model, lean_obj_arg anim, uint32_t frame, lean_obj_arg world) {
-//     UpdateModelAnimation(lean_raylib_Model_from(model), lean_raylib_ModelAnimation_from(anim), frame);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateModelAnimation (
+    lean_obj_arg modelObj, b_lean_obj_arg anim, uint32_t frame, lean_obj_arg world
+) {
+    if (LEAN_UNLIKELY(!lean_is_exclusive(modelObj))) {
+        lean_raylib_Model modelClone = lean_raylib_Model_clone(lean_get_external_data(modelObj));
+        lean_dec_ref(modelObj);
+        modelObj = lean_raylib_Model_to(modelClone);
+    }
+    lean_raylib_Model* model = lean_get_external_data(modelObj);
+    model->meshes = lean_ensure_exclusive_array(model->meshes);
+    for (size_t i = 0; i < model->model.meshCount; ++i) {
+        lean_array_set_core(model->meshes, i,
+            lean_raylib_Mesh_ensure_exclusive(lean_array_get_core(model->meshes, i))
+        );
+    }
+    UpdateModelAnimation(
+        model->model,
+        *lean_raylib_ModelAnimation_from(anim),
+        frame
+    );
+    return lean_io_result_mk_ok(modelObj);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadModelAnimation (lean_obj_arg anim, lean_obj_arg world) {
-//     UnloadModelAnimation(lean_raylib_ModelAnimation_from(anim));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__UnloadModelAnimations (/* ModelAnimation* */lean_obj_arg animations, uint32_t count, lean_obj_arg world) {
-//     UnloadModelAnimations(/*todo: ptr?*/animations, count);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT uint8_t lean_raylib__IsModelAnimationValid (lean_obj_arg model, lean_obj_arg anim, lean_obj_arg world) {
-//     bool result_ = IsModelAnimationValid(lean_raylib_Model_from(model), lean_raylib_ModelAnimation_from(anim));
-//     return result_;
-// }
+LEAN_EXPORT uint8_t lean_raylib__IsModelAnimationValid (b_lean_obj_arg model, b_lean_obj_arg anim) {
+    return IsModelAnimationValid(
+        lean_raylib_Model_from(model)->model,
+        *lean_raylib_ModelAnimation_from(anim)
+    );
+}
 
 LEAN_EXPORT uint8_t lean_raylib__CheckCollisionSpheres (b_lean_obj_arg center1, uint32_t radius1, b_lean_obj_arg center2, uint32_t radius2) {
     return CheckCollisionSpheres(
