@@ -1922,15 +1922,22 @@ LEAN_EXPORT uint8_t lean_raylib__IsRenderTextureReady (b_lean_obj_arg target) {
     return IsRenderTextureReady(*lean_raylib_RenderTexture_from(target));
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UpdateTexture (lean_obj_arg texture, /* const void* */lean_obj_arg pixels, lean_obj_arg world) {
-//     UpdateTexture(/*cast Texture2D to_lean?false*/(texture), /*todo: ptr?*/pixels);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateTexture (b_lean_obj_arg texture, b_lean_obj_arg pixels, lean_obj_arg world) {
+    UpdateTexture(
+        *lean_raylib_Texture_from(texture),
+        lean_pod_BytesView_unwrap(pixels)->ptr
+    );
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__UpdateTextureRec (lean_obj_arg texture, lean_obj_arg rec, /* const void* */lean_obj_arg pixels, lean_obj_arg world) {
-//     UpdateTextureRec(/*cast Texture2D to_lean?false*/(texture), lean_raylib_Rectangle_from(rec), /*todo: ptr?*/pixels);
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateTextureRec (b_lean_obj_arg texture, b_lean_obj_arg rec, b_lean_obj_arg pixels, lean_obj_arg world) {
+    UpdateTextureRec(
+        *lean_raylib_Texture_from(texture),
+        lean_raylib_Rectangle_from(rec),
+        lean_pod_BytesView_unwrap(pixels)->ptr
+    );
+    return lean_io_result_mk_ok(lean_box(0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__GenTextureMipmaps (lean_obj_arg texture_old_box) {
     lean_object* texture_res_box;
@@ -2766,7 +2773,6 @@ LEAN_EXPORT uint8_t lean_raylib__IsSoundReady (b_lean_obj_arg sound) {
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateSound (b_lean_obj_arg soundObj, uint32_t frameCount, b_lean_obj_arg data, lean_obj_arg world) {
     Sound* sound = lean_raylib_Sound_from (soundObj);
     UpdateSound(*sound, lean_pod_BytesView_unwrap(data)->ptr, frameCount);
-    sound->frameCount = frameCount;
     return lean_io_result_mk_ok(lean_box(0));
 }
 

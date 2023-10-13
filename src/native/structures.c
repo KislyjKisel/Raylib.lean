@@ -927,8 +927,8 @@ LEAN_EXPORT uint32_t lean_raylib__Sound_channels(b_lean_obj_arg sound) {
     return lean_raylib_Sound_from(sound)->stream.channels;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__Sound_frameCount(b_lean_obj_arg sound, lean_obj_arg world) {
-    return lean_io_result_mk_ok(lean_box_uint32(lean_raylib_Sound_from(sound)->frameCount));
+LEAN_EXPORT uint32_t lean_raylib__Sound_frameCount(b_lean_obj_arg sound) {
+    return lean_raylib_Sound_from(sound)->frameCount;
 }
 
 

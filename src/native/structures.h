@@ -722,8 +722,8 @@ static inline lean_object* lean_raylib_Sound_to (Sound sound, lean_obj_arg ctx) 
     return lean_alloc_external(lean_raylib_Sound_class, (void*)soundWctx);
 }
 
-static inline Sound const* lean_raylib_Sound_from (b_lean_obj_arg obj) {
-    return (Sound const*) lean_get_external_data(obj);
+static inline Sound* lean_raylib_Sound_from (b_lean_obj_arg obj) {
+    return (Sound*) lean_get_external_data(obj);
 }
 
 

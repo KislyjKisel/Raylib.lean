@@ -1298,25 +1298,21 @@ opaque isTextureReady (texture : @& Texture2DRef) : Bool
 @[extern "lean_raylib__IsRenderTextureReady"]
 opaque isRenderTextureReady (target : @& RenderTexture2D) : Bool
 
--- /-- Update GPU texture with new data -/
--- @[extern "lean_raylib__UpdateTexture"]
--- opaque updateTexture : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | texture : Texture2D
---   | pixels : const void *
--- -/
--- /-- Update GPU texture rectangle with new data -/
--- @[extern "lean_raylib__UpdateTextureRec"]
--- opaque updateTextureRec : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | texture : Texture2D
---   | rec : Rectangle
---   | pixels : const void *
--- -/
+/-- Update GPU texture with new data -/
+@[extern "lean_raylib__UpdateTexture"]
+opaque updateTexture (texture : @& Texture2D)
+  (pixels : @& Pod.BytesView
+    (texture.ref.width.toNat * texture.ref.height.toNat * texture.ref.format.bytesPerPixel)
+    1
+  ) : BaseIO Unit
+
+/-- Update GPU texture rectangle with new data -/
+@[extern "lean_raylib__UpdateTextureRec"]
+opaque updateTextureRec (texture : @& Texture2D) (rect : @& Rectangle)
+  (pixels : @& Pod.BytesView
+    (rect.width.toUInt32.toNat * rect.height.toUInt32.toNat * texture.ref.format.bytesPerPixel)
+    1
+  ) : BaseIO Unit
 
 /-- Generate GPU mipmaps for a texture -/
 @[extern "lean_raylib__GenTextureMipmaps"]
@@ -1848,6 +1844,7 @@ opaque loadSoundFromWave (ctx : Context) (wave : @& Wave) : Sound
 @[extern "lean_raylib__IsSoundReady"]
 opaque isSoundReady (sound : @& Sound) : Bool
 
+-- todo: use case? sound's frameCount is unchanged after update
 /-- Update sound buffer with new data -/
 @[extern "lean_raylib__UpdateSound"]
 opaque updateSound (sound : @& Sound) (frameCount : UInt32)

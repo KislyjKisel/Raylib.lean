@@ -742,7 +742,7 @@ opaque Sound.channels (sound : @& Sound) : UInt32
 
 /-- Total number of frames (considering channels) -/
 @[extern "lean_raylib__Sound_frameCount"]
-opaque Sound.frameCount (sound : @& Sound) : BaseIO UInt32
+opaque Sound.frameCount (sound : @& Sound) : UInt32
 
 /-! # Music -/
 
