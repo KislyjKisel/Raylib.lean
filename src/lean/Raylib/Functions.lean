@@ -1741,15 +1741,9 @@ opaque genMeshHeightmap (ctx : Context) (heightmap : @& Image) (size : @& Vector
 @[extern "lean_raylib__GenMeshCubicmap"]
 opaque genMeshCubicmap (ctx : Context) (cubicmap : @& Image) (cubeSize : @& Vector3) : Mesh
 
--- /-- Load materials from model file -/
--- @[extern "lean_raylib__LoadMaterials"]
--- opaque loadMaterials : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: Material *
---   params:
---   | fileName : const char *
---   | materialCount : int *
--- -/
+/-- Load materials from model file -/
+@[extern "lean_raylib__LoadMaterials"]
+opaque loadMaterials (ctx : @& Context) (fileName : @& String) : Array Material
 
 /-- Check if a material is ready -/
 def isMaterialReady (material : Material) : Bool := isShaderReady material.shader

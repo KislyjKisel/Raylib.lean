@@ -2341,7 +2341,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawGrid (uint32_t slices, uint32_t spacin
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-static lean_obj_res lean_raylib_Material_own (Material* mat, lean_obj_arg ctx) {
+static lean_obj_res lean_raylib_Material_own (Material* mat, b_lean_obj_arg ctx) {
     Vector4 params = {
         .x = mat->params[0],
         .y = mat->params[1],
@@ -2612,10 +2612,17 @@ LEAN_EXPORT lean_obj_res lean_raylib__GenMeshCubicmap (lean_obj_arg ctx, b_lean_
     );
 }
 
-// LEAN_EXPORT /* Material* */lean_obj_arg lean_raylib__LoadMaterials (/* const char* */lean_obj_arg fileName, /* int* */lean_obj_arg materialCount, lean_obj_arg world) {
-//     Material * result_ = LoadMaterials(lean_string_cstr(fileName), /*todo: ptr?*/materialCount);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadMaterials (b_lean_obj_arg ctx, b_lean_obj_arg fileName, lean_obj_arg world) {
+    int materialCount;
+    Material* materials = LoadMaterials(lean_string_cstr(fileName), &materialCount);
+    lean_object* lmats = lean_alloc_array(materialCount, materialCount);
+    for (size_t i = 0; i < materialCount; ++i) {
+        lean_array_set_core(lmats, i, lean_raylib_Material_own(&materials[i], ctx));
+        RL_FREE(materials[i].maps);
+    }
+    MemFree(materials);
+    return lean_io_result_mk_ok(lmats);
+}
 
 // LEAN_EXPORT /* ModelAnimation* */lean_obj_arg lean_raylib__LoadModelAnimations (/* const char* */lean_obj_arg fileName, /* unsigned int* */lean_obj_arg animCount, lean_obj_arg world) {
 //     ModelAnimation * result_ = LoadModelAnimations(lean_string_cstr(fileName), /*todo: ptr?*/animCount);
