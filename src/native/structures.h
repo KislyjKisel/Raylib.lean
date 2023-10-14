@@ -86,7 +86,7 @@ static inline Image* lean_raylib_Image_from (b_lean_obj_arg obj) {
     return (Image*) lean_get_external_data(obj);
 }
 
-static inline lean_object* lean_raylib_Image_to (Image const* obj) {
+static inline lean_object* lean_raylib_Image_to (Image* obj) {
     return lean_alloc_external(lean_raylib_Image_class, (void*)obj);
 }
 
@@ -201,30 +201,35 @@ static inline NPatchInfo lean_raylib_NPatchInfo_from (b_lean_obj_arg obj) {
 
 // # Glyph info
 
-// static inline void lean_raylib_GlyphInfo_set (b_lean_obj_arg obj, uint32_t value, uint32_t offsetX, uint32_t offsetY, uint32_t advanceX, lean_obj_arg image) {
-//     lean_ctor_set(obj, 0, lean_box_uint32(value));
-//     lean_ctor_set(obj, 1, lean_box_uint32(offsetX));
-//     lean_ctor_set(obj, 2, lean_box_uint32(offsetY));
-//     lean_ctor_set(obj, 3, lean_box_uint32(advanceX));
-//     lean_ctor_set(obj, 4, image); // todo: lean_dec_ref(lean_ctor_get(obj, 4))
-// }
+static inline void lean_raylib_GlyphInfo_set_impl (b_lean_obj_arg obj, uint32_t value, uint32_t offsetX, uint32_t offsetY, uint32_t advanceX, lean_obj_arg image) {
+    lean_ctor_set(obj, 0, lean_box_uint32(value));
+    lean_ctor_set(obj, 1, lean_box_uint32(offsetX));
+    lean_ctor_set(obj, 2, lean_box_uint32(offsetY));
+    lean_ctor_set(obj, 3, lean_box_uint32(advanceX));
+    lean_ctor_set(obj, 4, image);
+}
 
-// static inline lean_object* lean_raylib_GlyphInfo_to (GlyphInfo r) {
-//     lean_object* obj = lean_alloc_ctor(0, 5, 0);
-//     LET_BOX(Image, image, r.image);
-//     lean_raylib_GlyphInfo_set(obj, r.value, r.offsetX, r.offsetY, r.advanceX, lean_raylib_Image_to(image));
-//     return obj;
-// }
+static inline void lean_raylib_GlyphInfo_set (b_lean_obj_arg obj, uint32_t value, uint32_t offsetX, uint32_t offsetY, uint32_t advanceX, lean_obj_arg image) {
+    lean_dec_ref(lean_ctor_get(obj, 4));
+    lean_raylib_GlyphInfo_set_impl(obj, value, offsetX, offsetY, advanceX, image);
+}
 
-// static inline GlyphInfo lean_raylib_GlyphInfo_from (b_lean_obj_arg obj) {
-//     GlyphInfo r;
-//     r.value = lean_unbox_uint32(lean_ctor_get(obj, 0));
-//     r.offsetX = lean_unbox_uint32(lean_ctor_get(obj, 1));
-//     r.offsetY = lean_unbox_uint32(lean_ctor_get(obj, 2));
-//     r.advanceX = lean_unbox_uint32(lean_ctor_get(obj, 3));
-//     r.image = *lean_raylib_Image_from(lean_ctor_get(obj, 4));
-//     return r;
-// }
+static inline lean_object* lean_raylib_GlyphInfo_to (GlyphInfo r) {
+    lean_object* obj = lean_alloc_ctor(0, 5, 0);
+    LET_BOX(Image, image, r.image);
+    lean_raylib_GlyphInfo_set_impl(obj, r.value, r.offsetX, r.offsetY, r.advanceX, lean_raylib_Image_to(image));
+    return obj;
+}
+
+static inline GlyphInfo lean_raylib_GlyphInfo_from (b_lean_obj_arg obj) {
+    GlyphInfo r;
+    r.value = lean_unbox_uint32(lean_ctor_get(obj, 0));
+    r.offsetX = lean_unbox_uint32(lean_ctor_get(obj, 1));
+    r.offsetY = lean_unbox_uint32(lean_ctor_get(obj, 2));
+    r.advanceX = lean_unbox_uint32(lean_ctor_get(obj, 3));
+    r.image = *lean_raylib_Image_from(lean_ctor_get(obj, 4));
+    return r;
+}
 
 
 // # Font

@@ -2151,32 +2151,61 @@ LEAN_EXPORT uint8_t lean_raylib__IsFontReady (lean_obj_arg font) {
     return IsFontReady(*lean_raylib_Font_from(font));
 }
 
-// LEAN_EXPORT /* GlyphInfo* */lean_obj_arg lean_raylib__LoadFontData (/* const unsigned char* */lean_obj_arg fileData, uint32_t dataSize, uint32_t fontSize, /* int* */lean_obj_arg fontChars, uint32_t glyphCount, uint32_t type, lean_obj_arg world) {
-//     GlyphInfo * result_ = LoadFontData(/*todo: ptr?*/fileData, dataSize, fontSize, /*todo: ptr?*/fontChars, glyphCount, type);
-//     return /*todo: ptr?*/result_;
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFontData (
+    b_lean_obj_arg n, b_lean_obj_arg data, uint32_t fontSize, b_lean_obj_arg fontChars,
+    uint32_t type, lean_obj_arg world
+) {
+    int glyphCount;
+    int* fontCharsC = NULL;
+    if (lean_ptr_tag(fontChars) == 0) {
+        glyphCount = lean_unbox_uint32(lean_ctor_get(fontChars, 0));
+    }
+    else {
+        lean_object* fontCharsA = lean_ctor_get(fontChars, 0);
+        glyphCount = lean_array_size(fontCharsA);
+        fontCharsC = RL_MALLOC(glyphCount * sizeof(int));
+        for (size_t i = 0; i < glyphCount; ++i) {
+            fontCharsC[i] = lean_unbox_uint32(lean_array_get_core(fontCharsA, i));
+        }
+    }
+    GlyphInfo* glyphs = LoadFontData(
+        lean_pod_BytesView_unwrap(data)->ptr,
+        lean_usize_of_nat(n),
+        fontSize,
+        fontCharsC,
+        glyphCount,
+        type
+    );
+    RL_FREE(fontCharsC);
+    if (glyphs == NULL) {
+        return lean_mk_option_none();
+    }
+    lean_object* glyphsA = lean_alloc_array(glyphCount, glyphCount);
+    for (size_t i = 0; i < glyphCount; ++i) {
+        lean_array_set_core(glyphsA, i, lean_raylib_GlyphInfo_to(glyphs[i]));
+    }
+    RL_FREE(glyphs);
+    return lean_mk_option_some(glyphsA);
+}
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GenImageFontAtlas (b_lean_obj_arg chars_opt, uint32_t fontSize, uint32_t padding, uint32_t packMethod) {
-//     size_t glyphCount = 0;
-//     GlyphInfo* chars_c = NULL;
-//     if(lean_option_is_some(chars_opt)) {
-//         lean_object* chars_arr = lean_ctor_get(chars_opt, 0);
-//         glyphCount = lean_array_size(chars_arr);
-//         chars_c = malloc(sizeof(int) * glyphCount);
-//         for(size_t i = 0; i < glyphCount; ++i) {
-//             chars_c[i] = lean_raylib_GlyphInfo_from(lean_array_get_core(chars_arr, i));
-//         }
-//     }
-//     Rectangle* recs = NULL;
-//     LET_BOX(Image, image, GenImageFontAtlas(chars_c, &recs, glyphCount, fontSize, padding, packMethod));
-//     free(chars_c);
-//     lean_object* recs_box = lean_alloc_array(glyphCount, glyphCount);
-//     for(size_t i = 0; i < glyphCount; ++i) {
-//         lean_array_set_core(recs_box, i, lean_raylib_Rectangle_to(recs[i]));
-//     }
-//     RL_FREE(recs);
-//     return lean_mk_tuple2(lean_raylib_Image_to(image), recs_box);
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GenImageFontAtlas (
+    b_lean_obj_arg chars, uint32_t fontSize, uint32_t padding, uint32_t packMethod
+) {
+    size_t glyphCount = lean_array_size(chars);
+    GlyphInfo* charsC = malloc(sizeof(int) * glyphCount);
+    for(size_t i = 0; i < glyphCount; ++i) {
+        charsC[i] = lean_raylib_GlyphInfo_from(lean_array_get_core(chars, i));
+    }
+    Rectangle* recsC = NULL;
+    LET_BOX(Image, image, GenImageFontAtlas(charsC, &recsC, glyphCount, fontSize, padding, packMethod));
+    free(charsC);
+    lean_object* recs = lean_alloc_array(glyphCount, glyphCount);
+    for(size_t i = 0; i < glyphCount; ++i) {
+        lean_array_set_core(recs, i, lean_raylib_Rectangle_to(recsC[i]));
+    }
+    RL_FREE(recsC);
+    return lean_mk_tuple2(lean_raylib_Image_to(image), recs);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__ExportFontAsCode (b_lean_obj_arg font, b_lean_obj_arg fileName, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(ExportFontAsCode(*lean_raylib_Font_from(font), lean_string_cstr(fileName))));
@@ -2229,9 +2258,11 @@ LEAN_EXPORT size_t lean_raylib__GetGlyphIndex (b_lean_obj_arg font, uint32_t cod
     return GetGlyphIndex(*lean_raylib_Font_from(font), codepoint);
 }
 
-// LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphInfo (b_lean_obj_arg font, uint32_t codepoint) {
-//     return lean_raylib_GlyphInfo_to(GetGlyphInfo(*lean_raylib_Font_from(font), codepoint));
-// }
+LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphInfo (b_lean_obj_arg font, uint32_t codepoint) {
+    GlyphInfo glyph = GetGlyphInfo(*lean_raylib_Font_from(font), codepoint);
+    glyph.image = ImageCopy(glyph.image);
+    return lean_raylib_GlyphInfo_to(glyph);
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetGlyphAtlasRec (b_lean_obj_arg font, uint32_t codepoint) {
     return lean_raylib_Rectangle_to(GetGlyphAtlasRec(*lean_raylib_Font_from(font), codepoint));

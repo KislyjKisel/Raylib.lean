@@ -1,10 +1,6 @@
 # Raylib.lean
 
-Partial Lean4 bindings to [raylib](https://github.com/raysan5/raylib) `4.5.0`, including Raymath and Raygui.
-
-## Not implemented
-
-* `genImageFontAtlas`, `getGlyphInfo`, `loadFontData`
+Lean4 bindings to [raylib](https://github.com/raysan5/raylib) `4.5.0`, including Raymath and Raygui.
 
 ## Usage
 

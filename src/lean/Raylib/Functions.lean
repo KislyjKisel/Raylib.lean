@@ -1441,28 +1441,36 @@ opaque loadFontFromMemory {size} (ctx : Context) (fileType : @& String) (data : 
 @[extern "lean_raylib__IsFontReady"]
 opaque isFontReady (font : @& Font) : Bool
 
--- /-- Load font data for further use -/
--- @[extern "lean_raylib__LoadFontData"]
--- opaque loadFontData : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: GlyphInfo *
---   params:
---   | fileData : const unsigned char *
---   | dataSize : int
---   | fontSize : int
---   | fontChars : int *
---   | glyphCount : int
---   | type : int
--- -/
+/--
+Load font data for further use.
 
-/-- `0` - Default, `1` - Skyline -/
+Params:
+`fontChars` -- either amount of chars starting at space or an array of chars to be loaded.
+
+Returns array of size `fontChars.elim id (·.size)`.
+-/
+@[extern "lean_raylib__LoadFontData"]
+opaque loadFontData {n : @& Nat} (data : @& Pod.BytesView n 1)
+  (fontSize : UInt32)
+  (fontChars : @& Sum UInt32 (Array Char))
+  (type : FontType)
+  : Option (Array GlyphInfo)
+
 def FontAtlasPackMethod : Type := Subtype (α := UInt32) (· < 2)
+def FontAtlasPackMethod.default : FontAtlasPackMethod := .mk 0 (by decide)
+def FontAtlasPackMethod.skyline : FontAtlasPackMethod := .mk 1 (by decide)
 
--- /-- Generate image font atlas using chars info -/
--- @[extern "lean_raylib__GenImageFontAtlas"]
--- opaque genImageFontAtlas (chars : @& Option (Array GlyphInfo)) (fontSize : UInt32) (padding : UInt32) (packMethod : FontAtlasPackMethod) : Image × Array Rectangle
+/--
+Generate image font atlas using chars info.
 
--- axiom : ∀ chars, (genImageFontAtlas chars _ _ _).snd.size = (chars.map Array.size).getD 95
+∀ chars, (genImageFontAtlas chars _ _ _).snd.size = chars.size
+-/
+@[extern "lean_raylib__GenImageFontAtlas"]
+opaque genImageFontAtlas (chars : @& Array GlyphInfo)
+  (fontSize : UInt32)
+  (padding : UInt32)
+  (packMethod : FontAtlasPackMethod)
+  : Image × Array Rectangle
 
 /-- Export font as code file, returns true on success -/
 @[extern "lean_raylib__ExportFontAsCode"]
@@ -1504,9 +1512,9 @@ opaque measureTextEx (font : @& Font) (text : @& String) (fontSize : Float32) (s
 @[extern "lean_raylib__GetGlyphIndex"]
 opaque getGlyphIndex (font : @& Font) (codepoint : Char) : USize
 
--- /-- Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found -/
--- @[extern "lean_raylib__GetGlyphInfo"]
--- opaque getGlyphInfo (font : @& Font) (codepoint : Char) : GlyphInfo
+/-- Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found -/
+@[extern "lean_raylib__GetGlyphInfo"]
+opaque getGlyphInfo (font : @& Font) (codepoint : Char) : GlyphInfo
 
 /-- Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found -/
 @[extern "lean_raylib__GetGlyphAtlasRec"]
