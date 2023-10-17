@@ -7,6 +7,7 @@ import Raylib.Enumerations
 import Raylib.Structures
 import Raylib.Util
 
+open System (FilePath)
 open Pod (Float32 Int32)
 open Raymath (Vector2 Vector3 Vector4 Matrix)
 
@@ -310,7 +311,7 @@ opaque unloadVrStereoConfig (config : @& VrStereoConfig) : BaseIO Unit
 
 /-- Load shader from files and bind default locations -/
 @[extern "lean_raylib__LoadShader"]
-opaque loadShader (ctx : Context) (vsFileName : @& Option String) (fsFileName : @& Option String) : BaseIO Shader
+opaque loadShader (ctx : Context) (vsFileName : @& Option FilePath) (fsFileName : @& Option FilePath) : BaseIO Shader
 
 /-- Load shader from code strings and bind default locations -/
 @[extern "lean_raylib__LoadShaderFromMemory"]
@@ -401,7 +402,7 @@ opaque setRandomSeed (seed : UInt32) : BaseIO Unit
 
 /-- Takes a screenshot of current screen (filename extension defines format) -/
 @[extern "lean_raylib__TakeScreenshot"]
-opaque takeScreenshot (fileName : String) : BaseIO Unit
+opaque takeScreenshot (fileName : @& FilePath) : BaseIO Unit
 
 /-- Setup init configuration flags (view FLAGS) -/
 @[extern "lean_raylib__SetConfigFlags"]
@@ -479,104 +480,104 @@ opaque resetSaveFileTextCallback : BaseIO Unit
 
 /-- Load file data as byte array (read) -/
 @[extern "lean_raylib__LoadFileData"]
-opaque loadFileData (fileName : @& String) : BaseIO ByteArray
+opaque loadFileData (fileName : @& FilePath) : BaseIO ByteArray
 
 /-- Save data to file from byte array (write), returns true on success -/
 @[extern "lean_raylib__SaveFileData"]
-opaque saveFileData (fileName : @& String) {size} (data : @& Pod.BytesView size 1) : BaseIO Bool
+opaque saveFileData (fileName : @& FilePath) {size} (data : @& Pod.BytesView size 1) : BaseIO Bool
 
 /-- Export data to code (.h), returns true on success -/
 @[extern "lean_raylib__ExportDataAsCode"]
-opaque exportDataAsCode {size} (data : @& Pod.BytesView size 1) (fileName : @& String) : BaseIO Bool
+opaque exportDataAsCode {size} (data : @& Pod.BytesView size 1) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Load text data from file (read), returns a ~~'\0' terminated~~ string -/
 @[extern "lean_raylib__LoadFileText"]
-opaque loadFileText (fileName : @& String) : BaseIO String
+opaque loadFileText (fileName : @& FilePath) : BaseIO String
 
 /-- Save text data to file (write), ~~string must be '\0' terminated~~, returns true on success -/
 @[extern "lean_raylib__SaveFileText"]
-opaque saveFileText (fileName : @& String) (text : @& String) : BaseIO Bool
+opaque saveFileText (fileName : @& FilePath) (text : @& String) : BaseIO Bool
 
 /-- Check if file exists -/
 @[extern "lean_raylib__FileExists"]
-opaque fileExists (fileName : @& String) : BaseIO Bool
+opaque fileExists (fileName : @& FilePath) : BaseIO Bool
 
 /-- Check if a directory path exists -/
 @[extern "lean_raylib__DirectoryExists"]
-opaque directoryExists (dirPath : @& String) : BaseIO Bool
+opaque directoryExists (dirPath : @& FilePath) : BaseIO Bool
 
 /--
 Check file extension (including point: .png, .wav)
 NOTE: Extensions checking is not case-sensitive.
 -/
 @[extern "lean_raylib__IsFileExtension"]
-opaque isFileExtension (fileName : @& String) (ext : @& String) : Bool
+opaque isFileExtension (fileName : @& FilePath) (ext : @& String) : Bool
 
 /--
 Get file length in bytes (NOTE: GetFileSize() conflicts with windows.h).
 Returns `0` on error (ex. file doesn't exist).
 -/
 @[extern "lean_raylib__GetFileLength"]
-opaque getFileLength (fileName : @& String) : BaseIO UInt32
+opaque getFileLength (fileName : @& FilePath) : BaseIO UInt32
 
 /-- Get pointer to extension for a filename string (includes dot: '.png') -/
 @[extern "lean_raylib__GetFileExtension"]
-opaque getFileExtension (fileName : @& String) : Option USize
+opaque getFileExtension (fileName : @& FilePath) : Option USize
 
 /-- Get pointer to filename for a path string -/
 @[extern "lean_raylib__GetFileName"]
-opaque getFileName (filePath : @& String) : USize
+opaque getFileName (filePath : @& FilePath) : USize
 
 /--
 Get filename string without extension (uses static string).
 THREAD-UNSAFE: static local
 -/
 @[extern "lean_raylib__GetFileNameWithoutExt"]
-opaque getFileNameWithoutExt (filePath : @& String) : String
+opaque getFileNameWithoutExt (filePath : @& FilePath) : FilePath
 
 /--
 Get full path for a given fileName with path (uses static string).
 THREAD-UNSAFE: static local
 -/
 @[extern "lean_raylib__GetDirectoryPath"]
-opaque getDirectoryPath (filePath : @& String) : String
+opaque getDirectoryPath (filePath : @& FilePath) : FilePath
 
 /--
 Get previous directory path for a given path (uses static string).
 THREAD-UNSAFE: static local
 -/
 @[extern "lean_raylib__GetPrevDirectoryPath"]
-opaque getPrevDirectoryPath (dirPath : @& String) : String
+opaque getPrevDirectoryPath (dirPath : @& FilePath) : FilePath
 
 /--
 Get current working directory (uses static string)
 THREAD-UNSAFE: static local
 -/
 @[extern "lean_raylib__GetWorkingDirectory"]
-opaque getWorkingDirectory : BaseIO String
+opaque getWorkingDirectory : BaseIO FilePath
 
 /--
 Get the directory if the running application (uses static string).
 THREAD-UNSAFE: static local
 -/
 @[extern "lean_raylib__GetApplicationDirectory"]
-opaque getApplicationDirectory : BaseIO String
+opaque getApplicationDirectory : BaseIO FilePath
 
 /-- Change working directory, return true on success -/
 @[extern "lean_raylib__ChangeDirectory"]
-opaque changeDirectory (dir : @& String) : BaseIO Bool
+opaque changeDirectory (dir : @& FilePath) : BaseIO Bool
 
 /-- Check if a given path is a file or a directory -/
 @[extern "lean_raylib__IsPathFile"]
-opaque isPathFile (path : @& String) : BaseIO Bool
+opaque isPathFile (path : @& FilePath) : BaseIO Bool
 
 /-- Load directory filepaths -/
 @[extern "lean_raylib__LoadDirectoryFiles"]
-opaque loadDirectoryFiles (dirPath : @& String) : BaseIO $ Array String
+opaque loadDirectoryFiles (dirPath : @& FilePath) : BaseIO $ Array FilePath
 
 /-- Load directory filepaths with extension filtering and recursive directory scan -/
 @[extern "lean_raylib__LoadDirectoryFilesEx"]
-opaque loadDirectoryFilesEx (basePath : @& String) (filter : @& String) (scanSubdirs : Bool) : BaseIO $ Array String
+opaque loadDirectoryFilesEx (basePath : @& FilePath) (filter : @& String) (scanSubdirs : Bool) : BaseIO $ Array FilePath
 
 /-- Check if a file has been dropped into window -/
 @[extern "lean_raylib__IsFileDropped"]
@@ -584,14 +585,14 @@ opaque isFileDropped : BaseIO Bool
 
 /-- Load dropped filepaths -/
 @[extern "lean_raylib__LoadDroppedFiles"]
-opaque loadDroppedFiles : BaseIO $ Array String
+opaque loadDroppedFiles : BaseIO $ Array FilePath
 
 /--
 Get file modification time (last write time).
 Returns `0` on error (ex. file doesn't exist).
 -/
 @[extern "lean_raylib__GetFileModTime"]
-opaque getFileModTime (fileName : @& String) : BaseIO UInt64
+opaque getFileModTime (fileName : @& FilePath) : BaseIO UInt64
 
 /-- Compress data (DEFLATE algorithm) -/
 @[extern "lean_raylib__CompressData"]
@@ -995,18 +996,18 @@ opaque getCollisionRec (rec1 : @& Rectangle) (rec2 : @& Rectangle) : Rectangle
 
 /-- Load image from file into CPU memory (RAM) -/
 @[extern "lean_raylib__LoadImage"]
-opaque loadImage (fileName : @& String) : BaseIO Image
+opaque loadImage (fileName : @& FilePath) : BaseIO Image
 
 /-- Load image from RAW file data -/
 @[extern "lean_raylib__LoadImageRaw"]
 opaque loadImageRaw
-  (fileName : @& String) (width : UInt32) (height : UInt32)
+  (fileName : @& FilePath) (width : UInt32) (height : UInt32)
   (format : PixelFormat) (headerSize : UInt32)
   : BaseIO Image
 
 /-- Load image sequence from file (frames appended to image.data) -/
 @[extern "lean_raylib__LoadImageAnim"]
-opaque loadImageAnim (fileName : @& String) : BaseIO (Image × UInt32)
+opaque loadImageAnim (fileName : @& FilePath) : BaseIO (Image × UInt32)
 
 /-- Load image from memory buffer, fileType refers to extension: i.e. '.png' -/
 @[extern "lean_raylib__LoadImageFromMemory"]
@@ -1029,11 +1030,11 @@ opaque isImageReady (image : @& Image) : Bool
 
 /-- Export image data to file, returns true on success -/
 @[extern "lean_raylib__ExportImage"]
-opaque exportImage (image : @& Image) (fileName : @& String) : BaseIO Bool
+opaque exportImage (image : @& Image) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Export image as code file defining an array of bytes, returns true on success -/
 @[extern "lean_raylib__ExportImageAsCode"]
-opaque exportImageAsCode (image : @& Image) (fileName : @& String) : BaseIO Bool
+opaque exportImageAsCode (image : @& Image) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Generate image: plain color -/
 @[extern "lean_raylib__GenImageColor"]
@@ -1276,7 +1277,7 @@ opaque imageDrawTextEx (dst : Image) (font : @& Font) (text : @& String) (positi
 
 /-- Load texture from file into GPU memory (VRAM) -/
 @[extern "lean_raylib__LoadTexture"]
-opaque loadTexture (ctx : Context) (fileName : @& String) : BaseIO Texture2D
+opaque loadTexture (ctx : Context) (fileName : @& FilePath) : BaseIO Texture2D
 
 /-- Load texture from image data -/
 @[extern "lean_raylib__LoadTextureFromImage"]
@@ -1420,11 +1421,11 @@ opaque getFontDefault (ctx : Context) : BaseIO Font
 
 /-- Load font from file into GPU memory (VRAM) -/
 @[extern "lean_raylib__LoadFont"]
-opaque loadFont (ctx : Context) (fileName : @& String) : BaseIO Font
+opaque loadFont (ctx : Context) (fileName : @& FilePath) : BaseIO Font
 
 /-- Load font from file with extended parameters, use `none` for `fontChars` to load the default character set -/
 @[extern "lean_raylib__LoadFontEx"]
-opaque loadFontEx (ctx : Context) (fileName : @& String) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : BaseIO Font
+opaque loadFontEx (ctx : Context) (fileName : @& FilePath) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : BaseIO Font
 
 /-- Load font from Image (XNA style) -/
 @[extern "lean_raylib__LoadFontFromImage"]
@@ -1474,7 +1475,7 @@ opaque genImageFontAtlas (chars : @& Array GlyphInfo)
 
 /-- Export font as code file, returns true on success -/
 @[extern "lean_raylib__ExportFontAsCode"]
-opaque exportFontAsCode (font : @& Font) (fileName : @& String) : BaseIO Bool
+opaque exportFontAsCode (font : @& Font) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Draw current FPS -/
 @[extern "lean_raylib__DrawFPS"]
@@ -1606,7 +1607,7 @@ opaque drawGrid (slices : UInt32) (spacing : Float32) : BaseIO Unit
 
 /-- Load model from files (meshes and materials) -/
 @[extern "lean_raylib__LoadModel"]
-opaque loadModel (ctx : @& Context) (fileName : @& String) : BaseIO Model
+opaque loadModel (ctx : @& Context) (fileName : @& FilePath) : BaseIO Model
 
 /-- Load model from generated mesh (default material) -/
 @[extern "lean_raylib__LoadModelFromMesh"]
@@ -1682,7 +1683,7 @@ opaque drawMeshInstancedBv (mesh : @& Mesh) (material : @& Material) (n : @& Nat
 
 /-- Export mesh data to file, returns true on success -/
 @[extern "lean_raylib__ExportMesh"]
-opaque exportMesh (mesh : @& Mesh) (fileName : @& String) : BaseIO Bool
+opaque exportMesh (mesh : @& Mesh) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Compute mesh bounding box limits -/
 @[extern "lean_raylib__GetMeshBoundingBox"]
@@ -1738,14 +1739,14 @@ opaque genMeshCubicmap (ctx : Context) (cubicmap : @& Image) (cubeSize : @& Vect
 
 /-- Load materials from model file -/
 @[extern "lean_raylib__LoadMaterials"]
-opaque loadMaterials (ctx : @& Context) (fileName : @& String) : Array Material
+opaque loadMaterials (ctx : @& Context) (fileName : @& FilePath) : Array Material
 
 /-- Check if a material is ready -/
 def isMaterialReady (material : Material) : Bool := isShaderReady material.shader
 
 /-- Load model animations from file -/
 @[extern "lean_raylib__LoadModelAnimations"]
-opaque loadModelAnimations (fileName : @& String) : BaseIO (Array ModelAnimation)
+opaque loadModelAnimations (fileName : @& FilePath) : BaseIO (Array ModelAnimation)
 
 /-- Update model animation pose -/
 @[extern "lean_raylib__UpdateModelAnimation"]
@@ -1805,7 +1806,7 @@ opaque setMasterVolume (volume : Float32) : BaseIO Unit
 
 /-- Load wave data from file -/
 @[extern "lean_raylib__LoadWave"]
-opaque loadWave (fileName : @& String) : BaseIO Wave
+opaque loadWave (fileName : @& FilePath) : BaseIO Wave
 
 /-- Load wave from memory buffer, fileType refers to extension: i.e. '.wav' -/
 @[extern "lean_raylib__LoadWaveFromMemory"]
@@ -1817,7 +1818,7 @@ opaque isWaveReady (wave : @& Wave) : Bool
 
 /-- Load sound from file -/
 @[extern "lean_raylib__LoadSound"]
-opaque loadSound (ctx : Context) (fileName : @& String) : BaseIO Sound
+opaque loadSound (ctx : Context) (fileName : @& FilePath) : BaseIO Sound
 
 /-- Load sound from wave data -/
 @[extern "lean_raylib__LoadSoundFromWave"]
@@ -1839,11 +1840,11 @@ opaque updateSound (sound : @& Sound) (frameCount : UInt32)
 
 /-- Export wave data to file, returns true on success -/
 @[extern "lean_raylib__ExportWave"]
-opaque exportWave (wave : @& Wave) (fileName : @& String) : BaseIO Bool
+opaque exportWave (wave : @& Wave) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Export wave sample data to code (.h), returns true on success -/
 @[extern "lean_raylib__ExportWaveAsCode"]
-opaque exportWaveAsCode (wave : @& Wave) (fileName : @& String) : BaseIO Bool
+opaque exportWaveAsCode (wave : @& Wave) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Play a sound -/
 @[extern "lean_raylib__PlaySound"]
@@ -1898,7 +1899,7 @@ opaque loadWaveSamples (wave : @& Wave) : BaseIO (Array Float32)
 
 /-- Load music stream from file -/
 @[extern "lean_raylib__LoadMusicStream"]
-opaque loadMusicStream (ctx : Context) (fileName : @& String) : BaseIO Music
+opaque loadMusicStream (ctx : Context) (fileName : @& FilePath) : BaseIO Music
 
 /-- Load music stream from data -/
 -- IO: calls TraceLog

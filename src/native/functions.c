@@ -668,7 +668,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetRandomSeed (uint32_t seed) {
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__TakeScreenshot (lean_obj_arg fileName, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__TakeScreenshot (b_lean_obj_arg fileName, lean_obj_arg world) {
     TakeScreenshot(lean_string_cstr(fileName));
     return lean_io_result_mk_ok(lean_box(0));
 }

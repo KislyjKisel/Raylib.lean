@@ -73,7 +73,7 @@ def main : IO Unit := do
   let modelPath : System.FilePath := "teapot.obj"
   let model ← if ← modelPath.pathExists
     then do
-      let model ← loadModel rlctx modelPath.toString
+      let model ← loadModel rlctx modelPath
       pure $ TestModel.model $ model.setMaterial? 0 material
     else
       pure $ .cube $ genMeshCube rlctx 1.0 1.0 1.0
