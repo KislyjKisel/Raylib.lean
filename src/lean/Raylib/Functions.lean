@@ -183,7 +183,7 @@ opaque getMonitorName (monitor : Int32) : BaseIO String
 
 /-- Set clipboard text content -/
 @[extern "lean_raylib__SetClipboardText"]
-opaque setClipboardText (text : String) : BaseIO Unit
+opaque setClipboardText (text : @& String) : BaseIO Unit
 
 /-- Get clipboard text content -/
 @[extern "lean_raylib__GetClipboardText"]
@@ -684,7 +684,7 @@ opaque getGamepadAxisMovement (gamepad : UInt32) (axis : UInt32) : BaseIO Float3
 
 /-- Set internal gamepad mappings (SDL_GameControllerDB) -/
 @[extern "lean_raylib__SetGamepadMappings"]
-opaque setGamepadMappings (mappings : String) : BaseIO Bool
+opaque setGamepadMappings (mappings : @& String) : BaseIO Bool
 
 /-- Check if a mouse button has been pressed once -/
 @[extern "lean_raylib__IsMouseButtonPressed"]

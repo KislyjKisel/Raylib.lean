@@ -199,7 +199,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetMonitorName (uint32_t monitor, lean_obj
     return lean_io_result_mk_ok(lean_mk_string(monitorName));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__SetClipboardText (lean_obj_arg text, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__SetClipboardText (b_lean_obj_arg text, lean_obj_arg world) {
     SetClipboardText(lean_string_cstr(text));
     return lean_io_result_mk_ok(lean_box(0));
 }
@@ -1030,7 +1030,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetGamepadAxisMovement (uint32_t gamepad, 
     return lean_io_result_mk_ok(lean_box_uint32(lean_pod_Float32_toBits(GetGamepadAxisMovement(gamepad, axis))));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__SetGamepadMappings (lean_obj_arg mappings, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__SetGamepadMappings (b_lean_obj_arg mappings, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(SetGamepadMappings(lean_string_cstr(mappings))));
 }
 
