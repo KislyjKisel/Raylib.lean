@@ -42,8 +42,17 @@ static inline int lean_option_is_some(b_lean_obj_arg opt) {
     return !lean_is_scalar(opt);
 }
 
-static inline void* lean_raylib_rlmemdup(void* src, size_t size) {
+static inline void* lean_raylib_rlmemdup(const void* src, size_t size) {
     void* dst = RL_MALLOC(size);
     memcpy(dst, src, size);
     return dst;
+}
+
+// NOT \0 terminated
+static inline const char* lean_raylib_Substring_cptr(b_lean_obj_arg ss) {
+    return lean_string_cstr(lean_ctor_get(ss, 0)) + lean_usize_of_nat(lean_ctor_get(ss, 1));
+}
+
+static inline size_t lean_raylib_Substring_utf8_byte_size(b_lean_obj_arg ss) {
+    return lean_usize_of_nat(lean_ctor_get(ss, 2)) - lean_usize_of_nat(lean_ctor_get(ss, 1));
 }

@@ -11,10 +11,15 @@
 
 // # Context
 
+typedef struct {
+    char* title;
+} lean_raylib_Context;
+
 extern lean_external_class* lean_raylib_Context_class;
 
-static inline lean_obj_res lean_raylib_Context_new () {
-    return lean_alloc_external(lean_raylib_Context_class, NULL);
+static inline lean_obj_res lean_raylib_Context_new (lean_raylib_Context ctx) {
+    LET_BOX(lean_raylib_Context, ctxBoxed, ctx);
+    return lean_alloc_external(lean_raylib_Context_class, ctxBoxed);
 }
 
 

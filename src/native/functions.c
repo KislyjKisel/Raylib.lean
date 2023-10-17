@@ -2,9 +2,13 @@
 #include "util.h"
 #include "structures.h"
 
-LEAN_EXPORT lean_obj_res lean_raylib__InitWindow (uint32_t width, uint32_t height, lean_obj_arg title, lean_obj_arg world) {
-    InitWindow(width, height, strdup(lean_string_cstr(title)));
-    return lean_io_result_mk_ok(lean_raylib_Context_new());
+LEAN_EXPORT lean_obj_res lean_raylib__InitWindow (uint32_t width, uint32_t height, b_lean_obj_arg title, lean_obj_arg world) {
+    lean_raylib_Context ctx;
+    size_t titleSize = lean_raylib_Substring_utf8_byte_size(title);
+    ctx.title = lean_raylib_rlmemdup(lean_raylib_Substring_cptr(title), titleSize + 1);
+    ctx.title[titleSize] = '\0';
+    InitWindow(width, height, ctx.title);
+    return lean_io_result_mk_ok(lean_raylib_Context_new(ctx));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__WindowShouldClose (lean_obj_arg world) {
@@ -94,8 +98,14 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetWindowIcons (b_lean_obj_arg images_box,
     return lean_io_result_mk_ok(lean_box(0));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__SetWindowTitle (lean_obj_arg title, lean_obj_arg world) {
-    SetWindowTitle(lean_string_cstr(title));
+LEAN_EXPORT lean_obj_res lean_raylib__SetWindowTitle (lean_obj_arg ctxObj, b_lean_obj_arg title, lean_obj_arg world) {
+    lean_raylib_Context* ctx = lean_get_external_data(ctxObj);
+    size_t titleSize = lean_raylib_Substring_utf8_byte_size(title);
+    char* newTitle = lean_raylib_rlmemdup(lean_raylib_Substring_cptr(title), titleSize + 1);
+    newTitle[titleSize] = '\0';
+    SetWindowTitle(newTitle);
+    RL_FREE(ctx->title);
+    ctx->title = newTitle;
     return lean_io_result_mk_ok(lean_box(0));
 }
 

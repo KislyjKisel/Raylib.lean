@@ -15,7 +15,7 @@ namespace Raylib
 
 /-- Initialize window and OpenGL context -/
 @[extern "lean_raylib__InitWindow"]
-opaque initWindow (width : UInt32) (height : UInt32) (title : String) : IO Context
+opaque initWindow (width : UInt32) (height : UInt32) (title : @& Substring) : IO Context
 
 /-- Check if `KeyboardKey.escape` pressed or Close icon pressed -/
 @[extern "lean_raylib__WindowShouldClose"]
@@ -95,7 +95,7 @@ opaque setWindowIcons (images : @& Array Image) : BaseIO Unit
 
 /-- Set title for window (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowTitle"]
-opaque setWindowTitle (title : String) : BaseIO Unit
+opaque setWindowTitle (title : @& Substring) : BaseIO Unit
 
 /-- Set window position on screen (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowPosition"]

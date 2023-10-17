@@ -23,8 +23,10 @@ lean_external_class* lean_raylib_WindowHandle_class;
 lean_object* lean_raylib_Image_empty;
 lean_object* lean_raylib_Texture_empty;
 
-static void lean_raylib_Context_finalize(void* ctx) {
+static void lean_raylib_Context_finalize(void* ctx_v) {
+    lean_raylib_Context* ctx = ctx_v;
     CloseWindow();
+    RL_FREE(ctx->title);
 }
 
 static void lean_raylib_Image_finalize(void* image) {

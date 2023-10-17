@@ -17,7 +17,7 @@ inductive TestModel where
 
 def main : IO Unit := do
   setConfigFlags .vsyncHint
-  let rlctx ← initWindow windowWidth windowHeight "Hello, Raylib-Lean"
+  let rlctx ← initWindow windowWidth windowHeight "Hello, Raylib-Lean".toSubstring
   initAudioDevice
   setExitKey .null
 
