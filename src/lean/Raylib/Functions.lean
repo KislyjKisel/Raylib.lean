@@ -1497,9 +1497,9 @@ opaque drawTextPro (font : @& Font) (text : @& String) (position : @& Vector2) (
 @[extern "lean_raylib__DrawTextCodepoint"]
 opaque drawTextCodepoint (font : @& Font) (codepoint : Char) (position : @& Vector2) (fontSize : Float32) (tint : Color) : BaseIO Unit
 
-/-- Draw utf-8 text using font and additional parameters. -/
+/-- Draw utf-32 text using font and additional parameters. -/
 @[extern "lean_raylib__DrawTextCodepoints"]
-opaque drawTextCodepoints (font : @& Font) (text : @& String) (position : @& Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
+opaque drawTextCodepoints (font : @& Font) (text : @& Array Char) (position : @& Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
 
 /-- Measure string width for default font -/
 @[extern "lean_raylib__MeasureText"]

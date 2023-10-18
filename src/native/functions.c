@@ -2242,7 +2242,21 @@ LEAN_EXPORT lean_obj_res lean_raylib__DrawTextPro (b_lean_obj_arg font, b_lean_o
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__DrawTextCodepoints (b_lean_obj_arg font, b_lean_obj_arg text, b_lean_obj_arg position, uint32_t fontSize, uint32_t spacing, uint32_t tint, lean_obj_arg world) {
-    DrawTextCodepoints(*lean_raylib_Font_from(font), (int*)lean_string_cstr(text), lean_string_len(text), lean_raylib_Vector2_from(position), lean_pod_Float32_fromBits(fontSize), lean_pod_Float32_fromBits(spacing), lean_raylib_Color_from(tint));
+    size_t size = lean_array_size(text);
+    int* characters = RL_MALLOC(size * sizeof(int));
+    for (size_t i = 0; i < size; ++i) {
+        characters[i] = lean_unbox_uint32(lean_array_get_core(text, i));
+    }
+    DrawTextCodepoints(
+        *lean_raylib_Font_from(font),
+        characters,
+        size,
+        lean_raylib_Vector2_from(position),
+        lean_pod_Float32_fromBits(fontSize),
+        lean_pod_Float32_fromBits(spacing),
+        lean_raylib_Color_from(tint)
+    );
+    RL_FREE(characters);
     return lean_io_result_mk_ok(lean_box(0));
 }
 
