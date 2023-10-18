@@ -1509,6 +1509,10 @@ opaque measureText (text : @& String) (fontSize : UInt32) : BaseIO UInt32
 @[extern "lean_raylib__MeasureTextEx"]
 opaque measureTextEx (font : @& Font) (text : @& String) (fontSize : Float32) (spacing : Float32) : Vector2
 
+/-- Measure substring size for `Font` -/
+@[extern "lean_raylib__MeasureTextExSize"]
+opaque measureTextEx' (font : @& Font) (text : @& Substring) (fontSize : Float32) (spacing : Float32) : Vector2
+
 /-- Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found -/
 @[extern "lean_raylib__GetGlyphIndex"]
 opaque getGlyphIndex (font : @& Font) (codepoint : Char) : USize

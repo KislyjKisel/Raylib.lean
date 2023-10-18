@@ -2264,6 +2264,73 @@ LEAN_EXPORT lean_obj_res lean_raylib__MeasureTextEx (b_lean_obj_arg font, b_lean
     ));
 }
 
+// Changed to recieve string size as a parameter.
+static Vector2 MeasureTextExSize(Font font, const char *text, size_t size, float fontSize, float spacing)
+{
+    // Copyright (c) 2013-2023 Ramon Santamaria (@raysan5)
+    Vector2 textSize = { 0 };
+
+    if ((font.texture.id == 0) || (text == NULL)) return textSize;
+
+    int tempByteCounter = 0;        // Used to count longer text line num chars
+    int byteCounter = 0;
+
+    float textWidth = 0.0f;
+    float tempTextWidth = 0.0f;     // Used to count longer text line width
+
+    float textHeight = (float)font.baseSize;
+    float scaleFactor = fontSize/(float)font.baseSize;
+
+    int letter = 0;                 // Current character
+    int index = 0;                  // Index position in sprite font
+
+    for (int i = 0; i < size; i++)
+    {
+        byteCounter++;
+
+        int next = 0;
+        letter = GetCodepointNext(&text[i], &next);
+        index = GetGlyphIndex(font, letter);
+
+        // NOTE: normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
+        // but we need to draw all the bad bytes using the '?' symbol so to not skip any we set next = 1
+        if (letter == 0x3f) next = 1;
+        i += next - 1;
+
+        if (letter != '\n')
+        {
+            if (font.glyphs[index].advanceX != 0) textWidth += font.glyphs[index].advanceX;
+            else textWidth += (font.recs[index].width + font.glyphs[index].offsetX);
+        }
+        else
+        {
+            if (tempTextWidth < textWidth) tempTextWidth = textWidth;
+            byteCounter = 0;
+            textWidth = 0;
+            textHeight += ((float)font.baseSize*1.5f); // NOTE: Fixed line spacing of 1.5 lines
+        }
+
+        if (tempByteCounter < byteCounter) tempByteCounter = byteCounter;
+    }
+
+    if (tempTextWidth < textWidth) tempTextWidth = textWidth;
+
+    textSize.x = tempTextWidth*scaleFactor + (float)((tempByteCounter - 1)*spacing); // Adds chars spacing to measure
+    textSize.y = textHeight*scaleFactor;
+
+    return textSize;
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__MeasureTextExSize (b_lean_obj_arg font, b_lean_obj_arg text, uint32_t fontSize, uint32_t spacing) {
+    return lean_raylib_Vector2_to(MeasureTextExSize(
+        *lean_raylib_Font_from(font),
+        lean_raylib_Substring_cptr(text),
+        lean_raylib_Substring_utf8_byte_size(text),
+        lean_pod_Float32_fromBits(fontSize),
+        lean_pod_Float32_fromBits(spacing)
+    ));
+}
+
 LEAN_EXPORT size_t lean_raylib__GetGlyphIndex (b_lean_obj_arg font, uint32_t codepoint) {
     return GetGlyphIndex(*lean_raylib_Font_from(font), codepoint);
 }
