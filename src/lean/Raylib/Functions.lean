@@ -1515,7 +1515,7 @@ opaque measureTextEx' (font : @& Font) (text : @& Substring) (fontSize : Float32
 
 /-- Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found -/
 @[extern "lean_raylib__GetGlyphIndex"]
-opaque getGlyphIndex (font : @& Font) (codepoint : Char) : USize
+opaque getGlyphIndex (font : @& Font) (codepoint : Char) : UInt32
 
 /-- Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found -/
 @[extern "lean_raylib__GetGlyphInfo"]

@@ -2331,7 +2331,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__MeasureTextExSize (b_lean_obj_arg font, b_
     ));
 }
 
-LEAN_EXPORT size_t lean_raylib__GetGlyphIndex (b_lean_obj_arg font, uint32_t codepoint) {
+LEAN_EXPORT uint32_t lean_raylib__GetGlyphIndex (b_lean_obj_arg font, uint32_t codepoint) {
     return GetGlyphIndex(*lean_raylib_Font_from(font), codepoint);
 }
 
