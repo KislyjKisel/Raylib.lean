@@ -57,7 +57,8 @@ def main : IO Unit := do
       in vec3 fragNormal;
       out vec4 finalColor;
       void main() {
-        finalColor = fragColor * colDiffuse * max(dot(normalize(fragNormal), normalize(vec3(1, 1, -1))), 0.5);
+        finalColor = fragColor * colDiffuse *
+          clamp(dot(normalize(fragNormal), normalize(vec3(0.5, 2, -1))), 0.2, 1.0);
       }
     ")
 
@@ -67,6 +68,7 @@ def main : IO Unit := do
       match m with
       | .diffuse => {
         texture := .getDefault rlctx
+        color := .maroon
       }
       | _ => .empty
   }
@@ -88,9 +90,9 @@ def main : IO Unit := do
     let modelPos := Vector3.mk 0 0 5
     match model with
     | .model m =>
-      drawModel m modelPos 1.0 .maroon
+      drawModel m modelPos 1.0 .white
     | .cube m =>
-      drawMesh m material Matrix.identity
+      drawMesh m material (Raymath.Native.Matrix.translateV $ .mk 0 0 5)
 
     endMode3D
     endDrawing
