@@ -589,7 +589,7 @@ namespace MouseButton
 /-- Mouse button left -/
 def left : MouseButton := Subtype.mk 0 MouseButton.Is.left
 /-- Mouse button right -/
-def Right : MouseButton := Subtype.mk 1 MouseButton.Is.right
+def right : MouseButton := Subtype.mk 1 MouseButton.Is.right
 /-- Mouse button middle (pressed wheel) -/
 def middle : MouseButton := Subtype.mk 2 MouseButton.Is.middle
 /-- Mouse button side (advanced mouse device) -/
