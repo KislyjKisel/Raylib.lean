@@ -127,19 +127,19 @@ instance : Nonempty Image := ImagePointed.property
 
 /-- Image base width -/
 @[extern "lean_raylib__Image_width"]
-opaque Image.width (self : @& Image) : UInt32
+opaque Image.width (image : @& Image) : UInt32
 
 /-- Image base height -/
 @[extern "lean_raylib__Image_height"]
-opaque Image.height (self : @& Image) : UInt32
+opaque Image.height (image : @& Image) : UInt32
 
 /-- Mipmap levels, 1 by default -/
 @[extern "lean_raylib__Image_mipmaps"]
-opaque Image.mipmaps (self : @& Image) : UInt32
+opaque Image.mipmaps (image : @& Image) : UInt32
 
 /-- Data format (PixelFormat type) -/
 @[extern "lean_raylib__Image_format"]
-opaque Image.format (self : @& Image) : PixelFormat
+opaque Image.format (image : @& Image) : PixelFormat
 
 @[extern "lean_raylib__Image_getEmpty"]
 private opaque Image.getEmpty : Unit → Image
@@ -364,63 +364,63 @@ opaque Mesh.mkIndexedBv
 
 /-- Number of vertices stored in arrays -/
 @[extern "lean_raylib__Mesh_vertexCount"]
-opaque Mesh.vertexCount (self : @& Mesh) : UInt32
+opaque Mesh.vertexCount (mesh : @& Mesh) : UInt32
 
 /-- Number of triangles stored (indexed or not) -/
 @[extern "lean_raylib__Mesh_triangleCount"]
-opaque Mesh.triangleCount (self : @& Mesh) : UInt32
+opaque Mesh.triangleCount (mesh : @& Mesh) : UInt32
 
 /-- Vertex position (XYZ - 3 components per vertex) (shader-location = 0) -/
 @[extern "lean_raylib__Mesh_vertices"]
-opaque Mesh.vertices (self : Mesh) : Pod.BytesView (self.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.vertices (mesh : Mesh) : Pod.BytesView (mesh.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1) -/
 @[extern "lean_raylib__Mesh_texcoords"]
-opaque Mesh.texcoords (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.texcoords (mesh : Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex texture second coordinates (UV - 2 components per vertex) (shader-location = 5) -/
 @[extern "lean_raylib__Mesh_texcoords2"]
-opaque Mesh.texcoords2 (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.texcoords2 (mesh : Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 2 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex normals (XYZ - 3 components per vertex) (shader-location = 2) -/
 @[extern "lean_raylib__Mesh_normals"]
-opaque Mesh.normals (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.normals (mesh : Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4) -/
 @[extern "lean_raylib__Mesh_tangents"]
-opaque Mesh.tangents (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.tangents (mesh : Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex colors (RGBA - 4 components per vertex) (shader-location = 3) -/
 @[extern "lean_raylib__Mesh_colors"]
-opaque Mesh.colors (self : Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
+opaque Mesh.colors (mesh : Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
 
 /-- Vertex indices (in case vertex data comes indexed) -/
 @[extern "lean_raylib__Mesh_indices"]
-opaque Mesh.indices (self : Mesh) : Option $ Pod.BytesView (self.triangleCount.toNat * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16)
+opaque Mesh.indices (mesh : Mesh) : Option $ Pod.BytesView (mesh.triangleCount.toNat * 3 * Pod.byteSize UInt16) (Pod.alignment UInt16)
 
 /-- Animated vertex positions (after bones transformations) -/
 @[extern "lean_raylib__Mesh_animVertices"]
-opaque Mesh.animVertices (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.animVertices (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Animated normals (after bones transformations) -/
 @[extern "lean_raylib__Mesh_animNormals"]
-opaque Mesh.animNormals (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.animNormals (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
 @[extern "lean_raylib__Mesh_boneIds"]
-opaque Mesh.boneIds (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
+opaque Mesh.boneIds (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
 
 /-- Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
 @[extern "lean_raylib__Mesh_boneWeights"]
-opaque Mesh.boneWeights (self : @& Mesh) : Option $ Pod.BytesView (self.vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+opaque Mesh.boneWeights (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
 
 /-- OpenGL Vertex Array Object id -/
 @[extern "lean_raylib__Mesh_vaoId"]
-opaque Mesh.vaoId (self : @& Mesh) : UInt32
+opaque Mesh.vaoId (mesh : @& Mesh) : UInt32
 
 /-- OpenGL Vertex Buffer Objects id (default vertex data) -/
 @[extern "lean_raylib__Mesh_vboId"]
-opaque Mesh.vboId (self : @& Mesh) (i : @& Fin Mesh.maxVertexBuffers) : UInt32
+opaque Mesh.vboId (mesh : @& Mesh) (i : @& Fin Mesh.maxVertexBuffers) : UInt32
 
 
 /-! # Shader -/
@@ -431,14 +431,14 @@ instance : Nonempty Shader := ShaderPointed.property
 
 /-- Shader program id -/
 @[extern "lean_raylib__Shader_id"]
-opaque Shader.id (self : @& Shader) : UInt32
+opaque Shader.id (shader : @& Shader) : UInt32
 
 /-- Shader locations array -/
 @[extern "lean_raylib__Shader_locs"]
-opaque Shader.locs (self : @& Shader) : Array UInt32
+opaque Shader.locs (shader : @& Shader) : Array UInt32
 
 @[extern "lean_raylib__Shader_defaultLoc"]
-opaque Shader.defaultLoc (self : @& Shader) (index : ShaderLocationIndex) : Option UInt32
+opaque Shader.defaultLoc (shader : @& Shader) (index : ShaderLocationIndex) : Option UInt32
 
 @[extern "lean_raylib__Shader_getDefault"]
 opaque Shader.getDefault (ctx : Context) : Shader
@@ -739,15 +739,15 @@ instance {st} : Nonempty (AudioStream st) := (AudioStreamPointed st).property
 
 /-- Frequency (samples per second) -/
 @[extern "lean_raylib__AudioStream_sampleRate"]
-opaque AudioStream.sampleRate {st} (self : @& AudioStream st) : UInt32
+opaque AudioStream.sampleRate {st} (audioStream : @& AudioStream st) : UInt32
 
 /-- Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
 @[extern "lean_raylib__AudioStream_sampleSize"]
-def AudioStream.sampleSize {st} (self : @& AudioStream st) : UInt32 := st.size
+def AudioStream.sampleSize {st} (audioStream : @& AudioStream st) : UInt32 := st.size
 
 /-- Number of channels (1-mono, 2-stereo, ...) -/
 @[extern "lean_raylib__AudioStream_channels"]
-opaque AudioStream.channels {st} (self : @& AudioStream st) : UInt32
+opaque AudioStream.channels {st} (audioStream : @& AudioStream st) : UInt32
 
 
 /-! # Sound -/
