@@ -49,13 +49,6 @@ namespace Raymath
 
 namespace Vector2
 
-export Raymath.Native.Vector2 (
-  zero one add addValue sub subValue scale mul length
-  lengthSqr dot distance distanceSqr angle lineAngle
-  neg div normalize transform lerp reflect min max rotate
-  moveTowards invert clamp clampValue equals beq
-)
-
 @[extern "lean_raymath_Vector_uget"]
 def uget (v : @& Vector2) (i : USize) (h : i < 2) : Float32 := ite (i = 0) v.x v.y
 
@@ -85,15 +78,6 @@ instance : GetElem Vector2 Nat Float32 (λ _ i ↦ i < 2) where
 
 
 namespace Vector3
-
-export Raymath.Native.Vector3 (
-  zero one add addValue sub subValue scale mul cross perpendicular beq
-  length lengthSqr dot distance distanceSqr angle neg div normalize
-  orthoNormalize transform rotateByQuaternion rotateByAxisAngle lerp
-  reflect min max barycenter invert clamp clampValue equals refract
-)
-
-export Raymath.Foreign.Vector3 (unproject)
 
 @[extern "lean_raymath_Vector_uget"]
 def uget (v : @& Vector3) (i : USize) («i<3uz» : i < 3) : Float32 :=
@@ -135,12 +119,6 @@ instance : GetElem Vector3 Nat Float32 (λ _ i ↦ i < 3) where
 
 
 namespace Vector4
-
-export Raymath.Native.Vector4 (
-  zero one add addValue sub subValue mul div neg length
-  lengthSqr dot distance distanceSqr scale normalize
-  mulMatrix lerp min max invert clamp clampValue equals beq
-)
 
 @[extern "lean_raymath_Vector_uget"]
 def uget (v : @& Vector4) (i : USize) («i<4uz» : i < 4) : Float32 :=
@@ -184,11 +162,6 @@ instance : GetElem Vector4 Nat Float32 (λ _ i ↦ i < 4) where
 
 
 namespace Matrix
-
-export Raymath.Native.Matrix (
-  determinant trace transpose invert identity add sub mul mulVector translate translateV rotate
-  rotateX rotateY rotateZ rotateXYZ rotateZYX scale scaleV frustum perspective ortho lookAt toArray
-)
 
 @[extern "lean_raymath_Matrix_urow"]
 def urow (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
@@ -267,18 +240,5 @@ instance : Sub Matrix := ⟨Matrix.sub⟩
 instance : Mul Matrix := ⟨Matrix.mul⟩
 instance : GetElem Matrix USize Vector4 (λ _ i ↦ i < 4) := ⟨Matrix.urow⟩
 instance : GetElem Matrix Nat Vector4 (λ _ i ↦ i < 4) := ⟨Matrix.row⟩
-
-
-namespace Quaternion
-
-export Raymath.Native.Quaternion (
-  identity qinvert qmul nlerp slerp fromVector3ToVector3 toMatrix fromEuler transform
-)
-
-export Raymath.Foreign.Quaternion (
-  fromMatrix fromAxisAngle toAxisAngle toEuler qequals
-)
-
-end Quaternion
 
 end Raymath

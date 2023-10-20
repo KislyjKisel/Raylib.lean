@@ -4,13 +4,7 @@ import Raymath.Core
 
 open Pod (Float32)
 
-namespace Raymath.Foreign
-
-abbrev Vector2 : Type := Raymath.Vector2
-abbrev Vector3 : Type := Raymath.Vector3
-abbrev Vector4 : Type := Raymath.Vector4
-abbrev Matrix : Type := Raymath.Matrix
-abbrev Quaternion : Type := Raymath.Quaternion
+namespace Raymath
 
 #pod_c_rwbytes_instance Raymath.Vector2
 #pod_c_rwbytes_instance Raymath.Vector3
@@ -56,4 +50,4 @@ opaque qequals (p q : @& Quaternion) : Bool
 
 end Quaternion
 
-end Raymath.Foreign
+end Raymath

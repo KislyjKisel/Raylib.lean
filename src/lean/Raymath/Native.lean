@@ -3,13 +3,7 @@ import Raymath.Core
 
 open Pod (Float32)
 
-namespace Raymath.Native
-
-abbrev Vector2 : Type := Raymath.Vector2
-abbrev Vector3 : Type := Raymath.Vector3
-abbrev Vector4 : Type := Raymath.Vector4
-abbrev Matrix : Type := Raymath.Matrix
-abbrev Quaternion : Type := Raymath.Quaternion
+namespace Raymath
 
 namespace Vector2
 
@@ -966,4 +960,5 @@ def fromEuler (pitch yaw roll : Float32) : Quaternion :=
 def transform (q : Quaternion) (mat : Matrix) : Quaternion := Matrix.mulVector mat q
 
 end Quaternion
-end Raymath.Native
+
+end Raymath

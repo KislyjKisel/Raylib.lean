@@ -92,7 +92,7 @@ def main : IO Unit := do
     | .model m =>
       drawModel m modelPos 1.0 .white
     | .cube m =>
-      drawMesh m material (Raymath.Native.Matrix.translateV $ .mk 0 0 5)
+      drawMesh m material (Matrix.translateV $ .mk 0 0 5)
 
     endMode3D
     endDrawing
