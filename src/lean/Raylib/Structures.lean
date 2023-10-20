@@ -105,6 +105,18 @@ structure Rectangle where
   height : Float32
 deriving Inhabited, Repr
 
+def Rectangle.position (rect : Rectangle) : Vector2 :=
+  { rect with }
+
+def Rectangle.size (rect : Rectangle) : Vector2 :=
+  { x := rect.width, y := rect.height }
+
+def Rectangle.move (offset : Vector2) (rect : Rectangle) : Rectangle :=
+  { rect with
+    x := rect.x + offset.x
+    y := rect.y + offset.y
+  }
+
 
 /-! # Image -/
 
