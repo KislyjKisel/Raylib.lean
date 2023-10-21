@@ -35,6 +35,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 * `alloc`: allocator for external (opaque ffi) objects.
   `"lean"` (default) means using the allocator Lean uses.
   `"native"` to use `malloc` and `free` instead.
+* `git`, `cmake`: git and cmake used to build raylib submodule, or `""` (empty string) to skip their respective steps.
 
 There are also [options to customize raylib build](options.md).
 

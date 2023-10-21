@@ -72,12 +72,14 @@ def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Proces
     return output.stdout
 
 def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCmdOutput : Bool) : m Unit := do
-  let gitOutput ← tryRunProcess {
-    cmd := "git"
-    args := #["submodule", "update", "--init", "--force", "--recursive"]
-    cwd := __dir__
-  }
-  if printCmdOutput then IO.println gitOutput
+  let gitCmd := (get_config? git).getD "git"
+  if gitCmd != "" then
+    let gitOutput ← tryRunProcess {
+      cmd := gitCmd
+      args := #["submodule", "update", "--init", "--force", "--recursive"]
+      cwd := __dir__
+    }
+    if printCmdOutput then IO.println gitOutput
 
   let mkdirOutput ← tryRunProcess {
     cmd := "mkdir"
@@ -154,19 +156,20 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatTtf" "-DSUPPORT_FILEFORMAT_TTF=" (get_config? formatTtf)
   cmakeBuildArgs := cmakeBuildArgs.push ".."
 
-  let cmakeOutput ← tryRunProcess {
-    cmd := "cmake"
-    args := cmakeBuildArgs
-    cwd := __dir__ / "raylib" / "build"
-  }
-  if printCmdOutput then IO.println cmakeOutput
-
-  let cmakeBuildOutput ← tryRunProcess {
-    cmd := "cmake"
-    args := #["--build", "."]
-    cwd := __dir__ / "raylib" / "build"
-  }
-  if printCmdOutput then IO.println cmakeBuildOutput
+  let cmakeCmd := (get_config? cmake).getD "cmake"
+  if cmakeCmd != "" then
+    let cmakeOutput ← tryRunProcess {
+      cmd := cmakeCmd
+      args := cmakeBuildArgs
+      cwd := __dir__ / "raylib" / "build"
+    }
+    if printCmdOutput then IO.println cmakeOutput
+    let cmakeBuildOutput ← tryRunProcess {
+      cmd := cmakeCmd
+      args := #["--build", "."]
+      cwd := __dir__ / "raylib" / "build"
+    }
+    if printCmdOutput then IO.println cmakeBuildOutput
 
 def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String × Array String) := do
   let mut weakArgs := #["-I", (← getLeanIncludeDir).toString]
