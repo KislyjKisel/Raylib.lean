@@ -3,6 +3,11 @@
 #include "structures.h"
 
 LEAN_EXPORT lean_obj_res lean_raylib__InitWindow (uint32_t width, uint32_t height, b_lean_obj_arg title, lean_obj_arg world) {
+    if (IsWindowReady()) {
+        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string(
+            "Window already initialized"
+        )));
+    }
     lean_raylib_Context ctx;
     size_t titleSize = lean_raylib_Substring_utf8_byte_size(title);
     ctx.title = lean_raylib_rlmemdup(lean_raylib_Substring_cptr(title), titleSize + 1);

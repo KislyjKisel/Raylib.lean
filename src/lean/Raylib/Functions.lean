@@ -13,7 +13,10 @@ open Raymath (Vector2 Vector3 Vector4 Matrix)
 
 namespace Raylib
 
-/-- Initialize window and OpenGL context -/
+/--
+Initialize window and OpenGL context.
+Throws if window is already initialized.
+-/
 @[extern "lean_raylib__InitWindow"]
 opaque initWindow (width : UInt32) (height : UInt32) (title : @& Substring) : IO Context
 
