@@ -12,7 +12,7 @@
   {"git":
    {"url": "https://github.com/KislyjKisel/lean-pod",
     "subDir?": null,
-    "rev": "cafcb99be88c5006720c663634d9e603d91f8cdb",
+    "rev": "1cba027fafe9c47e102fb9de24f962435976616b",
     "opts": {},
     "name": "pod",
     "inputRev?": "main",
