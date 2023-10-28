@@ -202,7 +202,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint32_t st, b_lea
                     err = "Call interface preparation failed: unknown error";
                     break;
             }
-            return lean_mk_io_user_error(lean_mk_string(err));
+            return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string(err)));
         }
         ffi_uninit = 0;
     }
@@ -211,7 +211,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint32_t st, b_lea
     ffi_closure* callback_closure = (ffi_closure*)ffi_closure_alloc(sizeof(ffi_closure), (void**)&callback_c);
     if(!callback_closure) {
         lean_dec_ref(callback);
-        return lean_mk_io_user_error(lean_mk_string("Closure allocation failed"));
+        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string("Closure allocation failed")));
     }
     ffi_status st_tr = ffi_prep_closure_loc(
         callback_closure,
@@ -224,7 +224,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint32_t st, b_lea
         lean_dec_ref(callback);
         char err[] = "Closure preparation failed: #?";
         err[sizeof(err) - 2] = '0' + st_tr;
-        return lean_mk_io_user_error(lean_mk_string(err));
+        ffi_closure_free(callback_closure);
+        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string(err)));
     }
 
     lean_mark_mt(callback);
