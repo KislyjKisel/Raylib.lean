@@ -31,7 +31,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 * `lflags`: additional flags used to link test executable.
 * `cmdout`: if present, print output of commands used when building submodule.
 * `libffi`: use `libffi`, required for some things to work, e.g, audio callback
-  (note: audio callback always segfaults with small allocator enabled which is the case by default)
+  (note: audio callback always segfaults due to missing thread initialization)
 * `alloc`: allocator for external (opaque ffi) objects.
   `"lean"` (default) means using the allocator Lean uses.
   `"native"` to use `malloc` and `free` instead.
@@ -60,6 +60,6 @@ There are also [options to customize raylib build](options.md).
 To run the example:
 ```
 lake update
-lake build
-./build/bin/test
+lake run raylib/buildSubmodule
+lake exe raylib-test
 ```

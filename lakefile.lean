@@ -52,7 +52,7 @@ def raylibSrc : RaylibSrc := match get_config? raylib with
 def splitArgStr (s : String) : Array String := Array.mk $ s.splitOn.filter $ not ∘ String.isEmpty
 
 @[default_target]
-lean_exe test {
+lean_exe «raylib-test» {
   root := `Main
   moreLinkArgs := Id.run $ do
     let mut args := splitArgStr $ (get_config? lflags).getD ""
