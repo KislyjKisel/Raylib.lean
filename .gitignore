@@ -1,5 +1,3 @@
-/build
-/lakefile.olean
-/lake-packages
+/.lake
 /*.obj
 /*.mtl

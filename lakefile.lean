@@ -15,10 +15,10 @@ def podConfig : NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "master" with libffiConfig
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "main" with podConfig
+require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "4d004dc" with libffiConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "eb4085c" with podConfig
 
-def packagesDir := defaultPackagesDir
+def packagesDir := defaultLakeDir / defaultPackagesDir
 
 package raylib {
   srcDir := "src/lean"
