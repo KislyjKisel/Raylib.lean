@@ -16,18 +16,18 @@ def podConfig : NameMap String := Id.run $ do
   cfg
 
 require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "4d004dc" with libffiConfig
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "eb4085c" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "86e4600" with podConfig
 
 def packagesDir := defaultLakeDir / defaultPackagesDir
 
 package raylib {
   srcDir := "src/lean"
   packagesDir := packagesDir
-  moreLeanArgs := #["-DautoImplicit=false"] ++
+  leanOptions := #[⟨`autoImplicit, false⟩]
+  moreLeanArgs :=
     if (get_config? libffi).isSome
       then #[s!"--load-dynlib=./{packagesDir}/libffi/lib/libffi.so"] -- why not automatic?
       else #[]
-  moreServerArgs := #["-DautoImplicit=false"]
 }
 
 lean_lib Raylib
