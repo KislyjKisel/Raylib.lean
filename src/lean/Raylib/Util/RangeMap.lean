@@ -74,38 +74,38 @@ where
                 rw [Nat.add_sub_assoc hi.1 _]
                 apply congrArg _ hl
               )
-termination_by go i _ _ _ => max - i
-decreasing_by
-  simp_wf
-  apply Nat.add_lt_add_right
-  show (max.val.val + (UInt32.size - (i + 1).val.val)) % UInt32.size < _
-  rewrite [
-    ← Nat.add_sub_assoc (Nat.le_of_lt (i + 1).val.isLt) _,
-    i_add_1_toNat_eq i hi him,
-    Nat.add_comm,
-    Nat.add_sub_assoc (Nat.succ_le_of_lt (i_lt_max_of_not_eq_max i hi him)) UInt32.size,
-    Nat.mod_eq_sub_mod (Nat.le_add_right UInt32.size _),
-    Nat.add_comm,
-    Nat.add_sub_cancel _ _,
-    Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) max.val.isLt)
-  ]
-  show max.val.val - i.val.val.succ < (max.val.val + (UInt32.size - i.val.val)) % UInt32.size
-  rewrite [
-    ← Nat.add_sub_assoc (Nat.le_of_lt i.val.isLt),
-    Nat.add_comm,
-    Nat.add_sub_assoc hi.2,
-    Nat.mod_eq_sub_mod (Nat.le_add_right UInt32.size _),
-    Nat.add_comm,
-    Nat.add_sub_cancel,
-    Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) max.val.isLt),
-  ]
-  show max.val.val - (i.val.val + 1) < _
-  exact Nat.sub_succ_lt_self _ _ (i_lt_max_of_not_eq_max i hi him)
+  termination_by max - i
+  decreasing_by
+    simp_wf
+    apply Nat.add_lt_add_right
+    show (max.val.val + (UInt32.size - (i + 1).val.val)) % UInt32.size < _
+    rewrite [
+      ← Nat.add_sub_assoc (Nat.le_of_lt (i + 1).val.isLt) _,
+      i_add_1_toNat_eq i hi him,
+      Nat.add_comm,
+      Nat.add_sub_assoc (Nat.succ_le_of_lt (i_lt_max_of_not_eq_max i hi him)) UInt32.size,
+      Nat.mod_eq_sub_mod (Nat.le_add_right UInt32.size _),
+      Nat.add_comm,
+      Nat.add_sub_cancel _ _,
+      Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) max.val.isLt)
+    ]
+    show max.val.val - i.val.val.succ < (max.val.val + (UInt32.size - i.val.val)) % UInt32.size
+    rewrite [
+      ← Nat.add_sub_assoc (Nat.le_of_lt i.val.isLt),
+      Nat.add_comm,
+      Nat.add_sub_assoc hi.2,
+      Nat.mod_eq_sub_mod (Nat.le_add_right UInt32.size _),
+      Nat.add_comm,
+      Nat.add_sub_cancel,
+      Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) max.val.isLt),
+    ]
+    show max.val.val - (i.val.val + 1) < _
+    exact Nat.sub_succ_lt_self _ _ (i_lt_max_of_not_eq_max i hi him)
 
 private
 theorem i_minus_min_lt_size (i : UInt32) (h : min ≤ i ∧ i < max) :
   (i - min).toUSize.toNat < max.toNat - min.toNat := by
-    show ((i.val.val + (UInt32.size - min.val.val)) % UInt32.size).toUSize.toNat < _
+    show ((i.val.val + (UInt32.size - min.val.val)) % UInt32.size) < _
     rewrite [
       ← Nat.add_sub_assoc (Nat.le_of_lt min.val.isLt),
       Nat.add_comm,
@@ -116,13 +116,8 @@ theorem i_minus_min_lt_size (i : UInt32) (h : min ≤ i ∧ i < max) :
       Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.val.isLt)
     ]
     apply Nat.lt_sub_of_add_lt
-    show USize.toNat (Nat.toUSize (_ - _)) + min.val.val < _
-    show ((_ - _) % USize.size) + min.val.val < _
-    rewrite [
-      Nat.mod_eq_of_lt $ Nat.lt_of_le_of_lt (Nat.sub_le _ _) $
-        Nat.lt_of_lt_of_le i.val.isLt Pod.usize_size_ge_2_pow_32,
-      Nat.sub_add_cancel h.1
-    ]
+    show i.val.val - min.val.val + min.val.val < max.toNat
+    rewrite [Nat.sub_add_cancel h.1]
     exact h.2
 
 def get (rm : RangeMap min max α) (i : UInt32) (h : min ≤ i ∧ i < max) : α :=

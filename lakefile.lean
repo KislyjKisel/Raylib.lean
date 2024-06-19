@@ -15,10 +15,10 @@ def podConfig : NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "4d004dc" with libffiConfig
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "86e4600" with podConfig
+require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "7c9fb2b" with libffiConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "117faba" with podConfig
 
-def packagesDir := defaultLakeDir / defaultPackagesDir
+def packagesDir := defaultPackagesDir
 
 package raylib {
   srcDir := "src/lean"
@@ -171,7 +171,7 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
     }
     if printCmdOutput then IO.println cmakeBuildOutput
 
-def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String × Array String) := do
+def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Array String) := do
   let mut weakArgs := #["-I", (← getLeanIncludeDir).toString]
   let mut traceArgs := #["-fPIC"].append $ splitArgStr $ (get_config? cflags).getD ""
 
@@ -245,7 +245,6 @@ extern_lib «raylib-lean» pkg := do
   buildStaticLib (pkg.nativeLibDir / name)
     (← bindingsSources.mapM λ stem ↦ do
       buildO
-        (stem ++ ".c")
         (objectFileDir / (stem ++ ".o"))
         (← inputFile $ nativeSrcDir / (stem ++ ".c"))
         weakArgs traceArgs

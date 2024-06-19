@@ -72,7 +72,11 @@ instance : BEq Vector2 := ⟨Vector2.beq⟩
 instance : Neg Vector2 := ⟨Vector2.neg⟩
 instance : Min Vector2 := ⟨Vector2.min⟩
 instance : Max Vector2 := ⟨Vector2.max⟩
-instance : GetElem Vector2 USize Float32 (λ _ i ↦ i < 2) := ⟨Vector2.uget⟩
+
+instance : GetElem Vector2 USize Float32 (λ _ i ↦ i < 2) where
+  getElem := Vector2.uget
+  getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
+
 instance : GetElem Vector2 Nat Float32 (λ _ i ↦ i < 2) where
   getElem v i h := v.get $ .mk i h
 
@@ -113,7 +117,11 @@ instance : BEq Vector3 := ⟨Vector3.beq⟩
 instance : Neg Vector3 := ⟨Vector3.neg⟩
 instance : Min Vector3 := ⟨Vector3.min⟩
 instance : Max Vector3 := ⟨Vector3.max⟩
-instance : GetElem Vector3 USize Float32 (λ _ i ↦ i < 3) := ⟨Vector3.uget⟩
+
+instance : GetElem Vector3 USize Float32 (λ _ i ↦ i < 3) where
+  getElem := Vector3.uget
+  getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
+
 instance : GetElem Vector3 Nat Float32 (λ _ i ↦ i < 3) where
   getElem v i h := v.get $ .mk i h
 
@@ -156,7 +164,11 @@ instance : BEq Vector4 := ⟨Vector4.beq⟩
 instance : Neg Vector4 := ⟨Vector4.neg⟩
 instance : Min Vector4 := ⟨Vector4.min⟩
 instance : Max Vector4 := ⟨Vector4.max⟩
-instance : GetElem Vector4 USize Float32 (λ _ i ↦ i < 4) := ⟨Vector4.uget⟩
+
+instance : GetElem Vector4 USize Float32 (λ _ i ↦ i < 4) where
+  getElem := Vector4.uget
+  getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
+
 instance : GetElem Vector4 Nat Float32 (λ _ i ↦ i < 4) where
   getElem v i h := v.get $ .mk i h
 
@@ -238,7 +250,14 @@ end Matrix
 instance : Add Matrix := ⟨Matrix.add⟩
 instance : Sub Matrix := ⟨Matrix.sub⟩
 instance : Mul Matrix := ⟨Matrix.mul⟩
-instance : GetElem Matrix USize Vector4 (λ _ i ↦ i < 4) := ⟨Matrix.urow⟩
-instance : GetElem Matrix Nat Vector4 (λ _ i ↦ i < 4) := ⟨Matrix.row⟩
+
+instance : GetElem Matrix USize Vector4 (λ _ i ↦ i < 4) where
+  getElem := Matrix.urow
+  getElem! m i := dite _ (m.urow i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
+
+
+instance : GetElem Matrix Nat Vector4 (λ _ i ↦ i < 4) where
+  getElem := Matrix.row
+  getElem! m i := dite _ (m.row i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
 end Raymath
