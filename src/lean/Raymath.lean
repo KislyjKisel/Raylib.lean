@@ -6,12 +6,12 @@ open Pod (Float32)
 
 namespace Raymath
 
-def toUSizeInj {m} (n : Nat) (h₁ : n < m) (h₂ : m ≤ 2 ^ 32 := by decide) : USize :=
-  ⟨n, Nat.lt_of_lt_of_le h₁ $ Nat.le_trans h₂ Pod.usize_size_ge_2_pow_32⟩
+def toUInt32Inj {m} (n : Nat) (h₁ : n < m) (h₂ : m ≤ 2 ^ 32 := by decide) : UInt32 :=
+  ⟨n, Nat.lt_of_lt_of_le h₁ $ Nat.le_trans h₂ (Nat.le_refl _)⟩
 
-theorem toUSizeInj_lt {m} (n : Nat) (h₁ : n < m) (h₂ : m < 2 ^ 32 := by decide) :
-  toUSizeInj n h₁ (Nat.le_of_lt h₂) < m.toUSize :=
-  (Nat.lt_of_lt_of_eq h₁ $ Eq.symm $ Pod.mod_usize_size_eq m h₂)
+theorem toUInt32Inj_lt {m} (n : Nat) (h₁ : n < m) (h₂ : m < 2 ^ 32 := by decide) :
+  toUInt32Inj n h₁ (Nat.le_of_lt h₂) < m.toUInt32 :=
+  (Nat.lt_of_lt_of_eq h₁ $ Eq.symm $ Nat.mod_eq_of_lt h₂)
 
 end Raymath
 
@@ -50,17 +50,17 @@ namespace Raymath
 namespace Vector2
 
 @[extern "lean_raymath_Vector_uget"]
-def uget (v : @& Vector2) (i : USize) (h : i < 2) : Float32 := ite (i = 0) v.x v.y
+def uget (v : @& Vector2) (i : UInt32) (h : i < 2) : Float32 := ite (i = 0) v.x v.y
 
 def get (v : @& Vector2) (i : Fin 2) : Float32 :=
-  v.uget (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt)
+  v.uget (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt)
 
 @[extern "lean_raymath_Vector2_uset"]
-def uset (v : Vector2) (i : USize) (h : i < 2) (value : Float32) : Vector2 :=
+def uset (v : Vector2) (i : UInt32) (h : i < 2) (value : Float32) : Vector2 :=
   ite (i = 0) { v with x := value } { v with y := value }
 
 def set (v : Vector2) (i : Fin 2) (value : Float32) : Vector2 :=
-  v.uset (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+  v.uset (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt) value
 
 end Vector2
 
@@ -73,7 +73,7 @@ instance : Neg Vector2 := ⟨Vector2.neg⟩
 instance : Min Vector2 := ⟨Vector2.min⟩
 instance : Max Vector2 := ⟨Vector2.max⟩
 
-instance : GetElem Vector2 USize Float32 (λ _ i ↦ i < 2) where
+instance : GetElem Vector2 UInt32 Float32 (λ _ i ↦ i < 2) where
   getElem := Vector2.uget
   getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
@@ -84,8 +84,8 @@ instance : GetElem Vector2 Nat Float32 (λ _ i ↦ i < 2) where
 namespace Vector3
 
 @[extern "lean_raymath_Vector_uget"]
-def uget (v : @& Vector3) (i : USize) («i<3uz» : i < 3) : Float32 :=
-  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» $ Pod.mod_usize_size_eq 3 (by decide)
+def uget (v : @& Vector3) (i : UInt32) («i<3uz» : i < 3) : Float32 :=
+  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» rfl
   match i, «↑i<3» with
     | ⟨0, _⟩, _ => v.x
     | ⟨1, _⟩, _ => v.y
@@ -93,19 +93,18 @@ def uget (v : @& Vector3) (i : USize) («i<3uz» : i < 3) : Float32 :=
     | ⟨n+3, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 3 n
 
 def get (v : @& Vector3) (i : Fin 3) : Float32 :=
-  v.uget (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt)
+  v.uget (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt)
 
 @[extern "lean_raymath_Vector3_uset"]
-def uset (v : Vector3) (i : USize) («i<3uz» : i < 3) (value : Float32) : Vector3 :=
-  let «↑i<3» := Nat.lt_of_lt_of_eq «i<3uz» $ Pod.mod_usize_size_eq 3 (by decide)
-  match i, «↑i<3» with
+def uset (v : Vector3) (i : UInt32) («i<3» : i < 3) (value : Float32) : Vector3 :=
+  match i, «i<3» with
     | ⟨0, _⟩, _ => { v with x := value }
     | ⟨1, _⟩, _ => { v with y := value }
     | ⟨2, _⟩, _ => { v with z := value }
     | ⟨n+3, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 3 n
 
 def set (v : Vector3) (i : Fin 3) (value : Float32) : Vector3 :=
-  v.uset (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+  v.uset (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt) value
 
 end Vector3
 
@@ -118,7 +117,7 @@ instance : Neg Vector3 := ⟨Vector3.neg⟩
 instance : Min Vector3 := ⟨Vector3.min⟩
 instance : Max Vector3 := ⟨Vector3.max⟩
 
-instance : GetElem Vector3 USize Float32 (λ _ i ↦ i < 3) where
+instance : GetElem Vector3 UInt32 Float32 (λ _ i ↦ i < 3) where
   getElem := Vector3.uget
   getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
@@ -129,9 +128,8 @@ instance : GetElem Vector3 Nat Float32 (λ _ i ↦ i < 3) where
 namespace Vector4
 
 @[extern "lean_raymath_Vector_uget"]
-def uget (v : @& Vector4) (i : USize) («i<4uz» : i < 4) : Float32 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
-  match i, «↑i<4» with
+def uget (v : @& Vector4) (i : UInt32) («i<4» : i < 4) : Float32 :=
+  match i, «i<4» with
     | ⟨0, _⟩, _ => v.x
     | ⟨1, _⟩, _ => v.y
     | ⟨2, _⟩, _ => v.z
@@ -139,12 +137,11 @@ def uget (v : @& Vector4) (i : USize) («i<4uz» : i < 4) : Float32 :=
     | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
 
 def get (v : @& Vector4) (i : Fin 4) : Float32 :=
-  v.uget (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt)
+  v.uget (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt)
 
 @[extern "lean_raymath_Vector4_uset"]
-def uset (v : Vector4) (i : USize) («i<4uz» : i < 4) (value : Float32) : Vector4 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
-  match i, «↑i<4» with
+def uset (v : Vector4) (i : UInt32) («i<4» : i < 4) (value : Float32) : Vector4 :=
+  match i, «i<4» with
     | ⟨0, _⟩, _ => { v with x := value }
     | ⟨1, _⟩, _ => { v with y := value }
     | ⟨2, _⟩, _ => { v with z := value }
@@ -152,7 +149,7 @@ def uset (v : Vector4) (i : USize) («i<4uz» : i < 4) (value : Float32) : Vecto
     | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
 
 def set (v : Vector4) (i : Fin 4) (value : Float32) : Vector4 :=
-  v.uset (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+  v.uset (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt) value
 
 end Vector4
 
@@ -165,7 +162,7 @@ instance : Neg Vector4 := ⟨Vector4.neg⟩
 instance : Min Vector4 := ⟨Vector4.min⟩
 instance : Max Vector4 := ⟨Vector4.max⟩
 
-instance : GetElem Vector4 USize Float32 (λ _ i ↦ i < 4) where
+instance : GetElem Vector4 UInt32 Float32 (λ _ i ↦ i < 4) where
   getElem := Vector4.uget
   getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
@@ -176,9 +173,8 @@ instance : GetElem Vector4 Nat Float32 (λ _ i ↦ i < 4) where
 namespace Matrix
 
 @[extern "lean_raymath_Matrix_urow"]
-def urow (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
-  match i, «↑i<4» with
+def urow (m : @& Matrix) (i : UInt32) («i<4» : i < 4) : Vector4 :=
+  match i, «i<4» with
     | ⟨0, _⟩, _ => .mk m.m0 m.m4 m.m8 m.m12
     | ⟨1, _⟩, _ => .mk m.m1 m.m5 m.m9 m.m13
     | ⟨2, _⟩, _ => .mk m.m2 m.m6 m.m10 m.m14
@@ -186,12 +182,11 @@ def urow (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
     | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
 
 def row (m : @& Matrix) (i : Nat) (h : i < 4) : Vector4 :=
-  m.urow (toUSizeInj i h) (toUSizeInj_lt i h)
+  m.urow (toUInt32Inj i h) (toUInt32Inj_lt i h)
 
 @[extern "lean_raymath_Matrix_ucolumn"]
-def ucolumn (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
-  match i, «↑i<4» with
+def ucolumn (m : @& Matrix) (i : UInt32) («i<4» : i < 4) : Vector4 :=
+  match i, «i<4» with
     | ⟨0, _⟩, _ => .mk m.m0 m.m1 m.m2 m.m3
     | ⟨1, _⟩, _ => .mk m.m4 m.m5 m.m6 m.m7
     | ⟨2, _⟩, _ => .mk m.m8 m.m9 m.m10 m.m11
@@ -199,20 +194,43 @@ def ucolumn (m : @& Matrix) (i : USize) («i<4uz» : i < 4) : Vector4 :=
     | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
 
 def column (m : @& Matrix) (i : Nat) (h : i < 4) : Vector4 :=
-  m.ucolumn (toUSizeInj i h) (toUSizeInj_lt i h)
+  m.ucolumn (toUInt32Inj i h) (toUInt32Inj_lt i h)
+
+@[extern "lean_raymath_Matrix_ugetLinear"]
+def ugetLinear (m : @& Matrix) (i : UInt32) (h : i < 16) : Float32 :=
+  match i, h with
+  | ⟨0, _⟩, _ => m.m0
+  | ⟨1, _⟩, _ => m.m4
+  | ⟨2, _⟩, _ => m.m8
+  | ⟨3, _⟩, _ => m.m12
+  | ⟨4, _⟩, _ => m.m1
+  | ⟨5, _⟩, _ => m.m5
+  | ⟨6, _⟩, _ => m.m9
+  | ⟨7, _⟩, _ => m.m13
+  | ⟨8, _⟩, _ => m.m2
+  | ⟨9, _⟩, _ => m.m6
+  | ⟨10, _⟩, _ => m.m0
+  | ⟨11, _⟩, _ => m.m14
+  | ⟨12, _⟩, _ => m.m3
+  | ⟨13, _⟩, _ => m.m7
+  | ⟨14, _⟩, _ => m.m11
+  | ⟨15, _⟩, _ => m.m15
+  | ⟨n+16, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 16 n
+
+def getLinear (m : @& Matrix) (i : Fin 16) : Float32 :=
+  m.ugetLinear (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt)
 
 @[extern "lean_raymath_Matrix_uget"]
-def uget (m : @& Matrix) (i : USize) (j : USize) (h₁ : i < 4) (h₂ : j < 4) : Float32 :=
+def uget (m : @& Matrix) (i : UInt32) (j : UInt32) (h₁ : i < 4) (h₂ : j < 4) : Float32 :=
   (m.urow i h₁).uget j h₂
 
 def get (m : @& Matrix) (i : Fin 4) (j : Fin 4) : Float32 := m.uget
-  (toUSizeInj i.val i.isLt) (toUSizeInj j.val j.isLt)
-  (toUSizeInj_lt i.val i.isLt) (toUSizeInj_lt j.val j.isLt)
+  (toUInt32Inj i.val i.isLt) (toUInt32Inj j.val j.isLt)
+  (toUInt32Inj_lt i.val i.isLt) (toUInt32Inj_lt j.val j.isLt)
 
 @[extern "lean_raymath_Matrix_usetRow"]
-def usetRow (m : Matrix) (i : USize) («i<4uz» : i < 4) (value : @& Vector4) : Matrix :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
-  match i, «↑i<4» with
+def usetRow (m : Matrix) (i : UInt32) («i<4» : i < 4) (value : @& Vector4) : Matrix :=
+  match i, «i<4» with
     | ⟨0, _⟩, _ => { m with m0 := value.x, m4 := value.y, m8 := value.z, m12 := value.w }
     | ⟨1, _⟩, _ => { m with m1 := value.x, m5 := value.y, m9 := value.z, m13 := value.w }
     | ⟨2, _⟩, _ => { m with m2 := value.x, m6 := value.y, m10 := value.z, m14 := value.w }
@@ -220,12 +238,11 @@ def usetRow (m : Matrix) (i : USize) («i<4uz» : i < 4) (value : @& Vector4) : 
     | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
 
 def setRow (m : Matrix) (i : Fin 4) (value : @& Vector4) : Matrix :=
-  m.usetRow (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+  m.usetRow (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt) value
 
 @[extern "lean_raymath_Matrix_usetColumn"]
-def usetColumn (m : Matrix) (i : USize) («i<4uz» : i < 4) (value : @& Vector4) : Matrix :=
-  let «↑i<4» := Nat.lt_of_lt_of_eq «i<4uz» $ Pod.mod_usize_size_eq 4 (by decide)
-  match i, «↑i<4» with
+def usetColumn (m : Matrix) (i : UInt32) («i<4» : i < 4) (value : @& Vector4) : Matrix :=
+  match i, «i<4» with
     | ⟨0, _⟩, _ => { m with m0 := value.x, m1 := value.y, m2 := value.z, m3 := value.w }
     | ⟨1, _⟩, _ => { m with m4 := value.x, m5 := value.y, m6 := value.z, m7 := value.w }
     | ⟨2, _⟩, _ => { m with m8 := value.x, m9 := value.y, m10 := value.z, m11 := value.w }
@@ -233,16 +250,40 @@ def usetColumn (m : Matrix) (i : USize) («i<4uz» : i < 4) (value : @& Vector4)
     | ⟨n+4, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 4 n
 
 def setColumn (m : Matrix) (i : Fin 4) (value : @& Vector4) : Matrix :=
-  m.usetColumn (toUSizeInj i.val i.isLt) (toUSizeInj_lt i.val i.isLt) value
+  m.usetColumn (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt) value
+
+@[extern "lean_raymath_Matrix_usetLinear"]
+def usetLinear (m : Matrix) (i : UInt32) (h : i < 16) (value : Float32) : Matrix :=
+  match i, h with
+  | ⟨0, _⟩, _ => { m with m0 := value }
+  | ⟨1, _⟩, _ => { m with m4 := value }
+  | ⟨2, _⟩, _ => { m with m8 := value }
+  | ⟨3, _⟩, _ => { m with m12 := value }
+  | ⟨4, _⟩, _ => { m with m1 := value }
+  | ⟨5, _⟩, _ => { m with m5 := value }
+  | ⟨6, _⟩, _ => { m with m9 := value }
+  | ⟨7, _⟩, _ => { m with m13 := value }
+  | ⟨8, _⟩, _ => { m with m2 := value }
+  | ⟨9, _⟩, _ => { m with m6 := value }
+  | ⟨10, _⟩, _ => { m with m10 := value }
+  | ⟨11, _⟩, _ => { m with m14 := value }
+  | ⟨12, _⟩, _ => { m with m3 := value }
+  | ⟨13, _⟩, _ => { m with m7 := value }
+  | ⟨14, _⟩, _ => { m with m11 := value }
+  | ⟨15, _⟩, _ => { m with m15 := value }
+  | ⟨n+16, _⟩, h₂ => False.elim $ Nat.not_le_of_gt h₂ $ Nat.le_add_left 16 n
+
+def setLinear (m : Matrix) (i : Fin 16) (value : Float32) : Matrix :=
+  m.usetLinear (toUInt32Inj i.val i.isLt) (toUInt32Inj_lt i.val i.isLt) value
 
 @[extern "lean_raymath_Matrix_uset"]
-def uset (m : Matrix) (i : USize) (j : USize) (h₁ : i < 4) (h₂ : j < 4) (value : Float32) : Matrix :=
+def uset (m : Matrix) (i : UInt32) (j : UInt32) (h₁ : i < 4) (h₂ : j < 4) (value : Float32) : Matrix :=
   let row := m.urow i h₁
   m.usetRow i h₁ (row.uset j h₂ value)
 
 def set (m : Matrix) (i : Fin 4) (j : Fin 4) (value : Float32) : Matrix := m.uset
-  (toUSizeInj i.val i.isLt) (toUSizeInj j.val j.isLt)
-  (toUSizeInj_lt i.val i.isLt) (toUSizeInj_lt j.val j.isLt)
+  (toUInt32Inj i.val i.isLt) (toUInt32Inj j.val j.isLt)
+  (toUInt32Inj_lt i.val i.isLt) (toUInt32Inj_lt j.val j.isLt)
   value
 
 end Matrix
@@ -251,13 +292,12 @@ instance : Add Matrix := ⟨Matrix.add⟩
 instance : Sub Matrix := ⟨Matrix.sub⟩
 instance : Mul Matrix := ⟨Matrix.mul⟩
 
-instance : GetElem Matrix USize Vector4 (λ _ i ↦ i < 4) where
-  getElem := Matrix.urow
-  getElem! m i := dite _ (m.urow i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
+instance : GetElem Matrix UInt32 Float32 (λ _ i ↦ i < 16) where
+  getElem := Matrix.ugetLinear
+  getElem! m i := dite _ (m.ugetLinear i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
-
-instance : GetElem Matrix Nat Vector4 (λ _ i ↦ i < 4) where
-  getElem := Matrix.row
-  getElem! m i := dite _ (m.row i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
+instance : GetElem Matrix Nat Float32 (λ _ i ↦ i < 16) where
+  getElem m i h := m.getLinear ⟨i, h⟩
+  getElem! m i := dite _ (m.getLinear ∘ Fin.mk i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
 end Raymath
