@@ -34,30 +34,30 @@ def lengthSqr (v : Vector2) : Float32 := v.x * v.x + v.y * v.y
 /-- Calculate two vectors dot product -/
 def dot (v1 v2 : Vector2) : Float32 := v1.x * v2.x + v1.y * v2.y
 
-/-- Calculate distance between two vectors -/
-def distance (v1 v2 : Vector2) : Float32 :=
-  ((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y)).sqrt
-
 /-- Calculate square distance between two vectors -/
 def distanceSqr (v1 v2 : Vector2) : Float32 :=
   (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y)
+
+/-- Calculate distance between two vectors -/
+def distance (v1 v2 : Vector2) : Float32 :=
+  (distanceSqr v1 v2).sqrt
 
 /--
 Calculate angle between two vectors.
 NOTE: Angle is calculated from origin point (0, 0).
 -/
-def angle (v1 v2 : Vector2) : Float32 := Float32.atan2 (v2.y - v1.y) (v2.x - v1.x)
+def angle (v1 v2 : Vector2) : Float32 :=
+  let dot := v1.x * v2.x + v1.y * v2.y
+  let det := v1.x * v2.y - v1.y * v2.x
+  Float32.atan2 det dot
 
 /--
 Calculate angle defined by a two vectors line.
 NOTE: Parameters need to be normalized.
 Current implementation should be aligned with glm::angle.
 -/
-def lineAngle (start finish : Vector2) : Float32 :=
-  let dot := start.x * finish.x + start.y * finish.y
-  let dotClamp := if dot < .negOne then .negOne else dot
-  let dotClamp := if dotClamp > .one then .one else dotClamp
-  dotClamp.acos
+def lineAngle (start «end» : Vector2) : Float32 :=
+  - Float32.atan2 («end».y - start.y) («end».x - start.x)
 
 /-- Scale vector (multiply by value) -/
 def scale (v : Vector2) (scale : Float32) : Vector2 := Vector2.mk (v.x * scale) (v.y * scale)
@@ -110,14 +110,12 @@ def rotate (v : Vector2) (angle : Float32) : Vector2 :=
 
 /-- Move Vector towards target -/
 def moveTowards (v target : Vector2) (maxDistance : Float32) : Vector2 :=
-  let dx := target.x - v.x
-  let dy := target.y - v.y
-  let value := dx * dx + dy * dy
-  if value == .zero || (maxDistance >= 0 && value <= maxDistance * maxDistance)
+  let delta := sub target v
+  let distanceSqr := delta.lengthSqr
+  if distanceSqr == .zero || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
     then target
     else
-      let dist := value.sqrt
-      Vector2.mk (v.x + dx / dist * maxDistance) (v.y + dy / dist * maxDistance)
+      add v $ scale delta $ maxDistance / distanceSqr.sqrt
 
 /-- Invert the given vector -/
 def invert (v : Vector2) : Vector2 := Vector2.mk (.one / v.x) (.one / v.y)
@@ -131,20 +129,14 @@ def clamp (v min max : Vector2) : Vector2 :=
 
 /-- Clamp the magnitude of the vector between two min and max values -/
 def clampValue (v : Vector2) (min max : Float32) : Vector2 :=
-  let length := v.x * v.x + v.y * v.y
-  if length > .zero
-    then
-      let length := length.sqrt
-      if length < min
-        then
-          let scale := min / length
-          Vector2.mk (v.x * scale) (v.y * scale)
-        else if length > max
-          then
-            let scale := max / length
-            Vector2.mk (v.x * scale) (v.y * scale)
-          else v
-    else v
+  let length := v.length
+  let scale :=
+    if length < min
+      then min / length
+      else if length > max
+        then max / length
+        else .one
+  Vector2.scale v scale
 
 /-- Check whether two given vectors are almost equal -/
 def equals (p q : Vector2) : Bool :=
@@ -154,6 +146,20 @@ def equals (p q : Vector2) : Bool :=
 
 def beq (v1 v2 : Vector2) : Bool :=
   v1.x == v2.x && v1.y == v2.y
+
+/--
+Compute the direction of a refracted ray where
+* `v`: normalized direction of the incoming ray
+* `n`: normalized normal vector of the interface of two optical media
+* `r`: the ratio of the refractive index of the medium from where the ray comes
+       to the refractive index of the medium on the other side of the surface
+-/
+def refract (v n : Vector2) (r : Float32) : Vector2 :=
+  let «v∙n» := dot v n
+  let d := .one - r * r * (.one - «v∙n» * «v∙n»)
+  if d >= .zero
+    then sub (scale v r) (scale n $ r * «v∙n» + d.sqrt)
+    else Vector2.zero
 
 end Vector2
 
@@ -214,19 +220,16 @@ def lengthSqr (v : Vector3) : Float32 := v.x * v.x + v.y * v.y + v.z * v.z
 /-- Calculate two vectors dot product -/
 def dot (v1 v2 : Vector3) : Float32 := v1.x * v2.x + v1.y * v2.y + v1.z * v2.z
 
-/-- Calculate distance between two vectors -/
-def distance (v1 v2 : Vector3) : Float32 :=
-  let dx := v2.x - v1.x
-  let dy := v2.y - v1.y
-  let dz := v2.z - v1.z
-  (dx * dx + dy * dy + dz * dz).sqrt
-
 /-- Calculate square distance between two vectors -/
 def distanceSqr (v1 v2 : Vector3) : Float32 :=
   let dx := v2.x - v1.x
   let dy := v2.y - v1.y
   let dz := v2.z - v1.z
   dx * dx + dy * dy + dz * dz
+
+/-- Calculate distance between two vectors -/
+def distance (v1 v2 : Vector3) : Float32 :=
+  (distanceSqr v1 v2).sqrt
 
 /-- Calculate angle between two vectors -/
 def angle (v1 v2 : Vector3) : Float32 :=
@@ -251,7 +254,17 @@ def normalize (v : Vector3) : Vector3 :=
     then
       let ilength := .one / length
       Vector3.mk (v.x * ilength) (v.y * ilength) (v.z * ilength)
-    else Vector3.zero
+    else
+      v
+
+/-- Calculate the projection of the vector `v1` on to `v2` -/
+def project (v1 v2 : Vector3) : Vector3 :=
+  let mag := (dot v1 v2) / (dot v2 v2)
+  Vector3.mk (v2.x * mag) (v2.y * mag) (v2.z * mag)
+
+/-- Calculate the rejection of the vector `v1` on to `v2` -/
+def reject (v1 v2 : Vector3) : Vector3 :=
+  sub v1 (project v1 v2)
 
 /--
 Orthonormalize provided vectors.
@@ -304,6 +317,17 @@ def lerp (v1 v2 : Vector3) (amount : Float32) : Vector3 := Vector3.mk
   (v1.y + amount * (v2.y - v1.y))
   (v1.z + amount * (v2.z - v1.z))
 
+/-- Calculate cubic hermite interpolation between two vectors and their tangents -/
+def cubicHermite (v1 tangent1 v2 tangent2 : Vector3) (amount : Float32) : Vector3 :=
+  let «amount²» := amount * amount
+  let «amount³» := «amount²» * amount
+  let sv1 := 2.0 * «amount³» - 3.0 * «amount²» + 1.0
+  let st1 := «amount³» - 2.0 * «amount²» + amount
+  let sv2 := -2.0 * «amount³» + 3.0 * «amount²»
+  let st2 := «amount³» - «amount²» + 1.0
+  add (scale v1 sv1) $ add (scale tangent1 st1) $
+    add (scale v2 sv2) $ scale tangent2 st2
+
 /-- Calculate reflected vector to normal -/
 def reflect (v normal : Vector3) : Vector3 :=
   let dot := v.x * normal.x + v.y * normal.y + v.z * normal.z
@@ -317,6 +341,14 @@ def min (v1 v2 : Vector3) : Vector3 :=
 def max (v1 v2 : Vector3) : Vector3 :=
   Vector3.mk (v1.x.max v2.x) (v1.y.max v2.y) (v1.z.max v2.z)
 
+/-- Move Vector towards target -/
+def moveTowards (v target : Vector3) (maxDistance : Float32) : Vector3 :=
+  let delta := sub target v
+  let distanceSqr := delta.lengthSqr
+  if distanceSqr == .zero || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
+    then target
+    else
+      add v $ scale delta $ maxDistance / distanceSqr.sqrt
 
 /--
 Compute barycenter coordinates (`u`, `v`, `w`) for point `p` with respect to triangle (`a`, `b`, `c`).
@@ -353,20 +385,14 @@ def clamp (v min max : Vector3) : Vector3 := Vector3.mk
 
 /-- Clamp the magnitude of the vector between two and values -/
 def clampValue (v : Vector3) (min max : Float32) : Vector3 :=
-  let length := v.x * v.x + v.y * v.y + v.z * v.z
-  if length > .zero
-    then
-      let length := length.sqrt
-      if length < min
-        then
-          let scale := min / length
-          Vector3.mk (v.x * scale) (v.y * scale) (v.z * scale)
-        else if length > max
-          then
-            let scale := max / length
-            Vector3.mk (v.x * scale) (v.y * scale) (v.z * scale)
-          else v
-    else v
+  let length := v.length
+  let scale :=
+    if length < min
+      then min / length
+      else if length > max
+        then max / length
+        else .one
+  Vector3.scale v scale
 
 /-- Check whether two given vectors are almost equal -/
 def equals (p q : Vector3) : Bool :=
@@ -378,23 +404,17 @@ def beq (v1 v2 : Vector3) : Bool :=
   v1.x == v2.x && v1.y == v2.y && v1.z == v2.z
 
 /--
-Compute the direction of a refracted ray where `v` specifies the
-normalized direction of the incoming ray, `n` specifies the
-normalized normal vector of the interface of two optical media,
-and `r` specifies the ratio of the refractive index of the medium
-from where the ray comes to the refractive index of the medium
-on the other side of the surface
+Compute the direction of a refracted ray where
+* `v`: normalized direction of the incoming ray
+* `n`: normalized normal vector of the interface of two optical media
+* `r`: the ratio of the refractive index of the medium from where the ray comes
+       to the refractive index of the medium on the other side of the surface
 -/
 def refract (v n : Vector3) (r : Float32) : Vector3 :=
-  let dot := v.x * n.x + v.y * n.y + v.z * n.z
-  let d := .one - r * r * (.one - dot * dot)
+  let «v∙n» := v.x * n.x + v.y * n.y + v.z * n.z
+  let d := .one - r * r * (.one - «v∙n» * «v∙n»)
   if d >= .zero
-    then
-      let d := d.sqrt
-      Vector3.mk
-        (r * v.x - (r * dot + d) * n.x)
-        (r * v.y - (r * dot + d) * n.y)
-        (r * v.z - (r * dot + d) * n.z)
+    then sub (scale v r) (scale n $ r * «v∙n» + d.sqrt)
     else Vector3.zero
 
 end Vector3
@@ -435,14 +455,6 @@ def lengthSqr (v : Vector4) : Float32 := v.x * v.x + v.y * v.y + v.z * v.z + v.w
 /-- Calculate two vectors dot product -/
 def dot (v1 v2 : Vector4) : Float32 := v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w
 
-/-- Calculate distance between two vectors -/
-def distance (v1 v2 : Vector4) : Float32 :=
-  let dx := v2.x - v1.x
-  let dy := v2.y - v1.y
-  let dz := v2.z - v1.z
-  let dw := v2.w - v1.w
-  (dx * dx + dy * dy + dz * dz + dw * dw).sqrt
-
 /-- Calculate square distance between two vectors -/
 def distanceSqr (v1 v2 : Vector4) : Float32 :=
   let dx := v2.x - v1.x
@@ -450,6 +462,10 @@ def distanceSqr (v1 v2 : Vector4) : Float32 :=
   let dz := v2.z - v1.z
   let dw := v2.w - v1.w
   dx * dx + dy * dy + dz * dz + dw * dw
+
+/-- Calculate distance between two vectors -/
+def distance (v1 v2 : Vector4) : Float32 :=
+  (distanceSqr v1 v2).sqrt
 
 /-- Negate provided vector (invert direction) -/
 def neg (v : Vector4) : Vector4 := Vector4.mk v.x.neg v.y.neg v.z.neg v.w.neg
@@ -476,6 +492,15 @@ def lerp (v1 v2 : Vector4) (amount : Float32) : Vector4 := Vector4.mk
   (v1.z + amount * (v2.z - v1.z))
   (v1.w + amount * (v2.w - v1.w))
 
+/-- Move Vector towards target -/
+def moveTowards (v target : Vector4) (maxDistance : Float32) : Vector4 :=
+  let delta := sub target v
+  let distanceSqr := delta.lengthSqr
+  if distanceSqr == .zero || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
+    then target
+    else
+      add v $ scale delta $ maxDistance / distanceSqr.sqrt
+
 /-- Get min value for each pair of components -/
 def min (v1 v2 : Vector4) : Vector4 :=
   Vector4.mk (v1.x.min v2.x) (v1.y.min v2.y) (v1.z.min v2.z) (v1.w.min v2.w)
@@ -500,18 +525,14 @@ def clamp (v min max : Vector4) : Vector4 := Vector4.mk
 
 /-- Clamp the magnitude of the vector between two and values -/
 def clampValue (v : Vector4) (min max : Float32) : Vector4 :=
-  let lengthSqr := Vector4.lengthSqr v
-  if lengthSqr > .zero
-    then
-      let length := lengthSqr.sqrt
-      if length < min
-        then
-          Vector4.scale v (min / length)
-        else if length > max
-          then
-            Vector4.scale v (max / length)
-          else v
-    else v
+  let length := v.length
+  let scale :=
+    if length < min
+      then min / length
+      else if length > max
+        then max / length
+        else .one
+  Vector4.scale v scale
 
 /-- Check whether two given vectors are almost equal -/
 def equals (p q : Vector4) : Bool :=
@@ -773,17 +794,17 @@ def scale (x y z : Float32) : Matrix := Matrix.mk
 def scaleV (v : Vector3) : Matrix := Matrix.scale v.x v.y v.z
 
 /-- Get perspective projection matrix -/
-def frustum (left right bottom top near far : Float) : Matrix :=
+def frustum (left right bottom top nearPlane farPlane : Float) : Matrix :=
   let rl := (right - left).toFloat32
   let tb := (top - bottom).toFloat32
-  let fn := (far - near).toFloat32
-  let m0 := near.toFloat32 * 2 / rl
-  let m5 := near.toFloat32 * 2 / tb
+  let fn := (farPlane - nearPlane).toFloat32
+  let m0 := nearPlane.toFloat32 * 2 / rl
+  let m5 := nearPlane.toFloat32 * 2 / tb
   let m8 := (right.toFloat32 + left.toFloat32) / rl
   let m9 := (top.toFloat32 + bottom.toFloat32) / tb
-  let m10 := ((far.toFloat32 + near.toFloat32) / fn).neg
+  let m10 := ((farPlane.toFloat32 + nearPlane.toFloat32) / fn).neg
   let m11 := -1
-  let m14 := (far.toFloat32 * near.toFloat32 * 2).neg / fn
+  let m14 := (farPlane.toFloat32 * nearPlane.toFloat32 * 2).neg / fn
   Matrix.mk
     m0 0  m8  0
     0  m5 m9  0
@@ -794,22 +815,22 @@ def frustum (left right bottom top near far : Float) : Matrix :=
 Get perspective projection matrix
 NOTE: Fovy angle must be provided in radians
 -/
-def perspective (fovy aspect near far : Float) : Matrix :=
-  let top := near * (fovy * 0.5).tan
+def perspective (fovY aspect nearPlane farPlane : Float) : Matrix :=
+  let top := nearPlane * (fovY * 0.5).tan
   let right := top * aspect
-  Matrix.frustum (-right) right (-top) top near far
+  Matrix.frustum (-right) right (-top) top nearPlane farPlane
 
 /-- Get orthographic projection matrix -/
-def ortho (left right bottom top near far : Float) : Matrix :=
+def ortho (left right bottom top nearPlane farPlane : Float) : Matrix :=
   let rl := (right - left).toFloat32
   let tb := (top - bottom).toFloat32
-  let fn := (far - near).toFloat32
+  let fn := (farPlane - nearPlane).toFloat32
   let m0 := 2 / rl
   let m5 := 2 / tb
   let m10 := -2 / fn
   let m12 := -(left.toFloat32 + right.toFloat32)/rl
   let m13 := -(top.toFloat32 + bottom.toFloat32)/tb
-  let m14 := -(far.toFloat32 + near.toFloat32)/fn
+  let m14 := -(farPlane.toFloat32 + nearPlane.toFloat32)/fn
   Matrix.mk
     m0 0  0   m12
     0  m5 0   m13
@@ -906,6 +927,27 @@ def slerp (q1 q2 : Quaternion) (amount : Float32) : Quaternion :=
               (q1.y * ratioA + q2.y * ratioB)
               (q1.z * ratioA + q2.z * ratioB)
               (q1.w * ratioA + q2.w * ratioB)
+
+/-- Calculate quaternion cubic spline interpolation using the SQUAD algorithm -/
+def cubicSplineSQUAD (q1 tangent1 q2 tangent2 : Quaternion) (amount : Float32) : Quaternion :=
+  let slerp1 := slerp q1 q2 amount
+  let slerp2 := slerp tangent1 tangent2 amount
+  let t := 2.0 * amount * (1.0 - amount)
+  slerp slerp1 slerp2 t
+
+/-- Calculate quaternion cubic spline interpolation using Cubic Hermite Spline algorithm -/
+def cubicSpline (q₁ outTangent₁ q₂ inTangent₂ : Quaternion) (t : Float32) : Quaternion :=
+  let «t²» := t * t
+  let «t³» := «t²» * t
+  let h₀₀ := 2.0 * «t³» - 3.0 * «t²» + 1.0
+  let h₁₀ := «t³» - 2.0 * «t²» + t
+  let h₀₁ := -2.0 * «t³» + 3.0 * «t²»
+  let h₁₁ := «t³» - «t²»
+  let p0 := Vector4.scale q₁ h₀₀
+  let m0 := Vector4.scale outTangent₁ h₁₀
+  let p1 := Vector4.scale q₂ h₀₁
+  let m1 := Vector4.scale inTangent₂ h₁₁
+  Vector4.normalize $ Vector4.add p0 $ Vector4.add m0 $ Vector4.add p1 m1
 
 /-- Calculate quaternion based on the rotation from one vector to another -/
 def fromVector3ToVector3 («from» to : Vector3) : Quaternion :=
