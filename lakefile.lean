@@ -187,10 +187,11 @@ def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String ×
 
   match raylibSrc with
     | .System =>
-      traceArgs := traceArgs.push $ ← tryRunProcess {
+      let pkgConfigOutput ← tryRunProcess {
         cmd := "pkg-config"
         args := #["--cflags", "raylib"]
       }
+      traceArgs := traceArgs.append $ splitArgStr $ pkgConfigOutput.replace "\n" " "
 
     | .Submodule => do
       buildRaylibSubmodule printCmdOutput
