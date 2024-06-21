@@ -57,7 +57,7 @@ lean_exe «raylib-test» {
   moreLinkArgs := Id.run $ do
     let mut args := splitArgStr $ (get_config? lflags).getD ""
     args := args.append $ match raylibSrc with
-      | .System => #["-L/usr/local/lib", "-lraylib"]
+      | .System => #["-L/usr/local/lib64", "-lraylib"]
       | .Submodule => #[s!"-L{__dir__}/raylib/build/raylib", "-lraylib"]
       | .Custom => #[]
       | .Unknown _ => #[]
