@@ -65,9 +65,17 @@ def set (v : Vector2) (i : Fin 2) (value : Float32) : Vector2 :=
 end Vector2
 
 instance : Add Vector2 := ⟨Vector2.add⟩
+instance : HAdd Float32 Vector2 Vector2 := ⟨λ s v ↦ ⟨s + v.x, s + v.y⟩⟩
+instance : HAdd Vector2 Float32 Vector2 := ⟨λ v s ↦ ⟨v.x + s, v.y + s⟩⟩
 instance : Sub Vector2 := ⟨Vector2.sub⟩
+instance : HSub Float32 Vector2 Vector2 := ⟨λ s v ↦ ⟨s - v.x, s - v.y⟩⟩
+instance : HSub Vector2 Float32 Vector2 := ⟨λ v s ↦ ⟨v.x - s, v.y - s⟩⟩
 instance : Mul Vector2 := ⟨Vector2.mul⟩
+instance : HMul Vector2 Float32 Vector2 := ⟨Vector2.scale⟩
+instance : HMul Float32 Vector2 Vector2 := ⟨λ s v ↦ v.scale s⟩
 instance : Div Vector2 := ⟨Vector2.div⟩
+instance : HDiv Vector2 Float32 Vector2 := ⟨λ v s ↦ v.scale (.one / s)⟩
+instance : HDiv Float32 Vector2 Vector2 := ⟨λ s v ↦ ⟨s / v.x, s / v.y⟩⟩
 instance : BEq Vector2 := ⟨Vector2.beq⟩
 instance : Neg Vector2 := ⟨Vector2.neg⟩
 instance : Min Vector2 := ⟨Vector2.min⟩
@@ -79,6 +87,9 @@ instance : GetElem Vector2 UInt32 Float32 (λ _ i ↦ i < 2) where
 
 instance : GetElem Vector2 Nat Float32 (λ _ i ↦ i < 2) where
   getElem v i h := v.get $ .mk i h
+
+instance : ToString Vector2 where
+  toString v := s!"({v.x} {v.y})"
 
 
 namespace Vector3
@@ -109,9 +120,17 @@ def set (v : Vector3) (i : Fin 3) (value : Float32) : Vector3 :=
 end Vector3
 
 instance : Add Vector3 := ⟨Vector3.add⟩
+instance : HAdd Float32 Vector3 Vector3 := ⟨λ s v ↦ ⟨s + v.x, s + v.y, s + v.z⟩⟩
+instance : HAdd Vector3 Float32 Vector3 := ⟨λ v s ↦ ⟨v.x + s, v.y + s, v.z + s⟩⟩
 instance : Sub Vector3 := ⟨Vector3.sub⟩
+instance : HSub Float32 Vector3 Vector3 := ⟨λ s v ↦ ⟨s - v.x, s - v.y, s - v.z⟩⟩
+instance : HSub Vector3 Float32 Vector3 := ⟨λ v s ↦ ⟨v.x - s, v.y - s, v.z - s⟩⟩
 instance : Mul Vector3 := ⟨Vector3.mul⟩
+instance : HMul Vector3 Float32 Vector3 := ⟨Vector3.scale⟩
+instance : HMul Float32 Vector3 Vector3 := ⟨λ s v ↦ v.scale s⟩
 instance : Div Vector3 := ⟨Vector3.div⟩
+instance : HDiv Vector3 Float32 Vector3 := ⟨λ v s ↦ v.scale (.one / s)⟩
+instance : HDiv Float32 Vector3 Vector3 := ⟨λ s v ↦ ⟨s / v.x, s / v.y, s / v.z⟩⟩
 instance : BEq Vector3 := ⟨Vector3.beq⟩
 instance : Neg Vector3 := ⟨Vector3.neg⟩
 instance : Min Vector3 := ⟨Vector3.min⟩
@@ -123,6 +142,9 @@ instance : GetElem Vector3 UInt32 Float32 (λ _ i ↦ i < 3) where
 
 instance : GetElem Vector3 Nat Float32 (λ _ i ↦ i < 3) where
   getElem v i h := v.get $ .mk i h
+
+instance : ToString Vector3 where
+  toString v := s!"({v.x} {v.y} {v.z})"
 
 
 namespace Vector4
@@ -154,9 +176,17 @@ def set (v : Vector4) (i : Fin 4) (value : Float32) : Vector4 :=
 end Vector4
 
 instance : Add Vector4 := ⟨Vector4.add⟩
+instance : HAdd Float32 Vector4 Vector4 := ⟨λ s v ↦ ⟨s + v.x, s + v.y, s + v.z, s + v.w⟩⟩
+instance : HAdd Vector4 Float32 Vector4 := ⟨λ v s ↦ ⟨v.x + s, v.y + s, v.z + s, v.w + s⟩⟩
 instance : Sub Vector4 := ⟨Vector4.sub⟩
+instance : HSub Float32 Vector4 Vector4 := ⟨λ s v ↦ ⟨s - v.x, s - v.y, s - v.z, s - v.w⟩⟩
+instance : HSub Vector4 Float32 Vector4 := ⟨λ v s ↦ ⟨v.x - s, v.y - s, v.z - s, v.w - s⟩⟩
 instance : Mul Vector4 := ⟨Vector4.mul⟩
+instance : HMul Vector4 Float32 Vector4 := ⟨Vector4.scale⟩
+instance : HMul Float32 Vector4 Vector4 := ⟨λ s v ↦ v.scale s⟩
 instance : Div Vector4 := ⟨Vector4.div⟩
+instance : HDiv Vector4 Float32 Vector4 := ⟨λ v s ↦ v.scale (.one / s)⟩
+instance : HDiv Float32 Vector4 Vector4 := ⟨λ s v ↦ ⟨s / v.x, s / v.y, s / v.z, s / v.w⟩⟩
 instance : BEq Vector4 := ⟨Vector4.beq⟩
 instance : Neg Vector4 := ⟨Vector4.neg⟩
 instance : Min Vector4 := ⟨Vector4.min⟩
@@ -168,6 +198,9 @@ instance : GetElem Vector4 UInt32 Float32 (λ _ i ↦ i < 4) where
 
 instance : GetElem Vector4 Nat Float32 (λ _ i ↦ i < 4) where
   getElem v i h := v.get $ .mk i h
+
+instance : ToString Vector4 where
+  toString v := s!"({v.x} {v.y} {v.z} {v.w})"
 
 
 namespace Matrix
