@@ -2,10 +2,10 @@ import Raylib.Structures
 
 namespace Raylib
 
-def versionMajor := 4
-def versionMinor := 5
+def versionMajor := 5
+def versionMinor := 1
 def versionPatch := 0
-def version := "4.5"
+def version := "5.1-dev"
 
 
 namespace Color

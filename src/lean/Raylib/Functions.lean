@@ -20,10 +20,6 @@ Throws if window is already initialized.
 @[extern "lean_raylib__InitWindow"]
 opaque initWindow (width : UInt32) (height : UInt32) (title : @& Substring) : IO Context
 
-/-- Check if `KeyboardKey.escape` pressed or Close icon pressed -/
-@[extern "lean_raylib__WindowShouldClose"]
-opaque windowShouldClose : BaseIO Bool
-
 /--
 Close window and unload OpenGL context.
 If there are any values that need the context to be destroyed,
@@ -31,6 +27,10 @@ nothing happens until their finalization.
 -/
 @[extern "lean_raylib__CloseWindow"]
 opaque closeWindow (ctx : Context) : BaseIO Unit
+
+/-- Check if application should close (`KeyboardKey.escape` pressed or windows close icon clicked) -/
+@[extern "lean_raylib__WindowShouldClose"]
+opaque windowShouldClose : BaseIO Bool
 
 /-- Check if window has been initialized successfully -/
 @[extern "lean_raylib__IsWindowReady"]
@@ -76,6 +76,10 @@ opaque clearWindowState (flags : ConfigFlags) : BaseIO Unit
 @[extern "lean_raylib__ToggleFullscreen"]
 opaque toggleFullscreen : BaseIO Unit
 
+/-- Toggle window state: borderless windowed (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__ToggleBorderlessWindowed"]
+opaque toggleBorderlessWindowed : BaseIO Unit
+
 /-- Set window state: maximized, if resizable (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__MaximizeWindow"]
 opaque maximizeWindow : BaseIO Unit
@@ -96,7 +100,7 @@ opaque setWindowIcon (image : @& Image) : BaseIO Unit
 @[extern "lean_raylib__SetWindowIcons"]
 opaque setWindowIcons (images : @& Array Image) : BaseIO Unit
 
-/-- Set title for window (only PLATFORM_DESKTOP) -/
+/-- Set title for window (only PLATFORM_DESKTOP and PLATFORM_WEB) -/
 @[extern "lean_raylib__SetWindowTitle"]
 opaque setWindowTitle (title : @& Substring) : BaseIO Unit
 
@@ -104,13 +108,17 @@ opaque setWindowTitle (title : @& Substring) : BaseIO Unit
 @[extern "lean_raylib__SetWindowPosition"]
 opaque setWindowPosition (x : Int32) (y : Int32) : BaseIO Unit
 
-/-- Set monitor for the current window (fullscreen mode) -/
+/-- Set monitor for the current window -/
 @[extern "lean_raylib__SetWindowMonitor"]
 opaque setWindowMonitor (monitor : Int32) : BaseIO Unit
 
 /-- Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE) -/
 @[extern "lean_raylib__SetWindowMinSize"]
 opaque setWindowMinSize (width : UInt32) (height : UInt32) : BaseIO Unit
+
+/-- Set window maximum dimensions (for FLAG_WINDOW_RESIZABLE) -/
+@[extern "lean_raylib__SetWindowMaxSize"]
+opaque setWindowMaxSize (width height : UInt32) : BaseIO Unit
 
 /-- Set window dimensions -/
 @[extern "lean_raylib__SetWindowSize"]
@@ -119,6 +127,10 @@ opaque setWindowSize (width : UInt32) (height : UInt32) : BaseIO Unit
 /-- Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__SetWindowOpacity"]
 opaque setWindowOpacity (opacity : Float32) : BaseIO Unit
+
+/-- Set window focused (only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__SetWindowFocused"]
+opaque setWindowFocused : BaseIO Unit
 
 /-- Get native window handle -/
 @[extern "lean_raylib__GetWindowHandle"]
@@ -180,7 +192,7 @@ opaque getWindowPosition : BaseIO Vector2
 @[extern "lean_raylib__GetWindowScaleDPI"]
 opaque getWindowScaleDPI : BaseIO Vector2
 
-/-- Get the human-readable, UTF-8 encoded name of the primary monitor -/
+/-- Get the human-readable, UTF-8 encoded name of the specified monitor -/
 @[extern "lean_raylib__GetMonitorName"]
 opaque getMonitorName (monitor : Int32) : BaseIO String
 
@@ -199,18 +211,6 @@ opaque enableEventWaiting : BaseIO Unit
 /-- Disable waiting for events on EndDrawing(), automatic events polling -/
 @[extern "lean_raylib__DisableEventWaiting"]
 opaque disableEventWaiting : BaseIO Unit
-
-/-- Swap back buffer with front buffer (screen drawing) -/
-@[extern "lean_raylib__SwapScreenBuffer"]
-opaque swapScreenBuffer : BaseIO Unit
-
-/-- Register all input events -/
-@[extern "lean_raylib__PollInputEvents"]
-opaque pollInputEvents : BaseIO Unit
-
-/-- Wait for some time (halt program execution) -/
-@[extern "lean_raylib__WaitTime"]
-opaque waitTime (seconds : Float32) : BaseIO Unit
 
 /-- Shows cursor -/
 @[extern "lean_raylib__ShowCursor"]
@@ -348,27 +348,20 @@ opaque setShaderValueMatrix (shader : @& Shader) (locIndex : UInt32) (mat : @& M
 @[extern "lean_raylib__SetShaderValueTexture"]
 opaque setShaderValueTexture (shader : @& Shader) (locIndex : UInt32) (texture : @& Texture2D) : BaseIO Unit
 
-/-- Get a ray trace from mouse position -/
+/-- Get a ray trace from screen position (i.e mouse) -/
 -- IO: uses screen size
-@[extern "lean_raylib__GetMouseRay"]
-opaque getMouseRay (mousePosition : @& Vector2) (camera : @& Camera) : BaseIO Ray
+@[extern "lean_raylib__GetScreenToWorldRay"]
+opaque getScreenToWorld (mousePosition : @& Vector2) (camera : @& Camera) : BaseIO Ray
 
-/-- Get camera transform matrix (view matrix) -/
-@[extern "lean_raylib__GetCameraMatrix"]
-opaque getCameraMatrix (camera : @& Camera) : Matrix
-
-/-- Get camera 2d transform matrix -/
-@[extern "lean_raylib__GetCameraMatrix2D"]
-opaque getCameraMatrix2D (camera : @& Camera2D) : Matrix
+/-- Get a ray trace from screen position (i.e mouse) -/
+-- IO: uses screen size
+@[extern "lean_raylib__GetScreenToWorldRayEx"]
+opaque getScreenToWorldEx (mousePosition : @& Vector2) (camera : @& Camera) (width height : UInt32) : Ray
 
 /-- Get the screen space position for a 3d world space position -/
 -- IO: uses screen size
 @[extern "lean_raylib__GetWorldToScreen"]
 opaque getWorldToScreen (position : @& Vector3) (camera : @& Camera) : BaseIO Vector2
-
-/-- Get the world space position for a 2d camera screen space position -/
-@[extern "lean_raylib__GetScreenToWorld2D"]
-opaque getScreenToWorld2D (position : @& Vector2) (camera : @& Camera2D) : Vector2
 
 /-- Get size position for a 3d world space position -/
 -- IO: uses screen size
@@ -379,13 +372,21 @@ opaque getWorldToScreenEx (position : @& Vector3) (camera : @& Camera) (width : 
 @[extern "lean_raylib__GetWorldToScreen2D"]
 opaque getWorldToScreen2D (position : @& Vector2) (camera : @& Camera2D) : Vector2
 
+/-- Get the world space position for a 2d camera screen space position -/
+@[extern "lean_raylib__GetScreenToWorld2D"]
+opaque getScreenToWorld2D (position : @& Vector2) (camera : @& Camera2D) : Vector2
+
+/-- Get camera transform matrix (view matrix) -/
+@[extern "lean_raylib__GetCameraMatrix"]
+opaque getCameraMatrix (camera : @& Camera) : Matrix
+
+/-- Get camera 2d transform matrix -/
+@[extern "lean_raylib__GetCameraMatrix2D"]
+opaque getCameraMatrix2D (camera : @& Camera2D) : Matrix
+
 /-- Set target FPS (maximum) -/
 @[extern "lean_raylib__SetTargetFPS"]
 opaque setTargetFPS (fps : UInt32) : BaseIO Unit
-
-/-- Get current FPS -/
-@[extern "lean_raylib__GetFPS"]
-opaque getFPS : BaseIO UInt32
 
 /-- Get time in seconds for last frame drawn (delta time) -/
 @[extern "lean_raylib__GetFrameTime"]
@@ -395,13 +396,33 @@ opaque getFrameTime : BaseIO Float32
 @[extern "lean_raylib__GetTime"]
 opaque getTime : BaseIO Float32
 
-/-- Get a random value between min and max (both included) -/
-@[extern "lean_raylib__GetRandomValue"]
-opaque getRandomValue (min : Int32) (max : Int32) : BaseIO Int32
+/-- Get current FPS -/
+@[extern "lean_raylib__GetFPS"]
+opaque getFPS : BaseIO UInt32
+
+/-- Swap back buffer with front buffer (screen drawing) -/
+@[extern "lean_raylib__SwapScreenBuffer"]
+opaque swapScreenBuffer : BaseIO Unit
+
+/-- Register all input events -/
+@[extern "lean_raylib__PollInputEvents"]
+opaque pollInputEvents : BaseIO Unit
+
+/-- Wait for some time (halt program execution) -/
+@[extern "lean_raylib__WaitTime"]
+opaque waitTime (seconds : Float32) : BaseIO Unit
 
 /-- Set the seed for the random number generator -/
 @[extern "lean_raylib__SetRandomSeed"]
 opaque setRandomSeed (seed : UInt32) : BaseIO Unit
+
+/-- Get a random value between min and max (both included) -/
+@[extern "lean_raylib__GetRandomValue"]
+opaque getRandomValue (min : Int32) (max : Int32) : BaseIO Int32
+
+/-- Load random values sequence, no values repeated -/
+@[extern "lean_raylib__LoadRandomSequence"]
+opaque loadRandomSequence (count : UInt32) (min max : Int32) : BaseIO (Array Int32)
 
 /-- Takes a screenshot of current screen (filename extension defines format) -/
 @[extern "lean_raylib__TakeScreenshot"]
@@ -410,6 +431,10 @@ opaque takeScreenshot (fileName : @& FilePath) : BaseIO Unit
 /-- Setup init configuration flags (view FLAGS) -/
 @[extern "lean_raylib__SetConfigFlags"]
 opaque setConfigFlags (flags : ConfigFlags) : BaseIO Unit
+
+/-- Open URL with default system browser (if available) -/
+@[extern "lean_raylib__OpenURL"]
+opaque openURL (url : @& String) : BaseIO Unit
 
 /--
 Show trace log messages (`debug`, `info`, `warning`, `error`...).
@@ -436,10 +461,6 @@ NOTE: Clones the buffer using `memAlloc` if it wasn't allocated using the same a
 -/
 @[extern "lean_raylib__MemRealloc"]
 opaque memRealloc {size₁ : @& Nat} (buf : Pod.Buffer size₁ 1) (size : @& Nat) : Pod.Buffer size 1
-
-/-- Open URL with default system browser (if available) -/
-@[extern "lean_raylib__OpenURL"]
-opaque openURL (url : @& String) : BaseIO Unit
 
 /-- Set custom trace log -/
 @[extern "lean_raylib__SetTraceLogCallback"]
@@ -560,7 +581,7 @@ THREAD-UNSAFE: static local
 opaque getWorkingDirectory : BaseIO FilePath
 
 /--
-Get the directory if the running application (uses static string).
+Get the directory of the running application (uses static string)
 THREAD-UNSAFE: static local
 -/
 @[extern "lean_raylib__GetApplicationDirectory"]
@@ -573,6 +594,10 @@ opaque changeDirectory (dir : @& FilePath) : BaseIO Bool
 /-- Check if a given path is a file or a directory -/
 @[extern "lean_raylib__IsPathFile"]
 opaque isPathFile (path : @& FilePath) : BaseIO Bool
+
+/-- Check if fileName is valid for the platform/OS -/
+@[extern "lean_raylib__IsFileNameValid"]
+opaque isFileNameValid (path : @& FilePath) : BaseIO Bool
 
 /-- Load directory filepaths -/
 @[extern "lean_raylib__LoadDirectoryFiles"]
@@ -621,9 +646,49 @@ opaque encodeDataBase64ST {σ size} (data : @& Pod.BytesRefImm σ size 1) : ST �
 @[extern "lean_raylib__DecodeDataBase64"]
 opaque decodeDataBase64 (code : @& String) : ByteArray
 
+/-- Load automation events list from file -/
+@[extern "lean_raylib__LoadAutomationEventList"]
+opaque loadAutomationEventList (fileName : @& FilePath) : BaseIO AutomationEventList
+
+/-- Load empty automation events list, capacity = MAX_AUTOMATION_EVENTS -/
+@[extern "lean_raylib__LoadEmptyAutomationEventList"]
+opaque loadEmptyAutomationEventList : BaseIO AutomationEventList
+
+/-- Export automation events list as text file -/
+@[extern "lean_raylib__ExportAutomationEventList"]
+opaque exportAutomationEventList (list : @& AutomationEventList) (fileName : @& FilePath) : BaseIO Bool
+
+/-- Set automation event list to record to -/
+@[extern "lean_raylib__SetAutomationEventList"]
+opaque setAutomationEventList (list : AutomationEventList) : BaseIO Unit
+
+/-- Clear automation event list to record to -/
+@[extern "lean_raylib__ResetAutomationEventList"]
+opaque resetAutomationEventList : BaseIO Unit
+
+/-- Set automation event internal base frame to start recording -/
+@[extern "lean_raylib__SetAutomationEventBaseFrame"]
+opaque setAutomationEventBaseFrame (frame : UInt32) : BaseIO Unit
+
+/-- Start recording automation events (AutomationEventList must be set) -/
+@[extern "lean_raylib__StartAutomationEventRecording"]
+opaque startAutomationEventRecording : BaseIO Unit
+
+/-- Stop recording automation events -/
+@[extern "lean_raylib__StopAutomationEventRecording"]
+opaque stopAutomationEventRecording : BaseIO Unit
+
+/-- Play a recorded automation event -/
+@[extern "lean_raylib__PlayAutomationEvent"]
+opaque playAutomationEvent (event : @& AutomationEvent) : BaseIO Unit
+
 /-- Check if a key has been pressed once -/
 @[extern "lean_raylib__IsKeyPressed"]
 opaque isKeyPressed (key : KeyboardKey) : BaseIO Bool
+
+/-- Check if a key has been pressed again (Only PLATFORM_DESKTOP) -/
+@[extern "lean_raylib__IsKeyPressedRepeat"]
+opaque isKeyPressedRepeat (key : KeyboardKey) : BaseIO Bool
 
 /-- Check if a key is being pressed -/
 @[extern "lean_raylib__IsKeyDown"]
@@ -637,10 +702,6 @@ opaque isKeyReleased (key : KeyboardKey) : BaseIO Bool
 @[extern "lean_raylib__IsKeyUp"]
 opaque isKeyUp (key : KeyboardKey) : BaseIO Bool
 
-/-- Set a custom key to exit program (default is ESC) -/
-@[extern "lean_raylib__SetExitKey"]
-opaque setExitKey (key : KeyboardKey) : BaseIO Unit
-
 /-- Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty -/
 @[extern "lean_raylib__GetKeyPressed"]
 opaque getKeyPressed : BaseIO KeyboardKey
@@ -648,6 +709,10 @@ opaque getKeyPressed : BaseIO KeyboardKey
 /-- Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty -/
 @[extern "lean_raylib__GetCharPressed"]
 opaque getCharPressed : BaseIO Char
+
+/-- Set a custom key to exit program (default is ESC) -/
+@[extern "lean_raylib__SetExitKey"]
+opaque setExitKey (key : KeyboardKey) : BaseIO Unit
 
 /-- Check if a gamepad is available -/
 @[extern "lean_raylib__IsGamepadAvailable"]
@@ -688,6 +753,10 @@ opaque getGamepadAxisMovement (gamepad : UInt32) (axis : UInt32) : BaseIO Float3
 /-- Set internal gamepad mappings (SDL_GameControllerDB) -/
 @[extern "lean_raylib__SetGamepadMappings"]
 opaque setGamepadMappings (mappings : @& String) : BaseIO Bool
+
+/-- Set gamepad vibration for both motors -/
+@[extern "lean_raylib__SetGamepadVibration"]
+opaque setGamepadVibration (gamepad : UInt32) (leftMotor rightMotor : Float32) : BaseIO Unit
 
 /-- Check if a mouse button has been pressed once -/
 @[extern "lean_raylib__IsMouseButtonPressed"]
@@ -809,41 +878,45 @@ opaque updateCameraPro (cam : Camera) (movement rotation : @& Vector3) (zoom : F
 @[extern "lean_raylib__SetShapesTexture"]
 opaque setShapesTexture (texture : Texture2DRef) (source : @& Rectangle) : BaseIO Unit
 
+/-- Reset texture and rectangle to be used on shapes drawing -/
+@[extern "lean_raylib__ResetShapesTexture"]
+opaque resetShapesTexture : BaseIO Unit
+
+/-- Get texture that is used for shapes drawing -/
+@[extern "lean_raylib__GetShapesTexture"]
+opaque getShapesTexture : BaseIO Texture2DRef
+
+/-- Get texture source rectangle that is used for shapes drawing -/
+@[extern "lean_raylib__GetShapesTextureRectangle"]
+opaque getShapesTextureRectangle : BaseIO Rectangle
+
 /-- Draw a pixel -/
 @[extern "lean_raylib__DrawPixel"]
 opaque drawPixel (posX : Int32) (posY : Int32) (color : Color) : BaseIO Unit
 
 /-- Draw a pixel (Vector version) -/
 @[extern "lean_raylib__DrawPixelV"]
-opaque drawPixelV (position : Vector2) (color : Color) : BaseIO Unit
+opaque drawPixelV (position : @& Vector2) (color : Color) : BaseIO Unit
 
 /-- Draw a line -/
 @[extern "lean_raylib__DrawLine"]
 opaque drawLine (startPosX : Int32) (startPosY : Int32) (endPosX : Int32) (endPosY : Int32) (color : Color) : BaseIO Unit
 
-/-- Draw a line (Vector version) -/
+/-- Draw a line (using gl lines) -/
 @[extern "lean_raylib__DrawLineV"]
-opaque drawLineV (startPos : Vector2) (endPos : Vector2) (color : Color) : BaseIO Unit
+opaque drawLineV (startPos : @& Vector2) (endPos : @& Vector2) (color : Color) : BaseIO Unit
 
-/-- Draw a line defining thickness -/
+/-- Draw a line (using triangles/quads) -/
 @[extern "lean_raylib__DrawLineEx"]
-opaque drawLineEx (startPos : Vector2) (endPos : Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+opaque drawLineEx (startPos : @& Vector2) (endPos : @& Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw lines sequence (using gl lines) -/
+@[extern "lean_raylib__DrawLineStrip"]
+opaque drawLineStrip (points : @& Array Vector2) (color : Color) : BaseIO Unit
 
 /-- Draw a line using cubic-bezier curves in-out -/
 @[extern "lean_raylib__DrawLineBezier"]
-opaque drawLineBezier (startPos : Vector2) (endPos : Vector2) (thick : Float32) (color : Color) : BaseIO Unit
-
-/-- Draw line using quadratic bezier curves with a control point -/
-@[extern "lean_raylib__DrawLineBezierQuad"]
-opaque drawLineBezierQuad (startPos : Vector2) (endPos : Vector2) (controlPos : Vector2) (thick : Float32) (color : Color) : BaseIO Unit
-
-/-- Draw line using cubic bezier curves with 2 control points -/
-@[extern "lean_raylib__DrawLineBezierCubic"]
-opaque drawLineBezierCubic (startPos : Vector2) (endPos : Vector2) (startControlPos : Vector2) (endControlPos : Vector2) (thick : Float32) (color : Color) : BaseIO Unit
-
-/-- Draw lines sequence -/
-@[extern "lean_raylib__DrawLineStrip"]
-opaque drawLineStrip (points : @& Array Vector2) (color : Color) : BaseIO Unit
+opaque drawLineBezier (startPos : @& Vector2) (endPos : @& Vector2) (thick : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw a color-filled circle -/
 @[extern "lean_raylib__DrawCircle"]
@@ -868,6 +941,10 @@ opaque drawCircleV (center : @& Vector2) (radius : Float32) (color : Color) : Ba
 /-- Draw circle outline -/
 @[extern "lean_raylib__DrawCircleLines"]
 opaque drawCircleLines (centerX : Int32) (centerY : Int32) (radius : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw circle outline (Vector version) -/
+@[extern "lean_raylib__DrawCircleLinesV"]
+opaque drawCircleLinesV (center : @& Vector2) (radius : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw ellipse -/
 @[extern "lean_raylib__DrawEllipse"]
@@ -919,15 +996,19 @@ opaque drawRectangleLines (posX : Int32) (posY : Int32) (width : Int32) (height 
 
 /-- Draw rectangle outline with extended parameters -/
 @[extern "lean_raylib__DrawRectangleLinesEx"]
-opaque drawRectangleLinesEx (rec : @& Rectangle) (lineThick : Float32) (color : Color) : BaseIO Unit
+opaque drawRectangleLinesEx (rect : @& Rectangle) (lineThick : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw rectangle with rounded edges -/
 @[extern "lean_raylib__DrawRectangleRounded"]
 opaque drawRectangleRounded (rec : @& Rectangle) (roundness : Float32) (segments : UInt32) (color : Color) : BaseIO Unit
 
-/-- Draw rectangle with rounded edges outline -/
+/-- Draw rectangle lines with rounded edges -/
 @[extern "lean_raylib__DrawRectangleRoundedLines"]
-opaque drawRectangleRoundedLines (rec : @& Rectangle) (roundness : Float32) (segments : UInt32) (lineThick : Float32) (color : Color) : BaseIO Unit
+opaque drawRectangleRoundedLines (rec : @& Rectangle) (roundness : Float32) (segments : UInt32) (color : Color) : BaseIO Unit
+
+/-- Draw rectangle with rounded edges outline -/
+@[extern "lean_raylib__DrawRectangleRoundedLinesEx"]
+opaque drawRectangleRoundedLinesEx (rec : @& Rectangle) (roundness : Float32) (segments : UInt32) (lineThick : Float32) (color : Color)  : BaseIO Unit
 
 /-- Draw a color-filled triangle (vertex in counter-clockwise order!) -/
 @[extern "lean_raylib__DrawTriangle"]
@@ -956,6 +1037,66 @@ opaque drawPolyLines (center : @& Vector2) (sides : UInt32) (radius : Float32) (
 /-- Draw a polygon outline of n sides with extended parameters -/
 @[extern "lean_raylib__DrawPolyLinesEx"]
 opaque drawPolyLinesEx (center : @& Vector2) (sides : UInt32) (radius : Float32) (rotation : Float32) (lineThick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline: Linear (does nothing for less than 2 points) -/
+@[extern "lean_raylib__DrawSplineLinear"]
+opaque drawSplineLinear (points : @& Array Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline: B-Spline (does nothing for less than 4 points) -/
+@[extern "lean_raylib__DrawSplineBasis"]
+opaque drawSplineBasis (points : @& Array Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline: Catmull-Rom (does nothing for less than 4 points) -/
+@[extern "lean_raylib__DrawSplineCatmullRom"]
+opaque drawSplineCatmullRom (points : @& Array Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline: Quadratic Bezier (does nothing for less than 3 points) (1 control point): [p1, c2, p3, c4...] -/
+@[extern "lean_raylib__DrawSplineBezierQuadratic"]
+opaque drawSplineBezierQuadratic (points : @& Array Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline: Cubic Bezier (does nothing for less than 4 points) (2 control points): [p1, c2, c3, p4, c5, c6...] -/
+@[extern "lean_raylib__DrawSplineBezierCubic"]
+opaque drawSplineBezierCubic (points : @& Array Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline segment: Linear, 2 points -/
+@[extern "lean_raylib__DrawSplineSegmentLinear"]
+opaque drawSplineSegmentLinear (p1 p2 : @& Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline segment: B-Spline, 4 points -/
+@[extern "lean_raylib__DrawSplineSegmentBasis"]
+opaque drawSplineSegmentBasis (p1 p2 p3 p4 : @& Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline segment: Catmull-Rom, 4 points -/
+@[extern "lean_raylib__DrawSplineSegmentCatmullRom"]
+opaque drawSplineSegmentCatmullRom (p1 p2 p3 p4 : @& Array Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline segment: Quadratic Bezier, 2 points, 1 control point -/
+@[extern "lean_raylib__DrawSplineSegmentBezierQuadratic"]
+opaque drawSplineSegmentBezierQuadratic (p1 c2 p3 : @& Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Draw spline segment: Cubic Bezier, 2 points, 2 control points -/
+@[extern "lean_raylib__DrawSplineSegmentBezierCubic"]
+opaque drawSplineSegmentBezierCubic (p1 c2 c3 p4 : @& Vector2) (thick : Float32) (color : Color) : BaseIO Unit
+
+/-- Get (evaluate) spline point: Linear -/
+@[extern "lean_raylib__GetSplinePointLinear"]
+opaque getSplinePointLinear (start «end» : @& Vector2) (t : Float32) : Vector2
+
+/-- Get (evaluate) spline point: B-Spline -/
+@[extern "lean_raylib__GetSplinePointBasis"]
+opaque getSplinePointBasis (p1 p2 p3 p4 : @& Vector2) (t : Float32) : Vector2
+
+/-- Get (evaluate) spline point: Catmull-Rom -/
+@[extern "lean_raylib__GetSplinePointCatmullRom"]
+opaque getSplinePointCatmullRom (p1 p2 p3 p4 : @& Vector2) (t : Float32) : Vector2
+
+/-- Get (evaluate) spline point: Quadratic Bezier -/
+@[extern "lean_raylib__GetSplinePointBezierQuad"]
+opaque getSplinePointBezierQuad (p1 c2 p3 : @& Vector2) (t : Float32) : Vector2
+
+/-- Get (evaluate) spline point: Cubic Bezier -/
+@[extern "lean_raylib__GetSplinePointBezierCubic"]
+opaque getSplinePointBezierCubic (p1 c2 c3 p4 : @& Vector2) (t : Float32) : Vector2
 
 /-- Check collision between two rectangles -/
 @[extern "lean_raylib__CheckCollisionRecs"]
@@ -993,6 +1134,10 @@ opaque checkCollisionLines (startPos1 : @& Vector2) (endPos1 : @& Vector2) (star
 @[extern "lean_raylib__CheckCollisionPointLine"]
 opaque checkCollisionPointLine (point : @& Vector2) (p1 : @& Vector2) (p2 : @& Vector2) (threshold : UInt32) : Bool
 
+/-- Check if circle collides with a line created betweeen two points [p1] and [p2] -/
+@[extern "lean_raylib__CheckCollisionCircleLine"]
+opaque checkCollisionCircleLine (center : @& Vector2) (radius : Float32) (p1 p2 : @& Vector2) : Bool
+
 /-- Get collision rectangle for two rectangles collision -/
 @[extern "lean_raylib__GetCollisionRec"]
 opaque getCollisionRec (rec1 : @& Rectangle) (rec2 : @& Rectangle) : Rectangle
@@ -1008,9 +1153,17 @@ opaque loadImageRaw
   (format : PixelFormat) (headerSize : UInt32)
   : BaseIO Image
 
+/-- Load image from SVG file data or string with specified size -/
+@[extern "lean_raylib__LoadImageSvg"]
+opaque loadImageSvg (fileNameOrString : @& String) (width height : UInt32) : BaseIO Image
+
 /-- Load image sequence from file (frames appended to image.data) -/
 @[extern "lean_raylib__LoadImageAnim"]
 opaque loadImageAnim (fileName : @& FilePath) : BaseIO (Image × UInt32)
+
+/-- Load image sequence from memory buffer -/
+@[extern "lean_raylib__LoadImageAnimFromMemory"]
+opaque loadImageAnimFromMemory {size} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Image × UInt32
 
 /-- Load image from memory buffer, fileType refers to extension: i.e. '.png' -/
 @[extern "lean_raylib__LoadImageFromMemory"]
@@ -1035,6 +1188,10 @@ opaque isImageReady (image : @& Image) : Bool
 @[extern "lean_raylib__ExportImage"]
 opaque exportImage (image : @& Image) (fileName : @& FilePath) : BaseIO Bool
 
+/-- Export image to memory buffer -/
+@[extern "lean_raylib__ExportImageToMemory"]
+opaque exportImageToMemory (image : @& Image) (fileType : @& String) : ByteArray
+
 /-- Export image as code file defining an array of bytes, returns true on success -/
 @[extern "lean_raylib__ExportImageAsCode"]
 opaque exportImageAsCode (image : @& Image) (fileName : @& FilePath) : BaseIO Bool
@@ -1043,13 +1200,9 @@ opaque exportImageAsCode (image : @& Image) (fileName : @& FilePath) : BaseIO Bo
 @[extern "lean_raylib__GenImageColor"]
 opaque genImageColor (width height : UInt32) (color : Color) : Image
 
-/-- Generate image: vertical gradient -/
-@[extern "lean_raylib__GenImageGradientV"]
-opaque genImageGradientV (width : UInt32) (height : UInt32) (top : Color) (bottom : Color) : Image
-
-/-- Generate image: horizontal gradient -/
-@[extern "lean_raylib__GenImageGradientH"]
-opaque genImageGradientH (width : UInt32) (height : UInt32) (left : Color) (right : Color) : Image
+/-- Generate image: linear gradient, direction in degrees [0..360], 0=Vertical gradient -/
+@[extern "lean_raylib__GenImageGradientLinear"]
+opaque genImageGradientLinear (width : UInt32) (height : UInt32) (direction : UInt32) (start «end» : Color) : Image
 
 /-- Generate image: radial gradient -/
 @[extern "lean_raylib__GenImageGradientRadial"]
@@ -1125,6 +1278,10 @@ opaque imageAlphaPremultiply (image : Image) : Image
 @[extern "lean_raylib__ImageBlurGaussian"]
 opaque imageBlurGaussian (image : Image) (blurSize : UInt32) : Image
 
+/-- Apply Custom Square image convolution kernel -/
+@[extern "lean_raylib__ImageKernelConvolution"]
+opaque imageKernelConvolution (image : Image) (kernel : @& Array Float32) : Image
+
 /-- Resize image (Bicubic scaling algorithm) -/
 @[extern "lean_raylib__ImageResize"]
 opaque imageResize (image : Image) (newWidth : UInt32) (newHeight : UInt32) : Image
@@ -1165,6 +1322,10 @@ opaque imageFlipVertical (image : Image) : Image
 /-- Flip image horizontally -/
 @[extern "lean_raylib__ImageFlipHorizontal"]
 opaque imageFlipHorizontal (image : Image) : Image
+
+/-- Rotate image by input angle in degrees (-359 to 359) -/
+@[extern "lean_raylib__ImageRotate"]
+opaque imageRotate (image : Image) (degrees : Int32) : Image
 
 /-- Rotate image clockwise 90deg -/
 @[extern "lean_raylib__ImageRotateCW"]
@@ -1354,11 +1515,15 @@ opaque drawTexturePro (texture : @& Texture2DRef) (source : @& Rectangle) (dest 
 @[extern "lean_raylib__DrawTextureNPatch"]
 opaque drawTextureNPatch (texture : @& Texture2D) (nPatchInfo : @& NPatchInfo) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float32) (tint : Color) : BaseIO Unit
 
+/-- Check if two colors are equal -/
+@[deprecated BEq.beq]
+def colorIsEqual (col1 col2 : Color) := col1 == col2
+
 /-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
 @[extern "lean_raylib__Fade"]
 opaque fade (color : Color) (alpha : Float32) : Color
 
-/-- Get hexadecimal value for a Color -/
+/-- Get hexadecimal value for a Color (0xRRGGBBAA) -/
 @[extern "lean_raylib__ColorToInt", deprecated Color.rgba]
 opaque colorToInt (color : Color) : UInt32
 
@@ -1428,7 +1593,7 @@ opaque loadFont (ctx : Context) (fileName : @& FilePath) : BaseIO Font
 
 /-- Load font from file with extended parameters, use `none` for `fontChars` to load the default character set -/
 @[extern "lean_raylib__LoadFontEx"]
-opaque loadFontEx (ctx : Context) (fileName : @& FilePath) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : BaseIO Font
+opaque loadFontEx (ctx : Context) (fileName : @& FilePath) (fontSize : UInt32) (codepoints : @& Option (Array Char)) : BaseIO Font
 
 /-- Load font from Image (XNA style) -/
 @[extern "lean_raylib__LoadFontFromImage"]
@@ -1439,7 +1604,7 @@ Load font from memory buffer, fileType refers to extension: i.e. '.ttf'.
 NOTE: data size isn't checked and may cause UB.
 -/
 @[extern "lean_raylib__LoadFontFromMemory"]
-opaque loadFontFromMemory {size} (ctx : Context) (fileType : @& String) (data : @& Pod.BytesView size 1) (fontSize : UInt32) (fontChars : @& Option (Array Char)) : Font
+opaque loadFontFromMemory {size} (ctx : Context) (fileType : @& String) (data : @& Pod.BytesView size 1) (fontSize : UInt32) (codepoints : @& Option (Array Char)) : Font
 
 /-- Check if a font is ready -/
 @[extern "lean_raylib__IsFontReady"]
@@ -1449,14 +1614,14 @@ opaque isFontReady (font : @& Font) : Bool
 Load font data for further use.
 
 Params:
-`fontChars` -- either amount of chars starting at space or an array of chars to be loaded.
+`codepoints` -- either amount of codepoints starting at space or an array of codepoints to be loaded.
 
-Returns array of size `fontChars.elim id (·.size)`.
+Returns array of size `codepoints.elim id (·.size)`.
 -/
 @[extern "lean_raylib__LoadFontData"]
 opaque loadFontData {n : @& Nat} (data : @& Pod.BytesView n 1)
   (fontSize : UInt32)
-  (fontChars : @& Sum UInt32 (Array Char))
+  (codepoints : @& Sum UInt32 (Array Char))
   (type : FontType)
   : Option (Array GlyphInfo)
 
@@ -1470,7 +1635,8 @@ Generate image font atlas using chars info.
 ∀ chars, (genImageFontAtlas chars _ _ _).snd.size = chars.size
 -/
 @[extern "lean_raylib__GenImageFontAtlas"]
-opaque genImageFontAtlas (chars : @& Array GlyphInfo)
+opaque genImageFontAtlas
+  (glyphs : @& Array GlyphInfo)
   (fontSize : UInt32)
   (padding : UInt32)
   (packMethod : FontAtlasPackMethod)
@@ -1503,6 +1669,10 @@ opaque drawTextCodepoint (font : @& Font) (codepoint : Char) (position : @& Vect
 /-- Draw utf-32 text using font and additional parameters. -/
 @[extern "lean_raylib__DrawTextCodepoints"]
 opaque drawTextCodepoints (font : @& Font) (text : @& Array Char) (position : @& Vector2) (fontSize : Float32) (spacing : Float32) (tint : Color) : BaseIO Unit
+
+/-- Set vertical line spacing when drawing with line-breaks -/
+@[extern "lean_raylib__SetTextLineSpacing"]
+opaque setTextLineSpacing (spacing : Int32) : BaseIO Unit
 
 /-- Measure string width for default font -/
 @[extern "lean_raylib__MeasureText"]
@@ -1688,10 +1858,6 @@ opaque drawMeshInstanced (mesh : @& Mesh) (material : @& Material) (transforms :
 opaque drawMeshInstancedBv (mesh : @& Mesh) (material : @& Material) (n : @& Nat)
   (transforms : @& Pod.BytesView (n * Pod.byteSize Matrix) (Pod.alignment Matrix)) : BaseIO Unit
 
-/-- Export mesh data to file, returns true on success -/
-@[extern "lean_raylib__ExportMesh"]
-opaque exportMesh (mesh : @& Mesh) (fileName : @& FilePath) : BaseIO Bool
-
 /-- Compute mesh bounding box limits -/
 @[extern "lean_raylib__GetMeshBoundingBox"]
 opaque getMeshBoundingBox (mesh : @& Mesh) : BoundingBox
@@ -1699,6 +1865,10 @@ opaque getMeshBoundingBox (mesh : @& Mesh) : BoundingBox
 /-- Compute mesh tangents -/
 @[extern "lean_raylib__GenMeshTangents"]
 opaque genMeshTangents (mesh : Mesh) : Mesh
+
+/-- Export mesh data to file, returns true on success -/
+@[extern "lean_raylib__ExportMesh"]
+opaque exportMesh (mesh : @& Mesh) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Generate polygonal mesh -/
 @[extern "lean_raylib__GenMeshPoly"]
@@ -1811,6 +1981,10 @@ opaque isAudioDeviceReady : BaseIO Bool
 @[extern "lean_raylib__SetMasterVolume"]
 opaque setMasterVolume (volume : Float32) : BaseIO Unit
 
+/-- Get master volume (listener) -/
+@[extern "lean_raylib__GetMasterVolume"]
+opaque getMasterVolume : BaseIO Float32
+
 /-- Load wave data from file -/
 @[extern "lean_raylib__LoadWave"]
 opaque loadWave (fileName : @& FilePath) : BaseIO Wave
@@ -1830,6 +2004,9 @@ opaque loadSound (ctx : Context) (fileName : @& FilePath) : BaseIO Sound
 /-- Load sound from wave data -/
 @[extern "lean_raylib__LoadSoundFromWave"]
 opaque loadSoundFromWave (ctx : Context) (wave : @& Wave) : Sound
+
+@[deprecated]
+def loadSoundAlias (source : Sound) : Sound := source
 
 /-- Checks if a sound is ready -/
 @[extern "lean_raylib__IsSoundReady"]
@@ -1889,9 +2066,9 @@ opaque setSoundPan (sound : @& Sound) (pan : Float32) : BaseIO Unit
 @[extern "lean_raylib__WaveCopy"]
 opaque waveCopy (wave : @& Wave) : Wave
 
-/-- Crop a wave to defined samples range -/
+/-- Crop a wave to defined frames range -/
 @[extern "lean_raylib__WaveCrop"]
-opaque waveCrop (wave : Wave) (initSample : UInt32) (finalSample : UInt32) : Wave
+opaque waveCrop (wave : Wave) (initFrame finalFrame : UInt32) : Wave
 
 /-- Convert wave data to desired format -/
 @[extern "lean_raylib__WaveFormat"]
@@ -2026,7 +2203,7 @@ opaque setAudioStreamBufferSizeDefault (size : UInt32) : BaseIO Unit
 @[extern "lean_raylib__SetAudioStreamCallback"]
 opaque setAudioStreamCallback {st} (stream : @& AudioStream st) (callback : AudioCallback st) : BaseIO Unit
 
--- /-- Attach audio stream processor to stream -/
+-- /-- Attach audio stream processor to stream, receives the samples as 'float' -/
 -- @[extern "lean_raylib__AttachAudioStreamProcessor"]
 -- opaque attachAudioStreamProcessor : Unit -> Unit
 -- /- todo: ^^ function ^^
@@ -2044,11 +2221,27 @@ opaque setAudioStreamCallback {st} (stream : @& AudioStream st) (callback : Audi
 --   | stream : AudioStream
 --   | processor : AudioCallback
 -- -/
--- /-- Attach audio stream processor to the entire audio pipeline -/
+-- /-- Attach audio stream processor to the entire audio pipeline, receives the samples as 'float' -/
 -- @[extern "lean_raylib__AttachAudioMixedProcessor"]
 -- opaque attachAudioMixedProcessor (processor : AudioCallback) : BaseIO Unit
 -- /-- Detach audio stream processor from the entire audio pipeline -/
 -- @[extern "lean_raylib__DetachAudioMixedProcessor"]
 -- opaque detachAudioMixedProcessor (processor : AudioCallback) : BaseIO Unit
+
+-- /-- Audio thread creation callback (called on the created thread, usually should be set before audio device initialization, can be NULL) -/
+-- @[extern "lean_raylib__SetAudioThreadEntryCallback"]
+-- opaque setAudioThreadEntryCallback (callback : AudioThreadEntryCallback) : BaseIO Unit
+
+-- /-- Reset audio thread creation callback -/
+-- @[extern "lean_raylib__ResetAudioThreadEntryCallback"]
+-- opaque resetAudioThreadEntryCallback : BaseIO Unit
+
+-- /-- Audio thread destruction callback (called on the destroyed thread, can be NULL) -/
+-- @[extern "lean_raylib__SetAudioThreadExitCallback"]
+-- opaque setAudioThreadExitCallback (callback : AudioThreadExitCallback) : BaseIO Unit
+
+-- /-- Reset audio thread destruction callback -/
+-- @[extern "lean_raylib__ResetAudioThreadExitCallback"]
+-- opaque resetAudioThreadExitCallback : BaseIO Unit
 
 end Raylib

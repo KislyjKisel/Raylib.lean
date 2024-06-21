@@ -62,6 +62,9 @@ def windowHighdpi : ConfigFlags := ConfigFlags.mk 8192
 /-- Set to support mouse passthrough, only supported when `windowUndecorated` -/
 def windowMousePassthrough : ConfigFlags := ConfigFlags.mk 16384
 
+/-- Set to run program in borderless windowed mode -/
+def borderlessWindowedMode : ConfigFlags := ConfigFlags.mk 32768
+
 /-- Set to try enabling MSAA 4X -/
 def msaa4xHint : ConfigFlags := ConfigFlags.mk 32
 
@@ -226,7 +229,7 @@ inductive KeyboardKey.Is : UInt32 -> Prop where
   | kpEnter : KeyboardKey.Is 335
   | kpEqual : KeyboardKey.Is 336
   | back : KeyboardKey.Is 4
-  | menu : KeyboardKey.Is 82
+  | menu : KeyboardKey.Is 5
   | volumeUp : KeyboardKey.Is 24
   | volumeDown : KeyboardKey.Is 25
 
@@ -557,7 +560,7 @@ def kpEqual : KeyboardKey := Subtype.mk 336 KeyboardKey.Is.kpEqual
 def back : KeyboardKey := Subtype.mk 4 KeyboardKey.Is.back
 
 /-- Android menu button -/
-def menu : KeyboardKey := Subtype.mk 82 KeyboardKey.Is.menu
+def menu : KeyboardKey := Subtype.mk 5 KeyboardKey.Is.menu
 
 /-- Android volume up button -/
 def volumeUp : KeyboardKey := Subtype.mk 24 KeyboardKey.Is.volumeUp
@@ -692,17 +695,17 @@ def leftFaceDown : GamepadButton := Subtype.mk 3 GamepadButton.Is.leftFaceDown
 def leftFaceLeft : GamepadButton := Subtype.mk 4 GamepadButton.Is.leftFaceLeft
 /-- Gamepad right button up (i.e. PS3: Triangle, Xbox: Y) -/
 def rightFaceUp : GamepadButton := Subtype.mk 5 GamepadButton.Is.rightFaceUp
-/-- Gamepad right button right (i.e. PS3: Square, Xbox: X) -/
+/-- Gamepad right button right (i.e. PS3: Circle, Xbox: X) -/
 def rightFaceRight : GamepadButton := Subtype.mk 6 GamepadButton.Is.rightFaceRight
 /-- Gamepad right button down (i.e. PS3: Cross, Xbox: A) -/
 def rightFaceDown : GamepadButton := Subtype.mk 7 GamepadButton.Is.rightFaceDown
-/-- Gamepad right button left (i.e. PS3: Circle, Xbox: B) -/
+/-- Gamepad right button left (i.e. PS3: Square, Xbox: B) -/
 def rightFaceLeft : GamepadButton := Subtype.mk 8 GamepadButton.Is.rightFaceLeft
 /-- Gamepad top/back trigger left (first), it could be a trailing button -/
 def leftTrigger1 : GamepadButton := Subtype.mk 9 GamepadButton.Is.leftTrigger1
 /-- Gamepad top/back trigger left (second), it could be a trailing button -/
 def leftTrigger2 : GamepadButton := Subtype.mk 10 GamepadButton.Is.leftTrigger2
-/-- Gamepad top/back trigger right (one), it could be a trailing button -/
+/-- Gamepad top/back trigger right (first), it could be a trailing button -/
 def rightTrigger1 : GamepadButton := Subtype.mk 11 GamepadButton.Is.rightTrigger1
 /-- Gamepad top/back trigger right (second), it could be a trailing button -/
 def rightTrigger2 : GamepadButton := Subtype.mk 12 GamepadButton.Is.rightTrigger2
@@ -958,7 +961,7 @@ def vec4 : ShaderAttributeDataType := Subtype.mk 3 ShaderAttributeDataType.Is.ve
 
 end ShaderAttributeDataType
 
-instance : Inhabited ShaderAttributeDataType := ⟨ShaderAttributeDataType.float⟩ 
+instance : Inhabited ShaderAttributeDataType := ⟨ShaderAttributeDataType.float⟩
 
 
 /-! # Pixel format -/
@@ -974,17 +977,20 @@ inductive PixelFormat.Is : UInt32 -> Prop where
   | uncompressedR32 : PixelFormat.Is 8
   | uncompressedR32g32b32 : PixelFormat.Is 9
   | uncompressedR32g32b32a32 : PixelFormat.Is 10
-  | compressedDxt1Rgb : PixelFormat.Is 11
-  | compressedDxt1Rgba : PixelFormat.Is 12
-  | compressedDxt3Rgba : PixelFormat.Is 13
-  | compressedDxt5Rgba : PixelFormat.Is 14
-  | compressedEtc1Rgb : PixelFormat.Is 15
-  | compressedEtc2Rgb : PixelFormat.Is 16
-  | compressedEtc2EacRgba : PixelFormat.Is 17
-  | compressedPvrtRgb : PixelFormat.Is 18
-  | compressedPvrtRgba : PixelFormat.Is 19
-  | compressedAstc4x4Rgba : PixelFormat.Is 20
-  | compressedAstc8x8Rgba : PixelFormat.Is 21
+  | uncompressedR16 : PixelFormat.Is 11
+  | uncompressedR16G16B16 : PixelFormat.Is 12
+  | uncompressedR16G16B16A16 : PixelFormat.Is 13
+  | compressedDxt1Rgb : PixelFormat.Is 14
+  | compressedDxt1Rgba : PixelFormat.Is 15
+  | compressedDxt3Rgba : PixelFormat.Is 16
+  | compressedDxt5Rgba : PixelFormat.Is 17
+  | compressedEtc1Rgb : PixelFormat.Is 18
+  | compressedEtc2Rgb : PixelFormat.Is 19
+  | compressedEtc2EacRgba : PixelFormat.Is 20
+  | compressedPvrtRgb : PixelFormat.Is 21
+  | compressedPvrtRgba : PixelFormat.Is 22
+  | compressedAstc4x4Rgba : PixelFormat.Is 23
+  | compressedAstc8x8Rgba : PixelFormat.Is 24
 
 def PixelFormat : Type := Subtype PixelFormat.Is
 
@@ -1010,28 +1016,34 @@ def uncompressedR32 : PixelFormat := Subtype.mk 8 PixelFormat.Is.uncompressedR32
 def uncompressedR32g32b32 : PixelFormat := Subtype.mk 9 PixelFormat.Is.uncompressedR32g32b32
 /-- 32*4 bpp (4 channels - float) -/
 def uncompressedR32g32b32a32 : PixelFormat := Subtype.mk 10 PixelFormat.Is.uncompressedR32g32b32a32
+/-- 16 bpp (1 channel - half float) -/
+def uncompressedR16 : PixelFormat := Subtype.mk 11 PixelFormat.Is.uncompressedR16
+/-- 16*3 bpp (3 channels - half float) -/
+def uncompressedR16G16B16 : PixelFormat := Subtype.mk 12 PixelFormat.Is.uncompressedR16G16B16
+/-- 16*4 bpp (4 channels - half float) -/
+def uncompressedR16G16B16A16 : PixelFormat := Subtype.mk 13 PixelFormat.Is.uncompressedR16G16B16A16
 /-- 4 bpp (no alpha) -/
-def compressedDxt1Rgb : PixelFormat := Subtype.mk 11 PixelFormat.Is.compressedDxt1Rgb
+def compressedDxt1Rgb : PixelFormat := Subtype.mk 14 PixelFormat.Is.compressedDxt1Rgb
 /-- 4 bpp (1 bit alpha) -/
-def compressedDxt1Rgba : PixelFormat := Subtype.mk 12 PixelFormat.Is.compressedDxt1Rgba
+def compressedDxt1Rgba : PixelFormat := Subtype.mk 15 PixelFormat.Is.compressedDxt1Rgba
 /-- 8 bpp -/
-def compressedDxt3Rgba : PixelFormat := Subtype.mk 13 PixelFormat.Is.compressedDxt3Rgba
+def compressedDxt3Rgba : PixelFormat := Subtype.mk 16 PixelFormat.Is.compressedDxt3Rgba
 /-- 8 bpp -/
-def compressedDxt5Rgba : PixelFormat := Subtype.mk 14 PixelFormat.Is.compressedDxt5Rgba
+def compressedDxt5Rgba : PixelFormat := Subtype.mk 17 PixelFormat.Is.compressedDxt5Rgba
 /-- 4 bpp -/
-def compressedEtc1Rgb : PixelFormat := Subtype.mk 15 PixelFormat.Is.compressedEtc1Rgb
+def compressedEtc1Rgb : PixelFormat := Subtype.mk 18 PixelFormat.Is.compressedEtc1Rgb
 /-- 4 bpp -/
-def compressedEtc2Rgb : PixelFormat := Subtype.mk 16 PixelFormat.Is.compressedEtc2Rgb
+def compressedEtc2Rgb : PixelFormat := Subtype.mk 19 PixelFormat.Is.compressedEtc2Rgb
 /-- 8 bpp -/
-def compressedEtc2EacRgba : PixelFormat := Subtype.mk 17 PixelFormat.Is.compressedEtc2EacRgba
+def compressedEtc2EacRgba : PixelFormat := Subtype.mk 20 PixelFormat.Is.compressedEtc2EacRgba
 /-- 4 bpp -/
-def compressedPvrtRgb : PixelFormat := Subtype.mk 18 PixelFormat.Is.compressedPvrtRgb
+def compressedPvrtRgb : PixelFormat := Subtype.mk 21 PixelFormat.Is.compressedPvrtRgb
 /-- 4 bpp -/
-def compressedPvrtRgba : PixelFormat := Subtype.mk 19 PixelFormat.Is.compressedPvrtRgba
+def compressedPvrtRgba : PixelFormat := Subtype.mk 22 PixelFormat.Is.compressedPvrtRgba
 /-- 8 bpp -/
-def compressedAstc4x4Rgba : PixelFormat := Subtype.mk 20 PixelFormat.Is.compressedAstc4x4Rgba
+def compressedAstc4x4Rgba : PixelFormat := Subtype.mk 23 PixelFormat.Is.compressedAstc4x4Rgba
 /-- 2 bpp -/
-def compressedAstc8x8Rgba : PixelFormat := Subtype.mk 21 PixelFormat.Is.compressedAstc8x8Rgba
+def compressedAstc8x8Rgba : PixelFormat := Subtype.mk 24 PixelFormat.Is.compressedAstc8x8Rgba
 
 end PixelFormat
 
@@ -1048,17 +1060,20 @@ def PixelFormat.bpp : PixelFormat → Nat
   | ⟨⟨8, _⟩, _⟩ => 32
   | ⟨⟨9, _⟩, _⟩ => 96
   | ⟨⟨10, _⟩, _⟩ => 128
-  | ⟨⟨11, _⟩, _⟩ => 4
-  | ⟨⟨12, _⟩, _⟩ => 4
-  | ⟨⟨13, _⟩, _⟩ => 8
-  | ⟨⟨14, _⟩, _⟩ => 8
+  | ⟨⟨11, _⟩, _⟩ => 16
+  | ⟨⟨12, _⟩, _⟩ => 48
+  | ⟨⟨13, _⟩, _⟩ => 64
+  | ⟨⟨14, _⟩, _⟩ => 4
   | ⟨⟨15, _⟩, _⟩ => 4
-  | ⟨⟨16, _⟩, _⟩ => 4
+  | ⟨⟨16, _⟩, _⟩ => 8
   | ⟨⟨17, _⟩, _⟩ => 8
   | ⟨⟨18, _⟩, _⟩ => 4
   | ⟨⟨19, _⟩, _⟩ => 4
   | ⟨⟨20, _⟩, _⟩ => 8
-  | ⟨⟨21, _⟩, _⟩ => 2
+  | ⟨⟨21, _⟩, _⟩ => 4
+  | ⟨⟨22, _⟩, _⟩ => 4
+  | ⟨⟨23, _⟩, _⟩ => 8
+  | ⟨⟨24, _⟩, _⟩ => 2
 
 def PixelFormat.bytesPerPixel (format : PixelFormat) : Nat := (format.bpp + 7) / 8
 
@@ -1286,15 +1301,15 @@ def CameraMode : Type := Subtype CameraMode.Is
 
 namespace CameraMode
 
-/-- Custom camera -/
+/-- Camera custom, controlled by user (UpdateCamera() does nothing) -/
 def custom : CameraMode := Subtype.mk 0 CameraMode.Is.custom
-/-- Free camera -/
+/-- Camera free mode -/
 def free : CameraMode := Subtype.mk 1 CameraMode.Is.free
-/-- Orbital camera -/
+/-- Camera orbital, around target, zoom supported -/
 def orbital : CameraMode := Subtype.mk 2 CameraMode.Is.orbital
-/-- First person camera -/
+/-- Camera first person -/
 def firstPerson : CameraMode := Subtype.mk 3 CameraMode.Is.firstPerson
-/-- Third person camera -/
+/-- Camera third person -/
 def thirdPerson : CameraMode := Subtype.mk 4 CameraMode.Is.thirdPerson
 
 end CameraMode

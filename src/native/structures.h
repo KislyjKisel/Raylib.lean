@@ -791,32 +791,31 @@ static inline void lean_raylib_VrDeviceInfo_set_impl (b_lean_obj_arg obj, VrDevi
     lean_ctor_set(obj, 1, lean_box_uint32(vrDeviceInfo->vResolution));
     lean_ctor_set(obj, 2, lean_pod_Float32_box(vrDeviceInfo->hScreenSize));
     lean_ctor_set(obj, 3, lean_pod_Float32_box(vrDeviceInfo->vScreenSize));
-    lean_ctor_set(obj, 4, lean_pod_Float32_box(vrDeviceInfo->vScreenCenter));
-    lean_ctor_set(obj, 5, lean_pod_Float32_box(vrDeviceInfo->eyeToScreenDistance));
-    lean_ctor_set(obj, 6, lean_pod_Float32_box(vrDeviceInfo->lensSeparationDistance));
-    lean_ctor_set(obj, 7, lean_pod_Float32_box(vrDeviceInfo->interpupillaryDistance));
+    lean_ctor_set(obj, 4, lean_pod_Float32_box(vrDeviceInfo->eyeToScreenDistance));
+    lean_ctor_set(obj, 5, lean_pod_Float32_box(vrDeviceInfo->lensSeparationDistance));
+    lean_ctor_set(obj, 6, lean_pod_Float32_box(vrDeviceInfo->interpupillaryDistance));
     Vector4 lensDistortionValues;
     lensDistortionValues.x = vrDeviceInfo->lensDistortionValues[0];
     lensDistortionValues.y = vrDeviceInfo->lensDistortionValues[1];
     lensDistortionValues.z = vrDeviceInfo->lensDistortionValues[2];
     lensDistortionValues.w = vrDeviceInfo->lensDistortionValues[3];
-    lean_ctor_set(obj, 8, lean_raylib_Vector4_to(lensDistortionValues));
+    lean_ctor_set(obj, 7, lean_raylib_Vector4_to(lensDistortionValues));
     Vector4 chromaAbCorrection;
     chromaAbCorrection.x = vrDeviceInfo->chromaAbCorrection[0];
     chromaAbCorrection.y = vrDeviceInfo->chromaAbCorrection[1];
     chromaAbCorrection.z = vrDeviceInfo->chromaAbCorrection[2];
     chromaAbCorrection.w = vrDeviceInfo->chromaAbCorrection[3];
-    lean_ctor_set(obj, 9, lean_raylib_Vector4_to(chromaAbCorrection));
+    lean_ctor_set(obj, 8, lean_raylib_Vector4_to(chromaAbCorrection));
 }
 
 static inline void lean_raylib_VrDeviceInfo_set (b_lean_obj_arg obj, VrDeviceInfo* vrDeviceInfo) {
+    lean_dec_ref(lean_ctor_get(obj, 7));
     lean_dec_ref(lean_ctor_get(obj, 8));
-    lean_dec_ref(lean_ctor_get(obj, 9));
     lean_raylib_VrDeviceInfo_set_impl(obj, vrDeviceInfo);
 }
 
 static inline lean_object* lean_raylib_VrDeviceInfo_to (VrDeviceInfo* vrDeviceInfo) {
-    lean_object* obj = lean_alloc_ctor(0, 10, 0);
+    lean_object* obj = lean_alloc_ctor(0, 9, 0);
     lean_raylib_VrDeviceInfo_set_impl(obj, vrDeviceInfo);
     return obj;
 }
@@ -827,16 +826,15 @@ static inline VrDeviceInfo lean_raylib_VrDeviceInfo_from (b_lean_obj_arg obj) {
     vrDeviceInfo.vResolution = lean_unbox_uint32(lean_ctor_get(obj, 1));
     vrDeviceInfo.hScreenSize = lean_pod_Float32_unbox(lean_ctor_get(obj, 2));
     vrDeviceInfo.vScreenSize = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
-    vrDeviceInfo.vScreenCenter = lean_pod_Float32_unbox(lean_ctor_get(obj, 4));
-    vrDeviceInfo.eyeToScreenDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 5));
-    vrDeviceInfo.lensSeparationDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 6));
-    vrDeviceInfo.interpupillaryDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 7));
-    Vector4 lensDistortionValues = lean_raylib_Vector4_from(lean_ctor_get(obj, 8));
+    vrDeviceInfo.eyeToScreenDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 4));
+    vrDeviceInfo.lensSeparationDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 5));
+    vrDeviceInfo.interpupillaryDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 6));
+    Vector4 lensDistortionValues = lean_raylib_Vector4_from(lean_ctor_get(obj, 7));
     vrDeviceInfo.lensDistortionValues[0] = lensDistortionValues.x;
     vrDeviceInfo.lensDistortionValues[1] = lensDistortionValues.y;
     vrDeviceInfo.lensDistortionValues[2] = lensDistortionValues.z;
     vrDeviceInfo.lensDistortionValues[3] = lensDistortionValues.w;
-    Vector4 chromaAbCorrection = lean_raylib_Vector4_from(lean_ctor_get(obj, 9));
+    Vector4 chromaAbCorrection = lean_raylib_Vector4_from(lean_ctor_get(obj, 8));
     vrDeviceInfo.chromaAbCorrection[0] = chromaAbCorrection.x;
     vrDeviceInfo.chromaAbCorrection[1] = chromaAbCorrection.y;
     vrDeviceInfo.chromaAbCorrection[2] = chromaAbCorrection.z;
@@ -923,6 +921,61 @@ static inline VrStereoConfig lean_raylib_VrStereoConfig_from (b_lean_obj_arg obj
     vrStereoConfig.scaleIn[0] = scaleIn.x;
     vrStereoConfig.scaleIn[1] = scaleIn.y;
     return vrStereoConfig;
+}
+
+
+// # Automation Event
+
+static inline void lean_raylib_AutomationEvent_set_impl (b_lean_obj_arg obj, AutomationEvent automationEvent) {
+    lean_ctor_set_uint32(obj, 4 * sizeof(void*) + 0, automationEvent.frame);
+    lean_ctor_set_uint32(obj, 4 * sizeof(void*) + sizeof(uint32_t), automationEvent.type);
+    lean_ctor_set(obj, 0, lean_box_uint32(automationEvent.params[0]));
+    lean_ctor_set(obj, 1, lean_box_uint32(automationEvent.params[1]));
+    lean_ctor_set(obj, 2, lean_box_uint32(automationEvent.params[2]));
+    lean_ctor_set(obj, 3, lean_box_uint32(automationEvent.params[3]));
+}
+
+static inline lean_object* lean_raylib_AutomationEvent_to (AutomationEvent automationEvent) {
+    lean_object* obj = lean_alloc_ctor(0, 4, 2 * sizeof(uint32_t));
+    lean_raylib_AutomationEvent_set_impl(obj, automationEvent);
+    return obj;
+}
+
+static inline AutomationEvent lean_raylib_AutomationEvent_from (b_lean_obj_arg obj) {
+    AutomationEvent automationEvent;
+    automationEvent.frame = lean_ctor_get_uint32(obj, 4 * sizeof(void*) + 0);
+    automationEvent.type = lean_ctor_get_uint32(obj, 4 * sizeof(void*) + sizeof(uint32_t));
+    for (size_t i = 0; i < 4; ++i) {
+        automationEvent.params[i] = lean_unbox_uint32(lean_ctor_get(obj, i));
+    }
+    return automationEvent;
+}
+
+
+// # Automation event list
+
+extern lean_external_class* lean_raylib_AutomationEventList_class;
+
+static inline lean_object* lean_raylib_AutomationEventList_to (AutomationEventList value) {
+    LET_BOX(AutomationEventList, boxed, value);
+    return lean_alloc_external(lean_raylib_AutomationEventList_class, (void*)boxed);
+}
+
+static inline AutomationEventList* lean_raylib_AutomationEventList_from (b_lean_obj_arg obj) {
+    return (AutomationEventList*) lean_get_external_data(obj);
+}
+
+static inline lean_obj_res lean_raylib_AutomationEventList_ensure_exclusive(lean_obj_arg obj) {
+    if(LEAN_LIKELY(lean_is_exclusive(obj))) {
+        return obj;
+    }
+    AutomationEventList newList;
+    AutomationEventList* oldList = lean_raylib_AutomationEventList_from(obj);
+    newList.capacity = oldList->capacity;
+    newList.count = oldList->count;
+    newList.events = lean_raylib_rlmemdup(oldList->events, newList.capacity * sizeof(AutomationEvent));
+    lean_dec_ref(obj);
+    return lean_raylib_AutomationEventList_to(newList);
 }
 
 

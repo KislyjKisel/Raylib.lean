@@ -24,4 +24,7 @@ def SaveFileTextCallback : Type := System.FilePath → String → IO Bool
 def AudioCallback (st : AudioSampleType) := {σ : Type} →
   (frames : Nat) → Pod.BytesRefMut σ (frames * st.size.toNat) st.alignment → EST2 IO.Error σ IO.RealWorld Unit
 
+-- def AudioThreadEntryCallback : Type := BaseIO Unit
+-- def AudioThreadExitCallback : Type := BaseIO Unit
+
 end Raylib

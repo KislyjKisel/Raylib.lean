@@ -56,7 +56,7 @@ opaque VaList.next {σ} (vl : @& VaList σ) (a : VaArg) : ST σ a.type
 structure Color where
   /-- R8G8B8A8 -/
   rgba : UInt32
-deriving Inhabited, Repr
+deriving Inhabited, Repr, BEq
 
 namespace Color
 
@@ -65,7 +65,7 @@ def fromRgba (r g b a : UInt8) : Color :=
     r.toUInt32 <<< 24 |||
     g.toUInt32 <<< 16 |||
     b.toUInt32 <<< 8 |||
-    a.toUInt32 
+    a.toUInt32
 
 def r (color : Color) : UInt8 := (Color.rgba color >>> 24).toUInt8
 def g (color : Color) : UInt8 := (Color.rgba color >>> 16).toUInt8
@@ -672,6 +672,11 @@ def ModelAnimation.setFramePose? (anim : ModelAnimation) (i j : UInt32) (t : Tra
     then setFramePose anim i j t h.1 h.2
     else anim
 
+/-- Animation name -/
+@[extern "lean_raylib__ModelAnimation_name"]
+opaque ModelAnimation.name (anim : @& ModelAnimation) : { name : String // name.length <= 32 } :=
+  ⟨"", Nat.zero_le 32⟩
+
 
 /-! # Ray -/
 
@@ -817,8 +822,6 @@ structure VrDeviceInfo where
   hScreenSize : Float32
   /-- Vertical size in meters -/
   vScreenSize : Float32
-  /-- Screen center in meters -/
-  vScreenCenter : Float32
   /-- Distance between eye and display in meters -/
   eyeToScreenDistance : Float32
   /-- Lens separation distance in meters -/
@@ -857,6 +860,53 @@ structure VrStereoConfig where
   /-- VR distortion scale in -/
   scaleIn : Vector2
 deriving Inhabited, Repr
+
+
+/-! # Automation event -/
+
+structure AutomationEvent where
+  frame : UInt32
+  type : UInt32
+  param0 : Int32
+  param1 : Int32
+  param2 : Int32
+  param3 : Int32
+deriving Inhabited, Repr
+
+
+/-! # Automation event list -/
+
+opaque AutomationEventListPointed : NonemptyType
+def AutomationEventList : Type := AutomationEventListPointed.type
+instance : Nonempty AutomationEventList := AutomationEventListPointed.property
+
+@[extern "lean_raylib__AutomationEventList_capacity"]
+opaque AutomationEventList.capacity (list : @& AutomationEventList) : UInt32
+
+@[extern "lean_raylib__AutomationEventList_count"]
+opaque AutomationEventList.count (list : @& AutomationEventList) : BaseIO UInt32
+
+@[extern "lean_raylib__AutomationEventList_setCount"]
+opaque AutomationEventList.setCount (list : @& AutomationEventList) (count : UInt32) : BaseIO Unit
+
+@[extern "lean_raylib__AutomationEventList_get"]
+opaque AutomationEventList.get (list : @& AutomationEventList) (index : UInt32) (h : index < list.capacity) : BaseIO AutomationEvent
+
+def AutomationEventList.get? (list : AutomationEventList) (index : UInt32) : BaseIO (Option AutomationEvent) :=
+  if h: index < list.capacity
+    then some <$> list.get index h
+    else pure none
+
+@[extern "lean_raylib__AutomationEventList_set"]
+opaque AutomationEventList.set (list : @& AutomationEventList) (index : UInt32) (h : index < list.capacity) (event : @& AutomationEvent) : BaseIO Unit
+
+def AutomationEventList.set? (list : AutomationEventList) (index : UInt32) (event : AutomationEvent) : BaseIO Bool :=
+  if h: index < list.capacity
+    then list.set index h event *> (pure (f := BaseIO) true)
+    else pure false
+
+@[extern "lean_raylib__AutomationEventList_withCapacity"]
+opaque AutomationEventList.withCapacity (capacity : UInt32) : AutomationEventList
 
 
 /-! # Window handle -/

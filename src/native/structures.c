@@ -18,6 +18,7 @@ lean_external_class* lean_raylib_Wave_class;
 lean_external_class* lean_raylib_Sound_class;
 lean_external_class* lean_raylib_Music_class;
 lean_external_class* lean_raylib_AudioStream_class;
+lean_external_class* lean_raylib_AutomationEventList_class;
 lean_external_class* lean_raylib_WindowHandle_class;
 
 lean_object* lean_raylib_Image_empty;
@@ -212,6 +213,11 @@ static void lean_raylib_Music_foreach(void* music_v, b_lean_obj_arg f) {
     lean_apply_1(f, music->ctx);
 }
 
+static void lean_raylib_AutomationEventList_finalize(void* automationEventList) {
+    UnloadAutomationEventList(*(AutomationEventList*)automationEventList);
+    lean_raylib_free(automationEventList);
+}
+
 LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
     lean_raylib_Context_class = lean_register_external_class(
         lean_raylib_Context_finalize,
@@ -287,6 +293,10 @@ LEAN_EXPORT lean_obj_res lean_raylib_initialize_Structures(lean_obj_arg world) {
     lean_raylib_Music_class = lean_register_external_class(
         lean_raylib_Music_finalize,
         lean_raylib_Music_foreach
+    );
+    lean_raylib_AutomationEventList_class = lean_register_external_class(
+        lean_raylib_AutomationEventList_finalize,
+        lean_raylib_default_foreach
     );
     lean_raylib_WindowHandle_class = lean_register_external_class(
         lean_raylib_default_finalize,
@@ -899,6 +909,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_setFramePose(
     return anim;
 }
 
+LEAN_EXPORT lean_obj_res lean_raylib__ModelAnimation_name(b_lean_obj_arg anim) {
+    return lean_mk_string(lean_raylib_ModelAnimation_from(anim)->name);
+}
+
 
 // # Wave
 
@@ -978,4 +992,42 @@ LEAN_EXPORT lean_obj_res lean_raylib__Music_looping(b_lean_obj_arg music, lean_o
 LEAN_EXPORT lean_obj_res lean_raylib__Music_looping_set(uint8_t looping, b_lean_obj_arg music, lean_obj_arg world) {
     lean_raylib_Music_from(music)->looping = looping;
     return lean_io_result_mk_ok(lean_box(0));
+}
+
+
+// # Automation event list
+
+LEAN_EXPORT uint32_t lean_raylib__AutomationEventList_capacity(b_lean_obj_arg automationEventList) {
+    return lean_raylib_AutomationEventList_from(automationEventList)->capacity;
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__AutomationEventList_count(b_lean_obj_arg automationEventList, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box_uint32(
+        lean_raylib_AutomationEventList_from(automationEventList)->count
+    ));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__AutomationEventList_setCount(b_lean_obj_arg automationEventList, uint32_t newCount, lean_obj_arg world) {
+    AutomationEventList* list = lean_raylib_AutomationEventList_from(automationEventList);
+    list->count = newCount <= list->capacity ? newCount : list->capacity;
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__AutomationEventList_get(b_lean_obj_arg automationEventList, uint32_t index, lean_obj_arg world) {
+    AutomationEventList* list = lean_raylib_AutomationEventList_from(automationEventList);
+    return lean_io_result_mk_ok(lean_raylib_AutomationEvent_to(list->events[index]));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__AutomationEventList_set(b_lean_obj_arg automationEventList, uint32_t index, b_lean_obj_arg event, lean_obj_arg world) {
+    AutomationEventList* list = lean_raylib_AutomationEventList_from(automationEventList);
+    list->events[index] = lean_raylib_AutomationEvent_from(event);
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__AutomationEventList_withCapacity(uint32_t capacity) {
+    AutomationEventList list;
+    list.capacity = capacity;
+    list.count = 0;
+    list.events = RL_MALLOC(capacity * sizeof(AutomationEvent));
+    return lean_raylib_AutomationEventList_to(list);
 }

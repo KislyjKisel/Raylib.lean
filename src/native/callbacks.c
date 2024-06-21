@@ -12,6 +12,8 @@ static lean_object* lean_raylib_LoadFileDataCallback_current = NULL;
 static lean_object* lean_raylib_SaveFileDataCallback_current = NULL;
 static lean_object* lean_raylib_LoadFileTextCallback_current = NULL;
 static lean_object* lean_raylib_SaveFileTextCallback_current = NULL;
+// static lean_object* lean_raylib_AudioThreadEntryCallback_current = NULL;
+// static lean_object* lean_raylib_AudioThreadExitCallback_current = NULL;
 
 static void lean_raylib_TraceLogCallback_wrapper(int logLevel, const char* text, va_list args) {
     assert(lean_raylib_TraceLogCallback_current != NULL);
@@ -35,7 +37,7 @@ static void lean_raylib_TraceLogCallback_wrapper(int logLevel, const char* text,
     va_end(args_wrapped.v);
 }
 
-static unsigned char* lean_raylib_LoadFileDataCallback_wrapper(const char* fileName, unsigned int* bytesRead) {
+static unsigned char* lean_raylib_LoadFileDataCallback_wrapper(const char* fileName, int* dataSize) {
     assert(lean_raylib_LoadFileDataCallback_current != NULL);
     lean_inc_ref(lean_raylib_LoadFileDataCallback_current);
     lean_object* bytes_iores = lean_apply_2(
@@ -54,11 +56,11 @@ static unsigned char* lean_raylib_LoadFileDataCallback_wrapper(const char* fileN
     unsigned char* bytes_c = RL_MALLOC(size);
     memcpy(bytes_c, lean_sarray_cptr(bytes_box), size);
     lean_dec_ref(bytes_iores);
-    *bytesRead = size;
+    *dataSize = size;
     return bytes_c;
 }
 
-static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void* data, unsigned int bytesToWrite) {
+static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void* data, int dataSize) {
     assert(lean_raylib_SaveFileDataCallback_current != NULL);
     lean_inc_ref(lean_raylib_SaveFileDataCallback_current);
     // EST2.Result
@@ -66,7 +68,7 @@ static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void*
         lean_raylib_SaveFileDataCallback_current,
         lean_box(0),
         lean_mk_string(fileName),
-        lean_usize_to_nat(bytesToWrite),
+        lean_uint32_to_nat(dataSize),
         lean_pod_BytesRef_wrap(data),
         lean_box(0),
         lean_box(0)
@@ -129,6 +131,29 @@ static bool lean_raylib_SaveFileTextCallback_wrapper(const char* fileName, char*
     return success;
 }
 
+// void lean_initialize_thread(void);
+// void lean_finalize_thread(void);
+
+// static void lean_raylib_AudioThreadEntryCallback_wrapper(void) {
+//     assert(lean_raylib_AudioThreadEntryCallback_current != NULL);
+//     lean_initialize_thread();
+//     lean_inc_ref(lean_raylib_AudioThreadEntryCallback_current);
+//     lean_dec_ref(lean_apply_1(
+//         lean_raylib_AudioThreadEntryCallback_current,
+//         lean_box(0)
+//     ));
+// }
+
+// static void lean_raylib_AudioThreadExitCallback_wrapper(void) {
+//     assert(lean_raylib_AudioThreadExitCallback_current != NULL);
+//     lean_inc_ref(lean_raylib_AudioThreadExitCallback_current);
+//     lean_dec_ref(lean_apply_1(
+//         lean_raylib_AudioThreadExitCallback_current,
+//         lean_box(0)
+//     ));
+//     lean_finalize_thread();
+// }
+
 #define LEAN_RAYLIB_CALLBACK_SET_RESET(action)\
 LEAN_EXPORT lean_obj_res lean_raylib__Set##action##Callback (lean_obj_arg callback, lean_obj_arg world) {\
     if (lean_raylib_##action##Callback_current != NULL) {\
@@ -153,6 +178,8 @@ LEAN_RAYLIB_CALLBACK_SET_RESET(LoadFileData);
 LEAN_RAYLIB_CALLBACK_SET_RESET(SaveFileData);
 LEAN_RAYLIB_CALLBACK_SET_RESET(LoadFileText);
 LEAN_RAYLIB_CALLBACK_SET_RESET(SaveFileText);
+// LEAN_RAYLIB_CALLBACK_SET_RESET(AudioThreadEntry);
+// LEAN_RAYLIB_CALLBACK_SET_RESET(AudioThreadExit);
 
 #ifdef LEAN_RAYLIB_LIBFFI
 static void lean_raylib_AudioStreamCallback_wrapper(ffi_cif *cif, void* ret, void** args, void* user_data) {
