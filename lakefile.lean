@@ -71,12 +71,22 @@ def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Proces
   else
     return output.stdout
 
+def updateRayguiSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCmdOutput : Bool) : m Unit := do
+  let gitCmd := (get_config? git).getD "git"
+  if gitCmd != "" then
+    let gitOutput ← tryRunProcess {
+      cmd := gitCmd
+      args := #["submodule", "update", "--init", "--force", "--recursive", "raygui"]
+      cwd := __dir__
+    }
+    if printCmdOutput then IO.println gitOutput
+
 def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCmdOutput : Bool) : m Unit := do
   let gitCmd := (get_config? git).getD "git"
   if gitCmd != "" then
     let gitOutput ← tryRunProcess {
       cmd := gitCmd
-      args := #["submodule", "update", "--init", "--force", "--recursive"]
+      args := #["submodule", "update", "--init", "--force", "--recursive", "raylib"]
       cwd := __dir__
     }
     if printCmdOutput then IO.println gitOutput
@@ -205,6 +215,13 @@ def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String ×
     | .Unknown name =>
       error s!"Unknown 'raylib' source: {name}"
 
+  if (get_config? raygui).isSome then
+    updateRayguiSubmodule printCmdOutput
+    weakArgs := weakArgs.append #[
+      "-I",
+      (pkg.dir / "raygui" / "src").toString
+    ]
+
   if (get_config? libffi).isSome then
     traceArgs := traceArgs.push "-DLEAN_RAYLIB_LIBFFI"
     match pkg.deps.find? λ dep ↦ dep.name == `libffi with
@@ -228,14 +245,12 @@ def bindingsCFlags (pkg : NPackage _package.name) : IndexBuildM (Array String ×
 extern_lib «raylib-lean» pkg := do
   let name := nameToStaticLib "raylib-lean"
   let (weakArgs, traceArgs) ← bindingsCFlags pkg
-  let weakArgs := weakArgs.append #[
-    "-I",
-    (pkg.dir / "raygui" / "src").toString
-  ]
-  let bindingsSources := #[
+  let mut bindingsSources := #[
     "enumerations", "structures", "functions", "callbacks",
-    "raymath", "raygui"
+    "raymath"
   ]
+  if (get_config? raygui).isSome then
+    bindingsSources := bindingsSources.push "raygui"
   let bindingsHeaders := #[
     "structures", "util", "include/raylib_lean", "include/raymath_lean"
   ]
