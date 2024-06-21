@@ -1,0 +1,8 @@
+{
+    "C_Cpp.default.includePath": [
+        "~/.elan/toolchains/stable/include",
+        "raylib/src",
+        ".lake/packages/pod/src/native/include",
+        ".lake/packages/libffi/include"
+    ],
+}
