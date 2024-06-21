@@ -25,6 +25,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
   `"submodule"` (default) to compile from source using git submodules.
   `"system"` to find using `pkg-config` (uses hardcoded paths for the test executable).
   `"custom"` to not pass library or header directories to the compiler.
+* `raygui`: allows using `Raygui`, downloads it as a submodule.
 * `cc`: c compiler invoked used to build native code.
   By default uses (ordered by priority) `LEAN_CC`, the compiler provided by Lean toolchain or `cc`.
 * `cflags`: additional flags passed to the native code compiler.
