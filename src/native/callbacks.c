@@ -19,7 +19,7 @@ static lean_object* lean_raylib_SaveFileTextCallback_current = NULL;
 static void lean_raylib_TraceLogCallback_wrapper(int logLevel, const char* text, va_list args) {
     assert(lean_raylib_TraceLogCallback_current != NULL);
     lean_inc_ref(lean_raylib_TraceLogCallback_current);
-    lean_raylib_VaList args_wrapped;
+    lean_raylib_VaList_data args_wrapped;
     va_copy(args_wrapped.v, args);
     // EST2.Result
     lean_object* result = lean_apply_6(
@@ -27,7 +27,7 @@ static void lean_raylib_TraceLogCallback_wrapper(int logLevel, const char* text,
         lean_box(0),
         lean_box_uint32(logLevel),
         lean_mk_string(text),
-        lean_raylib_VaList_to(&args_wrapped),
+        lean_raylib_VaList_box(&args_wrapped),
         lean_box(0),
         lean_box(0)
     );
@@ -257,7 +257,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint32_t st, b_lea
     }
 
     lean_mark_mt(callback);
-    lean_raylib_AudioStream* stream = lean_raylib_AudioStream_from(stream_box);
+    lean_raylib_AudioStream_data* stream = lean_raylib_AudioStream_fromRepr(stream_box);
     if(stream->closure != NULL) {
         lean_dec_ref(stream->closure->user_data);
         ffi_closure_free(stream->closure);
