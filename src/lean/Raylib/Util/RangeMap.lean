@@ -34,7 +34,6 @@ theorem i_add_1_toNat_eq (i : UInt32)
       exact Nat.mod_eq_of_lt $ Nat.lt_of_le_of_lt
         (Nat.succ_le_of_lt $ i_lt_max_of_not_eq_max i hi i_ne_max) max.val.isLt
 
-
 def ofFn (mm : min ≤ max) (f : (i : UInt32) → min ≤ i ∧ i < max → α) :
   RangeMap min max α :=
     go min (Array.mkEmpty (max - min).val.val)
@@ -78,41 +77,47 @@ where
   decreasing_by
     simp_wf
     apply Nat.add_lt_add_right
-    show (max.val.val + (UInt32.size - (i + 1).val.val)) % UInt32.size < _
+    show _ % UInt32.size < _
+    dsimp
+    have : i.1.1 + 1 < UInt32.size := by
+      apply Nat.lt_of_le_of_lt _ max.1.isLt
+      apply Nat.succ_le_of_lt
+      apply Nat.lt_of_le_of_ne hi.2
+      intro h
+      apply him
+      apply UInt32.eq_of_val_eq
+      apply Fin.eq_of_val_eq
+      exact h
     rewrite [
-      ← Nat.add_sub_assoc (Nat.le_of_lt (i + 1).val.isLt) _,
-      i_add_1_toNat_eq i hi him,
+      Nat.mod_eq_of_lt this,
+      Nat.add_comm,
+      ← Nat.add_sub_assoc (Nat.le_of_lt this),
       Nat.add_comm,
       Nat.add_sub_assoc (Nat.succ_le_of_lt (i_lt_max_of_not_eq_max i hi him)) UInt32.size,
-      Nat.mod_eq_sub_mod (Nat.le_add_right UInt32.size _),
-      Nat.add_comm,
-      Nat.add_sub_cancel _ _,
+      Nat.add_mod_left,
       Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) max.val.isLt)
     ]
-    show max.val.val - i.val.val.succ < (max.val.val + (UInt32.size - i.val.val)) % UInt32.size
+    show _ < _ % UInt32.size
     rewrite [
+      Nat.add_comm,
       ← Nat.add_sub_assoc (Nat.le_of_lt i.val.isLt),
       Nat.add_comm,
       Nat.add_sub_assoc hi.2,
-      Nat.mod_eq_sub_mod (Nat.le_add_right UInt32.size _),
-      Nat.add_comm,
-      Nat.add_sub_cancel,
+      Nat.add_mod_left,
       Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) max.val.isLt),
     ]
-    show max.val.val - (i.val.val + 1) < _
     exact Nat.sub_succ_lt_self _ _ (i_lt_max_of_not_eq_max i hi him)
 
 private
 theorem i_minus_min_lt_size (i : UInt32) (h : min ≤ i ∧ i < max) :
   (i - min).toUSize.toNat < max.toNat - min.toNat := by
-    show ((i.val.val + (UInt32.size - min.val.val)) % UInt32.size) < _
+    show (_  % UInt32.size) < _
     rewrite [
+      Nat.add_comm,
       ← Nat.add_sub_assoc (Nat.le_of_lt min.val.isLt),
       Nat.add_comm,
       Nat.add_sub_assoc h.1,
-      Nat.mod_eq_sub_mod (Nat.le_add_right UInt32.size _),
-      Nat.add_comm,
-      Nat.add_sub_cancel,
+      Nat.add_mod_left,
       Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.val.isLt)
     ]
     apply Nat.lt_sub_of_add_lt

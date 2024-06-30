@@ -29,7 +29,7 @@ LEAN_EXPORT lean_obj_res lean_raygui__GuiIsLocked(lean_obj_arg world) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raygui__GuiSetAlpha(uint32_t alpha, lean_obj_arg world) {
-    GuiSetAlpha(lean_pod_Float32_fromBits(alpha));
+    GuiSetAlpha(lean_pod_Float32_fromRepr(alpha));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -249,40 +249,40 @@ LEAN_EXPORT lean_obj_res lean_raygui__GuiTextBox(b_lean_obj_arg bounds, b_lean_o
 }
 
 LEAN_EXPORT lean_obj_res lean_raygui__GuiSlider(b_lean_obj_arg bounds, b_lean_obj_arg textLeft, b_lean_obj_arg textRight, uint32_t value, uint32_t minValue, uint32_t maxValue, lean_obj_arg world) {
-    float value_ = lean_pod_Float32_fromBits(value);
+    float value_ = lean_pod_Float32_fromRepr(value);
     GuiSlider(
         lean_raylib_Rectangle_from(bounds),
         lean_string_cstr(textLeft),
         lean_string_cstr(textRight),
         &value_,
-        lean_pod_Float32_fromBits(minValue),
-        lean_pod_Float32_fromBits(maxValue)
+        lean_pod_Float32_fromRepr(minValue),
+        lean_pod_Float32_fromRepr(maxValue)
     );
     return lean_io_result_mk_ok(lean_pod_Float32_box(value_));
 }
 
 LEAN_EXPORT lean_obj_res lean_raygui__GuiSliderBar(b_lean_obj_arg bounds, b_lean_obj_arg textLeft, b_lean_obj_arg textRight, uint32_t value, uint32_t minValue, uint32_t maxValue, lean_obj_arg world) {
-    float value_ = lean_pod_Float32_fromBits(value);
+    float value_ = lean_pod_Float32_fromRepr(value);
     GuiSliderBar(
         lean_raylib_Rectangle_from(bounds),
         lean_string_cstr(textLeft),
         lean_string_cstr(textRight),
         &value_,
-        lean_pod_Float32_fromBits(minValue),
-        lean_pod_Float32_fromBits(maxValue)
+        lean_pod_Float32_fromRepr(minValue),
+        lean_pod_Float32_fromRepr(maxValue)
     );
     return lean_io_result_mk_ok(lean_pod_Float32_box(value_));
 }
 
 LEAN_EXPORT lean_obj_res lean_raygui__GuiProgressBar(b_lean_obj_arg bounds, b_lean_obj_arg textLeft, b_lean_obj_arg textRight, uint32_t value, uint32_t minValue, uint32_t maxValue, lean_obj_arg world) {
-    float value_ = lean_pod_Float32_fromBits(value);
+    float value_ = lean_pod_Float32_fromRepr(value);
     GuiProgressBar(
         lean_raylib_Rectangle_from(bounds),
         lean_string_cstr(textLeft),
         lean_string_cstr(textRight),
         &value_,
-        lean_pod_Float32_fromBits(minValue),
-        lean_pod_Float32_fromBits(maxValue)
+        lean_pod_Float32_fromRepr(minValue),
+        lean_pod_Float32_fromRepr(maxValue)
     );
     return lean_io_result_mk_ok(lean_pod_Float32_box(value_));
 }
@@ -302,7 +302,7 @@ LEAN_EXPORT lean_obj_res lean_raygui__GuiGrid(b_lean_obj_arg bounds, b_lean_obj_
     GuiGrid(
         lean_raylib_Rectangle_from(bounds),
         lean_string_cstr(text),
-        lean_pod_Float32_fromBits(spacing),
+        lean_pod_Float32_fromRepr(spacing),
         subdivs,
         &mouseCell_
     );
@@ -392,13 +392,13 @@ LEAN_EXPORT lean_obj_res lean_raygui__GuiColorPanel(b_lean_obj_arg bounds, b_lea
 }
 
 LEAN_EXPORT lean_obj_res lean_raygui__GuiColorBarAlpha(b_lean_obj_arg bounds, b_lean_obj_arg text, uint32_t alpha, lean_obj_arg world) {
-    float alpha_ = lean_pod_Float32_fromBits(alpha);
+    float alpha_ = lean_pod_Float32_fromRepr(alpha);
     GuiColorBarAlpha(lean_raylib_Rectangle_from(bounds), lean_string_cstr(text), &alpha_);
     return lean_io_result_mk_ok(lean_pod_Float32_box(alpha_));
 }
 
 LEAN_EXPORT lean_obj_res lean_raygui__GuiColorBarHue(b_lean_obj_arg bounds, b_lean_obj_arg text, uint32_t value, lean_obj_arg world) {
-    float value_ = lean_pod_Float32_fromBits(value);
+    float value_ = lean_pod_Float32_fromRepr(value);
     GuiColorBarHue(lean_raylib_Rectangle_from(bounds), lean_string_cstr(text), &value_);
     return lean_io_result_mk_ok(lean_pod_Float32_box(value_));
 }

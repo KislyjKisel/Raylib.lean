@@ -1,6 +1,7 @@
 #include <string.h>
+#include <lean/lean.h>
 #include <lean_pod.h>
-#include "util.h"
+#include <raylib.h>
 #include "structures.h"
 
 #ifdef LEAN_RAYLIB_LIBFFI
@@ -69,7 +70,7 @@ static bool lean_raylib_SaveFileDataCallback_wrapper(const char* fileName, void*
         lean_box(0),
         lean_mk_string(fileName),
         lean_uint32_to_nat(dataSize),
-        lean_pod_BytesRef_wrap(data),
+        lean_pod_BytesRef_box(data),
         lean_box(0),
         lean_box(0)
     );
@@ -191,7 +192,7 @@ static void lean_raylib_AudioStreamCallback_wrapper(ffi_cif *cif, void* ret, voi
         callback,
         lean_box(0),
         lean_usize_to_nat(frames),
-        lean_pod_BytesRef_wrap(*(uint8_t**)args[0]),
+        lean_pod_BytesRef_box(*(uint8_t**)args[0]),
         lean_box(0),
         lean_box(0)
     );

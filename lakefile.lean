@@ -16,7 +16,7 @@ def podConfig : NameMap String := Id.run $ do
   cfg
 
 require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "7c9fb2b" with libffiConfig
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "117faba" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "bbcd18e" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -246,13 +246,13 @@ extern_lib «raylib-lean» pkg := do
   let name := nameToStaticLib "raylib-lean"
   let (weakArgs, traceArgs) ← bindingsCFlags pkg
   let mut bindingsSources := #[
-    "enumerations", "structures", "functions", "callbacks",
+    "structures", "functions", "callbacks",
     "raymath"
   ]
   if (get_config? raygui).isSome then
     bindingsSources := bindingsSources.push "raygui"
   let bindingsHeaders := #[
-    "structures", "util", "include/raylib_lean", "include/raymath_lean"
+    "structures", "include/raylib_lean", "include/raymath_lean"
   ]
   let nativeSrcDir := pkg.dir / "src" / "native"
   let objectFileDir := pkg.irDir / "native"
@@ -262,7 +262,7 @@ extern_lib «raylib-lean» pkg := do
     (← bindingsSources.mapM λ stem ↦ do
       buildO
         (objectFileDir / (stem ++ ".o"))
-        (← inputFile $ nativeSrcDir / (stem ++ ".c"))
+        (← inputTextFile $ nativeSrcDir / (stem ++ ".c"))
         weakArgs traceArgs
         ((get_config? cc).getD
         (← getLeanCc).toString)

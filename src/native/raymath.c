@@ -1,5 +1,4 @@
-#include "util.h"
-#include <raymath.h>
+#include <lean/lean.h>
 #include <lean_pod.h>
 #include "include/raymath_lean.h"
 
@@ -24,7 +23,7 @@ LEAN_EXPORT lean_obj_res lean_raymath_Vector2_uset(lean_obj_arg v, uint32_t i, u
         } u;
         u.vector = lean_raylib_Vector2_from(v);
         lean_dec_ref(v);
-        u.fields[i] = lean_pod_Float32_fromBits(value);
+        u.fields[i] = lean_pod_Float32_fromRepr(value);
         return lean_raylib_Vector2_to(u.vector);
     }
 }
@@ -49,7 +48,7 @@ LEAN_EXPORT lean_obj_res lean_raymath_Vector3_uset(lean_obj_arg v, uint32_t i, u
         } u;
         u.vector = lean_raylib_Vector3_from(v);
         lean_dec_ref(v);
-        u.fields[i] = lean_pod_Float32_fromBits(value);
+        u.fields[i] = lean_pod_Float32_fromRepr(value);
         return lean_raylib_Vector3_to(u.vector);
     }
 }
@@ -66,7 +65,7 @@ LEAN_EXPORT lean_obj_res lean_raymath_Vector4_uset(lean_obj_arg v, uint32_t i, u
         } u;
         u.vector = lean_raylib_Vector4_from(v);
         lean_dec_ref(v);
-        u.fields[i] = lean_pod_Float32_fromBits(value);
+        u.fields[i] = lean_pod_Float32_fromRepr(value);
         return lean_raylib_Vector4_to(u.vector);
     }
 }
@@ -159,7 +158,7 @@ LEAN_EXPORT lean_obj_res lean_raymath_Matrix_usetLinear(lean_obj_arg m, uint32_t
         } u;
         u.matrix = lean_raylib_Matrix_from(m);
         lean_dec_ref(m);
-        u.fields[i] = lean_pod_Float32_fromBits(value);
+        u.fields[i] = lean_pod_Float32_fromRepr(value);
         return lean_raylib_Matrix_to(u.matrix);
     }
 }
@@ -175,7 +174,7 @@ LEAN_EXPORT lean_obj_res lean_raymath_Quaternion_fromMatrix(b_lean_obj_arg mat) 
 LEAN_EXPORT lean_obj_res lean_raymath_Quaternion_fromAxisAngle(b_lean_obj_arg axis, uint32_t angle) {
     return lean_raylib_Vector4_to(QuaternionFromAxisAngle(
         lean_raylib_Vector3_from(axis),
-        lean_pod_Float32_fromBits(angle)
+        lean_pod_Float32_fromRepr(angle)
     ));
 }
 

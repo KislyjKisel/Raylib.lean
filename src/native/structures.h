@@ -1,13 +1,27 @@
 #pragma once
 
+#include <assert.h>
 #include <lean_pod.h>
-#include "util.h"
-#include <rlgl.h>
+#include "include/raylib_lean.h"
 #include "include/raymath_lean.h"
+#include <rlgl.h>
 
 #ifdef LEAN_RAYLIB_LIBFFI
 #include <ffi.h>
 #endif
+
+#define LEAN_RAYLIB_ALLOC_STRUCT(T, n, x)\
+    T* n = lean_raylib_alloc(sizeof(T));\
+    *n = x;
+
+#define LEAN_RAYLIB_ALLOC_INIT(T, n, ...) LEAN_RAYLIB_ALLOC_STRUCT(T, n, ((T){__VA_ARGS__}));
+
+static inline void* lean_raylib_rlmemdup(const void* src, size_t size) {
+    void* dst = RL_MALLOC(size);
+    memcpy(dst, src, size);
+    return dst;
+}
+
 
 // # Context
 
@@ -18,7 +32,7 @@ typedef struct {
 extern lean_external_class* lean_raylib_Context_class;
 
 static inline lean_obj_res lean_raylib_Context_new (lean_raylib_Context ctx) {
-    LET_BOX(lean_raylib_Context, ctxBoxed, ctx);
+    LEAN_RAYLIB_ALLOC_STRUCT(lean_raylib_Context, ctxBoxed, ctx);
     return lean_alloc_external(lean_raylib_Context_class, ctxBoxed);
 }
 
@@ -99,7 +113,7 @@ static inline lean_obj_res lean_raylib_Image_exclusive(lean_obj_arg image_box) {
     if (LEAN_LIKELY(lean_is_exclusive(image_box))) {
         return image_box;
     }
-    LET_BOX(Image, image_copy, ImageCopy(*lean_raylib_Image_from(image_box)));
+    LEAN_RAYLIB_ALLOC_STRUCT(Image, image_copy, ImageCopy(*lean_raylib_Image_from(image_box)));
     lean_object* image_copy_box = lean_raylib_Image_to(image_copy);
     lean_dec_ref(image_box);
     return image_copy_box;
@@ -123,7 +137,7 @@ extern lean_external_class* lean_raylib_Texture_class;
 extern lean_object* lean_raylib_Texture_empty;
 
 static inline lean_object* lean_raylib_TextureRef_alloc (Texture2D texture, lean_obj_arg owner) {
-    LET_BOX_STRUCT(lean_raylib_TextureRef, textureRef,
+    LEAN_RAYLIB_ALLOC_INIT(lean_raylib_TextureRef, textureRef,
         .texture = texture,
         .owner = owner,
     );
@@ -135,7 +149,7 @@ static inline lean_raylib_TextureRef const* lean_raylib_TextureRef_from (b_lean_
 }
 
 static inline lean_object* lean_raylib_Texture_to (Texture texture, lean_obj_arg ctx) {
-    LET_BOX_STRUCT(lean_raylib_Texture, textureWctx,
+    LEAN_RAYLIB_ALLOC_INIT(lean_raylib_Texture, textureWctx,
         .texture = texture,
         .ctx = ctx
     );
@@ -157,7 +171,7 @@ typedef struct {
 extern lean_external_class* lean_raylib_RenderTexture_class;
 
 static inline lean_object* lean_raylib_RenderTexture_to (RenderTexture texture, lean_obj_arg ctx) {
-    LET_BOX_STRUCT(lean_raylib_RenderTexture, rtWctx,
+    LEAN_RAYLIB_ALLOC_INIT(lean_raylib_RenderTexture, rtWctx,
         .texture = texture,
         .ctx = ctx
     );
@@ -221,7 +235,7 @@ static inline void lean_raylib_GlyphInfo_set (b_lean_obj_arg obj, uint32_t value
 
 static inline lean_object* lean_raylib_GlyphInfo_to (GlyphInfo r) {
     lean_object* obj = lean_alloc_ctor(0, 5, 0);
-    LET_BOX(Image, image, r.image);
+    LEAN_RAYLIB_ALLOC_STRUCT(Image, image, r.image);
     lean_raylib_GlyphInfo_set_impl(obj, r.value, r.offsetX, r.offsetY, r.advanceX, lean_raylib_Image_to(image));
     return obj;
 }
@@ -247,7 +261,7 @@ typedef struct {
 extern lean_external_class* lean_raylib_Font_class;
 
 static inline lean_object* lean_raylib_Font_to (Font font, lean_obj_arg ctx) {
-    LET_BOX_STRUCT(lean_raylib_Font, fontWctx,
+    LEAN_RAYLIB_ALLOC_INIT(lean_raylib_Font, fontWctx,
         .font = font,
         .ctx = ctx
     );
@@ -334,7 +348,7 @@ typedef struct {
 extern lean_external_class* lean_raylib_Mesh_class;
 
 static inline lean_object* lean_raylib_Mesh_to (Mesh mesh, lean_obj_arg ctx) {
-    LET_BOX_STRUCT(lean_raylib_Mesh, meshWctx,
+    LEAN_RAYLIB_ALLOC_INIT(lean_raylib_Mesh, meshWctx,
         .mesh = mesh,
         .ctx = ctx
     );
@@ -405,7 +419,7 @@ typedef struct {
 extern lean_external_class* lean_raylib_Shader_class;
 
 static inline lean_object* lean_raylib_Shader_to (Shader shader, lean_obj_arg ctx) {
-    LET_BOX_STRUCT(lean_raylib_Shader, shaderWctx,
+    LEAN_RAYLIB_ALLOC_INIT(lean_raylib_Shader, shaderWctx,
         .shader = shader,
         .ctx = ctx
     );
@@ -551,7 +565,7 @@ typedef struct {
 extern lean_external_class* lean_raylib_Model_class;
 
 static inline lean_object* lean_raylib_Model_to (lean_raylib_Model model) {
-    LET_BOX(lean_raylib_Model, modelBoxed, model);
+    LEAN_RAYLIB_ALLOC_STRUCT(lean_raylib_Model, modelBoxed, model);
     return lean_alloc_external(lean_raylib_Model_class, (void*)modelBoxed);
 }
 
@@ -595,7 +609,7 @@ static inline lean_raylib_Model lean_raylib_Model_clone(lean_raylib_Model* model
 extern lean_external_class* lean_raylib_ModelAnimation_class;
 
 static inline lean_object* lean_raylib_ModelAnimation_to (ModelAnimation anim) {
-    LET_BOX(ModelAnimation, animBox, anim);
+    LEAN_RAYLIB_ALLOC_STRUCT(ModelAnimation, animBox, anim);
     return lean_alloc_external(lean_raylib_ModelAnimation_class, (void*)animBox);
 }
 
@@ -750,7 +764,7 @@ typedef struct {
 extern lean_external_class* lean_raylib_Sound_class;
 
 static inline lean_object* lean_raylib_Sound_to (Sound sound, lean_obj_arg ctx) {
-    LET_BOX_STRUCT(lean_raylib_Sound, soundWctx,
+    LEAN_RAYLIB_ALLOC_INIT(lean_raylib_Sound, soundWctx,
         .sound = sound,
         .ctx = ctx
     );
@@ -772,7 +786,7 @@ typedef struct {
 extern lean_external_class* lean_raylib_Music_class;
 
 static inline lean_object* lean_raylib_Music_to (Music music, lean_obj_arg ctx) {
-    LET_BOX_STRUCT(lean_raylib_Music, musicWctx,
+    LEAN_RAYLIB_ALLOC_INIT(lean_raylib_Music, musicWctx,
         .music = music,
         .ctx = ctx
     );
@@ -957,7 +971,7 @@ static inline AutomationEvent lean_raylib_AutomationEvent_from (b_lean_obj_arg o
 extern lean_external_class* lean_raylib_AutomationEventList_class;
 
 static inline lean_object* lean_raylib_AutomationEventList_to (AutomationEventList value) {
-    LET_BOX(AutomationEventList, boxed, value);
+    LEAN_RAYLIB_ALLOC_STRUCT(AutomationEventList, boxed, value);
     return lean_alloc_external(lean_raylib_AutomationEventList_class, (void*)boxed);
 }
 

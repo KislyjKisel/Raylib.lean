@@ -1,4 +1,4 @@
-{"version": 7,
+{"version": "1.0.0",
  "packagesDir": ".lake/packages",
  "packages":
  [{"url": "https://github.com/KislyjKisel/libffi-lake",
@@ -13,10 +13,10 @@
   {"url": "https://github.com/KislyjKisel/lean-pod",
    "type": "git",
    "subDir": null,
-   "rev": "117fababe3988edb66c2b346b61e7941de716f24",
+   "rev": "bbcd18e5138ed820fc2e2c6109c3c6afc102bee6",
    "name": "pod",
    "manifestFile": "lake-manifest.json",
-   "inputRev": "117faba",
+   "inputRev": "bbcd18e",
    "inherited": false,
    "configFile": "lakefile.lean"}],
  "name": "raylib",

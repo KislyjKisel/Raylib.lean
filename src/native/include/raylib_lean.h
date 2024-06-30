@@ -1,3 +1,5 @@
+#pragma once
+
 #include <lean/lean.h>
 #include <raylib.h>
 
