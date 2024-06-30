@@ -2,6 +2,7 @@
     "C_Cpp.default.includePath": [
         "~/.elan/toolchains/stable/include",
         "raylib/src",
+        "raygui/src",
         ".lake/packages/pod/src/native/include",
         ".lake/packages/libffi/include"
     ],
