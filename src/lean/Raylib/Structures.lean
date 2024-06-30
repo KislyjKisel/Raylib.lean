@@ -1,3 +1,4 @@
+import Pod.Meta
 import Pod.BytesView
 import Raymath.Core
 import Raylib.Enumerations
@@ -8,23 +9,18 @@ open Raymath (Vector2 Vector3 Vector4 Matrix Quaternion)
 
 namespace Raylib
 
-@[extern "lean_raylib_initialize_Structures"] private
-opaque «initialize» : BaseIO Unit
+open scoped Pod
 
-builtin_initialize «initialize»
+extern_initialize => "lean_raylib_initialize_Structures"
 
 /-! # Context -/
 
-opaque ContextPointed : NonemptyType
-def Context : Type := ContextPointed.type
-instance : Nonempty Context := ContextPointed.property
+define_foreign_type Context
 
 
 /-! # VaList -/
 
-opaque VaListPointed (σ : Type) : NonemptyType
-def VaList (σ : Type) : Type := (VaListPointed σ).type
-instance {σ} : Nonempty (VaList σ) := (VaListPointed σ).property
+define_foreign_type VaList (σ : Type)
 
 inductive VaArg where
 -- Tag values are inspected by native code in `lean_raylib__VaList_next`
@@ -120,10 +116,8 @@ def Rectangle.move (offset : Vector2) (rect : Rectangle) : Rectangle :=
 
 /-! # Image -/
 
-opaque ImagePointed : NonemptyType
 /-- Image, pixel data stored in CPU memory (RAM) -/
-def Image : Type := ImagePointed.type
-instance : Nonempty Image := ImagePointed.property
+define_foreign_type Image
 
 /-- Image base width -/
 @[extern "lean_raylib__Image_width"]
@@ -149,10 +143,8 @@ def Image.empty : Image := Image.getEmpty ()
 
 /-! # Texture -/
 
-opaque TextureRefPointed : NonemptyType
 /-- Points to a native texture object while holding a reference to its managed owner -/
-def TextureRef : Type := TextureRefPointed.type
-instance : Nonempty TextureRef := TextureRefPointed.property
+define_foreign_type TextureRef
 
 opaque TexturePointed : NonemptyType
 /-- Texture, tex data stored in GPU memory (VRAM) -/
@@ -194,10 +186,8 @@ opaque Texture.getDefault (ctx : Context) : Texture
 
 /-! # Render texture -/
 
-opaque RenderTexturePointed : NonemptyType
 /-- RenderTexture, fbo for texture rendering -/
-def RenderTexture : Type := RenderTexturePointed.type
-instance : Nonempty RenderTexture := RenderTexturePointed.property
+define_foreign_type RenderTexture
 
 @[extern "lean_raylib__RenderTexture_id"]
 opaque RenderTexture.id (texture : @& RenderTexture) : UInt32
@@ -249,10 +239,8 @@ deriving Nonempty
 
 /-! # Font -/
 
-opaque FontPointed : NonemptyType
 /-- Font, font texture and GlyphInfo array data -/
-def Font : Type := FontPointed.type
-instance : Nonempty Font := FontPointed.property
+define_foreign_type Font
 
 /-- Base size (default chars height) -/
 @[extern "lean_raylib__Font_baseSize"]
@@ -309,10 +297,8 @@ deriving Inhabited, Repr
 
 /-! # Mesh -/
 
-opaque MeshPointed : NonemptyType
 /-- Mesh, vertex data and vao/vbo -/
-def Mesh : Type := MeshPointed.type
-instance : Nonempty Mesh := MeshPointed.property
+define_foreign_type Mesh
 
 structure Mesh.Skinning (vertexCount : UInt32) where
   boneIds : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) 1
@@ -425,9 +411,7 @@ opaque Mesh.vboId (mesh : @& Mesh) (i : @& Fin Mesh.maxVertexBuffers) : UInt32
 
 /-! # Shader -/
 
-opaque ShaderPointed : NonemptyType
-def Shader : Type := ShaderPointed.type
-instance : Nonempty Shader := ShaderPointed.property
+define_foreign_type Shader
 
 /-- Shader program id -/
 @[extern "lean_raylib__Shader_id"]
@@ -517,10 +501,8 @@ deriving Inhabited, Repr
 
 /-! # Model -/
 
-opaque ModelPointed : NonemptyType
 /-- Model, meshes, materials and animation data created with raylib's functions -/
-def Model : Type := ModelPointed.type
-instance : Nonempty Model := ModelPointed.property
+define_foreign_type Model
 
 @[extern "lean_raylib__Model_mk"]
 opaque Model.mk
@@ -617,9 +599,7 @@ def Model.setMeshMaterial? (model : Model) (i j : UInt32) : Model :=
 
 /-! # Model animation -/
 
-opaque ModelAnimationPointed : NonemptyType
-def ModelAnimation : Type := ModelAnimationPointed.type
-instance : Nonempty ModelAnimation := ModelAnimationPointed.property
+define_foreign_type ModelAnimation
 
 @[extern "lean_raylib__ModelAnimation_mk"]
 opaque ModelAnimation.mk (bones : @& Array BoneInfo)
@@ -716,10 +696,8 @@ deriving Inhabited, Repr
 
 /-! # Wave -/
 
-opaque WavePointed : NonemptyType
 /-- Wave, audio wave data -/
-def Wave : Type := WavePointed.type
-instance : Nonempty Wave := WavePointed.property
+define_foreign_type Wave
 
 /-- Getter: Total number of frames (considering channels) -/
 @[extern "lean_raylib__Wave_frameCount"]
@@ -737,10 +715,8 @@ opaque Wave.channels (wave : @& Wave) : UInt32
 
 /-! # Audio stream -/
 
-opaque AudioStreamPointed (st : AudioSampleType) : NonemptyType
 /-- AudioStream, custom audio stream -/
-def AudioStream (st : AudioSampleType) : Type := (AudioStreamPointed st).type
-instance {st} : Nonempty (AudioStream st) := (AudioStreamPointed st).property
+define_foreign_type AudioStream (st : AudioSampleType)
 
 /-- Frequency (samples per second) -/
 @[extern "lean_raylib__AudioStream_sampleRate"]
@@ -757,10 +733,7 @@ opaque AudioStream.channels {st} (audioStream : @& AudioStream st) : UInt32
 
 /-! # Sound -/
 
-opaque SoundPointed : NonemptyType
-/-- Sound -/
-def Sound : Type := SoundPointed.type
-instance : Nonempty Sound := SoundPointed.property
+define_foreign_type Sound
 
 /-- Frequency (samples per second) -/
 @[extern "lean_raylib__Sound_sampleRate"]
@@ -778,12 +751,11 @@ opaque Sound.channels (sound : @& Sound) : UInt32
 @[extern "lean_raylib__Sound_frameCount"]
 opaque Sound.frameCount (sound : @& Sound) : UInt32
 
+
 /-! # Music -/
 
-opaque MusicPointed : NonemptyType
 /-- Music, audio stream, anything longer than ~10 seconds should be streamed -/
-def Music : Type := MusicPointed.type
-instance : Nonempty Music := MusicPointed.property
+define_foreign_type Music
 
 /-- Getter: Frequency (samples per second) -/
 @[extern "lean_raylib__Music_sampleRate"]
@@ -876,9 +848,7 @@ deriving Inhabited, Repr
 
 /-! # Automation event list -/
 
-opaque AutomationEventListPointed : NonemptyType
-def AutomationEventList : Type := AutomationEventListPointed.type
-instance : Nonempty AutomationEventList := AutomationEventListPointed.property
+define_foreign_type AutomationEventList
 
 @[extern "lean_raylib__AutomationEventList_capacity"]
 opaque AutomationEventList.capacity (list : @& AutomationEventList) : UInt32
@@ -911,8 +881,4 @@ opaque AutomationEventList.withCapacity (capacity : UInt32) : AutomationEventLis
 
 /-! # Window handle -/
 
-opaque WindowHandlePointed : NonemptyType
-def WindowHandle : Type := WindowHandlePointed.type
-instance : Nonempty WindowHandle := WindowHandlePointed.property
-
-end Raylib
+define_foreign_type WindowHandle
