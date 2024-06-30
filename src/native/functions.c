@@ -1,6 +1,7 @@
+#include <assert.h>
 #include <string.h>
-#include "structures.h"
 #include <raylib.h>
+#include "include/raylib_lean.h"
 
 // Where in raylib `int` is used it is assumed to be the same with `int32_t` 
 #ifdef static_assert

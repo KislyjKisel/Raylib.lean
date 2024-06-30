@@ -1,5 +1,5 @@
 #include <lean/lean.h>
-#include "structures.h"
+#include "include/raylib_lean.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include <raygui.h>

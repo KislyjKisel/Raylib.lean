@@ -4,7 +4,6 @@
 #include <raylib.h>
 #include <rlgl.h>
 #include "include/raylib_lean.h"
-#include "structures.h"
 
 lean_external_class* lean_raylib_Context_class;
 lean_external_class* lean_raylib_VaList_class;

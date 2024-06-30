@@ -2,7 +2,7 @@
 #include <lean/lean.h>
 #include <lean_pod.h>
 #include <raylib.h>
-#include "structures.h"
+#include "include/raylib_lean.h"
 
 #ifdef LEAN_RAYLIB_LIBFFI
 #include <ffi.h>

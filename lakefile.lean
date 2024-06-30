@@ -252,7 +252,7 @@ extern_lib «raylib-lean» pkg := do
   if (get_config? raygui).isSome then
     bindingsSources := bindingsSources.push "raygui"
   let bindingsHeaders := #[
-    "structures", "include/raylib_lean", "include/raymath_lean"
+    "include/raylib_lean", "include/raymath_lean"
   ]
   let nativeSrcDir := pkg.dir / "src" / "native"
   let objectFileDir := pkg.irDir / "native"
