@@ -16,7 +16,7 @@ def podConfig : NameMap String := Id.run $ do
   cfg
 
 require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "7c9fb2b" with libffiConfig
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "bbcd18e" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "b363d7c" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -199,7 +199,7 @@ def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Arra
     | .System =>
       let pkgConfigOutput ← tryRunProcess {
         cmd := "pkg-config"
-        args := #["--cflags", "raylib"]
+        args := #["--cflags", "raylib", "glfw3"]
       }
       traceArgs := traceArgs.append $ splitArgStr $ pkgConfigOutput.replace "\n" " "
 
@@ -207,7 +207,9 @@ def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Arra
       buildRaylibSubmodule printCmdOutput
       traceArgs := traceArgs.append #[
         "-I",
-        (pkg.dir / "raylib" / "build" / "raylib" / "include").toString
+        (pkg.dir / "raylib" / "build" / "raylib" / "include").toString,
+        "-I",
+        (pkg.dir / "raylib" / "src" / "external" / "glfw" / "include").toString
       ]
 
     | .Custom => pure ()
@@ -247,7 +249,7 @@ extern_lib «raylib-lean» pkg := do
   let (weakArgs, traceArgs) ← bindingsCFlags pkg
   let mut bindingsSources := #[
     "structures", "functions", "callbacks",
-    "raymath"
+    "raymath", "glfw"
   ]
   if (get_config? raygui).isSome then
     bindingsSources := bindingsSources.push "raygui"

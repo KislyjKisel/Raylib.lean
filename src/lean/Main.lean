@@ -21,6 +21,13 @@ def main : IO Unit := do
   initAudioDevice
   setExitKey .null
 
+  IO.println "Supported video modes:"
+  let videoModes ← (Glfw.getVideoModes (← Glfw.getPrimaryMonitor.toIO)).toIO
+  for videoMode in videoModes do
+    IO.println <| repr videoMode
+  IO.println "Current video mode:"
+  IO.println <| repr <| ← (Glfw.getVideoMode (← Glfw.getPrimaryMonitor.toIO)).toIO
+
   -- let audioStream ← loadAudioStream rlctx 44100 .u16 1
   -- setMasterVolume 0.5
   -- setAudioStreamCallback audioStream λ frames data ↦ do

@@ -2,6 +2,7 @@
 
 #include <lean/lean.h>
 #include <raylib.h>
+#include <GLFW/glfw3.h>
 #include "raymath_lean.h"
 
 #ifdef LEAN_RAYLIB_LIBFFI
@@ -1054,3 +1055,64 @@ static inline lean_obj_res lean_raylib_AutomationEventList_ensure_exclusive(lean
 // # Window Handle
 
 LEAN_POD_PTR_ALIAS(raylib_WindowHandle, void*);
+
+
+// # GLFW
+
+static inline uint8_t lean_raylib_glfw_ErrorCode_toRepr(int err) {
+    switch (err) {
+        case GLFW_NO_ERROR: return 0;
+        case GLFW_NOT_INITIALIZED: return 1;
+        case GLFW_NO_CURRENT_CONTEXT: return 2;
+        case GLFW_INVALID_ENUM: return 3;
+        case GLFW_INVALID_VALUE: return 4;
+        case GLFW_OUT_OF_MEMORY: return 5;
+        case GLFW_API_UNAVAILABLE: return 6;
+        case GLFW_VERSION_UNAVAILABLE: return 7;
+        case GLFW_PLATFORM_ERROR: return 8;
+        case GLFW_FORMAT_UNAVAILABLE: return 9;
+        case GLFW_NO_WINDOW_CONTEXT: return 10;
+#ifdef GLFW_CURSOR_UNAVAILABLE
+        case GLFW_CURSOR_UNAVAILABLE: return 11;
+#endif
+#ifdef GLFW_FEATURE_UNAVAILABLE
+        case GLFW_FEATURE_UNAVAILABLE: return 12;
+#endif
+#ifdef GLFW_FEATURE_UNIMPLEMENTED
+        case GLFW_FEATURE_UNIMPLEMENTED: return 13;
+#endif
+#ifdef GLFW_PLATFORM_UNAVAILABLE
+        case GLFW_PLATFORM_UNAVAILABLE: return 14;
+#endif
+        default:
+            return 15;
+    }
+}
+
+#define lean_raylib_glfw_ErrorCode_box(x) lean_box(lean_raylib_glfw_ErrorCode_toRepr(x))
+
+#define LEAN_RAYLIB_GLFW_Error_LAYOUT 0, 1, 0, 0, 0, 0, 1
+#define LEAN_RAYLIB_GLFW_Error_code U8, 0, LEAN_RAYLIB_GLFW_Error_LAYOUT
+#define LEAN_RAYLIB_GLFW_Error_description BOX, 0, LEAN_RAYLIB_GLFW_Error_LAYOUT
+
+LEAN_POD_PTR_ALIAS(raylib_glfw_Window, GLFWwindow*)
+LEAN_POD_PTR_ALIAS(raylib_glfw_Monitor, GLFWmonitor*)
+
+#define LEAN_RAYLIB_GLFW_VideoMode_LAYOUT 0, 0, 0, 0, 6, 0, 0
+#define LEAN_RAYLIB_GLFW_VideoMode_width U32, 0, LEAN_RAYLIB_GLFW_VideoMode_LAYOUT
+#define LEAN_RAYLIB_GLFW_VideoMode_height U32, 1, LEAN_RAYLIB_GLFW_VideoMode_LAYOUT
+#define LEAN_RAYLIB_GLFW_VideoMode_redBits U32, 2, LEAN_RAYLIB_GLFW_VideoMode_LAYOUT
+#define LEAN_RAYLIB_GLFW_VideoMode_greenBits U32, 3, LEAN_RAYLIB_GLFW_VideoMode_LAYOUT
+#define LEAN_RAYLIB_GLFW_VideoMode_blueBits U32, 4, LEAN_RAYLIB_GLFW_VideoMode_LAYOUT
+#define LEAN_RAYLIB_GLFW_VideoMode_refreshRate U32, 5, LEAN_RAYLIB_GLFW_VideoMode_LAYOUT
+
+static inline lean_obj_res lean_raylib_glfw_VideoMode_box(const GLFWvidmode* vidmode) {
+    lean_object* vidmode_box = LEAN_POD_ALLOC_CTOR(LEAN_RAYLIB_GLFW_VideoMode_LAYOUT);
+    LEAN_POD_CTOR_SET(vidmode_box, vidmode->width, LEAN_RAYLIB_GLFW_VideoMode_width);
+    LEAN_POD_CTOR_SET(vidmode_box, vidmode->height, LEAN_RAYLIB_GLFW_VideoMode_height);
+    LEAN_POD_CTOR_SET(vidmode_box, vidmode->redBits, LEAN_RAYLIB_GLFW_VideoMode_redBits);
+    LEAN_POD_CTOR_SET(vidmode_box, vidmode->greenBits, LEAN_RAYLIB_GLFW_VideoMode_greenBits);
+    LEAN_POD_CTOR_SET(vidmode_box, vidmode->blueBits, LEAN_RAYLIB_GLFW_VideoMode_blueBits);
+    LEAN_POD_CTOR_SET(vidmode_box, vidmode->refreshRate, LEAN_RAYLIB_GLFW_VideoMode_refreshRate);
+    return vidmode_box;
+}

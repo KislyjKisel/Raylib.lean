@@ -5,3 +5,4 @@ import Raylib.Aliases
 import Raylib.Callbacks
 import Raylib.Functions
 import Raylib.Defines
+import Raylib.Glfw
