@@ -4,17 +4,16 @@
 #include <raylib.h>
 #include "include/raylib_lean.h"
 
-#ifdef LEAN_RAYLIB_LIBFFI
-#include <ffi.h>
-#endif
-
 static lean_object* lean_raylib_TraceLogCallback_current = NULL;
 static lean_object* lean_raylib_LoadFileDataCallback_current = NULL;
 static lean_object* lean_raylib_SaveFileDataCallback_current = NULL;
 static lean_object* lean_raylib_LoadFileTextCallback_current = NULL;
 static lean_object* lean_raylib_SaveFileTextCallback_current = NULL;
-// static lean_object* lean_raylib_AudioThreadEntryCallback_current = NULL;
-// static lean_object* lean_raylib_AudioThreadExitCallback_current = NULL;
+
+#ifdef LEAN_RAYLIB_FORK
+static lean_object* lean_raylib_AudioThreadEntryCallback_current = NULL;
+static lean_object* lean_raylib_AudioThreadExitCallback_current = NULL;
+#endif
 
 static void lean_raylib_TraceLogCallback_wrapper(int logLevel, const char* text, va_list args) {
     assert(lean_raylib_TraceLogCallback_current != NULL);
@@ -132,28 +131,30 @@ static bool lean_raylib_SaveFileTextCallback_wrapper(const char* fileName, char*
     return success;
 }
 
-// void lean_initialize_thread(void);
-// void lean_finalize_thread(void);
+#ifdef LEAN_RAYLIB_FORK
+void lean_initialize_thread(void);
+void lean_finalize_thread(void);
 
-// static void lean_raylib_AudioThreadEntryCallback_wrapper(void) {
-//     assert(lean_raylib_AudioThreadEntryCallback_current != NULL);
-//     lean_initialize_thread();
-//     lean_inc_ref(lean_raylib_AudioThreadEntryCallback_current);
-//     lean_dec_ref(lean_apply_1(
-//         lean_raylib_AudioThreadEntryCallback_current,
-//         lean_box(0)
-//     ));
-// }
+static void lean_raylib_AudioThreadEntryCallback_wrapper(void) {
+    assert(lean_raylib_AudioThreadEntryCallback_current != NULL);
+    lean_initialize_thread();
+    lean_inc_ref(lean_raylib_AudioThreadEntryCallback_current);
+    lean_dec_ref(lean_apply_1(
+        lean_raylib_AudioThreadEntryCallback_current,
+        lean_box(0)
+    ));
+}
 
-// static void lean_raylib_AudioThreadExitCallback_wrapper(void) {
-//     assert(lean_raylib_AudioThreadExitCallback_current != NULL);
-//     lean_inc_ref(lean_raylib_AudioThreadExitCallback_current);
-//     lean_dec_ref(lean_apply_1(
-//         lean_raylib_AudioThreadExitCallback_current,
-//         lean_box(0)
-//     ));
-//     lean_finalize_thread();
-// }
+static void lean_raylib_AudioThreadExitCallback_wrapper(void) {
+    assert(lean_raylib_AudioThreadExitCallback_current != NULL);
+    lean_inc_ref(lean_raylib_AudioThreadExitCallback_current);
+    lean_dec_ref(lean_apply_1(
+        lean_raylib_AudioThreadExitCallback_current,
+        lean_box(0)
+    ));
+    lean_finalize_thread();
+}
+#endif
 
 #define LEAN_RAYLIB_CALLBACK_SET_RESET(action)\
 LEAN_EXPORT lean_obj_res lean_raylib__Set##action##Callback (lean_obj_arg callback, lean_obj_arg world) {\
@@ -179,94 +180,99 @@ LEAN_RAYLIB_CALLBACK_SET_RESET(LoadFileData);
 LEAN_RAYLIB_CALLBACK_SET_RESET(SaveFileData);
 LEAN_RAYLIB_CALLBACK_SET_RESET(LoadFileText);
 LEAN_RAYLIB_CALLBACK_SET_RESET(SaveFileText);
-// LEAN_RAYLIB_CALLBACK_SET_RESET(AudioThreadEntry);
-// LEAN_RAYLIB_CALLBACK_SET_RESET(AudioThreadExit);
 
-#ifdef LEAN_RAYLIB_LIBFFI
-static void lean_raylib_AudioStreamCallback_wrapper(ffi_cif *cif, void* ret, void** args, void* user_data) {
-    lean_object* callback = user_data;
+#ifdef LEAN_RAYLIB_FORK
+LEAN_RAYLIB_CALLBACK_SET_RESET(AudioThreadEntry);
+LEAN_RAYLIB_CALLBACK_SET_RESET(AudioThreadExit);
+#else
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioThreadEntryCallback (lean_obj_arg callback, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(0));
+}
+LEAN_EXPORT lean_obj_res lean_raylib__ResetAudioThreadEntryCallback (lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(0));
+}
+LEAN_EXPORT lean_obj_res lean_raylib__SetAudioThreadExitCallback (lean_obj_arg callback, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(0));
+}
+LEAN_EXPORT lean_obj_res lean_raylib__ResetAudioThreadExitCallback (lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(0));
+}
+#endif
+
+// BELOW: TODO
+
+#ifdef LEAN_RAYLIB_FORK
+static void lean_raylib_AudioStreamCallback_wrapper(void* bufferData, unsigned int frames, void* userdata) {
+    lean_object* callback = userdata;
     lean_inc_ref(callback);
-    // Segmentation fault on `lean_alloc_small` (the call is now removed, still crashes later)
-    size_t frames = *(unsigned int*)args[1];
-    lean_object* res = lean_apply_5(
+    lean_dec_ref(lean_apply_5(
         callback,
         lean_box(0),
         lean_usize_to_nat(frames),
-        lean_pod_BytesRef_box(*(uint8_t**)args[0]),
+        lean_pod_BytesRef_box(bufferData),
         lean_box(0),
         lean_box(0)
-    );
-    if(lean_ptr_tag(res) == 1) {
-        lean_io_result_show_error(res);
-        lean_dec_ref(res);
-        return;
-    }
-    lean_dec_ref(res);
-    return;
+    ));
 }
 #endif
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamCallback (uint32_t st, b_lean_obj_arg stream_box, lean_obj_arg callback, lean_obj_arg world) {
-#ifdef LEAN_RAYLIB_LIBFFI
-    static ffi_type* argtypes[] = { &ffi_type_pointer, &ffi_type_uint };
-    static ffi_cif callback_cif;
-    static int ffi_uninit = 1;
-    if(ffi_uninit) {
-        ffi_status st_cif = ffi_prep_cif(&callback_cif, FFI_DEFAULT_ABI, 2, &ffi_type_void, argtypes);
-        if(st_cif != FFI_OK) {
-            lean_dec_ref(callback);
-            const char* err;
-            switch (st_cif) {
-                case FFI_BAD_TYPEDEF:
-                    err = "Call interface preparation failed: incorrect type";
-                    break;
-                case FFI_BAD_ABI:
-                    err = "Call interface preparation failed: invalid abi parameter";
-                    break;
-                case FFI_BAD_ARGTYPE:
-                    err = "Call interface preparation failed: unexpected BAD_ARGTYPE";
-                    break;
-                default:
-                    err = "Call interface preparation failed: unknown error";
-                    break;
-            }
-            return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string(err)));
-        }
-        ffi_uninit = 0;
-    }
-
-    AudioCallback callback_c;
-    ffi_closure* callback_closure = (ffi_closure*)ffi_closure_alloc(sizeof(ffi_closure), (void**)&callback_c);
-    if(!callback_closure) {
-        lean_dec_ref(callback);
-        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string("Closure allocation failed")));
-    }
-    ffi_status st_tr = ffi_prep_closure_loc(
-        callback_closure,
-        &callback_cif,
-        lean_raylib_AudioStreamCallback_wrapper,
-        callback,
-        callback_c
-    );
-    if(st_tr != FFI_OK) {
-        lean_dec_ref(callback);
-        char err[] = "Closure preparation failed: #?";
-        err[sizeof(err) - 2] = '0' + st_tr;
-        ffi_closure_free(callback_closure);
-        return lean_io_result_mk_error(lean_mk_io_user_error(lean_mk_string(err)));
-    }
-
+#ifdef LEAN_RAYLIB_FORK
     lean_mark_mt(callback);
     lean_raylib_AudioStream_data* stream = lean_raylib_AudioStream_fromRepr(stream_box);
-    if(stream->closure != NULL) {
-        lean_dec_ref(stream->closure->user_data);
-        ffi_closure_free(stream->closure);
+    if(stream->callback != NULL) {
+        lean_dec_ref(stream->callback);
     }
-    stream->closure = callback_closure;
-
-    SetAudioStreamCallback(stream->stream, callback_c);
+    stream->callback = callback;
+    SetAudioStreamCallback(stream->stream, lean_raylib_AudioStreamCallback_wrapper, callback);
 #else
     lean_dec_ref(callback);
 #endif
     return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__AttachAudioStreamProcessor (uint32_t st, b_lean_obj_arg stream, lean_obj_arg processor, lean_obj_arg io_) {
+#ifdef LEAN_RAYLIB_FORK
+    AttachAudioStreamProcessor(
+        lean_raylib_AudioStream_fromRepr(stream)->stream,
+        lean_raylib_AudioStreamCallback_wrapper,
+        processor
+    );
+#endif
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__DetachAudioStreamProcessor (uint32_t st, b_lean_obj_arg stream, lean_obj_arg processor, lean_obj_arg io_) {
+#ifdef LEAN_RAYLIB_FORK
+    bool success = DetachAudioStreamProcessor(
+        lean_raylib_AudioStream_fromRepr(stream)->stream,
+        lean_raylib_AudioStreamCallback_wrapper,
+        processor
+    );
+    if (success) {
+        lean_dec_ref(processor);
+    }
+    return lean_io_result_mk_ok(lean_box(success));
+#else
+    return lean_io_result_mk_ok(lean_box(false));
+#endif
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__AttachAudioMixedProcessor (lean_obj_arg processor, lean_obj_arg io_) {
+#ifdef LEAN_RAYLIB_FORK
+    AttachAudioMixedProcessor(lean_raylib_AudioStreamCallback_wrapper, processor);
+#endif
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__DetachAudioMixedProcessor (b_lean_obj_arg processor, lean_obj_arg io_) {
+#ifdef LEAN_RAYLIB_FORK
+    bool success = DetachAudioMixedProcessor(lean_raylib_AudioStreamCallback_wrapper, processor);
+    if (success) {
+        lean_dec_ref(processor);
+    }
+    return lean_io_result_mk_ok(lean_box(success));
+#else
+    return lean_io_result_mk_ok(lean_box(false));
+#endif
 }

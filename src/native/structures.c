@@ -160,11 +160,8 @@ static void lean_raylib_Wave_finalize(void* wave) {
 static void lean_raylib_AudioStream_finalize(void* audioStream_v) {
     lean_raylib_AudioStream_data* audioStream = audioStream_v;
     UnloadAudioStream(audioStream->stream);
-#ifdef LEAN_RAYLIB_LIBFFI
-    if (audioStream->closure != NULL) {
-        lean_dec_ref(audioStream->closure->user_data);
-        ffi_closure_free(audioStream->closure);
-    }
+#ifdef LEAN_RAYLIB_FORK
+    lean_dec_ref(audioStream->callback);
 #endif
     lean_dec_ref(audioStream->ctx);
     lean_raylib_free(audioStream);
@@ -175,12 +172,11 @@ static void lean_raylib_AudioStream_foreach(void* audioStream_v, b_lean_obj_arg 
     lean_inc_ref(f);
     lean_inc_ref(audioStream->ctx);
     lean_apply_1(f, audioStream->ctx);
-#ifdef LEAN_RAYLIB_LIBFFI
-    if (audioStream->closure != NULL) {
+#ifdef LEAN_RAYLIB_FORK
+    if (audioStream->callback != NULL) {
         lean_inc_ref(f);
-        lean_object* callback = audioStream->closure->user_data;
-        lean_inc(callback);
-        lean_apply_1(f, callback);
+        lean_inc_ref(audioStream->callback);
+        lean_apply_1(f, audioStream->callback);
     }
 #endif
 }

@@ -53,3 +53,29 @@ def seqRight {ε σ₁ σ₂ α β} (x : EST2 ε σ₁ σ₂ α) (y : Unit → E
   | EST2.Result.error e s₁ s₂ => EST2.Result.error e s₁ s₂
 
 instance (ε σ₁ σ₂ : Type) : Monad (EST2 ε σ₁ σ₂) := { pure, bind, map, seqRight }
+
+instance {ε σ₁ σ₂} : MonadLift (EST ε σ₁) (EST2 ε σ₁ σ₂) where
+  monadLift x := EST2.lift₁ x
+
+instance {ε σ₁ σ₂} : MonadLift (EST ε σ₂) (EST2 ε σ₁ σ₂) where
+  monadLift x := EST2.lift₂ x
+
+def toExcept {ε σ₁ σ₂ α} (x : EST2 ε σ₁ σ₂ α) : EST2 Empty σ₁ σ₂ (Except ε α) := λ s₁ s₂ ↦
+  match x s₁ s₂ with
+  | .ok x s₁ s₂ => .ok (.ok x) s₁ s₂
+  | .error e s₁ s₂ => .ok (.error e) s₁ s₂
+
+def ignoreErrors {ε σ₁ σ₂} (x : EST2 ε σ₁ σ₂ Unit) : EST2 Empty σ₁ σ₂ Unit := λ s₁ s₂ ↦
+  match x s₁ s₂ with
+  | .ok x s₁ s₂ => .ok x s₁ s₂
+  | .error _ s₁ s₂ => .ok () s₁ s₂
+
+def ignoreErrors? {ε σ₁ σ₂ α} (x : EST2 ε σ₁ σ₂ α) : EST2 Empty σ₁ σ₂ (Option α) := λ s₁ s₂ ↦
+  match x s₁ s₂ with
+  | .ok x s₁ s₂ => .ok (some x) s₁ s₂
+  | .error _ s₁ s₂ => .ok none s₁ s₂
+
+def ignoreErrorsD {ε σ₁ σ₂ α} (default : α) (x : EST2 ε σ₁ σ₂ α) : EST2 Empty σ₁ σ₂ α := λ s₁ s₂ ↦
+  match x s₁ s₂ with
+  | .ok x s₁ s₂ => .ok x s₁ s₂
+  | .error _ s₁ s₂ => .ok default s₁ s₂

@@ -1,5 +1,6 @@
 import Pod.Meta
 import Pod.Int
+import Raylib.Structures
 
 open Pod (Int32)
 
@@ -55,6 +56,11 @@ def GlfwIO.toIO {α} (x : GlfwIO α) : IO α :=
 
 /-- Opaque window object. -/
 define_foreign_type Window
+
+-- TODO: Handle assumed to be GLFWwindow* because `Raylib.Glfw` functions (in an ideal world)
+-- should only be accessible when Raylib uses GLFW.
+@[extern "lean_raylib_glfw_Window_mk"]
+opaque Window.mk (handle : WindowBackendHandle) : Window
 
 /-- Opaque monitor object. -/
 define_foreign_type Monitor

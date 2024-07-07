@@ -724,7 +724,8 @@ opaque AudioStream.sampleRate {st} (audioStream : @& AudioStream st) : UInt32
 
 /-- Bit depth (bits per sample): 8, 16, 32 (24 not supported) -/
 @[extern "lean_raylib__AudioStream_sampleSize"]
-def AudioStream.sampleSize {st} (audioStream : @& AudioStream st) : UInt32 := st.size
+def AudioStream.sampleSize {st} (audioStream : @& AudioStream st) : UInt32 :=
+  st.bitWidth
 
 /-- Number of channels (1-mono, 2-stereo, ...) -/
 @[extern "lean_raylib__AudioStream_channels"]
@@ -882,3 +883,4 @@ opaque AutomationEventList.withCapacity (capacity : UInt32) : AutomationEventLis
 /-! # Window handle -/
 
 define_foreign_type WindowHandle
+define_foreign_type WindowBackendHandle

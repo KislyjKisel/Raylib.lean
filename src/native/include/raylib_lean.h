@@ -5,10 +5,6 @@
 #include <GLFW/glfw3.h>
 #include "raymath_lean.h"
 
-#ifdef LEAN_RAYLIB_LIBFFI
-#include <ffi.h>
-#endif
-
 /// Allocate external raylib object.
 /// @param sz must be divisible by `LEAN_OBJECT_SIZE_DELTA`
 static inline void* lean_raylib_alloc(size_t sz) {
@@ -781,19 +777,19 @@ static inline lean_object* lean_raylib_Wave_box (Wave const* obj) {
 typedef struct {
     AudioStream stream;
     lean_object* ctx;
-#ifdef LEAN_RAYLIB_LIBFFI
-    ffi_closure* closure; // NULLABLE
+#ifdef LEAN_RAYLIB_FORK
+    lean_object* callback; // NULLABLE
 #endif
 } lean_raylib_AudioStream_data;
 
 LEAN_POD_DECLARE_EXTERNAL_CLASS(raylib_AudioStream, lean_raylib_AudioStream_data*);
 
-static inline lean_object* lean_raylib_AudioStream_box (AudioStream stream, lean_obj_arg ctx, void* closure) {
+static inline lean_object* lean_raylib_AudioStream_box (AudioStream stream, lean_obj_arg ctx, lean_obj_arg callback) {
     lean_raylib_AudioStream_data* stream_heap = lean_raylib_alloc(sizeof(lean_raylib_AudioStream_data));
     stream_heap->stream = stream;
     stream_heap->ctx = ctx;
-#ifdef LEAN_RAYLIB_LIBFFI
-    stream_heap->closure = closure;
+#ifdef LEAN_RAYLIB_FORK
+    stream_heap->callback = callback;
 #endif
     return lean_alloc_external(lean_raylib_AudioStream_class, (void*)stream_heap);
 }
@@ -802,8 +798,22 @@ static inline lean_object* lean_raylib_AudioStream_box (AudioStream stream, lean
 
 /// @param stream \@& AudioStream
 /// @param callback nullable
-static inline void lean_raylib_AudioStream_setCallback(b_lean_obj_arg stream, AudioCallback callback) {
-    SetAudioStreamCallback(lean_raylib_AudioStream_unbox(stream)->stream, callback);
+static inline void lean_raylib_AudioStream_setCallback(
+    b_lean_obj_arg stream, AudioCallback callback
+#ifdef LEAN_RAYLIB_FORK
+    , void* userdata
+#endif
+) {
+    lean_raylib_AudioStream_data* data = lean_raylib_AudioStream_unbox(stream);
+    #ifdef LEAN_RAYLIB_FORK
+    if (data->callback != NULL) {
+        lean_dec_ref(data->callback);
+        data->callback = NULL;
+    }
+    SetAudioStreamCallback(data->stream, callback, userdata);
+    #else
+    SetAudioStreamCallback(data->stream, callback);
+    #endif
 }
 
 
@@ -1055,6 +1065,7 @@ static inline lean_obj_res lean_raylib_AutomationEventList_ensure_exclusive(lean
 // # Window Handle
 
 LEAN_POD_PTR_ALIAS(raylib_WindowHandle, void*);
+LEAN_POD_PTR_ALIAS(raylib_WindowBackendHandle, void*);
 
 
 // # GLFW
@@ -1096,6 +1107,12 @@ static inline uint8_t lean_raylib_glfw_ErrorCode_toRepr(int err) {
 #define LEAN_RAYLIB_GLFW_Error_description BOX, 0, LEAN_RAYLIB_GLFW_Error_LAYOUT
 
 LEAN_POD_PTR_ALIAS(raylib_glfw_Window, GLFWwindow*)
+// @param handle owned
+static inline lean_obj_res lean_raylib_glfw_Window_mk_(lean_raylib_WindowBackendHandle handle) {
+    // return lean_raylib_glfw_Window_toRepr(lean_raylib_WindowBackendHandle_fromRepr(handle)); // lean_dec_ref handle
+    return handle; // Both are ptr aliases
+}
+
 LEAN_POD_PTR_ALIAS(raylib_glfw_Monitor, GLFWmonitor*)
 
 #define LEAN_RAYLIB_GLFW_VideoMode_LAYOUT 0, 0, 0, 0, 6, 0, 0

@@ -25,6 +25,10 @@ static inline lean_obj_res lean_raylib_glfw_error(void) {
     }\
 }
 
+LEAN_EXPORT lean_obj_res lean_raylib_glfw_Window_mk(lean_raylib_WindowBackendHandle handle) {
+    return lean_raylib_glfw_Window_mk_(handle);
+}
+
 LEAN_EXPORT lean_obj_res lean_raylib_glfw_getPrimaryMonitor(lean_obj_arg io_) {
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
     if (monitor == NULL) {

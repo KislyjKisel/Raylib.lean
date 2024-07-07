@@ -136,6 +136,13 @@ opaque setWindowFocused : BaseIO Unit
 @[extern "lean_raylib__GetWindowHandle"]
 opaque getWindowHandle : BaseIO WindowHandle
 
+/--
+Get GLFWwindow/SDL_Window/RGFW_window pointer or NULL.
+Requires `fork` config option.
+-/
+@[extern "lean_raylib__GetWindowBackendHandle"]
+opaque getWindowBackendHandle : BaseIO WindowBackendHandle
+
 /-- Get current screen width -/
 @[extern "lean_raylib__GetScreenWidth"]
 opaque getScreenWidth : BaseIO UInt32
@@ -2199,49 +2206,68 @@ opaque setAudioStreamPan {st} (stream : @& AudioStream st) (pan : Float32) : Bas
 @[extern "lean_raylib__SetAudioStreamBufferSizeDefault"]
 opaque setAudioStreamBufferSizeDefault (size : UInt32) : BaseIO Unit
 
-/-- Audio thread callback to request new data -/
+/--
+Audio thread callback to request new data.
+Requires `fork` config option.
+-/
 @[extern "lean_raylib__SetAudioStreamCallback"]
 opaque setAudioStreamCallback {st} (stream : @& AudioStream st) (callback : AudioCallback st) : BaseIO Unit
 
--- /-- Attach audio stream processor to stream, receives the samples as 'float' -/
--- @[extern "lean_raylib__AttachAudioStreamProcessor"]
--- opaque attachAudioStreamProcessor : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | stream : AudioStream
---   | processor : AudioCallback
--- -/
--- /-- Detach audio stream processor from stream -/
--- @[extern "lean_raylib__DetachAudioStreamProcessor"]
--- opaque detachAudioStreamProcessor : Unit -> Unit
--- /- todo: ^^ function ^^
---   returns: void
---   params:
---   | stream : AudioStream
---   | processor : AudioCallback
--- -/
--- /-- Attach audio stream processor to the entire audio pipeline, receives the samples as 'float' -/
--- @[extern "lean_raylib__AttachAudioMixedProcessor"]
--- opaque attachAudioMixedProcessor (processor : AudioCallback) : BaseIO Unit
--- /-- Detach audio stream processor from the entire audio pipeline -/
--- @[extern "lean_raylib__DetachAudioMixedProcessor"]
--- opaque detachAudioMixedProcessor (processor : AudioCallback) : BaseIO Unit
+/--
+Attach audio stream processor to stream.
+Requires `fork` config option.
+-/
+@[extern "lean_raylib__AttachAudioStreamProcessor"]
+opaque attachAudioStreamProcessor {st} (stream : @& AudioStream st) (processor : AudioCallback st) : BaseIO Unit
 
--- /-- Audio thread creation callback (called on the created thread, usually should be set before audio device initialization, can be NULL) -/
--- @[extern "lean_raylib__SetAudioThreadEntryCallback"]
--- opaque setAudioThreadEntryCallback (callback : AudioThreadEntryCallback) : BaseIO Unit
+/--
+Detach audio stream processor from stream.
+Returns whether any processor was detached.
+Requires `fork` config option.
+-/
+@[extern "lean_raylib__DetachAudioStreamProcessor"]
+opaque detachAudioStreamProcessor {st} (stream : @& AudioStream st) (processor : @& AudioCallback st) : BaseIO Bool
 
--- /-- Reset audio thread creation callback -/
--- @[extern "lean_raylib__ResetAudioThreadEntryCallback"]
--- opaque resetAudioThreadEntryCallback : BaseIO Unit
+/--
+Attach audio stream processor to the entire audio pipeline.
+Requires `fork` config option.
+-/
+@[extern "lean_raylib__AttachAudioMixedProcessor"]
+opaque attachAudioMixedProcessor (processor : AudioCallback .f32) : BaseIO Unit
 
--- /-- Audio thread destruction callback (called on the destroyed thread, can be NULL) -/
--- @[extern "lean_raylib__SetAudioThreadExitCallback"]
--- opaque setAudioThreadExitCallback (callback : AudioThreadExitCallback) : BaseIO Unit
+/--
+Detach audio stream processor from the entire audio pipeline.
+Returns whether any processor was detached.
+Requires `fork` config option. -/
+@[extern "lean_raylib__DetachAudioMixedProcessor"]
+opaque detachAudioMixedProcessor (processor : @& AudioCallback .f32) : BaseIO Bool
 
--- /-- Reset audio thread destruction callback -/
--- @[extern "lean_raylib__ResetAudioThreadExitCallback"]
--- opaque resetAudioThreadExitCallback : BaseIO Unit
+/--
+Audio thread creation callback (called on the created thread, usually should be set before audio device initialization).
+Requires `fork` config option.
+-/
+@[extern "lean_raylib__SetAudioThreadEntryCallback"]
+opaque setAudioThreadEntryCallback (callback : AudioThreadEntryCallback := pure ()) : BaseIO Unit
+
+/--
+Reset audio thread creation callback.
+Requires `fork` config option.
+-/
+@[extern "lean_raylib__ResetAudioThreadEntryCallback"]
+opaque resetAudioThreadEntryCallback : BaseIO Unit
+
+/--
+Audio thread destruction callback (called on the destroyed thread).
+Requires `fork` config option.
+-/
+@[extern "lean_raylib__SetAudioThreadExitCallback"]
+opaque setAudioThreadExitCallback (callback : AudioThreadExitCallback := pure ()) : BaseIO Unit
+
+/--
+Reset audio thread destruction callback.
+Requires `fork` config option.
+-/
+@[extern "lean_raylib__ResetAudioThreadExitCallback"]
+opaque resetAudioThreadExitCallback : BaseIO Unit
 
 end Raylib

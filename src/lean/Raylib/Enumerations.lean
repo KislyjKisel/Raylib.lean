@@ -1,10 +1,12 @@
 import Pod.UInt
 import Pod.Int
 import Pod.Float
+import Pod.BytesRef
+import Pod.Instances
 import Raymath.Core
 import Raylib.Util
 
-open Pod (Int32)
+open Pod (Int16 Int32 Float32 BytesRefMut)
 
 namespace Raylib
 
@@ -1364,21 +1366,44 @@ instance : Inhabited NPatchLayout := ⟨NPatchLayout.ninePatch⟩
 /-! # Audio sample type -/
 
 inductive AudioSampleType.Is : UInt32 -> Prop where
+  /-- PCM 8-bit unsigned integer. Centerpoint is 128. -/
   | u8 : AudioSampleType.Is 8
-  | u16 : AudioSampleType.Is 16
-  | u32 : AudioSampleType.Is 32
+  /-- PCM 16-bit signed integer, native-endian. Centerpoint is 0. -/
+  | s16 : AudioSampleType.Is 16
+  /-- PCM single-precision floating-point, native-endian. Centerpoint is 0, min -1, max 1. -/
+  | f32 : AudioSampleType.Is 32
 
 def AudioSampleType : Type := Subtype AudioSampleType.Is
 
 def AudioSampleType.u8 := Subtype.mk 8 AudioSampleType.Is.u8
-def AudioSampleType.u16 := Subtype.mk 16 AudioSampleType.Is.u16
-def AudioSampleType.u32 := Subtype.mk 32 AudioSampleType.Is.u32
+def AudioSampleType.s16 := Subtype.mk 16 AudioSampleType.Is.s16
+def AudioSampleType.f32 := Subtype.mk 32 AudioSampleType.Is.f32
 
-def AudioSampleType.size : AudioSampleType → UInt32 := Subtype.val
+abbrev AudioSampleType.type : AudioSampleType → Type
+  | ⟨⟨8, _⟩, _⟩ => UInt8
+  | ⟨⟨16, _⟩, _⟩ => Int16
+  | ⟨⟨32, _⟩, _⟩ => Float32
 
-def AudioSampleType.alignment : AudioSampleType → Nat
-  | ⟨⟨8, _⟩, _⟩ => Pod.alignment UInt8
-  | ⟨⟨16, _⟩, _⟩ => Pod.alignment UInt16
-  | ⟨⟨32, _⟩, _⟩ => Pod.alignment UInt32
+instance {st : AudioSampleType} : Pod.Storable st.type :=
+  match st with
+  | ⟨⟨8, _⟩, _⟩ => Pod.instStorableUInt8
+  | ⟨⟨16, _⟩, _⟩ => Pod.instStorableInt16
+  | ⟨⟨32, _⟩, _⟩ => Pod.instStorableFloat32
+
+def AudioSampleType.bitWidth : AudioSampleType → UInt32 :=
+  Subtype.val
+
+instance {st : AudioSampleType} : Pod.WriteBytes st.type :=
+  match st with
+  | ⟨⟨8, _⟩, _⟩ => inferInstanceAs (Pod.WriteBytes UInt8)
+  | ⟨⟨16, _⟩, _⟩ => inferInstanceAs (Pod.WriteBytes Int16)
+  | ⟨⟨32, _⟩, _⟩ => inferInstanceAs (Pod.WriteBytes Float32)
+
+def setSample {σ} {st : AudioSampleType} {frames i}
+  (h : i < frames)
+  (data : Pod.BytesRefMut σ (frames * Pod.byteSize st.type) (Pod.alignment st.type))
+  (x : st.type) :
+    ST σ Unit :=
+      Pod.BytesRef.setOffEl data i x (Pod.offEl frames i h)
 
 end Raylib

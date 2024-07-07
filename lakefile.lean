@@ -1,11 +1,8 @@
 import Lake
 open Lake DSL
 
-def libffiConfig : NameMap String := Id.run $ do
-  let mut cfg := NameMap.empty
-  if (get_config? libffi).isNone then
-    cfg := cfg.insert `disable ""
-  cfg
+def optionFork := (get_config? fork).isSome
+def submoduleDir := cond optionFork "raylibFork" "raylib"
 
 def podConfig : NameMap String := Id.run $ do
   let mut cfg := NameMap.empty
@@ -15,8 +12,7 @@ def podConfig : NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require libffi from git "https://github.com/KislyjKisel/libffi-lake" @ "7c9fb2b" with libffiConfig
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "b363d7c" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "8f2c2ad" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -24,10 +20,6 @@ package raylib {
   srcDir := "src/lean"
   packagesDir := packagesDir
   leanOptions := #[⟨`autoImplicit, false⟩]
-  moreLeanArgs :=
-    if (get_config? libffi).isSome
-      then #[s!"--load-dynlib=./{packagesDir}/libffi/lib/libffi.so"] -- why not automatic?
-      else #[]
 }
 
 lean_lib Raylib
@@ -58,7 +50,7 @@ lean_exe «raylib-test» {
     let mut args := splitArgStr $ (get_config? lflags).getD ""
     args := args.append $ match raylibSrc with
       | .System => #["-L/usr/local/lib64", "-lraylib"]
-      | .Submodule => #[s!"-L{__dir__}/raylib/build/raylib", "-lraylib"]
+      | .Submodule => #[s!"-L{__dir__}/{submoduleDir}/build/raylib", "-lraylib"]
       | .Custom => #[]
       | .Unknown _ => #[]
     pure args
@@ -86,14 +78,14 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
   if gitCmd != "" then
     let gitOutput ← tryRunProcess {
       cmd := gitCmd
-      args := #["submodule", "update", "--init", "--force", "--recursive", "raylib"]
+      args := #["submodule", "update", "--init", "--force", "--recursive", submoduleDir]
       cwd := __dir__
     }
     if printCmdOutput then IO.println gitOutput
 
   let mkdirOutput ← tryRunProcess {
     cmd := "mkdir"
-    args := #["-p", "raylib/build"]
+    args := #["-p", s!"{submoduleDir}/build"]
     cwd := __dir__
   }
   if printCmdOutput then IO.println mkdirOutput
@@ -114,7 +106,9 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
       then cmakeBuildArgs := cmakeBuildArgs.push s!"\"-DPLATFORM={platform}\""
       else error s!"Invalid config option value: platform={platform}; expected one of {platforms}"
   if let some oglVer := get_config? opengl then
-    let oglVers := #["OFF", "4.3", "3.3", "2.1", "1.1", "ES 2.0"]
+    let mut oglVers := #["OFF", "4.3", "3.3", "2.1", "1.1", "ES 2.0"]
+    if optionFork then
+      oglVers := oglVers.push "4.6"
     if oglVers.contains oglVer
       then cmakeBuildArgs := cmakeBuildArgs.push s!"\"-DOPENGL_VERSION={oglVer}\""
       else error s!"Invalid config option value: opengl={oglVer}; expected one of {oglVers}"
@@ -171,13 +165,13 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
     let cmakeOutput ← tryRunProcess {
       cmd := cmakeCmd
       args := cmakeBuildArgs
-      cwd := __dir__ / "raylib" / "build"
+      cwd := __dir__ / submoduleDir / "build"
     }
     if printCmdOutput then IO.println cmakeOutput
     let cmakeBuildOutput ← tryRunProcess {
       cmd := cmakeCmd
       args := #["--build", "."]
-      cwd := __dir__ / "raylib" / "build"
+      cwd := __dir__ / submoduleDir / "build"
     }
     if printCmdOutput then IO.println cmakeBuildOutput
 
@@ -207,9 +201,9 @@ def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Arra
       buildRaylibSubmodule printCmdOutput
       traceArgs := traceArgs.append #[
         "-I",
-        (pkg.dir / "raylib" / "build" / "raylib" / "include").toString,
+        (pkg.dir / submoduleDir / "build" / "raylib" / "include").toString,
         "-I",
-        (pkg.dir / "raylib" / "src" / "external" / "glfw" / "include").toString
+        (pkg.dir / submoduleDir / "src" / "external" / "glfw" / "include").toString
       ]
 
     | .Custom => pure ()
@@ -224,15 +218,8 @@ def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Arra
       (pkg.dir / "raygui" / "src").toString
     ]
 
-  if (get_config? libffi).isSome then
-    traceArgs := traceArgs.push "-DLEAN_RAYLIB_LIBFFI"
-    match pkg.deps.find? λ dep ↦ dep.name == `libffi with
-    | none => error "Missing dependency 'Libffi'"
-    | some dep =>
-      weakArgs := weakArgs ++ #[
-        "-I",
-        (dep.dir / "include").toString
-      ]
+  if optionFork then
+    traceArgs := traceArgs.push "-DLEAN_RAYLIB_FORK"
 
   match get_config? alloc with
   | .none | .some "lean" => pure ()
@@ -266,8 +253,7 @@ extern_lib «raylib-lean» pkg := do
         (objectFileDir / (stem ++ ".o"))
         (← inputTextFile $ nativeSrcDir / (stem ++ ".c"))
         weakArgs traceArgs
-        ((get_config? cc).getD
-        (← getLeanCc).toString)
+        ((get_config? cc).getD (← getLeanCc).toString)
         (pure extraTrace)
     )
 

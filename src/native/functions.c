@@ -165,6 +165,16 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetWindowHandle (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_raylib_WindowHandle_box(GetWindowHandle()));
 }
 
+LEAN_EXPORT lean_obj_res lean_raylib__GetWindowBackendHandle (lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_raylib_WindowBackendHandle_box(
+#ifdef LEAN_RAYLIB_FORK
+    GetWindowBackendHandle()
+#else
+    NULL
+#endif
+    ));
+}
+
 LEAN_EXPORT lean_obj_res lean_raylib__GetScreenWidth (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box_uint32(GetScreenWidth()));
 }
@@ -3517,13 +3527,3 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetAudioStreamBufferSizeDefault (uint32_t 
     SetAudioStreamBufferSizeDefault(size);
     return lean_io_result_mk_ok(lean_box(0));
 }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__AttachAudioStreamProcessor (lean_obj_arg stream, lean_obj_arg processor, lean_obj_arg world) {
-//     AttachAudioStreamProcessor(lean_raylib_AudioStream_fromRepr(stream), /*cast AudioCallback to_lean?false*/(processor));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
-
-// LEAN_EXPORT lean_obj_res lean_raylib__DetachAudioStreamProcessor (lean_obj_arg stream, lean_obj_arg processor, lean_obj_arg world) {
-//     DetachAudioStreamProcessor(lean_raylib_AudioStream_fromRepr(stream), /*cast AudioCallback to_lean?false*/(processor));
-//     return lean_io_result_mk_ok(lean_box(0));
-// }
