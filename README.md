@@ -31,8 +31,8 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 * `cflags`: additional flags passed to the native code compiler.
 * `lflags`: additional flags used to link test executable.
 * `cmdout`: if present, print output of commands used when building submodule.
-* `libffi`: use `libffi`, required for some things to work, e.g, audio callback
-  (note: audio callback always segfaults due to missing thread initialization)
+* `fork`: use raylib's [fork](https://github.com/KislyjKisel/raylib) that provides features used by
+  implementations of some functions (notably audio callbacks) and some more.
 * `alloc`: allocator for external (opaque ffi) objects.
   `"lean"` (default) means using the allocator Lean uses.
   `"native"` to use `malloc` and `free` instead.
