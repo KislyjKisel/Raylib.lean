@@ -35,16 +35,17 @@ def main : IO Unit := do
 
   setMasterVolume 0.5
   let audioSampleRate := 44100
-  let audioDt : Float32 := 1.0 / audioSampleRate.toFloat32
+  let audioDt := 1.0 / audioSampleRate.toFloat32
   let audioStream ← loadAudioStream rlctx audioSampleRate .f32 1
   let audioFrequency : Float32 := 440.0
   let audioX ← IO.mkRef (0.0 : Float32)
   setAudioStreamCallback audioStream λ frames data ↦ do
     EST2.ignoreErrors do
-      let mut x ← EST2.lift₂ <| (audioX.get : IO Float32)
+      let mut x ← audioX.get
       for h: _ in [:frames] do
-        setSample h.upper data (2.0 * .pi * audioFrequency * x).sin
+        EST2.lift₁ <| setSample h.upper data (2.0 * .pi * audioFrequency * x).sin
         x := x + audioDt
+      audioX.set x
   playAudioStream audioStream
 
   let camUp := Vector3.mk 0 1 0
