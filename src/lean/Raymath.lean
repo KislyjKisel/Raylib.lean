@@ -83,7 +83,6 @@ instance : Max Vector2 := ⟨Vector2.max⟩
 
 instance : GetElem Vector2 UInt32 Float32 (λ _ i ↦ i < 2) where
   getElem := Vector2.uget
-  getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
 instance : GetElem Vector2 Nat Float32 (λ _ i ↦ i < 2) where
   getElem v i h := v.get $ .mk i h
@@ -138,7 +137,6 @@ instance : Max Vector3 := ⟨Vector3.max⟩
 
 instance : GetElem Vector3 UInt32 Float32 (λ _ i ↦ i < 3) where
   getElem := Vector3.uget
-  getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
 instance : GetElem Vector3 Nat Float32 (λ _ i ↦ i < 3) where
   getElem v i h := v.get $ .mk i h
@@ -194,7 +192,6 @@ instance : Max Vector4 := ⟨Vector4.max⟩
 
 instance : GetElem Vector4 UInt32 Float32 (λ _ i ↦ i < 4) where
   getElem := Vector4.uget
-  getElem! v i := dite _ (v.uget i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
 instance : GetElem Vector4 Nat Float32 (λ _ i ↦ i < 4) where
   getElem v i h := v.get $ .mk i h
@@ -327,10 +324,8 @@ instance : Mul Matrix := ⟨Matrix.mul⟩
 
 instance : GetElem Matrix UInt32 Float32 (λ _ i ↦ i < 16) where
   getElem := Matrix.ugetLinear
-  getElem! m i := dite _ (m.ugetLinear i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
 instance : GetElem Matrix Nat Float32 (λ _ i ↦ i < 16) where
   getElem m i h := m.getLinear ⟨i, h⟩
-  getElem! m i := dite _ (m.getLinear ∘ Fin.mk i) (λ _ ↦ default) -- this line may be removed when lean4#4418 is fixed
 
 end Raymath
