@@ -76,37 +76,32 @@ where
   termination_by max - i
   decreasing_by
     simp_wf
-    apply Nat.add_lt_add_right
-    show _ % UInt32.size < _
-    dsimp
-    have : i.1.1 + 1 < UInt32.size := by
-      apply Nat.lt_of_le_of_lt _ max.1.isLt
-      apply Nat.succ_le_of_lt
+    have i_lt_max : i < max := by
       apply Nat.lt_of_le_of_ne hi.2
       intro h
       apply him
       apply UInt32.eq_of_val_eq
       apply Fin.eq_of_val_eq
       exact h
+    have i_succ_lt_u32 : i.val + 1 < UInt32.size := by
+      apply Nat.lt_of_le_of_lt
+      apply Nat.succ_le_of_lt i_lt_max
+      exact max.val.isLt
+    have i_succ_le_max : i + 1 ≤ max := by
+      show _ % UInt32.size ≤ _
+      rewrite [Nat.mod_eq_of_lt i_succ_lt_u32]
+      exact Nat.succ_le_of_lt i_lt_max
     rewrite [
-      Nat.mod_eq_of_lt this,
-      Nat.add_comm,
-      ← Nat.add_sub_assoc (Nat.le_of_lt this),
-      Nat.add_comm,
-      Nat.add_sub_assoc (Nat.succ_le_of_lt (i_lt_max_of_not_eq_max i hi him)) UInt32.size,
-      Nat.add_mod_left,
-      Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) max.val.isLt)
+      UInt32.sub_toNat_of_le _ _ i_succ_le_max,
+      UInt32.sub_toNat_of_le _ _ hi.2
     ]
-    show _ < _ % UInt32.size
+    show _ - (_ % UInt32.size) < _
     rewrite [
-      Nat.add_comm,
-      ← Nat.add_sub_assoc (Nat.le_of_lt i.val.isLt),
-      Nat.add_comm,
-      Nat.add_sub_assoc hi.2,
-      Nat.add_mod_left,
-      Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) max.val.isLt),
+      Nat.mod_eq_of_lt (a := 1) (by decide),
+      Nat.mod_eq_of_lt i_succ_lt_u32
     ]
-    exact Nat.sub_succ_lt_self _ _ (i_lt_max_of_not_eq_max i hi him)
+    apply Nat.sub_add_lt_sub _ Nat.zero_lt_one
+    exact Nat.succ_le_of_lt i_lt_max
 
 private
 theorem i_minus_min_lt_size (i : UInt32) (h : min ≤ i ∧ i < max) :
