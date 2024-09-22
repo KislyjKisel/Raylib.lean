@@ -411,6 +411,9 @@ static inline Mesh lean_raylib_Mesh_clone(Mesh* meshSrc) {
     if(mesh.boneWeights != NULL) {
         mesh.boneWeights = lean_raylib_rlmemdup(mesh.boneWeights, sizeof(float[4]) * mesh.vertexCount);
     }
+    if(mesh.boneMatrices != NULL) {
+        mesh.boneMatrices = lean_raylib_rlmemdup(mesh.boneMatrices, sizeof(float[16]) * mesh.boneCount);
+    }
     if(mesh.animVertices != NULL) {
         mesh.animVertices = lean_raylib_rlmemdup(mesh.animVertices, sizeof(float[3]) * mesh.vertexCount);
     }
