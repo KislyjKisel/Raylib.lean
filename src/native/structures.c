@@ -494,6 +494,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkBv(
             lean_pod_BytesView_fromRepr(lean_ctor_get(skinning_val, 1))->ptr,
             sizeof(float[4]) * vertexCount
         );
+        uint32_t boneCount = lean_ctor_get_uint32(skinning_val, sizeof(lean_object*) * 3);
+        mesh.boneCount = boneCount;
+        mesh.boneMatrices = lean_raylib_rlmemdup(
+            lean_pod_BytesView_fromRepr(lean_ctor_get(skinning_val, 2))->ptr,
+            sizeof(float[16]) * boneCount
+        );
         mesh.animVertices = lean_raylib_rlmemdup(
             mesh.vertices,
             sizeof(float[3]) * vertexCount
@@ -585,6 +591,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__Mesh_mkIndexedBv(
             lean_pod_BytesView_fromRepr(lean_ctor_get(skinning_val, 1))->ptr,
             sizeof(float[4]) * vertexCount
         );
+        uint32_t boneCount = lean_ctor_get_uint32(skinning_val, sizeof(lean_object*) * 3);
+        mesh.boneCount = boneCount;
+        mesh.boneMatrices = lean_raylib_rlmemdup(
+            lean_pod_BytesView_fromRepr(lean_ctor_get(skinning_val, 2))->ptr,
+            sizeof(float[16]) * boneCount
+        );
         mesh.animVertices = lean_raylib_rlmemdup(
             mesh.vertices,
             sizeof(float[3]) * vertexCount
@@ -603,6 +615,10 @@ LEAN_EXPORT uint32_t lean_raylib__Mesh_vertexCount(b_lean_obj_arg mesh) {
 
 LEAN_EXPORT uint32_t lean_raylib__Mesh_triangleCount(b_lean_obj_arg mesh) {
     return lean_raylib_Mesh_fromRepr(mesh)->mesh.triangleCount;
+}
+
+LEAN_EXPORT uint32_t lean_raylib__Mesh_boneCount(b_lean_obj_arg mesh) {
+    return lean_raylib_Mesh_fromRepr(mesh)->mesh.boneCount;
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__Mesh_vertices(lean_obj_arg mesh) {
@@ -631,6 +647,7 @@ LEAN_RAYLIB_MESH_VIEW_OPT(animVertices, float);
 LEAN_RAYLIB_MESH_VIEW_OPT(animNormals, float);
 LEAN_RAYLIB_MESH_VIEW_OPT(boneIds, unsigned char);
 LEAN_RAYLIB_MESH_VIEW_OPT(boneWeights, float);
+LEAN_RAYLIB_MESH_VIEW_OPT(boneMatrices, Matrix);
 
 LEAN_EXPORT uint32_t lean_raylib__Mesh_vaoId(b_lean_obj_arg mesh) {
     return lean_raylib_Mesh_fromRepr(mesh)->mesh.vaoId;

@@ -1,6 +1,6 @@
 # Raylib.lean
 
-Lean4 bindings to [raylib](https://github.com/raysan5/raylib) `5.1-dev`, including Raymath and Raygui `4.0-dev`.
+Lean4 bindings to [raylib](https://github.com/raysan5/raylib) `5.5-dev`, including Raymath and Raygui `4.0-dev`.
 
 ## Usage
 

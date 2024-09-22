@@ -3,6 +3,35 @@ import Raymath.Core
 
 open Pod (Float32)
 
+namespace Pod.Float32
+
+/-- Clamp Float32 value -/
+def clamp (value min max : Float32) : Float32 :=
+  let x := if value < min then min else value
+  if x > max then max else x
+
+/-- Calculate linear interpolation between two Float32s -/
+def lerp (start finish amount : Float32) : Float32 :=
+  start + amount * (finish - start)
+
+/-- Normalize input value within input range -/
+def normalize (value start finish : Float32) : Float32 :=
+  (value - start) / (finish - start)
+
+/-- Remap input value within input range to output range -/
+def remap (value inputStart inputEnd outputStart outputEnd : Float32) : Float32 :=
+  (value - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart
+
+/-- Wrap input value from min to max -/
+def wrap (value min max : Float32) : Float32 :=
+  value - (max - min) * ((value - min) / (max - min)).floor
+
+/-- Check whether two given floats are almost equal -/
+def equals (x y : Float32) : Bool :=
+  (x - y).abs <= Raymath.epsilon * Float32.one.max (x.abs.max y.abs)
+
+end Pod.Float32
+
 namespace Raymath
 
 namespace Vector2
@@ -955,6 +984,52 @@ def fromVector3ToVector3 («from» to : Vector3) : Quaternion :=
   let cross := Vector3.cross «from» to
   Vector4.normalize (Vector4.mk cross.x cross.y cross.z (1 + cos2Theta))
 
+/-- Get a quaternion for a given rotation matrix. Native implementation. -/
+def fromMatrix (mat : Matrix) : Quaternion :=
+  let fourWSquaredMinus1 := mat.m0  + mat.m5 + mat.m10
+  let fourXSquaredMinus1 := mat.m0  - mat.m5 - mat.m10
+  let fourYSquaredMinus1 := mat.m5  - mat.m0 - mat.m10
+  let fourZSquaredMinus1 := mat.m10 - mat.m0 - mat.m5
+  Id.run <| do
+    let mut biggestIndex: Fin 4 := 0
+    let mut fourBiggestSquaredMinus1 := fourWSquaredMinus1
+    if fourXSquaredMinus1 > fourBiggestSquaredMinus1 then
+      fourBiggestSquaredMinus1 := fourXSquaredMinus1
+      biggestIndex := 1
+    if fourYSquaredMinus1 > fourBiggestSquaredMinus1 then
+      fourBiggestSquaredMinus1 := fourYSquaredMinus1
+      biggestIndex := 2
+    if fourZSquaredMinus1 > fourBiggestSquaredMinus1 then
+      fourBiggestSquaredMinus1 := fourZSquaredMinus1
+      biggestIndex := 3
+    let biggestVal := (fourBiggestSquaredMinus1 + 1.0).sqrt * 0.5
+    let mult := 0.25 / biggestVal
+    match biggestIndex with
+    | ⟨0, _⟩ => ({
+        w := biggestVal
+        x := (mat.m6 - mat.m9) * mult
+        y := (mat.m8 - mat.m2) * mult
+        z := (mat.m1 - mat.m4) * mult
+      } : Quaternion)
+    | ⟨1, _⟩ => ({
+        x := biggestVal
+        w := (mat.m6 - mat.m9) * mult
+        y := (mat.m1 + mat.m4) * mult
+        z := (mat.m8 + mat.m2) * mult
+      } : Quaternion)
+    | ⟨2, _⟩ => ({
+        y := biggestVal
+        w := (mat.m8 - mat.m2) * mult
+        x := (mat.m1 + mat.m4) * mult
+        z := (mat.m6 + mat.m9) * mult
+      } : Quaternion)
+    | ⟨3, _⟩ => ({
+        z := biggestVal
+        w := (mat.m1 - mat.m4) * mult
+        x := (mat.m8 + mat.m2) * mult
+        y := (mat.m6 + mat.m9) * mult
+      } : Quaternion)
+
 /-- Get a matrix for a given quaternion -/
 def toMatrix (q : Quaternion) : Matrix :=
   let a2 := q.x * q.x
@@ -1002,5 +1077,37 @@ def fromEuler (pitch yaw roll : Float32) : Quaternion :=
 def transform (q : Quaternion) (mat : Matrix) : Quaternion := Matrix.mulVector mat q
 
 end Quaternion
+
+
+/-- Returns translation, rotation and scale. Native implementation. -/
+def Matrix.decompose (mat : Matrix) : Vector3 × Quaternion × Vector3 :=
+  let translation := ⟨mat.m12, mat.m13, mat.m14⟩
+  let a := mat.m0
+  let b := mat.m4
+  let c := mat.m8
+  let d := mat.m1
+  let e := mat.m5
+  let f := mat.m9
+  let g := mat.m2
+  let h := mat.m6
+  let i := mat.m10
+  let A := e * i - f * h
+  let B := f * g - d * i
+  let C := d * h - e * g
+  let det := a * A + b * B + c * C;
+  let abc: Vector3 := ⟨a, b, c⟩
+  let «def»: Vector3 := ⟨d, e, f⟩
+  let ghi: Vector3 := ⟨g, h, i⟩
+  let scale := ⟨abc.length, «def».length, «ghi».length⟩
+  let scale := if det < 0.0 then scale.neg else scale
+  let rotation :=
+    if det.equals 0.0
+      then Quaternion.identity
+      else Quaternion.fromMatrix { mat with
+        m0 := mat.m0 / scale.x
+        m5 := mat.m5 / scale.y
+        m10 := mat.m10 / scale.z
+      }
+  (translation, rotation, scale)
 
 end Raymath

@@ -131,3 +131,9 @@ static inline Matrix lean_raylib_Matrix_unbox (b_lean_obj_arg obj) {
 }
 
 #define lean_raylib_Matrix_fromRepr lean_raylib_Matrix_unbox
+
+
+#define lean_raylib_Quaternion_fromRepr lean_raylib_Vector4_fromRepr
+#define lean_raylib_Quaternion_unbox lean_raylib_Vector4_unbox
+#define lean_raylib_Quaternion_toRepr lean_raylib_Vector4_toRepr
+#define lean_raylib_Quaternion_box lean_raylib_Vector4_box

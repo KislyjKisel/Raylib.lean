@@ -303,6 +303,8 @@ define_foreign_type Mesh
 structure Mesh.Skinning (vertexCount : UInt32) where
   boneIds : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize UInt8) 1
   boneWeights : Pod.BytesView (vertexCount.toNat * 4 * Pod.byteSize Float32) 1
+  boneCount : UInt32
+  boneMatrices : Pod.BytesView (boneCount.toNat * Pod.byteSize Matrix) 1
 
 /-- `MAX_MESH_VERTEX_BUFFERS` -/
 abbrev Mesh.maxVertexBuffers : Nat := 7
@@ -356,6 +358,10 @@ opaque Mesh.vertexCount (mesh : @& Mesh) : UInt32
 @[extern "lean_raylib__Mesh_triangleCount"]
 opaque Mesh.triangleCount (mesh : @& Mesh) : UInt32
 
+/-- Number of bones -/
+@[extern "lean_raylib__Mesh_boneCount"]
+opaque Mesh.boneCount (mesh : @& Mesh) : UInt32
+
 /-- Vertex position (XYZ - 3 components per vertex) (shader-location = 0) -/
 @[extern "lean_raylib__Mesh_vertices"]
 opaque Mesh.vertices (mesh : Mesh) : Pod.BytesView (mesh.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
@@ -392,13 +398,17 @@ opaque Mesh.animVertices (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.vertexC
 @[extern "lean_raylib__Mesh_animNormals"]
 opaque Mesh.animNormals (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 3 * Pod.byteSize Float32) (Pod.alignment Float32)
 
-/-- Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) -/
+/-- Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) (shader-location = 6) -/
 @[extern "lean_raylib__Mesh_boneIds"]
 opaque Mesh.boneIds (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 4 * Pod.byteSize UInt8) (Pod.alignment UInt8)
 
-/-- Vertex bone weight, up to 4 bones influence by vertex (skinning) -/
+/-- Vertex bone weight, up to 4 bones influence by vertex (skinning) (shader-location = 7) -/
 @[extern "lean_raylib__Mesh_boneWeights"]
 opaque Mesh.boneWeights (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.vertexCount.toNat * 4 * Pod.byteSize Float32) (Pod.alignment Float32)
+
+/-- Bones animated transformation matrices -/
+@[extern "lean_raylib__Mesh_boneMatrices"]
+opaque Mesh.boneMatrices (mesh : @& Mesh) : Option $ Pod.BytesView (mesh.boneCount.toNat * Pod.byteSize Matrix) (Pod.alignment Matrix)
 
 /-- OpenGL Vertex Array Object id -/
 @[extern "lean_raylib__Mesh_vaoId"]
@@ -664,7 +674,7 @@ opaque ModelAnimation.name (anim : @& ModelAnimation) : { name : String // name.
 structure Ray where
   /-- Ray position (origin) -/
   position : Vector3
-  /-- Ray direction -/
+  /-- Ray direction (normalized) -/
   direction : Vector3
 deriving Inhabited, Repr
 

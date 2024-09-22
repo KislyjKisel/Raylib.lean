@@ -825,6 +825,9 @@ inductive ShaderLocationIndex.Is : UInt32 -> Prop where
   | mapIrradiance : ShaderLocationIndex.Is 23
   | mapPrefilter : ShaderLocationIndex.Is 24
   | mapBrdf : ShaderLocationIndex.Is 25
+  | vertexBoneids : ShaderLocationIndex.Is 26
+  | vertexBoneweights : ShaderLocationIndex.Is 27
+  | boneMatrices : ShaderLocationIndex.Is 28
 
 def ShaderLocationIndex : Type := Subtype ShaderLocationIndex.Is
 
@@ -882,6 +885,12 @@ def mapIrradiance : ShaderLocationIndex := Subtype.mk 23 ShaderLocationIndex.Is.
 def mapPrefilter : ShaderLocationIndex := Subtype.mk 24 ShaderLocationIndex.Is.mapPrefilter
 /-- Shader location: sampler2d texture: brdf -/
 def mapBrdf : ShaderLocationIndex := Subtype.mk 25 ShaderLocationIndex.Is.mapBrdf
+/-- Shader location: vertex attribute: boneIds -/
+def vertexBoneids : ShaderLocationIndex := Subtype.mk 26 ShaderLocationIndex.Is.vertexBoneids
+/-- Shader location: vertex attribute: boneWeights -/
+def vertexBoneweights : ShaderLocationIndex := Subtype.mk 27 ShaderLocationIndex.Is.vertexBoneweights
+/-- Shader location: array of matrices uniform: boneMatrices -/
+def boneMatrices : ShaderLocationIndex := Subtype.mk 28 ShaderLocationIndex.Is.boneMatrices
 
 end ShaderLocationIndex
 

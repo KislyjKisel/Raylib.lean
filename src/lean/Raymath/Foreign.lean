@@ -20,11 +20,20 @@ opaque unproject (source : @& Vector3) (projection view : @& Matrix) : Vector3
 end Vector3
 
 
+namespace Matrix
+
+/-- Returns translation, rotation and scale. Foreign implementation. -/
+@[extern "lean_raymath_Matrix_decompose"]
+opaque decompose' (mat : @& Matrix) : Vector3 × Quaternion × Vector3
+
+end Matrix
+
+
 namespace Quaternion
 
-/-- Get a quaternion for a given rotation matrix -/
+/-- Get a quaternion for a given rotation matrix. Foreign implementation. -/
 @[extern "lean_raymath_Quaternion_fromMatrix"]
-opaque fromMatrix (mat : @& Matrix) : Quaternion
+opaque fromMatrix' (mat : @& Matrix) : Quaternion
 
 /--
 Get rotation quaternion for an angle and axis.

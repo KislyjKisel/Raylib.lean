@@ -70,6 +70,17 @@ LEAN_EXPORT lean_obj_res lean_raymath_Vector4_uset(lean_obj_arg v, uint32_t i, u
     }
 }
 
+LEAN_EXPORT lean_obj_res lean_raymath_Matrix_decompose(b_lean_obj_arg mat) {
+    Vector3 translation, scale;
+    Quaternion rotation;
+    MatrixDecompose(lean_raylib_Matrix_fromRepr(mat), &translation, &rotation, &scale);
+    return lean_mk_tuple3(
+        lean_raylib_Vector3_box(translation),
+        lean_raylib_Quaternion_box(rotation),
+        lean_raylib_Vector3_box(scale)
+    );
+}
+
 LEAN_EXPORT lean_obj_res lean_raymath_Matrix_urow(b_lean_obj_arg m, uint32_t i) {
     uint32_t offset = 4 * i;
     return lean_raylib_Vector4_toRepr((Vector4){

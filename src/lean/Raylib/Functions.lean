@@ -72,11 +72,11 @@ opaque setWindowState (flags : ConfigFlags) : BaseIO Unit
 @[extern "lean_raylib__ClearWindowState"]
 opaque clearWindowState (flags : ConfigFlags) : BaseIO Unit
 
-/-- Toggle window state: fullscreen/windowed (only PLATFORM_DESKTOP) -/
+/-- Toggle window state: fullscreen/windowed [resizes monitor to match window resolution] (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__ToggleFullscreen"]
 opaque toggleFullscreen : BaseIO Unit
 
-/-- Toggle window state: borderless windowed (only PLATFORM_DESKTOP) -/
+/-- Toggle window state: borderless windowed [resizes window to match monitor resolution] (only PLATFORM_DESKTOP) -/
 @[extern "lean_raylib__ToggleBorderlessWindowed"]
 opaque toggleBorderlessWindowed : BaseIO Unit
 
@@ -610,7 +610,7 @@ opaque isFileNameValid (path : @& FilePath) : BaseIO Bool
 @[extern "lean_raylib__LoadDirectoryFiles"]
 opaque loadDirectoryFiles (dirPath : @& FilePath) : BaseIO $ Array FilePath
 
-/-- Load directory filepaths with extension filtering and recursive directory scan -/
+/-- Load directory filepaths with extension filtering and recursive directory scan. Use 'DIR' in the filter string to include directories in the result -/
 @[extern "lean_raylib__LoadDirectoryFilesEx"]
 opaque loadDirectoryFilesEx (basePath : @& FilePath) (filter : @& String) (scanSubdirs : Bool) : BaseIO $ Array FilePath
 
@@ -939,7 +939,7 @@ opaque drawCircleSectorLines (center : @& Vector2) (radius : Float32) (startAngl
 
 /-- Draw a gradient-filled circle -/
 @[extern "lean_raylib__DrawCircleGradient"]
-opaque drawCircleGradient (centerX : Int32) (centerY : Int32) (radius : Float32) (color1 : Color) (color2 : Color) : BaseIO Unit
+opaque drawCircleGradient (centerX centerY : Int32) (radius : Float32) (inner outer : Color) : BaseIO Unit
 
 /-- Draw a color-filled circle (Vector version) -/
 @[extern "lean_raylib__DrawCircleV"]
@@ -987,19 +987,19 @@ opaque drawRectanglePro (rec : @& Rectangle) (origin : @& Vector2) (rotation : F
 
 /-- Draw a vertical-gradient-filled rectangle -/
 @[extern "lean_raylib__DrawRectangleGradientV"]
-opaque drawRectangleGradientV (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color1 : Color) (color2 : Color) : BaseIO Unit
+opaque drawRectangleGradientV (posX posY width height : Int32) (top bottom : Color) : BaseIO Unit
 
 /-- Draw a horizontal-gradient-filled rectangle -/
 @[extern "lean_raylib__DrawRectangleGradientH"]
-opaque drawRectangleGradientH (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color1 : Color) (color2 : Color) : BaseIO Unit
+opaque drawRectangleGradientH (posX posY width height : Int32) (left right : Color) : BaseIO Unit
 
 /-- Draw a gradient-filled rectangle with custom vertex colors -/
 @[extern "lean_raylib__DrawRectangleGradientEx"]
-opaque drawRectangleGradientEx (rec : @& Rectangle) (col1 : Color) (col2 : Color) (col3 : Color) (col4 : Color) : BaseIO Unit
+opaque drawRectangleGradientEx (rec : @& Rectangle) (topLeft bottomLeft topRight bottomRight : Color) : BaseIO Unit
 
 /-- Draw rectangle outline -/
 @[extern "lean_raylib__DrawRectangleLines"]
-opaque drawRectangleLines (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color : Color) : BaseIO Unit
+opaque drawRectangleLines (posX posY width height : Int32) (color : Color) : BaseIO Unit
 
 /-- Draw rectangle outline with extended parameters -/
 @[extern "lean_raylib__DrawRectangleLinesEx"]
@@ -1245,13 +1245,17 @@ opaque imageCopy (image : @& Image) : Image
 @[extern "lean_raylib__ImageFromImage"]
 opaque imageFromImage (image : @& Image) (rec : @& Rectangle) : Image
 
+/-- Create an image from a selected channel of another image (GRAYSCALE) -/
+@[extern "lean_raylib__ImageFromChannel"]
+opaque imageFromChannel (image : @& Image) (selectedChannel : Int32) : Image
+
 /-- Create an image from text (default font) -/
 @[extern "lean_raylib__ImageText"]
 opaque imageText (text : @& String) (fontSize : UInt32) (color : Color) : Image
 
 /-- Create an image from text (custom sprite font) -/
 @[extern "lean_raylib__ImageTextEx"]
-opaque imageTextEx (font : @& Font) (text : @& String) (fontSize : Float32) (spacing : Float32) (tint : Color) : Image
+opaque imageTextEx (font : @& Font) (text : @& String) (fontSize spacing : Float32) (tint : Color) : Image
 
 /-- Convert image data to desired format -/
 @[extern "lean_raylib__ImageFormat"]
@@ -1285,7 +1289,10 @@ opaque imageAlphaPremultiply (image : Image) : Image
 @[extern "lean_raylib__ImageBlurGaussian"]
 opaque imageBlurGaussian (image : Image) (blurSize : UInt32) : Image
 
-/-- Apply Custom Square image convolution kernel -/
+/--
+Apply custom square convolution kernel to image.
+NOTE: The convolution kernel matrix is expected to be square.
+-/
 @[extern "lean_raylib__ImageKernelConvolution"]
 opaque imageKernelConvolution (image : Image) (kernel : @& Array Float32) : Image
 
@@ -1400,11 +1407,15 @@ opaque imageDrawLine (image : Image) (startPosX : Int32) (startPosY : Int32) (en
 
 /-- Draw line within an image (Vector version) -/
 @[extern "lean_raylib__ImageDrawLineV"]
-opaque imageDrawLineV (image : Image) (start : @& Vector2) (finish : @& Vector2) (color : Color) : Image
+opaque imageDrawLineV (image : Image) (start finish : @& Vector2) (color : Color) : Image
+
+/-- Draw a line defining thickness within an image -/
+@[extern "lean_raylib__ImageDrawLineEx"]
+opaque imageDrawLineEx (image : Image) (start finish : @& Vector2) (thick : UInt32) (color : Color) : Image
 
 /-- Draw a filled circle within an image -/
 @[extern "lean_raylib__ImageDrawCircle"]
-opaque imageDrawCircle (image : Image) (centerX : Int32) (centerY : Int32) (radius : UInt32) (color : Color) : Image
+opaque imageDrawCircle (image : Image) (centerX centerY : Int32) (radius : UInt32) (color : Color) : Image
 
 /-- Draw a filled circle within an image (Vector version) -/
 @[extern "lean_raylib__ImageDrawCircleV"]
@@ -1433,6 +1444,60 @@ opaque imageDrawRectangleRec (dst : Image) (rect : @& Rectangle) (color : Color)
 /-- Draw rectangle lines within an image -/
 @[extern "lean_raylib__ImageDrawRectangleLines"]
 opaque imageDrawRectangleLines (dst : Image) (rect : @& Rectangle) (thick : UInt32) (color : Color) : Image
+
+/-- Draw triangle within an image -/
+@[extern "lean_raylib__ImageDrawTriangle"]
+opaque imageDrawTriangle (dst : Image) (v1 v2 v3 : @& Vector2) (color : Color) : Image
+
+/-- Draw triangle with interpolated colors within an image -/
+@[extern "lean_raylib__ImageDrawTriangleEx"]
+opaque imageDrawTriangleEx (dst : Image) (v1 v2 v3 : @& Vector2) (c1 c2 c3 : Color) : Image
+
+/-- Draw triangle outline within an image -/
+@[extern "lean_raylib__ImageDrawTriangleLines"]
+opaque imageDrawTriangleLines (dst : Image) (v1 v2 v3 : @& Vector2) (color : Color) : Image
+
+/-- Draw a triangle fan defined by points within an image (first vertex is the center) -/
+@[extern "lean_raylib__ImageDrawTriangleFan"]
+opaque imageDrawTriangleFan (dst : Image) (points : @& Array Vector2) (color : Color) : Image
+
+private
+def imageDrawTriangleFanEx.aux (dst : Image) (points : Array (Vector2 × Color)) (center : Vector2 × Color) (i1 : Nat) : Image :=
+  if h: i1 + 1 < points.size
+    then
+      let p1 := points[i1]
+      let p2 := points[i1 + 1]
+      imageDrawTriangleFanEx.aux (imageDrawTriangleEx dst center.1 p1.1 p2.1 center.2 p1.2 p2.2) points center (i1 + 1)
+    else
+      dst
+
+/-- Draw a triangle fan with interpolated colors within an image (first vertex is the center) -/
+def imageDrawTriangleFanEx (dst : Image) (points : Array (Vector2 × Color)) : Image :=
+  if h: 0 < points.size
+    then
+      let center := points[0]
+      imageDrawTriangleFanEx.aux dst points center 1
+    else
+      dst
+
+/-- Draw a triangle strip defined by points within an image -/
+@[extern "lean_raylib__ImageDrawTriangleStrip"]
+opaque imageDrawTriangleStrip (dst : Image) (points : @& Array Vector2) (color : Color) : Image
+
+private
+def imageDrawTriangleStripEx.aux (dst : Image) (points : Array (Vector2 × Color)) (i1 : Nat) : Image :=
+  if h: i1 + 2 < points.size
+    then
+      let p1 := points[i1]
+      let p2 := points[i1 + 1]
+      let p3 := points[i1 + 2]
+      imageDrawTriangleStripEx.aux (imageDrawTriangleEx dst p1.1 p2.1 p3.1 p1.2 p2.2 p3.2) points (i1 + 1)
+    else
+      dst
+
+/-- Draw a triangle strip with interpolated colors within an image -/
+def imageDrawTriangleStripEx (dst : Image) (points : Array (Vector2 × Color)) : Image :=
+  imageDrawTriangleStripEx.aux dst points 0
 
 /-- Draw a source image within a destination image (tint applied to source) -/
 @[extern "lean_raylib__ImageDraw"]
@@ -1568,7 +1633,11 @@ opaque colorAlpha (color : Color) (alpha : Float32) : Color
 
 /-- Get src alpha-blended into dst color with tint -/
 @[extern "lean_raylib__ColorAlphaBlend"]
-opaque colorAlphaBlend (dst : Color) (src : Color) (tint : Color) : Color
+opaque colorAlphaBlend (dst src tint : Color) : Color
+
+/-- Get color lerp interpolation between two colors, factor [0.0..1.0] -/
+@[extern "lean_raylib__ColorLerp"]
+opaque colorLerp (color1 color2 : Color) (factor : Float32) : Color
 
 /-- Get Color structure from hexadecimal value -/
 @[extern "lean_raylib__GetColor", deprecated Color.mk]
@@ -1598,7 +1667,7 @@ opaque getFontDefault (ctx : Context) : BaseIO Font
 @[extern "lean_raylib__LoadFont"]
 opaque loadFont (ctx : Context) (fileName : @& FilePath) : BaseIO Font
 
-/-- Load font from file with extended parameters, use `none` for `fontChars` to load the default character set -/
+/-- Load font from file with extended parameters, use `none` for `fontChars` to load the default character set, font size is provided in pixels height -/
 @[extern "lean_raylib__LoadFontEx"]
 opaque loadFontEx (ctx : Context) (fileName : @& FilePath) (fontSize : UInt32) (codepoints : @& Option (Array Char)) : BaseIO Font
 
@@ -1821,13 +1890,21 @@ opaque drawModelWires (model : @& Model) (position : @& Vector3) (scale : Float3
 @[extern "lean_raylib__DrawModelWiresEx"]
 opaque drawModelWiresEx (model : @& Model) (position : @& Vector3) (rotationAxis : @& Vector3) (rotationAngle : Float32) (scale : @& Vector3) (tint : Color) : BaseIO Unit
 
+/-- Draw a model as points -/
+@[extern "lean_raylib__DrawModelPoints"]
+opaque drawModelPoints (model : @& Model) (position : @& Vector3) (scale : Float32) (tint : Color) : BaseIO Unit
+
+/-- Draw a model as points with extended parameters -/
+@[extern "lean_raylib__DrawModelPointsEx"]
+opaque drawModelPointsEx (model : @& Model) (position : @& Vector3) (rotationAxis : @& Vector3) (rotationAngle : Float32) (scale : Float32) (tint : Color) : BaseIO Unit
+
 /-- Draw bounding box (wires) -/
 @[extern "lean_raylib__DrawBoundingBox"]
 opaque drawBoundingBox (box : @& BoundingBox) (color : Color) : BaseIO Unit
 
 /-- Draw a billboard texture -/
 @[extern "lean_raylib__DrawBillboard"]
-opaque drawBillboard (camera : @& Camera) (texture : @& Texture2DRef) (position : @& Vector3) (size : Float32) (tint : Color) : BaseIO Unit
+opaque drawBillboard (camera : @& Camera) (texture : @& Texture2DRef) (position : @& Vector3) (scale : Float32) (tint : Color) : BaseIO Unit
 
 /-- Draw a billboard texture defined by source -/
 @[extern "lean_raylib__DrawBillboardRec"]
@@ -1939,6 +2016,10 @@ opaque updateModelAnimation (model : Model) (anim : @& ModelAnimation) (frame : 
 /-- Check model animation skeleton match -/
 @[extern "lean_raylib__IsModelAnimationValid"]
 opaque isModelAnimationValid (model : @& Model) (anim : @& ModelAnimation) : Bool
+
+/-- Update model animation mesh bone matrices -/
+@[extern "lean_raylib__UpdateModelAnimationBoneMatrices"]
+opaque updateModelAnimationBoneMatrices (model : Model) (anim : @& ModelAnimation) (frame : UInt32) : BaseIO Model
 
 /-- Check collision between two spheres -/
 @[extern "lean_raylib__CheckCollisionSpheres"]

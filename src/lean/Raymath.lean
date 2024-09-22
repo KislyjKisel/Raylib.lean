@@ -13,40 +13,6 @@ theorem toUInt32Inj_lt {m} (n : Nat) (h₁ : n < m) (h₂ : m < 2 ^ 32 := by dec
   toUInt32Inj n h₁ (Nat.le_of_lt h₂) < m.toUInt32 :=
   (Nat.lt_of_lt_of_eq h₁ $ Eq.symm $ Nat.mod_eq_of_lt h₂)
 
-end Raymath
-
-namespace Pod.Float32
-
-/-- Clamp Float32 value -/
-def clamp (value min max : Float32) : Float32 :=
-  let x := if value < min then min else value
-  if x > max then max else x
-
-/-- Calculate linear interpolation between two Float32s -/
-def lerp (start finish amount : Float32) : Float32 :=
-  start + amount * (finish - start)
-
-/-- Normalize input value within input range -/
-def normalize (value start finish : Float32) : Float32 :=
-  (value - start) / (finish - start)
-
-/-- Remap input value within input range to output range -/
-def remap (value inputStart inputEnd outputStart outputEnd : Float32) : Float32 :=
-  (value - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart
-
-/-- Wrap input value from min to max -/
-def wrap (value min max : Float32) : Float32 :=
-  value - (max - min) * ((value - min) / (max - min)).floor
-
-/-- Check whether two given floats are almost equal -/
-def equals (x y : Float32) : Bool :=
-  (x - y).abs <= Raymath.epsilon * Float32.one.max (x.abs.max y.abs)
-
-end Pod.Float32
-
-
-namespace Raymath
-
 namespace Vector2
 
 @[extern "lean_raymath_Vector_uget"]
