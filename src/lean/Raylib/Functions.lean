@@ -594,6 +594,10 @@ THREAD-UNSAFE: static local
 @[extern "lean_raylib__GetApplicationDirectory"]
 opaque getApplicationDirectory : BaseIO FilePath
 
+/-- Create directories (including full path requested), returns `true` on success -/
+@[extern "lean_raylib__MakeDirectory"]
+opaque makeDirectory (dir : @& FilePath) : BaseIO Bool
+
 /-- Change working directory, return true on success -/
 @[extern "lean_raylib__ChangeDirectory"]
 opaque changeDirectory (dir : @& FilePath) : BaseIO Bool
@@ -897,11 +901,11 @@ opaque getShapesTexture : BaseIO Texture2DRef
 @[extern "lean_raylib__GetShapesTextureRectangle"]
 opaque getShapesTextureRectangle : BaseIO Rectangle
 
-/-- Draw a pixel -/
+/-- Draw a pixel using geometry [Can be slow, use with care] -/
 @[extern "lean_raylib__DrawPixel"]
 opaque drawPixel (posX : Int32) (posY : Int32) (color : Color) : BaseIO Unit
 
-/-- Draw a pixel (Vector version) -/
+/-- Draw a pixel using geometry (Vector version) [Can be slow, use with care] -/
 @[extern "lean_raylib__DrawPixelV"]
 opaque drawPixelV (position : @& Vector2) (color : Color) : BaseIO Unit
 
@@ -1159,10 +1163,6 @@ opaque loadImageRaw
   (fileName : @& FilePath) (width : UInt32) (height : UInt32)
   (format : PixelFormat) (headerSize : UInt32)
   : BaseIO Image
-
-/-- Load image from SVG file data or string with specified size -/
-@[extern "lean_raylib__LoadImageSvg"]
-opaque loadImageSvg (fileNameOrString : @& String) (width height : UInt32) : BaseIO Image
 
 /-- Load image sequence from file (frames appended to image.data) -/
 @[extern "lean_raylib__LoadImageAnim"]

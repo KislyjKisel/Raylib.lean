@@ -894,6 +894,9 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetApplicationDirectory (lean_obj_arg worl
 
 // # END STATIC
 
+LEAN_EXPORT lean_obj_res lean_raylib__MakeDirectory (b_lean_obj_arg dirPath, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_box(MakeDirectory(lean_string_cstr(dirPath)) == 0));
+}
 
 LEAN_EXPORT lean_obj_res lean_raylib__ChangeDirectory (b_lean_obj_arg dir, lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box(ChangeDirectory(lean_string_cstr(dir))));
@@ -1797,13 +1800,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadImageRaw (
 , lean_obj_arg world) {
     LEAN_RAYLIB_ALLOC_STRUCT(Image, image, LoadImageRaw(
         lean_string_cstr(fileName), width, height, format, headerSize
-    ));
-    return lean_io_result_mk_ok(lean_raylib_Image_box(image));
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__LoadImageSvg (b_lean_obj_arg fileNameOrString, uint32_t width, uint32_t height, lean_obj_arg world) {
-    LEAN_RAYLIB_ALLOC_STRUCT(Image, image, LoadImageSvg(
-        lean_string_cstr(fileNameOrString), width, height
     ));
     return lean_io_result_mk_ok(lean_raylib_Image_box(image));
 }

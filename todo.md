@@ -11,9 +11,3 @@
   IIRC there was a note somewhere saying that Lean devs want to fix it)
 
 * Separate `extern_lib` for the raylib when interdependent single-package `extern_lib`s will be possible
-
-* Fix audio stream callbacks.
-  (When building submodule it is possible to pass args to cmake to run smth on thread entry/exit:
-  `cmake .. -DCMAKE_C_FLAGS="-DMA_ON_THREAD_ENTRY=\"printf(\\\"Hello\\\");\""`.
-  C allows function declaration there, so it is possible to run Lean thread initialization.
-  Making it work without custom build is hard/hacky probably.)

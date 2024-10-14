@@ -92,8 +92,8 @@ where
       rewrite [Nat.mod_eq_of_lt i_succ_lt_u32]
       exact Nat.succ_le_of_lt i_lt_max
     rewrite [
-      UInt32.sub_toNat_of_le _ _ i_succ_le_max,
-      UInt32.sub_toNat_of_le _ _ hi.2
+      UInt32.toNat_sub_of_le _ _ i_succ_le_max,
+      UInt32.toNat_sub_of_le _ _ hi.2
     ]
     show _ - (_ % UInt32.size) < _
     rewrite [
