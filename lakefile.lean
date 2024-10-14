@@ -83,12 +83,7 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
     }
     if printCmdOutput then IO.println gitOutput
 
-  let mkdirOutput ← tryRunProcess {
-    cmd := "mkdir"
-    args := #["-p", s!"{__dir__}/{submoduleDir}/build"]
-    cwd := __dir__
-  }
-  if printCmdOutput then IO.println mkdirOutput
+  IO.FS.createDirAll s!"{__dir__}/{submoduleDir}/build"
 
   let mut cmakeBuildArgs : Array String := #[
     "-DCUSTOMIZE_BUILD=ON",
@@ -106,7 +101,7 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
       then cmakeBuildArgs := cmakeBuildArgs.push s!"\"-DPLATFORM={platform}\""
       else error s!"Invalid config option value: platform={platform}; expected one of {platforms}"
   if let some oglVer := get_config? opengl then
-    let mut oglVers := #["OFF", "4.3", "3.3", "2.1", "1.1", "ES 2.0"]
+    let mut oglVers := #["OFF", "4.3", "3.3", "2.1", "1.1", "ES 2.0", "ES 3.0"]
     if optionFork then
       oglVers := oglVers.push "4.6"
     if oglVers.contains oglVer
@@ -138,19 +133,26 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "savePng" "-DSUPPORT_SAVE_PNG=" (get_config? savePng)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "saveBmp" "-DSUPPORT_SAVE_BMP=" (get_config? saveBmp)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatPng" "-DSUPPORT_FILEFORMAT_PNG=" (get_config? formatPng)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatGif" "-DSUPPORT_FILEFORMAT_GIF=" (get_config? formatGif)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatQoi" "-DSUPPORT_FILEFORMAT_QOI=" (get_config? formatQoi)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatDds" "-DSUPPORT_FILEFORMAT_DDS=" (get_config? formatDds)
-  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatHdr" "-DSUPPORT_FILEFORMAT_HDR=" (get_config? formatHdr)
-  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatKtx" "-DSUPPORT_FILEFORMAT_KTX=" (get_config? formatKtx)
-  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatAstc" "-DSUPPORT_FILEFORMAT_ASTC=" (get_config? formatAstc)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatBmp" "-DSUPPORT_FILEFORMAT_BMP=" (get_config? formatBmp)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatTga" "-DSUPPORT_FILEFORMAT_TGA=" (get_config? formatTga)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatJpg" "-DSUPPORT_FILEFORMAT_JPG=" (get_config? formatJpg)
-  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatGif" "-DSUPPORT_FILEFORMAT_GIF=" (get_config? formatGif)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatPsd" "-DSUPPORT_FILEFORMAT_PSD=" (get_config? formatPsd)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatHdr" "-DSUPPORT_FILEFORMAT_HDR=" (get_config? formatHdr)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatPic" "-DSUPPORT_FILEFORMAT_PIC=" (get_config? formatPic)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatKtx" "-DSUPPORT_FILEFORMAT_KTX=" (get_config? formatKtx)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatAstc" "-DSUPPORT_FILEFORMAT_ASTC=" (get_config? formatAstc)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatPkm" "-DSUPPORT_FILEFORMAT_PKM=" (get_config? formatPkm)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatPvr" "-DSUPPORT_FILEFORMAT_PVR=" (get_config? formatPvr)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatSvg" "-DSUPPORT_FILEFORMAT_SVG=" (get_config? formatSvg)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatObj" "-DSUPPORT_FILEFORMAT_OBJ=" (get_config? formatObj)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatMtl" "-DSUPPORT_FILEFORMAT_MTL=" (get_config? formatMtl)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatIqm" "-DSUPPORT_FILEFORMAT_IQM=" (get_config? formatIqm)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatGltf" "-DSUPPORT_FILEFORMAT_GLTF=" (get_config? formatGltf)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatVox" "-DSUPPORT_FILEFORMAT_VOX=" (get_config? formatVox)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatM3d" "-DSUPPORT_FILEFORMAT_M3D=" (get_config? formatM3d)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatWav" "-DSUPPORT_FILEFORMAT_WAV=" (get_config? formatWav)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatOgg" "-DSUPPORT_FILEFORMAT_OGG=" (get_config? formatOgg)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatXm" "-DSUPPORT_FILEFORMAT_XM=" (get_config? formatXm)
@@ -158,6 +160,7 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatFlac" "-DSUPPORT_FILEFORMAT_FLAC=" (get_config? formatFlac)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatFnt" "-DSUPPORT_FILEFORMAT_FNT=" (get_config? formatFnt)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatTtf" "-DSUPPORT_FILEFORMAT_TTF=" (get_config? formatTtf)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "formatBdf" "-DSUPPORT_FILEFORMAT_BDF=" (get_config? formatBdf)
   cmakeBuildArgs := cmakeBuildArgs.push ".."
 
   let cmakeCmd := (get_config? cmake).getD "cmake"
