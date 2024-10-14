@@ -85,7 +85,7 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
 
   let mkdirOutput ← tryRunProcess {
     cmd := "mkdir"
-    args := #["-p", s!"{submoduleDir}/build"]
+    args := #["-p", s!"{__dir__}/{submoduleDir}/build"]
     cwd := __dir__
   }
   if printCmdOutput then IO.println mkdirOutput
@@ -259,4 +259,11 @@ extern_lib «raylib-lean» pkg := do
 
 script buildSubmodule do
   buildRaylibSubmodule true
+  return 0
+
+script cleanCmakeCache do
+  let path := s!"{__dir__}/{submoduleDir}/build"
+  if ← System.FilePath.pathExists path then
+    IO.println s!"Removing: {path}"
+    IO.FS.removeDirAll path
   return 0
