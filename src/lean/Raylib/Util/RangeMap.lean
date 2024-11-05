@@ -62,7 +62,7 @@ where
                 )
               )
               (by
-                show (vs.data.concat _).length = (i + 1).val.val - _
+                show (vs.toList.concat _).length = (i + 1).val.val - _
                 rewrite [
                   i_add_1_toNat_eq i hi him,
                   List.length_concat _ _,
