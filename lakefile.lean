@@ -22,10 +22,13 @@ package raylib {
   leanOptions := #[⟨`autoImplicit, false⟩]
 }
 
+@[default_target]
 lean_lib Raylib
+
 lean_lib Raymath {
   precompileModules := true
 }
+
 lean_lib Raygui
 
 inductive RaylibSrc
@@ -43,7 +46,7 @@ def raylibSrc : RaylibSrc := match get_config? raylib with
 
 def splitArgStr (s : String) : Array String := Array.mk $ s.splitOn.filter $ not ∘ String.isEmpty
 
-@[default_target]
+@[test_driver]
 lean_exe «raylib-test» {
   root := `Main
   moreLinkArgs := Id.run $ do
