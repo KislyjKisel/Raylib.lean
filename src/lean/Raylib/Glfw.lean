@@ -114,3 +114,31 @@ the return value will depend on whether that window is iconified.
 -/
 @[extern "lean_raylib_glfw_getVideoMode"]
 opaque getVideoMode (monitor : @& Monitor) : GlfwIO VideoMode
+
+/--
+This function sets the swap interval for the current OpenGL or OpenGL ES context,
+i.e. the number of screen updates to wait from the time swap buffers was called
+before swapping the buffers and returning.
+This is sometimes called _vertical synchronization_, _vertical retrace synchronization_ or just _vsync_.
+
+A context that supports either of the `WGL_EXT_swap_control_tear` and `GLX_EXT_swap_control_tear`
+extensions also accepts _negative_ swap intervals, which allows the driver to swap immediately
+even if a frame arrives a little bit late.
+You can check for these extensions with `extensionSupported`.
+
+A context must be current on the calling thread.
+Calling this function without a current context will cause a `noCurrentContext` error.
+-/
+@[extern "lean_raylib_glfw_swapInterval"]
+opaque swapInterval (interval : Int32) : GlfwIO Unit
+
+/--
+This function returns whether the specified extension is supported
+by the current OpenGL or OpenGL ES context.
+It searches both for client API extension and context creation API extensions.
+
+A context must be current on the calling thread.
+Calling this function without a current context will cause a `noCurrentContext` error.
+-/
+@[extern "lean_raylib_glfw_extensionSupported"]
+opaque extensionSupported (extension : @& String) : GlfwIO Bool

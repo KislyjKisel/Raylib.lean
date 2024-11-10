@@ -77,3 +77,15 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_getVideoMode(lean_raylib_glfw_Monitor 
     }
     return lean_io_result_mk_ok(lean_raylib_glfw_VideoMode_box(mode));
 }
+
+LEAN_EXPORT lean_obj_res lean_raylib_glfw_swapInterval(lean_pod_Int32 interval, lean_obj_arg io_) {
+    glfwSwapInterval(lean_pod_Int32_fromRepr(interval));
+    lean_raylib_glfw_tryError();
+    return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib_glfw_extensionSupported(b_lean_obj_arg extension, lean_obj_arg io_) {
+    int res = glfwExtensionSupported(lean_string_cstr(extension));
+    lean_raylib_glfw_tryError();
+    return lean_io_result_mk_ok(lean_box(res == GLFW_TRUE));
+}
