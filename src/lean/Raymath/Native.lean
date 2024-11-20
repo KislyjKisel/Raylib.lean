@@ -63,6 +63,9 @@ def lengthSqr (v : Vector2) : Float32 := v.x * v.x + v.y * v.y
 /-- Calculate two vectors dot product -/
 def dot (v1 v2 : Vector2) : Float32 := v1.x * v2.x + v1.y * v2.y
 
+/-- Calculate two vectors cross product -/
+def cross (v1 v2 : Vector2) : Float32 := v1.x * v2.y - v1.y * v2.x
+
 /-- Calculate square distance between two vectors -/
 def distanceSqr (v1 v2 : Vector2) : Float32 :=
   (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y)
