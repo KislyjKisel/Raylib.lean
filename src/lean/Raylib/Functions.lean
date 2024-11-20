@@ -40,19 +40,19 @@ opaque isWindowReady : BaseIO Bool
 @[extern "lean_raylib__IsWindowFullscreen"]
 opaque isWindowFullscreen : BaseIO Bool
 
-/-- Check if window is currently hidden (only PLATFORM_DESKTOP) -/
+/-- Check if window is currently hidden -/
 @[extern "lean_raylib__IsWindowHidden"]
 opaque isWindowHidden : BaseIO Bool
 
-/-- Check if window is currently minimized (only PLATFORM_DESKTOP) -/
+/-- Check if window is currently minimized -/
 @[extern "lean_raylib__IsWindowMinimized"]
 opaque isWindowMinimized : BaseIO Bool
 
-/-- Check if window is currently maximized (only PLATFORM_DESKTOP) -/
+/-- Check if window is currently maximized -/
 @[extern "lean_raylib__IsWindowMaximized"]
 opaque isWindowMaximized : BaseIO Bool
 
-/-- Check if window is currently focused (only PLATFORM_DESKTOP) -/
+/-- Check if window is currently focused -/
 @[extern "lean_raylib__IsWindowFocused"]
 opaque isWindowFocused : BaseIO Bool
 
@@ -64,7 +64,7 @@ opaque isWindowResized : BaseIO Bool
 @[extern "lean_raylib__IsWindowState"]
 opaque isWindowState (flag : ConfigFlags) : BaseIO Bool
 
-/-- Set window configuration state using flags (only PLATFORM_DESKTOP) -/
+/-- Set window configuration state using flags -/
 @[extern "lean_raylib__SetWindowState"]
 opaque setWindowState (flags : ConfigFlags) : BaseIO Unit
 
@@ -72,39 +72,39 @@ opaque setWindowState (flags : ConfigFlags) : BaseIO Unit
 @[extern "lean_raylib__ClearWindowState"]
 opaque clearWindowState (flags : ConfigFlags) : BaseIO Unit
 
-/-- Toggle window state: fullscreen/windowed [resizes monitor to match window resolution] (only PLATFORM_DESKTOP) -/
+/-- Toggle window state: fullscreen/windowed, resizes monitor to match window resolution -/
 @[extern "lean_raylib__ToggleFullscreen"]
 opaque toggleFullscreen : BaseIO Unit
 
-/-- Toggle window state: borderless windowed [resizes window to match monitor resolution] (only PLATFORM_DESKTOP) -/
+/-- Toggle window state: borderless windowed, resizes window to match monitor resolution -/
 @[extern "lean_raylib__ToggleBorderlessWindowed"]
 opaque toggleBorderlessWindowed : BaseIO Unit
 
-/-- Set window state: maximized, if resizable (only PLATFORM_DESKTOP) -/
+/-- Set window state: maximized, if resizable -/
 @[extern "lean_raylib__MaximizeWindow"]
 opaque maximizeWindow : BaseIO Unit
 
-/-- Set window state: minimized, if resizable (only PLATFORM_DESKTOP) -/
+/-- Set window state: minimized, if resizable -/
 @[extern "lean_raylib__MinimizeWindow"]
 opaque minimizeWindow : BaseIO Unit
 
-/-- Set window state: not minimized/maximized (only PLATFORM_DESKTOP) -/
+/-- Set window state: not minimized/maximized -/
 @[extern "lean_raylib__RestoreWindow"]
 opaque restoreWindow : BaseIO Unit
 
-/-- Set icon for window (single image, RGBA 32bit, only PLATFORM_DESKTOP) -/
+/-- Set icon for window (single image, RGBA 32bit) -/
 @[extern "lean_raylib__SetWindowIcon"]
 opaque setWindowIcon (image : @& Image) : BaseIO Unit
 
-/-- Set icon for window (multiple images, RGBA 32bit, only PLATFORM_DESKTOP) -/
+/-- Set icon for window (multiple images, RGBA 32bit) -/
 @[extern "lean_raylib__SetWindowIcons"]
 opaque setWindowIcons (images : @& Array Image) : BaseIO Unit
 
-/-- Set title for window (only PLATFORM_DESKTOP and PLATFORM_WEB) -/
+/-- Set title for window -/
 @[extern "lean_raylib__SetWindowTitle"]
 opaque setWindowTitle (title : @& Substring) : BaseIO Unit
 
-/-- Set window position on screen (only PLATFORM_DESKTOP) -/
+/-- Set window position on screen -/
 @[extern "lean_raylib__SetWindowPosition"]
 opaque setWindowPosition (x : Int32) (y : Int32) : BaseIO Unit
 
@@ -124,11 +124,11 @@ opaque setWindowMaxSize (width height : UInt32) : BaseIO Unit
 @[extern "lean_raylib__SetWindowSize"]
 opaque setWindowSize (width : UInt32) (height : UInt32) : BaseIO Unit
 
-/-- Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP) -/
+/-- Set window opacity [0.0..1.0] -/
 @[extern "lean_raylib__SetWindowOpacity"]
 opaque setWindowOpacity (opacity : Float32) : BaseIO Unit
 
-/-- Set window focused (only PLATFORM_DESKTOP) -/
+/-- Set window focused -/
 @[extern "lean_raylib__SetWindowFocused"]
 opaque setWindowFocused : BaseIO Unit
 
@@ -163,7 +163,7 @@ opaque getRenderHeight : BaseIO UInt32
 @[extern "lean_raylib__GetMonitorCount"]
 opaque getMonitorCount : BaseIO UInt32
 
-/-- Get current connected monitor -/
+/-- Get current monitor where window is placed -/
 @[extern "lean_raylib__GetCurrentMonitor"]
 opaque getCurrentMonitor : BaseIO UInt32
 
@@ -210,6 +210,10 @@ opaque setClipboardText (text : @& String) : BaseIO Unit
 /-- Get clipboard text content -/
 @[extern "lean_raylib__GetClipboardText"]
 opaque getClipboardText : BaseIO String
+
+/-- Get clipboard image content -/
+@[extern "lean_raylib__GetClipboardImage"]
+opaque getClipboardImage : BaseIO Image
 
 /-- Enable waiting for events on EndDrawing(), no automatic event polling -/
 @[extern "lean_raylib__EnableEventWaiting"]
@@ -327,9 +331,9 @@ opaque loadShader (ctx : Context) (vsFileName : @& Option FilePath) (fsFileName 
 @[extern "lean_raylib__LoadShaderFromMemory"]
 opaque loadShaderFromMemory (ctx : Context) (vsCode : @& Option String) (fsCode : @& Option String) : BaseIO Shader
 
-/-- Check if a shader is ready -/
-@[extern "lean_raylib__IsShaderReady"]
-opaque isShaderReady (shader : @& Shader) : Bool
+/-- Check if a shader is valid (loaded on GPU) -/
+@[extern "lean_raylib__IsShaderValid"]
+opaque isShaderValid (shader : @& Shader) : Bool
 
 /-- Get shader uniform location -/
 @[extern "lean_raylib__GetShaderLocation"]
@@ -515,11 +519,11 @@ opaque loadFileData (fileName : @& FilePath) : BaseIO ByteArray
 
 /-- Save data to file from byte array (write), returns true on success -/
 @[extern "lean_raylib__SaveFileData"]
-opaque saveFileData (fileName : @& FilePath) {size} (data : @& Pod.BytesView size 1) : BaseIO Bool
+opaque saveFileData (fileName : @& FilePath) {size : @& Nat} (data : @& Pod.BytesView size 1) : BaseIO Bool
 
 /-- Export data to code (.h), returns true on success -/
 @[extern "lean_raylib__ExportDataAsCode"]
-opaque exportDataAsCode {size} (data : @& Pod.BytesView size 1) (fileName : @& FilePath) : BaseIO Bool
+opaque exportDataAsCode {size : @& Nat} (data : @& Pod.BytesView size 1) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Load text data from file (read), returns a ~~'\0' terminated~~ string -/
 @[extern "lean_raylib__LoadFileText"]
@@ -635,27 +639,55 @@ opaque getFileModTime (fileName : @& FilePath) : BaseIO UInt64
 
 /-- Compress data (DEFLATE algorithm) -/
 @[extern "lean_raylib__CompressData"]
-opaque compressData {size} (data : @& Pod.BytesView size 1) : ByteArray
+opaque compressData {size : @& Nat} (data : @& Pod.BytesView size 1) : ByteArray
 
 /-- Compress data (DEFLATE algorithm) -/
 @[extern "lean_raylib__CompressDataST"]
-opaque compressDataST {σ size} (data : @& Pod.BytesRefImm σ size 1) : ST σ ByteArray
+opaque compressDataST {σ} {size : @& Nat} (data : @& Pod.BytesRefImm σ size 1) : ST σ ByteArray
 
 /-- Decompress data (DEFLATE algorithm) -/
 @[extern "lean_raylib__DecompressData"]
-opaque decompressData {size} (compData : @& Pod.BytesView size 1) : ByteArray
+opaque decompressData {size : @& Nat} (compData : @& Pod.BytesView size 1) : ByteArray
 
 /-- Encode data to Base64 string -/
 @[extern "lean_raylib__EncodeDataBase64"]
-opaque encodeDataBase64 {size} (data : @& Pod.BytesView size 1) : String
+opaque encodeDataBase64 {size : @& Nat} (data : @& Pod.BytesView size 1) : String
 
 /-- Encode data to Base64 string -/
 @[extern "lean_raylib__EncodeDataBase64ST"]
-opaque encodeDataBase64ST {σ size} (data : @& Pod.BytesRefImm σ size 1) : ST σ String
+opaque encodeDataBase64ST {σ} {size : @& Nat} (data : @& Pod.BytesRefImm σ size 1) : ST σ String
 
 /-- Decode Base64 string data -/
 @[extern "lean_raylib__DecodeDataBase64"]
 opaque decodeDataBase64 (code : @& String) : ByteArray
+
+/-- Compute CRC32 hash code -/
+@[extern "lean_raylib__ComputeCRC32"]
+opaque computeCRC32 {size : @& Nat} (data : @& Pod.BytesView size 1) : UInt32
+
+/-- Compute CRC32 hash code -/
+@[extern "lean_raylib__ComputeCRC32ST"]
+opaque computeCRC32ST {σ} {size : @& Nat} (data : @& Pod.BytesRefImm σ size 1) : ST σ UInt32
+
+/-- Compute MD5 hash code (not threadsafe - uses `static`) -/
+@[extern "lean_raylib__ComputeMD5"]
+opaque computeMD5 {size : @& Nat} (data : @& Pod.BytesView size 1) : { hash : ByteArray // hash.size = 16 } :=
+  .mk (ByteArray.mk <| Array.mkArray 16 0) rfl
+
+/-- Compute MD5 hash code (not threadsafe - uses `static`) -/
+@[extern "lean_raylib__ComputeMD5ST"]
+opaque computeMD5ST {σ} {size : @& Nat} (data : @& Pod.BytesRefImm σ size 1) : ST σ { hash : ByteArray // hash.size = 16 } :=
+  pure <| .mk (ByteArray.mk <| Array.mkArray 16 0) rfl
+
+/-- Compute SHA1 hash code (not threadsafe - uses `static`) -/
+@[extern "lean_raylib__ComputeSHA1"]
+opaque computeSHA1 {size : @& Nat} (data : @& Pod.BytesView size 1) : { hash : ByteArray // hash.size = 20 } :=
+  .mk (ByteArray.mk <| Array.mkArray 20 0) rfl
+
+/-- Compute SHA1 hash code (not threadsafe - uses `static`) -/
+@[extern "lean_raylib__ComputeSHA1ST"]
+opaque computeSHA1ST {σ} {size : @& Nat} (data : @& Pod.BytesRefImm σ size 1) : ST σ { hash : ByteArray // hash.size = 20 } :=
+  pure <| .mk (ByteArray.mk <| Array.mkArray 20 0) rfl
 
 /-- Load automation events list from file -/
 @[extern "lean_raylib__LoadAutomationEventList"]
@@ -697,7 +729,7 @@ opaque playAutomationEvent (event : @& AutomationEvent) : BaseIO Unit
 @[extern "lean_raylib__IsKeyPressed"]
 opaque isKeyPressed (key : KeyboardKey) : BaseIO Bool
 
-/-- Check if a key has been pressed again (Only PLATFORM_DESKTOP) -/
+/-- Check if a key has been pressed again -/
 @[extern "lean_raylib__IsKeyPressedRepeat"]
 opaque isKeyPressedRepeat (key : KeyboardKey) : BaseIO Bool
 
@@ -765,9 +797,9 @@ opaque getGamepadAxisMovement (gamepad : UInt32) (axis : UInt32) : BaseIO Float3
 @[extern "lean_raylib__SetGamepadMappings"]
 opaque setGamepadMappings (mappings : @& String) : BaseIO Bool
 
-/-- Set gamepad vibration for both motors -/
+/-- Set gamepad vibration for both motors (duration in seconds) -/
 @[extern "lean_raylib__SetGamepadVibration"]
-opaque setGamepadVibration (gamepad : UInt32) (leftMotor rightMotor : Float32) : BaseIO Unit
+opaque setGamepadVibration (gamepad : UInt32) (leftMotor rightMotor duration : Float32) : BaseIO Unit
 
 /-- Check if a mouse button has been pressed once -/
 @[extern "lean_raylib__IsMouseButtonPressed"]
@@ -857,7 +889,7 @@ opaque isGestureDetected (gesture : Gesture) : BaseIO Bool
 @[extern "lean_raylib__GetGestureDetected"]
 opaque getGestureDetected : BaseIO Gesture
 
-/-- Get gesture hold time in milliseconds -/
+/-- Get gesture hold time in seconds -/
 @[extern "lean_raylib__GetGestureHoldDuration"]
 opaque getGestureHoldDuration : BaseIO Float32
 
@@ -1121,6 +1153,10 @@ opaque checkCollisionCircles (center1 : @& Vector2) (radius1 : Float32) (center2
 @[extern "lean_raylib__CheckCollisionCircleRec"]
 opaque checkCollisionCircleRec (center : @& Vector2) (radius : Float32) (rec : @& Rectangle) : Bool
 
+/-- Check if circle collides with a line created betweeen two points [p1] and [p2] -/
+@[extern "lean_raylib__CheckCollisionCircleLine"]
+opaque checkCollisionCircleLine (center : @& Vector2) (radius : Float32) (p1 p2 : @& Vector2) : Bool
+
 /-- Check if point is inside rectangle -/
 @[extern "lean_raylib__CheckCollisionPointRec"]
 opaque checkCollisionPointRec (point : @& Vector2) (rec : @& Rectangle) : Bool
@@ -1133,6 +1169,10 @@ opaque checkCollisionPointCircle (point : @& Vector2) (center : @& Vector2) (rad
 @[extern "lean_raylib__CheckCollisionPointTriangle"]
 opaque checkCollisionPointTriangle (point : @& Vector2) (p1 : @& Vector2) (p2 : @& Vector2) (p3 : @& Vector2) : Bool
 
+/-- Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold] -/
+@[extern "lean_raylib__CheckCollisionPointLine"]
+opaque checkCollisionPointLine (point : @& Vector2) (p1 : @& Vector2) (p2 : @& Vector2) (threshold : UInt32) : Bool
+
 /-- Check if point is within a polygon described by array of vertices -/
 @[extern "lean_raylib__CheckCollisionPointPoly"]
 opaque checkCollisionPointPoly (point : @& Vector2) (points : @& Array Vector2) : Bool
@@ -1140,14 +1180,6 @@ opaque checkCollisionPointPoly (point : @& Vector2) (points : @& Array Vector2) 
 /-- Check the collision between two lines defined by two points each, returns collision point by reference -/
 @[extern "lean_raylib__CheckCollisionLines"]
 opaque checkCollisionLines (startPos1 : @& Vector2) (endPos1 : @& Vector2) (startPos2 : @& Vector2) (endPos2 : @& Vector2) : Option Vector2
-
-/-- Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold] -/
-@[extern "lean_raylib__CheckCollisionPointLine"]
-opaque checkCollisionPointLine (point : @& Vector2) (p1 : @& Vector2) (p2 : @& Vector2) (threshold : UInt32) : Bool
-
-/-- Check if circle collides with a line created betweeen two points [p1] and [p2] -/
-@[extern "lean_raylib__CheckCollisionCircleLine"]
-opaque checkCollisionCircleLine (center : @& Vector2) (radius : Float32) (p1 p2 : @& Vector2) : Bool
 
 /-- Get collision rectangle for two rectangles collision -/
 @[extern "lean_raylib__GetCollisionRec"]
@@ -1170,11 +1202,11 @@ opaque loadImageAnim (fileName : @& FilePath) : BaseIO (Image × UInt32)
 
 /-- Load image sequence from memory buffer -/
 @[extern "lean_raylib__LoadImageAnimFromMemory"]
-opaque loadImageAnimFromMemory {size} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Image × UInt32
+opaque loadImageAnimFromMemory {size : @& Nat} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Image × UInt32
 
 /-- Load image from memory buffer, fileType refers to extension: i.e. '.png' -/
 @[extern "lean_raylib__LoadImageFromMemory"]
-opaque loadImageFromMemory {size} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Image
+opaque loadImageFromMemory {size : @& Nat} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Image
 
 /--
 Load image from GPU texture data.
@@ -1187,9 +1219,9 @@ opaque loadImageFromTexture (texture : @& Texture2DRef) : BaseIO Image
 @[extern "lean_raylib__LoadImageFromScreen"]
 opaque loadImageFromScreen : BaseIO Image
 
-/-- Check if an image is ready -/
-@[extern "lean_raylib__IsImageReady"]
-opaque isImageReady (image : @& Image) : Bool
+/-- Check if an image is valid (data and parameters) -/
+@[extern "lean_raylib__IsImageValid"]
+opaque isImageValid (image : @& Image) : Bool
 
 /-- Export image data to file, returns true on success -/
 @[extern "lean_raylib__ExportImage"]
@@ -1527,13 +1559,13 @@ opaque loadTextureCubemap (ctx : Context) (image : @& Image) (layout : CubemapLa
 @[extern "lean_raylib__LoadRenderTexture"]
 opaque loadRenderTexture (ctx : Context) (width : UInt32) (height : UInt32) : BaseIO RenderTexture2D
 
-/-- Check if a texture is ready -/
-@[extern "lean_raylib__IsTextureReady"]
-opaque isTextureReady (texture : @& Texture2DRef) : Bool
+/-- Check if a texture is valid (loaded on GPU) -/
+@[extern "lean_raylib__IsTextureValid"]
+opaque isTextureValid (texture : @& Texture2DRef) : Bool
 
-/-- Check if a render texture is ready -/
-@[extern "lean_raylib__IsRenderTextureReady"]
-opaque isRenderTextureReady (target : @& RenderTexture2D) : Bool
+/-- Check if a render texture is valid (loaded on GPU) -/
+@[extern "lean_raylib__IsRenderTextureValid"]
+opaque isRenderTextureValid (target : @& RenderTexture2D) : Bool
 
 /-- Update GPU texture with new data -/
 @[extern "lean_raylib__UpdateTexture"]
@@ -1680,11 +1712,11 @@ Load font from memory buffer, fileType refers to extension: i.e. '.ttf'.
 NOTE: data size isn't checked and may cause UB.
 -/
 @[extern "lean_raylib__LoadFontFromMemory"]
-opaque loadFontFromMemory {size} (ctx : Context) (fileType : @& String) (data : @& Pod.BytesView size 1) (fontSize : UInt32) (codepoints : @& Option (Array Char)) : Font
+opaque loadFontFromMemory {size : @& Nat} (ctx : Context) (fileType : @& String) (data : @& Pod.BytesView size 1) (fontSize : UInt32) (codepoints : @& Option (Array Char)) : Font
 
-/-- Check if a font is ready -/
-@[extern "lean_raylib__IsFontReady"]
-opaque isFontReady (font : @& Font) : Bool
+/-- Check if a font is valid (font data loaded, WARNING: GPU texture not checked) -/
+@[extern "lean_raylib__IsFontValid"]
+opaque isFontValid (font : @& Font) : Bool
 
 /--
 Load font data for further use.
@@ -1866,9 +1898,9 @@ opaque loadModel (ctx : @& Context) (fileName : @& FilePath) : BaseIO Model
 @[extern "lean_raylib__LoadModelFromMesh"]
 opaque loadModelFromMesh (mesh : Mesh) : Model
 
-/-- Check if a model is ready -/
-@[extern "lean_raylib__IsModelReady"]
-opaque isModelReady (model : @& Model) : Bool
+/-- Check if a model is valid (loaded on GPU, VAO/VBOs) -/
+@[extern "lean_raylib__IsModelValid"]
+opaque isModelValid (model : @& Model) : Bool
 
 /-- Compute model bounding box limits (considers all meshes) -/
 @[extern "lean_raylib__GetModelBoundingBox"]
@@ -2002,24 +2034,27 @@ opaque genMeshCubicmap (ctx : Context) (cubicmap : @& Image) (cubeSize : @& Vect
 @[extern "lean_raylib__LoadMaterials"]
 opaque loadMaterials (ctx : @& Context) (fileName : @& FilePath) : Array Material
 
-/-- Check if a material is ready -/
-def isMaterialReady (material : Material) : Bool := isShaderReady material.shader
+/-- Check if a material is valid (shader assigned, map textures loaded in GPU) -/
+def isMaterialValid (material : Material) : Bool :=
+  -- TODO: sync with raylib's implementation
+  -- Last time there wasn't any check other than for shader validity.
+  isShaderValid material.shader
 
 /-- Load model animations from file -/
 @[extern "lean_raylib__LoadModelAnimations"]
 opaque loadModelAnimations (fileName : @& FilePath) : BaseIO (Array ModelAnimation)
 
-/-- Update model animation pose -/
+/-- Update model animation pose (CPU) -/
 @[extern "lean_raylib__UpdateModelAnimation"]
 opaque updateModelAnimation (model : Model) (anim : @& ModelAnimation) (frame : UInt32) : BaseIO Model
+
+/-- Update model animation mesh bone matrices (GPU skinning) -/
+@[extern "lean_raylib__UpdateModelAnimationBones"]
+opaque updateModelAnimationBones (model : Model) (anim : @& ModelAnimation) (frame : UInt32) : BaseIO Model
 
 /-- Check model animation skeleton match -/
 @[extern "lean_raylib__IsModelAnimationValid"]
 opaque isModelAnimationValid (model : @& Model) (anim : @& ModelAnimation) : Bool
-
-/-- Update model animation mesh bone matrices -/
-@[extern "lean_raylib__UpdateModelAnimationBoneMatrices"]
-opaque updateModelAnimationBoneMatrices (model : Model) (anim : @& ModelAnimation) (frame : UInt32) : BaseIO Model
 
 /-- Check collision between two spheres -/
 @[extern "lean_raylib__CheckCollisionSpheres"]
@@ -2079,11 +2114,11 @@ opaque loadWave (fileName : @& FilePath) : BaseIO Wave
 
 /-- Load wave from memory buffer, fileType refers to extension: i.e. '.wav' -/
 @[extern "lean_raylib__LoadWaveFromMemory"]
-opaque loadWaveFromMemory {size} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Wave
+opaque loadWaveFromMemory {size : @& Nat} (fileType : @& String) (fileData : @& Pod.BytesView size 1) : Wave
 
-/-- Checks if wave data is ready -/
-@[extern "lean_raylib__IsWaveReady"]
-opaque isWaveReady (wave : @& Wave) : Bool
+/-- Checks if wave data is valid (data loaded and parameters) -/
+@[extern "lean_raylib__IsWaveValid"]
+opaque isWaveValid (wave : @& Wave) : Bool
 
 /-- Load sound from file -/
 @[extern "lean_raylib__LoadSound"]
@@ -2096,9 +2131,9 @@ opaque loadSoundFromWave (ctx : Context) (wave : @& Wave) : Sound
 @[deprecated]
 def loadSoundAlias (source : Sound) : Sound := source
 
-/-- Checks if a sound is ready -/
-@[extern "lean_raylib__IsSoundReady"]
-opaque isSoundReady (sound : @& Sound) : Bool
+/-- Checks if a sound is valid (data loaded and buffers initialized) -/
+@[extern "lean_raylib__IsSoundValid"]
+opaque isSoundValid (sound : @& Sound) : Bool
 
 -- todo: use case? sound's frameCount is unchanged after update
 /-- Update sound buffer with new data -/
@@ -2178,9 +2213,9 @@ opaque loadMusicStream (ctx : Context) (fileName : @& FilePath) : BaseIO Music
 @[extern "lean_raylib__LoadMusicStreamFromMemory"]
 opaque loadMusicStreamFromMemory (ctx : Context) (fileType : @& String) (data : @& ByteArray) : BaseIO Music
 
-/-- Checks if a music stream is ready -/
-@[extern "lean_raylib__IsMusicReady"]
-opaque isMusicReady (music : @& Music) : Bool
+/-- Checks if a music stream is valid (context and buffers initialized) -/
+@[extern "lean_raylib__IsMusicValid"]
+opaque isMusicValid (music : @& Music) : Bool
 
 /-- Start music playing -/
 @[extern "lean_raylib__PlayMusicStream"]
@@ -2235,8 +2270,8 @@ opaque getMusicTimePlayed (music : @& Music) : BaseIO Float
 opaque loadAudioStream (ctx : Context) (sampleRate : UInt32) (sampleType : AudioSampleType) (channels : UInt32) : BaseIO (AudioStream sampleType)
 
 /-- Checks if an audio stream is ready -/
-@[extern "lean_raylib__IsAudioStreamReady"]
-opaque isAudioStreamReady {st} (stream : @& AudioStream st) : Bool
+@[extern "lean_raylib__IsAudioStreamValid"]
+opaque isAudioStreamValid {st} (stream : @& AudioStream st) : Bool
 
 /-- Update audio stream buffers with data. -/
 @[extern "lean_raylib__UpdateAudioStream"]

@@ -1105,7 +1105,13 @@ def Matrix.decompose (mat : Matrix) : Vector3 × Quaternion × Vector3 :=
       then Quaternion.identity
       else Quaternion.fromMatrix { mat with
         m0 := mat.m0 / scale.x
+        m4 := mat.m4 / scale.x
+        m8 := mat.m8 / scale.x
+        m1 := mat.m1 / scale.y
         m5 := mat.m5 / scale.y
+        m9 := mat.m9 / scale.y
+        m2 := mat.m2 / scale.z
+        m6 := mat.m6 / scale.z
         m10 := mat.m10 / scale.z
       }
   (translation, rotation, scale)

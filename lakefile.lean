@@ -12,7 +12,7 @@ def podConfig : NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "b8f6f69" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "be986d2" with podConfig
 
 def packagesDir := defaultPackagesDir
 

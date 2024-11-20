@@ -246,6 +246,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetClipboardText (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_mk_string(clipboardText));
 }
 
+LEAN_EXPORT lean_obj_res lean_raylib__GetClipboardImage (lean_obj_arg world) {
+    LEAN_RAYLIB_ALLOC_STRUCT(Image, image, GetClipboardImage());
+    return lean_io_result_mk_ok(lean_raylib_Image_box(image));
+}
+
 LEAN_EXPORT lean_obj_res lean_raylib__EnableEventWaiting (lean_obj_arg world) {
     EnableEventWaiting();
     return lean_io_result_mk_ok(lean_box(0));
@@ -434,8 +439,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadShaderFromMemory (
     ));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsShaderReady (b_lean_obj_arg shader) {
-    return IsShaderReady(lean_raylib_Shader_fromRepr(shader)->shader);
+LEAN_EXPORT uint8_t lean_raylib__IsShaderValid (b_lean_obj_arg shader) {
+    return IsShaderValid(lean_raylib_Shader_fromRepr(shader)->shader);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetShaderLocation (lean_obj_arg shader, b_lean_obj_arg uniformName) {
@@ -810,17 +815,17 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFileData (b_lean_obj_arg fileName) {
     return lean_io_result_mk_ok(arr);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__SaveFileData (b_lean_obj_arg fileName, size_t sz, b_lean_obj_arg data, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__SaveFileData (b_lean_obj_arg fileName, b_lean_obj_arg sz, b_lean_obj_arg data, lean_obj_arg world) {
     lean_pod_BytesView_data* dataView = lean_pod_BytesView_fromRepr(data);
     return lean_io_result_mk_ok(lean_box(
-        SaveFileData(lean_string_cstr(fileName), dataView->ptr, sz)
+        SaveFileData(lean_string_cstr(fileName), dataView->ptr, lean_usize_of_nat(sz))
     ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__ExportDataAsCode (size_t sz, b_lean_obj_arg data, b_lean_obj_arg fileName, lean_obj_arg world) {
+LEAN_EXPORT lean_obj_res lean_raylib__ExportDataAsCode (b_lean_obj_arg sz, b_lean_obj_arg data, b_lean_obj_arg fileName, lean_obj_arg world) {
     lean_pod_BytesView_data* dataView = lean_pod_BytesView_fromRepr(data);
     return lean_io_result_mk_ok(lean_box(
-        ExportDataAsCode(dataView->ptr, sz, lean_string_cstr(fileName))
+        ExportDataAsCode(dataView->ptr, lean_usize_of_nat(sz), lean_string_cstr(fileName))
     ));
 }
 
@@ -950,11 +955,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetFileModTime (b_lean_obj_arg fileName, l
     ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__CompressData (size_t sz, b_lean_obj_arg data) {
+LEAN_EXPORT lean_obj_res lean_raylib__CompressData (b_lean_obj_arg sz, b_lean_obj_arg data) {
     int compressedDataSize;
     unsigned char* compressedData = CompressData(
         lean_pod_BytesView_fromRepr(data)->ptr,
-        sz,
+        lean_usize_of_nat(sz),
         &compressedDataSize
     );
     lean_object* compressedArray = lean_alloc_sarray(sizeof(uint8_t), compressedDataSize, compressedDataSize);
@@ -963,11 +968,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__CompressData (size_t sz, b_lean_obj_arg da
     return compressedArray;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__CompressDataST (size_t sz, b_lean_obj_arg data, lean_obj_arg st) {
+LEAN_EXPORT lean_obj_res lean_raylib__CompressDataST (b_lean_obj_arg sz, b_lean_obj_arg data, lean_obj_arg st) {
     int compressedDataSize;
     unsigned char* compressedData = CompressData(
         lean_pod_BytesRef_fromRepr(data),
-        sz,
+        lean_usize_of_nat(sz),
         &compressedDataSize
     );
     lean_object* compressedArray = lean_alloc_sarray(sizeof(uint8_t), compressedDataSize, compressedDataSize);
@@ -976,11 +981,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__CompressDataST (size_t sz, b_lean_obj_arg 
     return lean_io_result_mk_ok(compressedArray);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__DecompressData (size_t sz, b_lean_obj_arg compData) {
+LEAN_EXPORT lean_obj_res lean_raylib__DecompressData (b_lean_obj_arg sz, b_lean_obj_arg compData) {
     int decompressedDataSize;
     unsigned char* decompressedData = DecompressData(
         lean_pod_BytesView_fromRepr(compData)->ptr,
-        sz,
+        lean_usize_of_nat(sz),
         &decompressedDataSize
     );
     lean_object* decompressedArray = lean_alloc_sarray(sizeof(uint8_t), decompressedDataSize, decompressedDataSize);
@@ -989,11 +994,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__DecompressData (size_t sz, b_lean_obj_arg 
     return decompressedArray;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64 (size_t sz, b_lean_obj_arg data) {
+LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64 (b_lean_obj_arg sz, b_lean_obj_arg data) {
     int encodedDataSize;
     char* encodedData = EncodeDataBase64(
         lean_pod_BytesView_fromRepr(data)->ptr,
-        sz,
+        lean_usize_of_nat(sz),
         &encodedDataSize
     );
     lean_object* encodedDataLean = lean_mk_string_from_bytes(encodedData, encodedDataSize);
@@ -1001,11 +1006,11 @@ LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64 (size_t sz, b_lean_obj_ar
     return encodedDataLean;
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64ST (size_t sz, b_lean_obj_arg data, lean_obj_arg st) {
+LEAN_EXPORT lean_obj_res lean_raylib__EncodeDataBase64ST (b_lean_obj_arg sz, b_lean_obj_arg data, lean_obj_arg st) {
     int encodedDataSize;
     char* encodedData = EncodeDataBase64(
         lean_pod_BytesRef_fromRepr(data),
-        sz,
+        lean_usize_of_nat(sz),
         &encodedDataSize
     );
     lean_object* encodedDataLean = lean_mk_string_from_bytes(encodedData, encodedDataSize);
@@ -1020,6 +1025,56 @@ LEAN_EXPORT lean_obj_res lean_raylib__DecodeDataBase64 (b_lean_obj_arg data) {
     memcpy(lean_sarray_cptr(decodedArray), decodedData, decodedDataSize);
     MemFree(decodedData);
     return decodedArray;
+}
+
+LEAN_EXPORT uint32_t lean_raylib__ComputeCRC32 (b_lean_obj_arg sz, lean_pod_BytesView data) {
+    return ComputeCRC32(lean_pod_BytesView_fromRepr(data)->ptr, lean_usize_of_nat(sz));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__ComputeCRC32ST (b_lean_obj_arg sz, lean_pod_BytesRef data, lean_obj_arg st) {
+    return lean_io_result_mk_ok(lean_box_uint32(
+        ComputeCRC32(lean_pod_BytesRef_fromRepr(data), lean_usize_of_nat(sz))
+    ));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__ComputeMD5 (b_lean_obj_arg sz, lean_pod_BytesView data) {
+    lean_object* hash = lean_alloc_sarray(1, 16, 16);
+    memcpy(
+        lean_sarray_cptr(hash),
+        ComputeMD5(lean_pod_BytesView_fromRepr(data)->ptr, lean_usize_of_nat(sz)),
+        16
+    );
+    return hash;
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__ComputeMD5ST (b_lean_obj_arg sz, lean_pod_BytesRef data, lean_obj_arg st) {
+    lean_object* hash = lean_alloc_sarray(1, 16, 16);
+    memcpy(
+        lean_sarray_cptr(hash),
+        ComputeMD5(lean_pod_BytesRef_fromRepr(data), lean_usize_of_nat(sz)),
+        16
+    );
+    return lean_io_result_mk_ok(hash);
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__ComputeSHA1 (b_lean_obj_arg sz, lean_pod_BytesView data) {
+    lean_object* hash = lean_alloc_sarray(1, 20, 20);
+    memcpy(
+        lean_sarray_cptr(hash),
+        ComputeSHA1(lean_pod_BytesView_fromRepr(data)->ptr, lean_usize_of_nat(sz)),
+        20
+    );
+    return hash;
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__ComputeSHA1ST (b_lean_obj_arg sz, lean_pod_BytesRef data, lean_obj_arg st) {
+    lean_object* hash = lean_alloc_sarray(1, 20, 20);
+    memcpy(
+        lean_sarray_cptr(hash),
+        ComputeMD5(lean_pod_BytesRef_fromRepr(data), lean_usize_of_nat(sz)),
+        20
+    );
+    return lean_io_result_mk_ok(hash);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__LoadAutomationEventList(b_lean_obj_arg fileName, lean_obj_arg world) {
@@ -1154,8 +1209,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetGamepadMappings (b_lean_obj_arg mapping
     return lean_io_result_mk_ok(lean_box(SetGamepadMappings(lean_string_cstr(mappings))));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__SetGamepadVibration(uint32_t gamepad, uint32_t leftMotor, uint32_t rightMotor, lean_obj_arg world) {
-    SetGamepadVibration(gamepad, lean_pod_Float32_fromRepr(leftMotor), lean_pod_Float32_fromRepr(rightMotor));
+LEAN_EXPORT lean_obj_res lean_raylib__SetGamepadVibration(uint32_t gamepad, uint32_t leftMotor, uint32_t rightMotor, uint32_t duration, lean_obj_arg world) {
+    SetGamepadVibration(gamepad, lean_pod_Float32_fromRepr(leftMotor), lean_pod_Float32_fromRepr(rightMotor), lean_pod_Float32_fromRepr(duration));
     return lean_io_result_mk_ok(lean_box(0));
 }
 
@@ -1715,6 +1770,15 @@ LEAN_EXPORT uint8_t lean_raylib__CheckCollisionCircleRec (b_lean_obj_arg center,
     );
 }
 
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionCircleLine (b_lean_obj_arg center, uint32_t radius, b_lean_obj_arg p1, b_lean_obj_arg p2) {
+    return CheckCollisionCircleLine(
+        lean_raylib_Vector2_fromRepr(center),
+        lean_pod_Float32_fromRepr(radius),
+        lean_raylib_Vector2_fromRepr(p1),
+        lean_raylib_Vector2_fromRepr(p2)
+    );
+}
+
 LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointRec (b_lean_obj_arg point, b_lean_obj_arg rec) {
     return CheckCollisionPointRec(lean_raylib_Vector2_fromRepr(point), lean_raylib_Rectangle_fromRepr(rec));
 }
@@ -1733,6 +1797,15 @@ LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointTriangle (b_lean_obj_arg poi
         lean_raylib_Vector2_fromRepr(p1),
         lean_raylib_Vector2_fromRepr(p2),
         lean_raylib_Vector2_fromRepr(p3)
+    );
+}
+
+LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointLine (b_lean_obj_arg point, b_lean_obj_arg p1, b_lean_obj_arg p2, uint32_t threshold) {
+    return CheckCollisionPointLine(
+        lean_raylib_Vector2_fromRepr(point),
+        lean_raylib_Vector2_fromRepr(p1),
+        lean_raylib_Vector2_fromRepr(p2),
+        threshold
     );
 }
 
@@ -1759,24 +1832,6 @@ LEAN_EXPORT lean_obj_res lean_raylib__CheckCollisionLines (b_lean_obj_arg startP
         return lean_mk_option_some(lean_raylib_Vector2_box(collisionPoint));
     }
     return lean_mk_option_none();
-}
-
-LEAN_EXPORT uint8_t lean_raylib__CheckCollisionPointLine (b_lean_obj_arg point, b_lean_obj_arg p1, b_lean_obj_arg p2, uint32_t threshold) {
-    return CheckCollisionPointLine(
-        lean_raylib_Vector2_fromRepr(point),
-        lean_raylib_Vector2_fromRepr(p1),
-        lean_raylib_Vector2_fromRepr(p2),
-        threshold
-    );
-}
-
-LEAN_EXPORT uint8_t lean_raylib__CheckCollisionCircleLine (b_lean_obj_arg center, uint32_t radius, b_lean_obj_arg p1, b_lean_obj_arg p2) {
-    return CheckCollisionCircleLine(
-        lean_raylib_Vector2_fromRepr(center),
-        lean_pod_Float32_fromRepr(radius),
-        lean_raylib_Vector2_fromRepr(p1),
-        lean_raylib_Vector2_fromRepr(p2)
-    );
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetCollisionRec (b_lean_obj_arg rec1, b_lean_obj_arg rec2) {
@@ -1813,20 +1868,25 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadImageAnim (/* String */ b_lean_obj_arg
     ));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadImageAnimFromMemory (size_t sz, b_lean_obj_arg fileType, b_lean_obj_arg fileData) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadImageAnimFromMemory (b_lean_obj_arg sz, b_lean_obj_arg fileType, b_lean_obj_arg fileData) {
     int frames;
-    LEAN_RAYLIB_ALLOC_STRUCT(Image, image, LoadImageAnimFromMemory(lean_string_cstr(fileType), lean_pod_BytesView_fromRepr(fileData)->ptr, sz, &frames));
+    LEAN_RAYLIB_ALLOC_STRUCT(Image, image, LoadImageAnimFromMemory(
+        lean_string_cstr(fileType),
+        lean_pod_BytesView_fromRepr(fileData)->ptr,
+        lean_usize_of_nat(sz),
+        &frames
+    ));
     return lean_mk_tuple2(
         lean_raylib_Image_box(image),
         lean_box_uint32(frames)
     );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromMemory (size_t sz, b_lean_obj_arg fileType, b_lean_obj_arg fileData) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromMemory (b_lean_obj_arg sz, b_lean_obj_arg fileType, b_lean_obj_arg fileData) {
     LEAN_RAYLIB_ALLOC_STRUCT(Image, image, LoadImageFromMemory(
         lean_string_cstr(fileType),
         lean_pod_BytesView_fromRepr(fileData)->ptr,
-        sz
+        lean_usize_of_nat(sz)
     ));
     return lean_raylib_Image_toRepr(image);
 }
@@ -1841,8 +1901,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadImageFromScreen (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_raylib_Image_box(image));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsImageReady (b_lean_obj_arg image) {
-    return IsImageReady(*lean_raylib_Image_fromRepr(image));
+LEAN_EXPORT uint8_t lean_raylib__IsImageValid (b_lean_obj_arg image) {
+    return IsImageValid(*lean_raylib_Image_fromRepr(image));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__ExportImage (b_lean_obj_arg image, b_lean_obj_arg fileName, lean_obj_arg world) {
@@ -2339,12 +2399,12 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadRenderTexture (lean_obj_arg ctx, uint3
     ));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsTextureReady (b_lean_obj_arg textureRef) {
-    return IsTextureReady(lean_raylib_TextureRef_fromRepr(textureRef)->texture);
+LEAN_EXPORT uint8_t lean_raylib__IsTextureValid (b_lean_obj_arg textureRef) {
+    return IsTextureValid(lean_raylib_TextureRef_fromRepr(textureRef)->texture);
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsRenderTextureReady (b_lean_obj_arg target) {
-    return IsRenderTextureReady(lean_raylib_RenderTexture_fromRepr(target)->texture);
+LEAN_EXPORT uint8_t lean_raylib__IsRenderTextureValid (b_lean_obj_arg target) {
+    return IsRenderTextureValid(lean_raylib_RenderTexture_fromRepr(target)->texture);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateTexture (b_lean_obj_arg texture, b_lean_obj_arg pixels, lean_obj_arg world) {
@@ -2557,7 +2617,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromImage (lean_obj_arg ctx, b_lea
     );
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (size_t sz, lean_obj_arg ctx, b_lean_obj_arg fileType, b_lean_obj_arg data, uint32_t fontSize, b_lean_obj_arg fontChars_opt) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (b_lean_obj_arg sz, lean_obj_arg ctx, b_lean_obj_arg fileType, b_lean_obj_arg data, uint32_t fontSize, b_lean_obj_arg fontChars_opt) {
     size_t glyphCount = 0;
     int* fontChars_c = NULL;
     if(lean_option_is_some(fontChars_opt)) {
@@ -2571,7 +2631,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (size_t sz, lean_obj_ar
     Font font = LoadFontFromMemory(
         lean_string_cstr(fileType),
         lean_pod_BytesView_fromRepr(data)->ptr,
-        sz,
+        lean_usize_of_nat(sz),
         fontSize,
         fontChars_c,
         glyphCount
@@ -2580,8 +2640,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadFontFromMemory (size_t sz, lean_obj_ar
     return lean_raylib_Font_toRepr(font, ctx);
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsFontReady (lean_obj_arg font) {
-    return IsFontReady(lean_raylib_Font_fromRepr(font)->font);
+LEAN_EXPORT uint8_t lean_raylib__IsFontValid (lean_obj_arg font) {
+    return IsFontValid(lean_raylib_Font_fromRepr(font)->font);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__LoadFontData (
@@ -2959,8 +3019,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadModelFromMesh (lean_obj_arg mesh) {
     return lean_raylib_Model_toRepr(model);
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsModelReady (b_lean_obj_arg model) {
-    return IsModelReady(lean_raylib_Model_fromRepr(model)->model);
+LEAN_EXPORT uint8_t lean_raylib__IsModelValid (b_lean_obj_arg model) {
+    return IsModelValid(lean_raylib_Model_fromRepr(model)->model);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetModelBoundingBox (b_lean_obj_arg model) {
@@ -3305,14 +3365,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__UpdateModelAnimation (
     return lean_io_result_mk_ok(modelObj);
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsModelAnimationValid (b_lean_obj_arg model, b_lean_obj_arg anim) {
-    return IsModelAnimationValid(
-        lean_raylib_Model_fromRepr(model)->model,
-        *lean_raylib_ModelAnimation_fromRepr(anim)
-    );
-}
-
-LEAN_EXPORT lean_obj_res lean_raylib__UpdateModelAnimationBoneMatrices (
+LEAN_EXPORT lean_obj_res lean_raylib__UpdateModelAnimationBones (
     lean_obj_arg modelObj, b_lean_obj_arg anim, uint32_t frame, lean_obj_arg world
 ) {
     if (LEAN_UNLIKELY(!lean_is_exclusive(modelObj))) {
@@ -3327,12 +3380,19 @@ LEAN_EXPORT lean_obj_res lean_raylib__UpdateModelAnimationBoneMatrices (
             lean_raylib_Mesh_ensure_exclusive(lean_array_get_core(model->meshes, i))
         );
     }
-    UpdateModelAnimationBoneMatrices(
+    UpdateModelAnimationBones(
         model->model,
         *lean_raylib_ModelAnimation_fromRepr(anim),
         frame
     );
     return lean_io_result_mk_ok(modelObj);
+}
+
+LEAN_EXPORT uint8_t lean_raylib__IsModelAnimationValid (b_lean_obj_arg model, b_lean_obj_arg anim) {
+    return IsModelAnimationValid(
+        lean_raylib_Model_fromRepr(model)->model,
+        *lean_raylib_ModelAnimation_fromRepr(anim)
+    );
 }
 
 LEAN_EXPORT uint8_t lean_raylib__CheckCollisionSpheres (b_lean_obj_arg center1, uint32_t radius1, b_lean_obj_arg center2, uint32_t radius2) {
@@ -3422,17 +3482,17 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadWave (b_lean_obj_arg fileName, lean_ob
     return lean_io_result_mk_ok(lean_raylib_Wave_box(wave));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib__LoadWaveFromMemory (size_t sz, b_lean_obj_arg fileType, b_lean_obj_arg fileData) {
+LEAN_EXPORT lean_obj_res lean_raylib__LoadWaveFromMemory (b_lean_obj_arg sz, b_lean_obj_arg fileType, b_lean_obj_arg fileData) {
     LEAN_RAYLIB_ALLOC_STRUCT(Wave, wave, LoadWaveFromMemory(
         lean_string_cstr(fileType),
         lean_pod_BytesView_fromRepr(fileData)->ptr,
-        sz
+        lean_usize_of_nat(sz)
     ));
     return lean_raylib_Wave_toRepr(wave);
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsWaveReady (b_lean_obj_arg wave) {
-    return IsWaveReady(*lean_raylib_Wave_fromRepr(wave));
+LEAN_EXPORT uint8_t lean_raylib__IsWaveValid (b_lean_obj_arg wave) {
+    return IsWaveValid(*lean_raylib_Wave_fromRepr(wave));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__LoadSound (lean_obj_arg ctx, b_lean_obj_arg fileName, lean_obj_arg world) {
@@ -3449,8 +3509,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadSoundFromWave (lean_obj_arg ctx, b_lea
     );
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsSoundReady (b_lean_obj_arg sound) {
-    return IsSoundReady(lean_raylib_Sound_fromRepr(sound)->sound);
+LEAN_EXPORT uint8_t lean_raylib__IsSoundValid (b_lean_obj_arg sound) {
+    return IsSoundValid(lean_raylib_Sound_fromRepr(sound)->sound);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateSound (b_lean_obj_arg soundObj, uint32_t frameCount, b_lean_obj_arg data, lean_obj_arg world) {
@@ -3568,8 +3628,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadMusicStreamFromMemory (lean_obj_arg ct
     );
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsMusicReady (b_lean_obj_arg music) {
-    return IsMusicReady(lean_raylib_Music_fromRepr(music)->music);
+LEAN_EXPORT uint8_t lean_raylib__IsMusicValid (b_lean_obj_arg music) {
+    return IsMusicValid(lean_raylib_Music_fromRepr(music)->music);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__PlayMusicStream (lean_obj_arg music, lean_obj_arg world) {
@@ -3641,8 +3701,8 @@ LEAN_EXPORT lean_obj_res lean_raylib__LoadAudioStream (lean_obj_arg ctx, uint32_
     ));
 }
 
-LEAN_EXPORT uint8_t lean_raylib__IsAudioStreamReady (uint32_t st, b_lean_obj_arg stream) {
-    return IsAudioStreamReady(lean_raylib_AudioStream_fromRepr(stream)->stream);
+LEAN_EXPORT uint8_t lean_raylib__IsAudioStreamValid (uint32_t st, b_lean_obj_arg stream) {
+    return IsAudioStreamValid(lean_raylib_AudioStream_fromRepr(stream)->stream);
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__UpdateAudioStream (uint32_t st, b_lean_obj_arg stream, b_lean_obj_arg data, uint32_t frameCount, lean_obj_arg world) {

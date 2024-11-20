@@ -1157,7 +1157,6 @@ inductive CubemapLayout.Is : UInt32 -> Prop where
   | lineHorizontal : CubemapLayout.Is 2
   | crossThreeByFour : CubemapLayout.Is 3
   | crossFourByThree : CubemapLayout.Is 4
-  | panorama : CubemapLayout.Is 5
 
 def CubemapLayout : Type := Subtype CubemapLayout.Is
 
@@ -1173,8 +1172,6 @@ def lineHorizontal : CubemapLayout := Subtype.mk 2 CubemapLayout.Is.lineHorizont
 def crossThreeByFour : CubemapLayout := Subtype.mk 3 CubemapLayout.Is.crossThreeByFour
 /-- Layout is defined by a 4x3 cross with cubemap faces -/
 def crossFourByThree : CubemapLayout := Subtype.mk 4 CubemapLayout.Is.crossFourByThree
-/-- Layout is defined by a panorama image (equirectangular map) -/
-def panorama : CubemapLayout := Subtype.mk 5 CubemapLayout.Is.panorama
 
 end CubemapLayout
 

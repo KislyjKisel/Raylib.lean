@@ -5,7 +5,7 @@ namespace Raylib
 def versionMajor := 5
 def versionMinor := 5
 def versionPatch := 0
-def version := "5.5-dev"
+def version := "5.5"
 
 
 namespace Color
