@@ -4,7 +4,7 @@ open Lake DSL
 def optionFork := (get_config? fork).isSome
 def submoduleDir := cond optionFork "raylibFork" "raylib"
 
-def podConfig : NameMap String := Id.run $ do
+def podConfig : Lean.NameMap String := Id.run $ do
   let mut cfg := NameMap.empty
   if let some cc := get_config? cc then
     cfg := cfg.insert `cc cc
@@ -12,7 +12,7 @@ def podConfig : NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "be986d2" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "356ca2c" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -185,7 +185,7 @@ def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Arra
   let mut weakArgs := #["-I", (← getLeanIncludeDir).toString]
   let mut traceArgs := #["-fPIC"].append $ splitArgStr $ (get_config? cflags).getD ""
 
-  match pkg.deps.find? λ dep ↦ dep.name == `pod with
+  match ← findPackage? `pod with
     | none => error "Missing dependency 'Pod'"
     | some pod =>
       weakArgs := weakArgs ++ #[
@@ -251,7 +251,7 @@ extern_lib «raylib-lean» pkg := do
   ]
   let nativeSrcDir := pkg.dir / "src" / "native"
   let objectFileDir := pkg.irDir / "native"
-  let headerFile (h : String) : FilePath := nativeSrcDir / (h ++ ".h")
+  let headerFile (h : String) : System.FilePath := nativeSrcDir / (h ++ ".h")
   let extraTrace ← mixTraceArray <$> (bindingsHeaders.mapM $ computeTrace ∘ headerFile)
   buildStaticLib (pkg.nativeLibDir / name)
     (← bindingsSources.mapM λ stem ↦ do

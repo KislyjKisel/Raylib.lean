@@ -22,8 +22,9 @@ theorem i_lt_max_of_not_eq_max (i : UInt32)
     apply Nat.lt_of_le_of_ne hi.2
     intro i_eq_max
     apply i_ne_max
-    show (UInt32.mk $ Fin.mk _ _) = _
-    conv => pattern i.val.val; rw [i_eq_max]
+    apply UInt32.eq_of_toBitVec_eq
+    apply BitVec.eq_of_toNat_eq
+    exact i_eq_max
 
 private
 theorem i_add_1_toNat_eq (i : UInt32)
@@ -70,8 +71,10 @@ where
                   Nat.add_comm _ 1
                 ]
                 show _ = 1 + i.val.val - min.val.val
-                rw [Nat.add_sub_assoc hi.1 _]
-                apply congrArg _ hl
+                rewrite [Array.size] at hl
+                rewrite [hl, Nat.add_sub_assoc _ _]
+                rfl
+                exact hi.1
               )
   termination_by max - i
   decreasing_by
@@ -87,49 +90,52 @@ where
       apply Nat.lt_of_le_of_lt
       apply Nat.succ_le_of_lt i_lt_max
       exact max.val.isLt
+    have i_succ_eq : i + 1 = UInt32.ofNatCore (i.toNat + 1) i_succ_lt_u32 := by
+      apply UInt32.eq_of_val_eq
+      apply Fin.eq_of_val_eq
+      show (i.toNat + 1) % _ = i.toNat + 1
+      apply Nat.mod_eq_of_lt
+      apply Nat.lt_of_le_of_lt
+      exact i_lt_max
+      exact max.toNat_lt_size
     have i_succ_le_max : i + 1 ≤ max := by
-      show _ % UInt32.size ≤ _
-      rewrite [Nat.mod_eq_of_lt i_succ_lt_u32]
-      exact Nat.succ_le_of_lt i_lt_max
+      rewrite [i_succ_eq]
+      show i.toNat + 1 ≤ _
+      exact i_lt_max
     rewrite [
       UInt32.toNat_sub_of_le _ _ i_succ_le_max,
       UInt32.toNat_sub_of_le _ _ hi.2
     ]
-    show _ - (_ % UInt32.size) < _
-    rewrite [
-      Nat.mod_eq_of_lt (a := 1) (by decide),
-      Nat.mod_eq_of_lt i_succ_lt_u32
-    ]
+    rewrite [i_succ_eq]
+    show max.toNat - (i.toNat + 1) < max.toNat - i.toNat
     apply Nat.sub_add_lt_sub _ Nat.zero_lt_one
     exact Nat.succ_le_of_lt i_lt_max
 
 private
-theorem i_minus_min_lt_size (i : UInt32) (h : min ≤ i ∧ i < max) :
+theorem USize_ofNat32_toNat (x : Nat) (h : x < 2^32) : (USize.ofNat32 x h).toNat = x := by
+  rfl
+
+private
+theorem i_sub_min_lt_max_sub_min (i : UInt32) (h : min ≤ i ∧ i < max) :
   (i - min).toUSize.toNat < max.toNat - min.toNat := by
-    show (_  % UInt32.size) < _
     rewrite [
-      Nat.add_comm,
-      ← Nat.add_sub_assoc (Nat.le_of_lt min.val.isLt),
-      Nat.add_comm,
-      Nat.add_sub_assoc h.1,
-      Nat.add_mod_left,
-      Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.val.isLt)
+      UInt32.toUSize,
+      USize_ofNat32_toNat,
+      ← UInt32.toNat,
+      UInt32.toNat_sub_of_le i min h.1,
     ]
-    apply Nat.lt_sub_of_add_lt
-    show i.val.val - min.val.val + min.val.val < max.toNat
-    rewrite [Nat.sub_add_cancel h.1]
-    exact h.2
+    apply Nat.sub_lt_sub_right h.1 h.2
 
 def get (rm : RangeMap min max α) (i : UInt32) (h : min ≤ i ∧ i < max) : α :=
   rm.val.uget (i - min).toUSize $ by
     rewrite [rm.property]
-    exact i_minus_min_lt_size i h
+    exact i_sub_min_lt_max_sub_min i h
 
 def set (rm : RangeMap min max α) (i : UInt32) (a : α) (h : min ≤ i ∧ i < max) :
   RangeMap min max α := Subtype.mk
     (rm.val.uset (i - min).toUSize a $ by
       rewrite [rm.property]
-      exact i_minus_min_lt_size i h
+      exact i_sub_min_lt_max_sub_min i h
     )
     (by
       show List.length (List.set _ _ _) = _
