@@ -1,6 +1,7 @@
 {
+    "C_Cpp.autoAddFileAssociations": false,
     "C_Cpp.default.includePath": [
-        "~/.elan/toolchains/stable/include",
+        "~/.elan/toolchains/leanprover--lean4---v4.13.0/include",
         "raylib/src",
         "raylib/src/external/glfw/include",
         "raygui/src",
