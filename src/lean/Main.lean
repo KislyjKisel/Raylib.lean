@@ -1,6 +1,5 @@
 import Raymath
 import Raylib
-import Raygui
 
 open Pod (Float32 Int32)
 open Raymath
@@ -105,7 +104,6 @@ def main : IO Unit := do
     beginDrawing
     clearBackground .raywhite
     drawFPS (.mk 0) (.mk 0)
-    let _ ← Raygui.button {x := 100, y := 10, width := 100, height := 50} "Click me"
     beginMode3D cam3d
 
     let modelPos := Vector3.mk 0 0 5
