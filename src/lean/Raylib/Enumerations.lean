@@ -1,12 +1,11 @@
 import Pod.UInt
-import Pod.Int
 import Pod.Float
 import Pod.BytesRef
 import Pod.Instances
 import Raymath.Core
 import Raylib.Util
 
-open Pod (Int16 Int32 Float32 BytesRefMut)
+open Pod (Float32 BytesRefMut)
 
 namespace Raylib
 

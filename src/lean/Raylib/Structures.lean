@@ -4,7 +4,7 @@ import Raymath.Core
 import Raylib.Enumerations
 import Raylib.Util.RangeMap
 
-open Pod (Float32 Int32)
+open Pod (Float32)
 open Raymath (Vector2 Vector3 Vector4 Matrix Quaternion)
 
 namespace Raylib
@@ -854,7 +854,7 @@ structure AutomationEvent where
   param1 : Int32
   param2 : Int32
   param3 : Int32
-deriving Inhabited, Repr
+deriving Inhabited -- TODO: (uses Repr Int32) , Repr
 
 
 /-! # Automation event list -/

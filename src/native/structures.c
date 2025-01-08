@@ -299,7 +299,7 @@ LEAN_EXPORT lean_obj_res lean_raylib__VaList_next(b_lean_obj_arg vl, uint8_t typ
     lean_object* value;
     switch(typ) {
         case 0:
-            value = lean_box_uint32((uint32_t)va_arg(lean_raylib_VaList_fromRepr(vl)->v, int32_t));
+            value = lean_pod_Int32_box(va_arg(lean_raylib_VaList_fromRepr(vl)->v, int32_t));
             break;
         case 1:
             value = lean_box_uint32(va_arg(lean_raylib_VaList_fromRepr(vl)->v, uint32_t));

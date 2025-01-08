@@ -1,7 +1,7 @@
 import Raymath
 import Raylib
 
-open Pod (Float32 Int32)
+open Pod (Float32)
 open Raymath
 open Raylib
 
@@ -51,7 +51,7 @@ def main : IO Unit := do
   let mut camForward := Vector3.mk 0 0 1
   let mut cam3d := Camera3D.mk (Vector3.mk 0 0 0) camForward camUp 90 .perspective
 
-  setMousePosition (Int32.mk (windowWidth / 2)) (Int32.mk (windowHeight / 2))
+  setMousePosition ⟨windowWidth / 2⟩ ⟨windowHeight / 2⟩
   let mut lastMousePosition ← getMousePosition
 
   let shader ← loadShaderFromMemory rlctx
@@ -103,7 +103,7 @@ def main : IO Unit := do
   repeat do
     beginDrawing
     clearBackground .raywhite
-    drawFPS (.mk 0) (.mk 0)
+    drawFPS 0 0
     beginMode3D cam3d
 
     let modelPos := Vector3.mk 0 0 5
@@ -123,7 +123,7 @@ def main : IO Unit := do
 
     if ← isWindowFullscreen
       then
-        setMousePosition (Int32.mk (windowWidth / 2)) (Int32.mk (windowHeight / 2))
+        setMousePosition ⟨windowWidth / 2⟩ ⟨windowHeight / 2⟩
         lastMousePosition ← getMousePosition
       else
         lastMousePosition := mp

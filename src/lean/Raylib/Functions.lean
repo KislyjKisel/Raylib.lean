@@ -8,7 +8,7 @@ import Raylib.Structures
 import Raylib.Util
 
 open System (FilePath)
-open Pod (Float32 Int32)
+open Pod (Float32)
 open Raymath (Vector2 Vector3 Vector4 Matrix)
 
 namespace Raylib
@@ -963,7 +963,7 @@ opaque drawLineBezier (startPos : @& Vector2) (endPos : @& Vector2) (thick : Flo
 
 /-- Draw a color-filled circle -/
 @[extern "lean_raylib__DrawCircle"]
-opaque drawCircle (centerX : Int32) (centerY : Int32) (radius : Float32) (color : Color) : BaseIO Unit
+opaque drawCircle (centerX centerY : Int32) (radius : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw a piece of a circle -/
 @[extern "lean_raylib__DrawCircleSector"]
@@ -983,7 +983,7 @@ opaque drawCircleV (center : @& Vector2) (radius : Float32) (color : Color) : Ba
 
 /-- Draw circle outline -/
 @[extern "lean_raylib__DrawCircleLines"]
-opaque drawCircleLines (centerX : Int32) (centerY : Int32) (radius : Float32) (color : Color) : BaseIO Unit
+opaque drawCircleLines (centerX centerY : Int32) (radius : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw circle outline (Vector version) -/
 @[extern "lean_raylib__DrawCircleLinesV"]
@@ -991,11 +991,11 @@ opaque drawCircleLinesV (center : @& Vector2) (radius : Float32) (color : Color)
 
 /-- Draw ellipse -/
 @[extern "lean_raylib__DrawEllipse"]
-opaque drawEllipse (centerX : Int32) (centerY : Int32) (radiusH : Float32) (radiusV : Float32) (color : Color) : BaseIO Unit
+opaque drawEllipse (centerX centerY : Int32) (radiusH : Float32) (radiusV : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw ellipse outline -/
 @[extern "lean_raylib__DrawEllipseLines"]
-opaque drawEllipseLines (centerX : Int32) (centerY : Int32) (radiusH : Float32) (radiusV : Float32) (color : Color) : BaseIO Unit
+opaque drawEllipseLines (centerX centerY : Int32) (radiusH : Float32) (radiusV : Float32) (color : Color) : BaseIO Unit
 
 /-- Draw ring -/
 @[extern "lean_raylib__DrawRing"]
@@ -1007,7 +1007,7 @@ opaque drawRingLines (center : @& Vector2) (innerRadius : Float32) (outerRadius 
 
 /-- Draw a color-filled rectangle -/
 @[extern "lean_raylib__DrawRectangle"]
-opaque drawRectangle (posX : Int32) (posY : Int32) (width : Int32) (height : Int32) (color : Color) : BaseIO Unit
+opaque drawRectangle (posX posY width height : Int32) (color : Color) : BaseIO Unit
 
 /-- Draw a color-filled rectangle (Vector version) -/
 @[extern "lean_raylib__DrawRectangleV"]
@@ -1245,11 +1245,11 @@ opaque genImageGradientLinear (width : UInt32) (height : UInt32) (direction : UI
 
 /-- Generate image: radial gradient -/
 @[extern "lean_raylib__GenImageGradientRadial"]
-opaque genImageGradientRadial (width : UInt32) (height : UInt32) (density : Float32) (inner : Color) (outer : Color) : Image
+opaque genImageGradientRadial (width : UInt32) (height : UInt32) (density : Float32) (inner outer : Color) : Image
 
 /-- Generate image: checked -/
 @[extern "lean_raylib__GenImageChecked"]
-opaque genImageChecked (width : UInt32) (height : UInt32) (checksX : Int32) (checksY : Int32) (col1 : Color) (col2 : Color) : Image
+opaque genImageChecked (width height : UInt32) (checksX checksY : Int32) (col1 col2 : Color) : Image
 
 /-- Generate image: white noise -/
 -- IO: Random
@@ -1258,7 +1258,7 @@ opaque genImageWhiteNoise (width : UInt32) (height : UInt32) (factor : Float32) 
 
 /-- Generate image: perlin noise -/
 @[extern "lean_raylib__GenImagePerlinNoise"]
-opaque genImagePerlinNoise (width : UInt32) (height : UInt32) (offsetX : Int32) (offsetY : Int32) (scale : Float32) : Image
+opaque genImagePerlinNoise (width height : UInt32) (offsetX offsetY : Int32) (scale : Float32) : Image
 
 /-- Generate image: cellular algorithm, bigger tileSize means bigger cells -/
 -- IO: Random
@@ -1340,10 +1340,8 @@ opaque imageResizeNN (image : Image) (newWidth : UInt32) (newHeight : UInt32) : 
 @[extern "lean_raylib__ImageResizeCanvas"]
 opaque imageResizeCanvas
   (image : Image)
-  (newWidth : UInt32)
-  (newHeight : UInt32)
-  (offsetX : Int32)
-  (offsetY : Int32)
+  (newWidth newHeight : UInt32)
+  (offsetX offsetY : Int32)
   (fill : Color)
   : Image
 
@@ -1435,7 +1433,7 @@ opaque imageDrawPixelV (image : Image) (position : @& Vector2) (color : Color) :
 
 /-- Draw line within an image -/
 @[extern "lean_raylib__ImageDrawLine"]
-opaque imageDrawLine (image : Image) (startPosX : Int32) (startPosY : Int32) (endPosX : Int32) (endPosY : Int32) (color : Color) : Image
+opaque imageDrawLine (image : Image) (startPosX startPosY endPosX endPosY : Int32) (color : Color) : Image
 
 /-- Draw line within an image (Vector version) -/
 @[extern "lean_raylib__ImageDrawLineV"]
@@ -1455,7 +1453,7 @@ opaque imageDrawCircleV (dst : Image) (center : @& Vector2) (radius : UInt32) (c
 
 /-- Draw circle outline within an image -/
 @[extern "lean_raylib__ImageDrawCircleLines"]
-opaque imageDrawCircleLines (dst : Image) (centerX : Int32) (centerY : Int32) (radius : UInt32) (color : Color) : Image
+opaque imageDrawCircleLines (dst : Image) (centerX centerY : Int32) (radius : UInt32) (color : Color) : Image
 
 /-- Draw circle outline within an image (Vector version) -/
 @[extern "lean_raylib__ImageDrawCircleLinesV"]
@@ -1463,7 +1461,7 @@ opaque imageDrawCircleLinesV (dst : Image) (center : @& Vector2) (radius : UInt3
 
 /-- Draw rectangle within an image -/
 @[extern "lean_raylib__ImageDrawRectangle"]
-opaque imageDrawRectangle (dst : Image) (posX : Int32) (posY : Int32) (width : UInt32) (height : UInt32) (color : Color) : Image
+opaque imageDrawRectangle (dst : Image) (posX posY : Int32) (width height : UInt32) (color : Color) : Image
 
 /-- Draw rectangle within an image (Vector version) -/
 @[extern "lean_raylib__ImageDrawRectangleV"]
@@ -1537,7 +1535,7 @@ opaque imageDraw (dst : Image) (src : @& Image) (srcRec : @& Rectangle) (dstRec 
 
 /-- Draw text (using default font) within an image (destination) -/
 @[extern "lean_raylib__ImageDrawText"]
-opaque imageDrawText (dst : Image) (text : @& String) (posX : Int32) (posY : Int32) (fontSize : UInt32) (color : Color) : Image
+opaque imageDrawText (dst : Image) (text : @& String) (posX posY : Int32) (fontSize : UInt32) (color : Color) : Image
 
 /-- Draw text (custom sprite font) within an image (destination) -/
 @[extern "lean_raylib__ImageDrawTextEx"]
@@ -1597,7 +1595,7 @@ opaque setTextureWrap (texture : @& Texture2DRef) (wrap : TextureWrap) : BaseIO 
 
 /-- Draw a Texture2D -/
 @[extern "lean_raylib__DrawTexture"]
-opaque drawTexture (texture : @& Texture2DRef) (posX : Int32) (posY : Int32) (tint : Color) : BaseIO Unit
+opaque drawTexture (texture : @& Texture2DRef) (posX posY : Int32) (tint : Color) : BaseIO Unit
 
 /-- Draw a Texture2D with position defined as Vector2 -/
 @[extern "lean_raylib__DrawTextureV"]
@@ -1620,7 +1618,7 @@ opaque drawTexturePro (texture : @& Texture2DRef) (source : @& Rectangle) (dest 
 opaque drawTextureNPatch (texture : @& Texture2D) (nPatchInfo : @& NPatchInfo) (dest : @& Rectangle) (origin : @& Vector2) (rotation : Float32) (tint : Color) : BaseIO Unit
 
 /-- Check if two colors are equal -/
-@[deprecated BEq.beq]
+@[deprecated BEq.beq (since := "2025-01-01")]
 def colorIsEqual (col1 col2 : Color) := col1 == col2
 
 /-- Get color with alpha applied, alpha goes from 0.0f to 1.0f -/
@@ -1628,7 +1626,7 @@ def colorIsEqual (col1 col2 : Color) := col1 == col2
 opaque fade (color : Color) (alpha : Float32) : Color
 
 /-- Get hexadecimal value for a Color (0xRRGGBBAA) -/
-@[extern "lean_raylib__ColorToInt", deprecated Color.rgba]
+@[extern "lean_raylib__ColorToInt", deprecated Color.rgba (since := "2025-01-01")]
 opaque colorToInt (color : Color) : UInt32
 
 /-- Get Color normalized as float [0..1] -/
@@ -1672,7 +1670,7 @@ opaque colorAlphaBlend (dst src tint : Color) : Color
 opaque colorLerp (color1 color2 : Color) (factor : Float32) : Color
 
 /-- Get Color structure from hexadecimal value -/
-@[extern "lean_raylib__GetColor", deprecated Color.mk]
+@[extern "lean_raylib__GetColor", deprecated Color.mk (since := "2025-01-01")]
 opaque getColor (hexValue : UInt32) : Color
 
 /-- Get Color from a source pixel pointer of certain format -/
@@ -1756,11 +1754,11 @@ opaque exportFontAsCode (font : @& Font) (fileName : @& FilePath) : BaseIO Bool
 
 /-- Draw current FPS -/
 @[extern "lean_raylib__DrawFPS"]
-opaque drawFPS (posX : Int32) (posY : Int32) : BaseIO Unit
+opaque drawFPS (posX posY : Int32) : BaseIO Unit
 
 /-- Draw text (using default font) -/
 @[extern "lean_raylib__DrawText"]
-opaque drawText (text : @& String) (posX : Int32) (posY : Int32) (fontSize : Int32) (color : Color) : BaseIO Unit
+opaque drawText (text : @& String) (posX posY fontSize : Int32) (color : Color) : BaseIO Unit
 
 /-- Draw text using font and additional parameters -/
 @[extern "lean_raylib__DrawTextEx"]
@@ -2128,7 +2126,7 @@ opaque loadSound (ctx : Context) (fileName : @& FilePath) : BaseIO Sound
 @[extern "lean_raylib__LoadSoundFromWave"]
 opaque loadSoundFromWave (ctx : Context) (wave : @& Wave) : Sound
 
-@[deprecated]
+@[deprecated id (since := "2025-01-01")]
 def loadSoundAlias (source : Sound) : Sound := source
 
 /-- Checks if a sound is valid (data loaded and buffers initialized) -/

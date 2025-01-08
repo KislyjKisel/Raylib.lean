@@ -39,7 +39,7 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_getPrimaryMonitor(lean_obj_arg io_) {
 
 LEAN_EXPORT lean_obj_res lean_raylib_glfw_setWindowMonitor(
     lean_raylib_glfw_Window window, lean_raylib_glfw_Monitor monitor,
-    lean_pod_Int32 xpos, lean_pod_Int32 ypos, uint32_t width, uint32_t height, uint32_t refreshRate,
+    int32_t xpos, int32_t ypos, uint32_t width, uint32_t height, uint32_t refreshRate,
     lean_obj_arg io_
 ) {
     GLFWmonitor* monitor_c = NULL;
@@ -49,8 +49,8 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_setWindowMonitor(
     glfwSetWindowMonitor(
         lean_raylib_glfw_Window_fromRepr(window),
         monitor_c,
-        lean_pod_Int32_fromRepr(xpos),
-        lean_pod_Int32_fromRepr(ypos),
+        xpos,
+        ypos,
         width, height, refreshRate
     );
     lean_raylib_glfw_tryError();
@@ -78,8 +78,8 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_getVideoMode(lean_raylib_glfw_Monitor 
     return lean_io_result_mk_ok(lean_raylib_glfw_VideoMode_box(mode));
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib_glfw_swapInterval(lean_pod_Int32 interval, lean_obj_arg io_) {
-    glfwSwapInterval(lean_pod_Int32_fromRepr(interval));
+LEAN_EXPORT lean_obj_res lean_raylib_glfw_swapInterval(int32_t interval, lean_obj_arg io_) {
+    glfwSwapInterval(interval);
     lean_raylib_glfw_tryError();
     return lean_io_result_mk_ok(lean_box(0));
 }

@@ -1013,10 +1013,10 @@ static inline VrStereoConfig lean_raylib_VrStereoConfig_unbox (b_lean_obj_arg ob
 static inline void lean_raylib_AutomationEvent_set_impl (b_lean_obj_arg obj, AutomationEvent automationEvent) {
     lean_ctor_set_uint32(obj, 4 * sizeof(void*) + 0, automationEvent.frame);
     lean_ctor_set_uint32(obj, 4 * sizeof(void*) + sizeof(uint32_t), automationEvent.type);
-    lean_ctor_set(obj, 0, lean_box_uint32(automationEvent.params[0]));
-    lean_ctor_set(obj, 1, lean_box_uint32(automationEvent.params[1]));
-    lean_ctor_set(obj, 2, lean_box_uint32(automationEvent.params[2]));
-    lean_ctor_set(obj, 3, lean_box_uint32(automationEvent.params[3]));
+    lean_ctor_set(obj, 0, lean_pod_Int32_box((int32_t)automationEvent.params[0]));
+    lean_ctor_set(obj, 1, lean_pod_Int32_box((int32_t)automationEvent.params[1]));
+    lean_ctor_set(obj, 2, lean_pod_Int32_box((int32_t)automationEvent.params[2]));
+    lean_ctor_set(obj, 3, lean_pod_Int32_box((int32_t)automationEvent.params[3]));
 }
 
 static inline lean_object* lean_raylib_AutomationEvent_box (AutomationEvent automationEvent) {
@@ -1032,7 +1032,7 @@ static inline AutomationEvent lean_raylib_AutomationEvent_unbox (b_lean_obj_arg 
     automationEvent.frame = lean_ctor_get_uint32(obj, 4 * sizeof(void*) + 0);
     automationEvent.type = lean_ctor_get_uint32(obj, 4 * sizeof(void*) + sizeof(uint32_t));
     for (size_t i = 0; i < 4; ++i) {
-        automationEvent.params[i] = lean_unbox_uint32(lean_ctor_get(obj, i));
+        automationEvent.params[i] = lean_pod_Int32_unbox(lean_ctor_get(obj, i));
     }
     return automationEvent;
 }

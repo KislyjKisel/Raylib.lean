@@ -1,8 +1,5 @@
 import Pod.Meta
-import Pod.Int
 import Raylib.Structures
-
-open Pod (Int32)
 
 namespace Raylib.Glfw
 
