@@ -3688,7 +3688,7 @@ LEAN_EXPORT uint32_t lean_raylib__GetMusicTimeLength (b_lean_obj_arg music) {
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetMusicTimePlayed (b_lean_obj_arg music, lean_obj_arg world) {
-    return lean_io_result_mk_ok(lean_box_float(
+    return lean_io_result_mk_ok(lean_pod_Float32_box(
         GetMusicTimePlayed(lean_raylib_Music_fromRepr(music)->music)
     ));
 }

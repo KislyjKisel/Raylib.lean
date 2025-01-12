@@ -1,0 +1,30 @@
+name = "raylib-examples"
+leanOptions = [["autoImplicit", false]]
+moreLinkArgs = ["-LraylibFork/build/raylib", "-lraylib"]
+
+[[require]]
+name = "raylib"
+
+# From Github
+# git = "https://github.com/KislyjKisel/Raylib.lean"
+# rev = "1234567" # Commit hash
+
+# From directory
+path = ".."
+
+# Optional features
+[require.options]
+raygui = "yes" # Any value set enables raygui bindings
+fork = "yes" # Any value set chooses alternative submodule which adds support for audio callbacks etc
+
+[[lean_exe]]
+name = "Minimal"
+
+[[lean_exe]]
+name = "Gui"
+
+[[lean_exe]]
+name = "Audio"
+
+[[lean_exe]]
+name = "VideoMode"

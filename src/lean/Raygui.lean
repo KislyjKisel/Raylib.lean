@@ -591,7 +591,11 @@ opaque toggleSlider (bounds : @& Rectangle) (text : @& String) (active : UInt32)
 @[extern "lean_raygui__GuiCheckBox"]
 opaque checkBox (bounds : @& Rectangle) (text : @& String) (checked : Bool) : BaseIO Bool
 
-/-- Combo Box control, returns selected item index -/
+/--
+Combo Box control, returns selected item index.
+NOTE: There is a `text` size limit (truncated) and maximum number of variants
+(see Raygui source/compilation flags, by default RAYGUI_TEXTSPLIT_MAX_ITEMS=128, RAYGUI_TEXTSPLIT_MAX_TEXT_SIZE=1024).
+-/
 @[extern "lean_raygui__GuiComboBox"]
 opaque comboBox (bounds : @& Rectangle) (text : @& String) (active : UInt32) : BaseIO UInt32
 
@@ -608,7 +612,11 @@ opaque spinner (bounds : @& Rectangle) (text : @& String) (value minValue maxVal
 @[extern "lean_raygui__GuiValueBox"]
 opaque valueBox (bounds : @& Rectangle) (text : @& String) (value minValue maxValue : UInt32) (editMode : Bool) : BaseIO (Bool × UInt32)
 
-/-- Text Box control, updates input text -/
+/--
+Text Box control, updates input text.
+`textSize` - max length.
+NOTE: Returns true on ENTER pressed (useful for data validation).
+-/
 @[extern "lean_raygui__GuiTextBox"]
 opaque textBox (bounds : @& Rectangle) (text : @& String) (textSize : UInt32) (editMode : Bool) : BaseIO (Bool × String)
 
@@ -640,11 +648,15 @@ opaque grid (bounds : @& Rectangle) (text : @& String) (spacing : Float32) (subd
 
 /-! ### Advance controls set -/
 
-/-- List View control, returns selected list item index -/
+/--
+List View control, returns selected list item index.
+NOTE: There is a `text` size limit (truncated) and maximum number of variants
+(see Raygui source/compilation flags, by default RAYGUI_TEXTSPLIT_MAX_ITEMS=128, RAYGUI_TEXTSPLIT_MAX_TEXT_SIZE=1024).
+-/
 @[extern "lean_raygui__GuiListView"]
 opaque listView (bounds : @& Rectangle) (text : @& String) (scrollIndex active : UInt32) : BaseIO (UInt32 × UInt32)
 
-/-- List View with extended parameters -/
+/-- List View with extended parameters (without a size limit). -/
 @[extern "lean_raygui__GuiListViewEx"]
 opaque listViewEx (bounds : @& Rectangle) (text : @& Array String) (scrollIndex active focus : UInt32) : BaseIO (UInt32 × UInt32 × UInt32)
 

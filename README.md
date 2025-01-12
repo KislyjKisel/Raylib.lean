@@ -2,7 +2,30 @@
 
 Lean4 bindings to [raylib](https://github.com/raysan5/raylib) `5.5`, including Raymath and Raygui `4.0-dev`.
 
-![Screenshot](./screenshot.png)
+## Examples
+
+Running (on Linux only):
+1. Clone this repository
+2. `cd` into cloned repository root
+3. `lake -R -Kfork -Kraygui run raylib/buildSubmodule`
+4. `lake -d=examples exe Minimal`
+
+Examples assume working directory to be the library repository root.
+Some require certain lake configuration options to be set (command above configures them).
+
+See also: raylib's [examples](https://github.com/raysan5/raylib/tree/master/examples) directory.
+
+<details>
+  <summary>List with images</summary>
+  <h4>Minimal</h4>
+  <a href="./examples/Minimal.lean"><img src="./screenshots/example_minimal.png" width="320" height="240"></a>
+  <h4>Raygui</h4>
+  <a href="./examples/Gui.lean"><img src="./screenshots/example_gui.png" width="320" height="240"></a>
+  <h4>Audio</h4>
+  <a href="./examples/Audio.lean"><img src="./screenshots/example_audio.png" width="320" height="150"></a>
+  <h4>Video mode</h4>
+  <a href="./examples/VideoMode.lean"><img src="./screenshots/example_videomode.png" width="320" height="240"></a>
+</details>
 
 
 ## Installation
@@ -35,20 +58,10 @@ Then run `lake update` and `lake run raylib/buildSubmodule`.
   If you don't have them in PATH you can provide their paths with options `git` and `cmake`.
   If you want to clone and/or build raylib manually you can provide empty `git` and `cmake` options
   and then run required commands (which can be found in the [lakefile](/lakefile.lean) in `buildRaylibSubmodule`).
-  You can also use `raylib` option set to `custom` and
-  provide separately built raylib via `lflags` and `cflags` options.
-  See [#3](https://github.com/KislyjKisel/Raylib.lean/issues/3).
+  You can also use `raylib` option set to `custom` and provide separately built raylib via the `cflags` options.
+  See [#3](https://github.com/KislyjKisel/Raylib.lean/issues/3) and [#5](https://github.com/KislyjKisel/Raylib.lean/issues/5).
 
 </details>
-
-
-## Example
-
-```
-lake update
-lake run raylib/buildSubmodule
-lake exe raylib-test
-```
 
 
 ## Options
@@ -57,13 +70,12 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 
 * `raylib`:
   `"submodule"` (default) to compile from source using git submodules.
-  `"system"` to find using `pkg-config` (uses hardcoded paths for the test executable).
+  `"system"` to find using `pkg-config`
   `"custom"` to not pass library or header directories to the compiler.
 * `raygui`: allows using `Raygui`, downloads it as a submodule.
 * `cc`: c compiler invoked used to build native code.
   By default uses (ordered by priority) `LEAN_CC`, the compiler provided by Lean toolchain or `cc`.
 * `cflags`: additional flags passed to the native code compiler.
-* `lflags`: additional flags used to link test executable.
 * `cmdout`: if present, print output of commands used when building submodule.
 * `fork`: use raylib's [fork](https://github.com/KislyjKisel/raylib) that provides features used by
   implementations of some functions (notably audio callbacks) and some more.
@@ -79,3 +91,4 @@ There are also [options to customize raylib build](options.md).
 
 * `buildSubmodule`: initializes submodule and builds it. Runs as part of the bindings build process.
 * `cleanCmakeCache`: removes `build` directory from the submodule.
+* `options`: prints configured lake options (doesn't include cmake build options).

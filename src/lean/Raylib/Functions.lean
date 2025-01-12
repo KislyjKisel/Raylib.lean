@@ -2261,7 +2261,7 @@ opaque getMusicTimeLength (music : @& Music) : Float32
 
 /-- Get current music time played (in seconds) -/
 @[extern "lean_raylib__GetMusicTimePlayed"]
-opaque getMusicTimePlayed (music : @& Music) : BaseIO Float
+opaque getMusicTimePlayed (music : @& Music) : BaseIO Float32
 
 /-- Load audio stream (to stream raw audio pcm data) -/
 @[extern "lean_raylib__LoadAudioStream"]

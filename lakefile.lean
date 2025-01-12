@@ -12,7 +12,7 @@ def podConfig : Lean.NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "fbecf51" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "3970320" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -45,19 +45,6 @@ def raylibSrc : RaylibSrc := match get_config? raylib with
   | some name => .Unknown name
 
 def splitArgStr (s : String) : Array String := Array.mk $ s.splitOn.filter $ not ∘ String.isEmpty
-
-@[test_driver]
-lean_exe «raylib-test» {
-  root := `Main
-  moreLinkArgs := Id.run $ do
-    let mut args := splitArgStr $ (get_config? lflags).getD ""
-    args := args.append $ match raylibSrc with
-      | .System => #["-L/usr/local/lib64", "-lraylib"]
-      | .Submodule => #[s!"-L{__dir__}/{submoduleDir}/build/raylib", "-lraylib"]
-      | .Custom => #[]
-      | .Unknown _ => #[]
-    pure args
-}
 
 def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m String := do
   let output ← IO.Process.output sa
@@ -272,4 +259,15 @@ script cleanCmakeCache do
   if ← System.FilePath.pathExists path then
     IO.println s!"Removing: {path}"
     IO.FS.removeDirAll path
+  return 0
+
+script options do
+  IO.println s!"raylib={get_config? raylib}"
+  IO.println s!"raygui? {(get_config? raygui).isSome}"
+  IO.println s!"cc={get_config? cc}"
+  IO.println s!"cflags={get_config? cflags}"
+  IO.println s!"fork? {optionFork}"
+  IO.println s!"alloc={get_config? alloc}"
+  IO.println s!"git={get_config? git}"
+  IO.println s!"cmake={get_config? cmake}"
   return 0

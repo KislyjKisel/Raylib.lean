@@ -39,19 +39,27 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_getPrimaryMonitor(lean_obj_arg io_) {
 
 LEAN_EXPORT lean_obj_res lean_raylib_glfw_setWindowMonitor(
     lean_raylib_glfw_Window window, lean_raylib_glfw_Monitor monitor,
-    int32_t xpos, int32_t ypos, uint32_t width, uint32_t height, uint32_t refreshRate,
+    int32_t xpos, int32_t ypos, uint32_t width, uint32_t height, b_lean_obj_arg refreshRate,
     lean_obj_arg io_
 ) {
     GLFWmonitor* monitor_c = NULL;
     if (lean_option_is_some(monitor)) {
         monitor_c = lean_raylib_glfw_Monitor_fromRepr(lean_ctor_get(monitor, 0));
     }
+    int refreshRate_value;
+    if (lean_option_is_some(refreshRate)) {
+        refreshRate_value = lean_unbox_uint32(lean_ctor_get(refreshRate, 0));
+    }
+    else {
+        refreshRate_value = GLFW_DONT_CARE;
+    }
     glfwSetWindowMonitor(
         lean_raylib_glfw_Window_fromRepr(window),
         monitor_c,
         xpos,
         ypos,
-        width, height, refreshRate
+        width, height,
+        refreshRate_value
     );
     lean_raylib_glfw_tryError();
     return lean_io_result_mk_ok(lean_box(0));

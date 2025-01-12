@@ -74,11 +74,13 @@ if the monitor is `none`, makes it windowed mode.
 When setting a monitor, this function updates the width, height and refresh rate
 of the desired video mode and switches to the video mode closest to it.
 The window position is ignored when setting a monitor.
+Setting refresh rate to `none` is equivalent to passing `GLFW_DONT_CARE`.
 -/
 @[extern "lean_raylib_glfw_setWindowMonitor"]
 opaque setWindowMonitor
   (window : @& Window) (monitor : @& (Option Monitor))
-  (xpos ypos : Int32) (width height refreshRate : UInt32) : GlfwIO Unit
+  (xpos ypos : Int32) (width height : UInt32)
+  (refreshRate : @& Option UInt32) : GlfwIO Unit
 
 /-- This describes a single video mode. -/
 structure VideoMode where
