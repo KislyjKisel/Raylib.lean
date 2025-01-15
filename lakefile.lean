@@ -17,19 +17,36 @@ require pod from git "https://github.com/KislyjKisel/lean-pod" @ "3970320" with 
 def packagesDir := defaultPackagesDir
 
 package raylib {
-  srcDir := "src/lean"
   packagesDir := packagesDir
   leanOptions := #[⟨`autoImplicit, false⟩]
 }
 
 @[default_target]
-lean_lib Raylib
+lean_lib Raylib {
+  srcDir := "src/lean"
+}
 
 lean_lib Raymath {
+  srcDir := "src/lean"
   precompileModules := true
 }
 
-lean_lib Raygui
+lean_lib Raygui {
+  srcDir := "src/lean"
+}
+
+def examplesLinkArgs :=
+  (splitArgStr <| (get_config? lflags).getD "").append <|
+    match raylibSrc with
+      | .System => #["-L/usr/local/lib64", "-lraylib"]
+      | .Submodule => #[s!"-L{submoduleDir}/build/raylib", "-lraylib"]
+      | .Custom => #[]
+      | .Unknown _ => #[]
+
+lean_exe examples.Minimal { moreLinkArgs := examplesLinkArgs }
+lean_exe examples.Gui { moreLinkArgs := examplesLinkArgs }
+lean_exe examples.Audio { moreLinkArgs := examplesLinkArgs }
+lean_exe examples.VideoMode { moreLinkArgs := examplesLinkArgs }
 
 inductive RaylibSrc
   | System
@@ -266,6 +283,7 @@ script options do
   IO.println s!"raygui? {(get_config? raygui).isSome}"
   IO.println s!"cc={get_config? cc}"
   IO.println s!"cflags={get_config? cflags}"
+  IO.println s!"lflags={get_config? lflags}"
   IO.println s!"fork? {optionFork}"
   IO.println s!"alloc={get_config? alloc}"
   IO.println s!"git={get_config? git}"

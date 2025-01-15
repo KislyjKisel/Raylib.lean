@@ -58,7 +58,7 @@ Then run `lake update` and `lake run raylib/buildSubmodule`.
   If you don't have them in PATH you can provide their paths with options `git` and `cmake`.
   If you want to clone and/or build raylib manually you can provide empty `git` and `cmake` options
   and then run required commands (which can be found in the [lakefile](/lakefile.lean) in `buildRaylibSubmodule`).
-  You can also use `raylib` option set to `custom` and provide separately built raylib via the `cflags` options.
+  You can also use `raylib` option set to `custom` and provide separately built raylib via the `cflags` options (and `lflags` for examples).
   See [#3](https://github.com/KislyjKisel/Raylib.lean/issues/3) and [#5](https://github.com/KislyjKisel/Raylib.lean/issues/5).
 
 </details>
@@ -70,12 +70,13 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
 
 * `raylib`:
   `"submodule"` (default) to compile from source using git submodules.
-  `"system"` to find using `pkg-config`
+  `"system"` to find using `pkg-config` (uses hardcoded paths for examples).
   `"custom"` to not pass library or header directories to the compiler.
 * `raygui`: allows using `Raygui`, downloads it as a submodule.
 * `cc`: c compiler invoked used to build native code.
   By default uses (ordered by priority) `LEAN_CC`, the compiler provided by Lean toolchain or `cc`.
 * `cflags`: additional flags passed to the native code compiler.
+* `lflags`: additional flags used to link examples.
 * `cmdout`: if present, print output of commands used when building submodule.
 * `fork`: use raylib's [fork](https://github.com/KislyjKisel/raylib) that provides features used by
   implementations of some functions (notably audio callbacks) and some more.

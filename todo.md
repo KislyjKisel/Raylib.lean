@@ -6,8 +6,6 @@
 * Fix `__dir__` in `olean` to allow running examples from a subdir.
 * Fix `Raymath` precompilation on NixOS.
 * Fix `pod` precompilation producing errors in VS Code on NixOS (clang crashes, which should be because wrong CC is set, but it seems to ignore `cc` option?)
-* Move examples to the main lakefile.
-  Allow configuration of `lflags` for examples and check if `cc` works (it should).
 * Add scaling in an example and test it with wayland.
   See highdpi functions in raylib.
   ```
@@ -20,7 +18,7 @@
 * Is `getLeanTrace` required for `buildO`?
   Docstring: only when using builtin `leanc`.
   Example in lake repo: uses despite compiling with `c++`.
-
+* Restructure /src/lean -> /src, /src/native -> /ffi (same in pod)
 
 # Waiting for toolchain updates
 
