@@ -58,6 +58,15 @@ define_foreign_type Window
 @[extern "lean_raylib_glfw_Window_mk"]
 opaque Window.mk (handle : WindowBackendHandle) : Window
 
+-- NOTE: Constructor indices are used in native code, synchronize changes!
+inductive Platform where
+| win32 : Platform
+| cocoa : Platform
+| wayland : Platform
+| x11 : Platform
+| null : Platform
+deriving Inhabited, Repr, BEq
+
 /--
 Initialization hints are set before `glfwInit` (called by raylib's `InitWindow`) and
 affect how the library behaves until termination.
@@ -119,36 +128,38 @@ def x11XcbVulkanSurface : InitHint := ⟨0x00052001⟩
 inductive Value : InitHint -> Type where
 /-- Allows to pass any value to use with an out-of-sync GLFW version. -/
 | unknown {hint} (value : Int32) : Value hint -- 0
-| false {hint} -- 1
+| bool (x : Bool) {hint} -- 1
   (h : hint == joystickHatButtons ||
     hint == cocoaChdirResources ||
     hint == cocoaMenubar ||
     hint == x11XcbVulkanSurface := by decide) : Value hint
-| true {hint} -- 2
-  (h : hint == joystickHatButtons ||
-    hint == cocoaChdirResources ||
-    hint == cocoaMenubar ||
-    hint == x11XcbVulkanSurface := by decide) : Value hint
-| anyPlatform : Value .platform -- 3
-| platformWin32 : Value .platform -- 4
-| platformCocoa : Value .platform -- 5
-| platformWayland : Value .platform -- 6
-| platformX11 : Value .platform -- 7
-| platformNull : Value .platform -- 8
-| anglePlatformTypeNone : Value .anglePlatformType -- 9
-| anglePlatformTypeOpengl : Value .anglePlatformType -- 10
-| anglePlatformTypeOpengles : Value .anglePlatformType -- 11
-| anglePlatformTypeD3d9 : Value .anglePlatformType -- 12
-| anglePlatformTypeD3d11 : Value .anglePlatformType -- 13
-| anglePlatformTypeVulkan : Value .anglePlatformType -- 14
-| anglePlatformTypeMetal : Value .anglePlatformType -- 15
-| waylandDisableLibdecor : Value .waylandLibdecor -- 16
-| waylandPreferLibdecor : Value .waylandLibdecor -- 17
+| anyPlatform : Value .platform -- 2
+| platform (platform : Platform) : Value .platform -- 3
+| anglePlatformTypeNone : Value .anglePlatformType -- 4
+| anglePlatformTypeOpengl : Value .anglePlatformType -- 5
+| anglePlatformTypeOpengles : Value .anglePlatformType -- 6
+| anglePlatformTypeD3d9 : Value .anglePlatformType -- 7
+| anglePlatformTypeD3d11 : Value .anglePlatformType -- 8
+| anglePlatformTypeVulkan : Value .anglePlatformType -- 9
+| anglePlatformTypeMetal : Value .anglePlatformType -- 10
+| waylandDisableLibdecor : Value .waylandLibdecor -- 11
+| waylandPreferLibdecor : Value .waylandLibdecor -- 12
 
 end InitHint
 
 @[extern "lean_raylib_glfw_initHint", inherit_doc InitHint]
 opaque initHint (hint : InitHint) (value : @& hint.Value) : GlfwIO Unit
+
+/-- This function returns the platform that was selected during initialization. -/
+@[extern "lean_raylib_glfw_getPlatform"]
+opaque getPlatform : GlfwIO Platform
+
+/--
+This function returns whether the library was compiled with support for the specified platform.
+This function may be called before `glfwInit` (`Raylib.initWindow`).
+-/
+@[extern "lean_raylib_glfw_platformSupported"]
+opaque platformSupported (platform : Platform) : GlfwIO Bool
 
 /-- Opaque monitor object. -/
 define_foreign_type Monitor

@@ -29,7 +29,15 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_Window_mk(lean_raylib_WindowBackendHan
     return lean_raylib_glfw_Window_mk_(handle);
 }
 
-LEAN_EXPORT lean_obj_res lean_raylib_glfw_initHint(int32_t hint, b_lean_obj_arg value) {
+static inline int lean_raylib_glfw_Platform_fromLean(uint8_t platform) {
+    return GLFW_ANY_PLATFORM + 1 + platform;
+}
+
+static inline uint8_t lean_raylib_glfw_Platform_toLean(int platform) {
+    return platform - (GLFW_ANY_PLATFORM + 1);
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib_glfw_initHint(int32_t hint, b_lean_obj_arg value, lean_obj_arg io_) {
     unsigned int value_tag = lean_obj_tag(value);
     int value_c;
     switch (value_tag) {
@@ -37,54 +45,40 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_initHint(int32_t hint, b_lean_obj_arg 
             value_c = (int32_t)lean_ctor_get_uint32(value, 0);
             break;
         case 1:
-            value_c = GLFW_FALSE;
+            uint8_t x = lean_ctor_get_uint8(value, 0);
+            value_c = (x != 0) ? GLFW_TRUE : GLFW_FALSE;
             break;
         case 2:
-            value_c = GLFW_TRUE;
-            break;
-        case 3:
             value_c = GLFW_ANY_PLATFORM;
             break;
+        case 3:
+            value_c = lean_raylib_glfw_Platform_fromLean(lean_ctor_get_uint8(value, 0));
+            break;
         case 4:
-            value_c = GLFW_PLATFORM_WIN32;
-            break;
-        case 5:
-            value_c = GLFW_PLATFORM_COCOA;
-            break;
-        case 6:
-            value_c = GLFW_PLATFORM_WAYLAND;
-            break;
-        case 7:
-            value_c = GLFW_PLATFORM_X11;
-            break;
-        case 8:
-            value_c = GLFW_PLATFORM_NULL;
-            break;
-        case 9:
             value_c = GLFW_ANGLE_PLATFORM_TYPE_NONE;
             break;
-        case 10:
+        case 5:
             value_c = GLFW_ANGLE_PLATFORM_TYPE_OPENGL;
             break;
-        case 11:
+        case 6:
             value_c = GLFW_ANGLE_PLATFORM_TYPE_OPENGLES;
             break;
-        case 12:
+        case 7:
             value_c = GLFW_ANGLE_PLATFORM_TYPE_D3D9;
             break;
-        case 13:
+        case 8:
             value_c = GLFW_ANGLE_PLATFORM_TYPE_D3D11;
             break;
-        case 14:
+        case 9:
             value_c = GLFW_ANGLE_PLATFORM_TYPE_VULKAN;
             break;
-        case 15:
+        case 10:
             value_c = GLFW_ANGLE_PLATFORM_TYPE_METAL;
             break;
-        case 16:
+        case 11:
             value_c = GLFW_WAYLAND_DISABLE_LIBDECOR;
             break;
-        case 17:
+        case 12:
             value_c = GLFW_WAYLAND_PREFER_LIBDECOR;
             break;
         default:
@@ -94,6 +88,18 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_initHint(int32_t hint, b_lean_obj_arg 
     glfwInitHint(hint, value_c);
     lean_raylib_glfw_tryError();
     return lean_io_result_mk_ok(lean_box(0));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib_glfw_getPlatform(lean_obj_arg io_) {
+    uint8_t platform = lean_raylib_glfw_Platform_toLean(glfwGetPlatform());
+    lean_raylib_glfw_tryError();
+    return lean_io_result_mk_ok(lean_box(platform));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib_glfw_platformSupported(uint8_t platform, lean_obj_arg io_) {
+    int res = glfwPlatformSupported(lean_raylib_glfw_Platform_fromLean(platform));
+    lean_raylib_glfw_tryError();
+    return lean_io_result_mk_ok(lean_box(res == GLFW_TRUE));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib_glfw_getPrimaryMonitor(lean_obj_arg io_) {
