@@ -8,7 +8,7 @@ Running (on Linux only):
 1. Clone this repository
 2. `cd` into cloned repository root
 3. `lake -R -Kfork -Kraygui run raylib/buildSubmodule`
-4. `lake -d=examples exe Minimal`
+4. `lake exe examples.Minimal`
 
 Examples assume working directory to be the library repository root.
 Some require certain lake configuration options to be set (command above configures them).

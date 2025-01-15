@@ -20,6 +20,8 @@ pkgs.mkShell rec {
 
 # To run an example:
 # Disable precompilation for Raymath
-# (cc may be either gcc or clang, both work)
-# Add `cc = "cc"` to `[require.options]`
-# Run `LEAN_CC=cc lake -d=examples exe Minimal`
+# ($cc may be either gcc or clang, both work)
+# Add `cc = "$cc"` to `[require.options]`
+# Run `LEAN_CC=$cc lake -R -Kfork -Kraygui -Kcc=$cc exe examples.Minimal`
+
+# To use with vscode: start vscode in direnv, disable precompilation for Pod.
