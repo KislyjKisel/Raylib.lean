@@ -102,7 +102,7 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
       then pure $ opts.push $ optPref ++ cfg
       else error s!"Invalid config option value: {cfgKey}={cfg}; expected ON or OFF"
   | none => pure opts
-  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "wayland" "-DUSE_WAYLAND=" (get_config? wayland)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "wayland" "-DGLFW_BUILD_WAYLAND=" (get_config? wayland)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "macosFatlib" "-DMACOS_FATLIB=" (get_config? macosFatlib)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "audio" "-DUSE_AUDIO=" (get_config? audio)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "busyWaitLoop" "-DSUPPORT_BUSY_WAIT_LOOP=" (get_config? busyWaitLoop)
@@ -188,11 +188,11 @@ def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Arra
         cmd := "pkg-config"
         args := #["--cflags", "raylib", "glfw3"]
       }
-      traceArgs := traceArgs.append $ splitArgStr $ pkgConfigOutput.replace "\n" " "
+      weakArgs := weakArgs.append $ splitArgStr $ pkgConfigOutput.replace "\n" " "
 
     | .Submodule => do
       buildRaylibSubmodule printCmdOutput
-      traceArgs := traceArgs.append #[
+      weakArgs := weakArgs.append #[
         "-I",
         (pkg.dir / submoduleDir / "build" / "raylib" / "include").toString,
         "-I",

@@ -10,7 +10,7 @@ To do this run lake script `buildSubmodule`.
 | `externalGlfw`     | `USE_EXTERNAL_GLFW`          |
 | `platform`         | `PLATFORM`                   |
 | `opengl`           | `OPENGL_VERSION`             |
-| `wayland`          | `USE_WAYLAND`                |
+| `wayland`          | `GLFW_BUILD_WAYLAND`         |
 | `macosFatlib`      | `MACOS_FATLIB`               |
 | `audio`            | `USE_AUDIO`                  |
 | `busyWaitLoop`     | `SUPPORT_BUSY_WAIT_LOOP`     |

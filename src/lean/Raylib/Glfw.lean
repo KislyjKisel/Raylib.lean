@@ -58,6 +58,98 @@ define_foreign_type Window
 @[extern "lean_raylib_glfw_Window_mk"]
 opaque Window.mk (handle : WindowBackendHandle) : Window
 
+/--
+Initialization hints are set before `glfwInit` (called by raylib's `InitWindow`) and
+affect how the library behaves until termination.
+
+Some hints are platform specific.
+These may be set on any platform but they will only affect their specific platform.
+Other platforms will ignore them.
+
+Allows to pass any value to use with an out-of-sync GLFW version.
+Passing invalid values will cause a harmless error that can be ignored.
+-/
+structure InitHint where
+  val : Int32
+deriving Inhabited, BEq
+
+namespace InitHint
+
+def platform : InitHint := ⟨0x00050003⟩
+
+/--
+Whether to also expose joystick hats as buttons, for compatibility with earlier
+versions of GLFW that did not have `glfwGetJoystickHats`.
+Default `true`.
+-/
+def joystickHatButtons : InitHint := ⟨0x00050001⟩
+
+/--
+Specifies the platform type (rendering backend) to request when using OpenGL ES and EGL via ANGLE.
+If the requested platform type is unavailable, ANGLE will use its default.
+-/
+def anglePlatformType : InitHint := ⟨0x00050002⟩
+
+/--
+Whether to set the current directory to the application to the Contents/Resources
+subdirectory of the application's bundle, if present.
+Default `true`.
+-/
+def cocoaChdirResources : InitHint := ⟨0x00051001⟩
+
+/--
+Whether to create the menu bar and dock icon when GLFW is initialized.
+Default `true`.
+-/
+def cocoaMenubar : InitHint := ⟨0x00051002⟩
+
+/--
+Whether to use libdecor for window decorations where available.
+-/
+def waylandLibdecor : InitHint := ⟨0x00053001⟩
+
+/--
+whether to prefer the `VK_KHR_xcb_surface` extension for creating Vulkan surfaces,
+or whether to use the `VK_KHR_xlib_surface` extension.
+Default `true`.
+-/
+def x11XcbVulkanSurface : InitHint := ⟨0x00052001⟩
+
+-- NOTE: Constructor indices are used in native code, synchronize changes!
+inductive Value : InitHint -> Type where
+/-- Allows to pass any value to use with an out-of-sync GLFW version. -/
+| unknown {hint} (value : Int32) : Value hint -- 0
+| false {hint} -- 1
+  (h : hint == joystickHatButtons ||
+    hint == cocoaChdirResources ||
+    hint == cocoaMenubar ||
+    hint == x11XcbVulkanSurface := by decide) : Value hint
+| true {hint} -- 2
+  (h : hint == joystickHatButtons ||
+    hint == cocoaChdirResources ||
+    hint == cocoaMenubar ||
+    hint == x11XcbVulkanSurface := by decide) : Value hint
+| anyPlatform : Value .platform -- 3
+| platformWin32 : Value .platform -- 4
+| platformCocoa : Value .platform -- 5
+| platformWayland : Value .platform -- 6
+| platformX11 : Value .platform -- 7
+| platformNull : Value .platform -- 8
+| anglePlatformTypeNone : Value .anglePlatformType -- 9
+| anglePlatformTypeOpengl : Value .anglePlatformType -- 10
+| anglePlatformTypeOpengles : Value .anglePlatformType -- 11
+| anglePlatformTypeD3d9 : Value .anglePlatformType -- 12
+| anglePlatformTypeD3d11 : Value .anglePlatformType -- 13
+| anglePlatformTypeVulkan : Value .anglePlatformType -- 14
+| anglePlatformTypeMetal : Value .anglePlatformType -- 15
+| waylandDisableLibdecor : Value .waylandLibdecor -- 16
+| waylandPreferLibdecor : Value .waylandLibdecor -- 17
+
+end InitHint
+
+@[extern "lean_raylib_glfw_initHint", inherit_doc InitHint]
+opaque initHint (hint : InitHint) (value : @& hint.Value) : GlfwIO Unit
+
 /-- Opaque monitor object. -/
 define_foreign_type Monitor
 
