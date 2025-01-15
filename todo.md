@@ -1,5 +1,6 @@
 # Short-term
 
+* ! Fix pod/raylib assumption about SInt representations (they are actually UInt* wrappers, not special).
 * See if passing lake config options to lakefiles in a subdir is disabled by design.
 * Check if dependent `extern_lib` may not be passed to `lean_exe` link flags.
 * Fix `__dir__` in `olean` to allow running examples from a subdir.
