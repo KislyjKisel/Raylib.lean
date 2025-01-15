@@ -45,8 +45,7 @@ LEAN_EXPORT lean_obj_res lean_raylib_glfw_initHint(int32_t hint, b_lean_obj_arg 
             value_c = (int32_t)lean_ctor_get_uint32(value, 0);
             break;
         case 1:
-            uint8_t x = lean_ctor_get_uint8(value, 0);
-            value_c = (x != 0) ? GLFW_TRUE : GLFW_FALSE;
+            value_c = (lean_ctor_get_uint8(value, 0) != 0) ? GLFW_TRUE : GLFW_FALSE;
             break;
         case 2:
             value_c = GLFW_ANY_PLATFORM;
