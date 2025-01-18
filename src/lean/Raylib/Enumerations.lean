@@ -5,7 +5,7 @@ import Pod.Instances
 import Raymath.Core
 import Raylib.Util
 
-open Pod (Float32 BytesRefMut)
+open Pod (BytesRefMut)
 
 namespace Raylib
 
@@ -937,7 +937,7 @@ end ShaderUniformDataType
 instance : Inhabited ShaderUniformDataType := ⟨ShaderUniformDataType.float⟩
 
 def ShaderUniformDataType.lift : ShaderUniformDataType → Type
-    | ⟨⟨0, _⟩, _⟩ => Pod.Float32
+    | ⟨⟨0, _⟩, _⟩ => Float32
     | ⟨⟨1, _⟩, _⟩ => Raymath.Vector2
     | ⟨⟨2, _⟩, _⟩ => Raymath.Vector3
     | ⟨⟨3, _⟩, _⟩ => Raymath.Vector4

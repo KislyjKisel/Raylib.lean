@@ -27,10 +27,10 @@ def main : IO Unit := do
   let rlctx ← Raylib.initWindow 800 600 "Example".toSubstring
   Raylib.setTargetFPS 60 -- not important, but avoids 100% cpu usage
 
-  let mut size: Pod.Float32 := 16
+  let mut size: Float32 := 16
   let mut selected_shape: UInt32 := 0
   let mut color: Raylib.Color := .blue
-  let mut position_x: Pod.Float32 := 400
+  let mut position_x: Float32 := 400
   let position_y := 160
 
   let iconNames ← List.replicate 32 0 |>.mapM λ _ ↦ Nat.toUInt8 <$> IO.rand 0 200
@@ -56,7 +56,7 @@ def main : IO Unit := do
     | .circle => Raylib.drawCircleV ⟨position_x, position_y⟩ size color
     | .square => Raylib.drawRectangleRec ⟨position_x - size, position_y - size, size * 2, size * 2⟩ color
     | .triangle =>
-      let point: Pod.Float32 → Raymath.Vector2 := λ degrees ↦
+      let point: Float32 → Raymath.Vector2 := λ degrees ↦
         let radians := degrees * Raymath.deg2Rad
         ⟨position_x + radians.cos * size, position_y + radians.sin * size⟩
       Raylib.drawTriangle (point 30) (point 270) (point 150) color

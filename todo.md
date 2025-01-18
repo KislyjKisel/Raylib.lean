@@ -1,7 +1,5 @@
 # Short-term
 
-* ! Fix pod/raylib assumption about SInt representations (they are actually UInt* wrappers, not special).
-* See if passing lake config options to lakefiles in a subdir is disabled by design.
 * Check if dependent `extern_lib` may not be passed to `lean_exe` link flags.
 * Fix `__dir__` in `olean` to allow running examples from a subdir.
 * Fix `Raymath` precompilation on NixOS.
@@ -19,11 +17,12 @@
   Docstring: only when using builtin `leanc`.
   Example in lake repo: uses despite compiling with `c++`.
 * Restructure /src/lean -> /src, /src/native -> /ffi (same in pod)
+* Use pod's macros for structure layouts/field offsets for all Lean-side structures passing ffi
+
 
 # Waiting for toolchain updates
 
 * Declare all lake options at the top, validate them and enforce specific values instead of "isSome" where appropriate.
-
 * Separate `extern_lib` for the raylib when interdependent single-package `extern_lib`s will be possible
 
 
@@ -36,7 +35,6 @@
   `lean_object { .., -> BoxedImage { ..header, ..data } }`
                                   data ptr = ^ = this + sizeof(Header)
   (benchmark!)
-
 * ST without result box allocation via custom no-error variant (-> EST, <-> ST)
   (does ST/IO allocate on every call? is it bad?
   IIRC there was a note somewhere saying that Lean devs want to fix it)

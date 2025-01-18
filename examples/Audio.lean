@@ -26,8 +26,8 @@ def main : IO Unit := do
   let audioSampleRate := 44100
   let audioDt := 1.0 / audioSampleRate.toFloat32
   let audioStream ← Raylib.loadAudioStream rlctx audioSampleRate .f32 1
-  let audioFrequency : IO.Ref Pod.Float32 := ← IO.mkRef 440.0
-  let audioX ← IO.mkRef (0.0 : Pod.Float32)
+  let audioFrequency : IO.Ref Float32 := ← IO.mkRef 440.0
+  let audioX ← IO.mkRef (0.0 : Float32)
   Raylib.setAudioStreamCallback audioStream λ frames data ↦ do
     Raylib.EST2.ignoreErrors do
       let mut x ← audioX.get

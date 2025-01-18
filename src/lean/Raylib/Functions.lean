@@ -8,7 +8,6 @@ import Raylib.Structures
 import Raylib.Util
 
 open System (FilePath)
-open Pod (Float32)
 open Raymath (Vector2 Vector3 Vector4 Matrix)
 
 namespace Raylib

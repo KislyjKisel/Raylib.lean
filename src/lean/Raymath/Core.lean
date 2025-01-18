@@ -1,6 +1,6 @@
 import Pod.Float
 
-open Pod (Float32 Storable)
+open Pod (Storable)
 
 namespace Raymath
 

@@ -1,6 +1,22 @@
 import Lake
 open Lake DSL
 
+def splitArgStr (s : String) : Array String :=
+  Array.mk $ s.splitOn.filter $ not ∘ String.isEmpty
+
+inductive RaylibSrc
+  | System
+  | Submodule
+  | Custom
+  | Unknown (name : String)
+
+def raylibSrc : RaylibSrc := match get_config? raylib with
+  | none => .Submodule
+  | some "system" => .System
+  | some "submodule" => .Submodule
+  | some "custom" => .Custom
+  | some name => .Unknown name
+
 def optionFork := (get_config? fork).isSome
 def submoduleDir := cond optionFork "raylibFork" "raylib"
 
@@ -12,7 +28,7 @@ def podConfig : Lean.NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "3970320" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "450d61b" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -47,21 +63,6 @@ lean_exe examples.Minimal { moreLinkArgs := examplesLinkArgs }
 lean_exe examples.Gui { moreLinkArgs := examplesLinkArgs }
 lean_exe examples.Audio { moreLinkArgs := examplesLinkArgs }
 lean_exe examples.VideoMode { moreLinkArgs := examplesLinkArgs }
-
-inductive RaylibSrc
-  | System
-  | Submodule
-  | Custom
-  | Unknown (name : String)
-
-def raylibSrc : RaylibSrc := match get_config? raylib with
-  | none => .Submodule
-  | some "system" => .System
-  | some "submodule" => .Submodule
-  | some "custom" => .Custom
-  | some name => .Unknown name
-
-def splitArgStr (s : String) : Array String := Array.mk $ s.splitOn.filter $ not ∘ String.isEmpty
 
 def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m String := do
   let output ← IO.Process.output sa

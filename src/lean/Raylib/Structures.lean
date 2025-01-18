@@ -4,7 +4,6 @@ import Raymath.Core
 import Raylib.Enumerations
 import Raylib.Util.RangeMap
 
-open Pod (Float32)
 open Raymath (Vector2 Vector3 Vector4 Matrix Quaternion)
 
 namespace Raylib
@@ -82,10 +81,10 @@ Maps `XYZW` to `RGBA`.
 -/
 def _root_.Raymath.Vector4.toColor (v : Vector4) : Color :=
   Color.fromRgba
-    ((v.x.max 0).min 255).toUInt8
-    ((v.y.max 0).min 255).toUInt8
-    ((v.z.max 0).min 255).toUInt8
-    ((v.w.max 0).min 255).toUInt8
+    (min (max v.x 0) 255).toUInt8
+    (min (max v.y 0) 255).toUInt8
+    (min (max v.z 0) 255).toUInt8
+    (min (max v.w 0) 255).toUInt8
 
 end Color
 
@@ -468,10 +467,10 @@ end MaterialMapArray
 structure Material where
   shader : Shader
   maps : MaterialMapArray
-  param0 : Float32 := .zero
-  param1 : Float32 := .zero
-  param2 : Float32 := .zero
-  param3 : Float32 := .zero
+  param0 : Float32 := 0
+  param1 : Float32 := 0
+  param2 : Float32 := 0
+  param3 : Float32 := 0
 deriving Nonempty
 
 def Material.params (m : Material) : Vector4 :=

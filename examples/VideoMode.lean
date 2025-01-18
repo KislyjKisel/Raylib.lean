@@ -19,7 +19,7 @@ def main : IO Unit := do
     Raylib.beginDrawing
     Raylib.clearBackground .raywhite
 
-    let padding : Pod.Float32 := 10
+    let padding : Float32 := 10
     Raylib.drawText "Alt+Enter to toggle fullscreen" padding.toInt32 padding.toInt32 20 .darkpurple
 
     let prevIndex := currentVideoModeIndex

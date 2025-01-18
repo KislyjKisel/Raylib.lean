@@ -2,7 +2,6 @@ import Pod.Float
 import Raymath.Core
 import Raylib.Structures
 
-open Pod (Float32)
 open Raymath (Vector2 Vector3)
 open Raylib (Color Rectangle)
 

@@ -88,15 +88,21 @@ static inline lean_obj_res lean_raylib_Color_box(Color color) {
 
 // # Rectangle
 
+#define LEAN_RAYLIB_Rectangle_LAYOUT 0, 0, 0, 0, 4, 0, 0
+#define LEAN_RAYLIB_Rectangle_x F32, 0, LEAN_RAYLIB_Rectangle_LAYOUT
+#define LEAN_RAYLIB_Rectangle_y F32, 1, LEAN_RAYLIB_Rectangle_LAYOUT
+#define LEAN_RAYLIB_Rectangle_width F32, 2, LEAN_RAYLIB_Rectangle_LAYOUT
+#define LEAN_RAYLIB_Rectangle_height F32, 3, LEAN_RAYLIB_Rectangle_LAYOUT
+
 static inline void lean_raylib_Rectangle_set (b_lean_obj_arg obj, Rectangle r) {
-    lean_ctor_set(obj, 0, lean_pod_Float32_box(r.x));
-    lean_ctor_set(obj, 1, lean_pod_Float32_box(r.y));
-    lean_ctor_set(obj, 2, lean_pod_Float32_box(r.width));
-    lean_ctor_set(obj, 3, lean_pod_Float32_box(r.height));
+    LEAN_POD_CTOR_SET(obj, r.x, LEAN_RAYLIB_Rectangle_x);
+    LEAN_POD_CTOR_SET(obj, r.y, LEAN_RAYLIB_Rectangle_y);
+    LEAN_POD_CTOR_SET(obj, r.width, LEAN_RAYLIB_Rectangle_width);
+    LEAN_POD_CTOR_SET(obj, r.height, LEAN_RAYLIB_Rectangle_height);
 }
 
 static inline lean_object* lean_raylib_Rectangle_box (Rectangle r) {
-    lean_object* obj = lean_alloc_ctor(0, 4, 0);
+    lean_object* obj = LEAN_POD_ALLOC_CTOR(LEAN_RAYLIB_Rectangle_LAYOUT);
     lean_raylib_Rectangle_set(obj, r);
     return obj;
 }
@@ -105,10 +111,10 @@ static inline lean_object* lean_raylib_Rectangle_box (Rectangle r) {
 
 static inline Rectangle lean_raylib_Rectangle_unbox (b_lean_obj_arg obj) {
     Rectangle r;
-    r.x = lean_pod_Float32_unbox(lean_ctor_get(obj, 0));
-    r.y = lean_pod_Float32_unbox(lean_ctor_get(obj, 1));
-    r.width = lean_pod_Float32_unbox(lean_ctor_get(obj, 2));
-    r.height = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
+    r.x = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_Rectangle_x);
+    r.y = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_Rectangle_y);
+    r.width = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_Rectangle_width);
+    r.height = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_Rectangle_height);
     return r;
 }
 
@@ -198,20 +204,31 @@ static inline lean_object* lean_raylib_RenderTexture_box (RenderTexture texture,
 
 // # NPatch info
 
+#define LEAN_RAYLIB_NPatchInfo_LAYOUT 0, 1, 0, 0, 8, 0, 0
+#define LEAN_RAYLIB_NPatchInfo_sourceX F32, 0, LEAN_RAYLIB_NPatchInfo_LAYOUT
+#define LEAN_RAYLIB_NPatchInfo_sourceY F32, 1, LEAN_RAYLIB_NPatchInfo_LAYOUT
+#define LEAN_RAYLIB_NPatchInfo_sourceWidth F32, 2, LEAN_RAYLIB_NPatchInfo_LAYOUT
+#define LEAN_RAYLIB_NPatchInfo_sourceHeight F32, 3, LEAN_RAYLIB_NPatchInfo_LAYOUT
+#define LEAN_RAYLIB_NPatchInfo_left U32, 4, LEAN_RAYLIB_NPatchInfo_LAYOUT
+#define LEAN_RAYLIB_NPatchInfo_top U32, 5, LEAN_RAYLIB_NPatchInfo_LAYOUT
+#define LEAN_RAYLIB_NPatchInfo_right U32, 6, LEAN_RAYLIB_NPatchInfo_LAYOUT
+#define LEAN_RAYLIB_NPatchInfo_bottom U32, 7, LEAN_RAYLIB_NPatchInfo_LAYOUT
+#define LEAN_RAYLIB_NPatchInfo_layout BOX, 0, LEAN_RAYLIB_NPatchInfo_LAYOUT
+
 static inline void lean_raylib_NPatchInfo_set (b_lean_obj_arg obj, NPatchInfo npi) {
-    lean_ctor_set(obj, 0, lean_pod_Float32_box(npi.source.x));
-    lean_ctor_set(obj, 1, lean_pod_Float32_box(npi.source.y));
-    lean_ctor_set(obj, 2, lean_pod_Float32_box(npi.source.width));
-    lean_ctor_set(obj, 3, lean_pod_Float32_box(npi.source.height));
-    lean_ctor_set(obj, 4, lean_box_uint32(npi.left));
-    lean_ctor_set(obj, 5, lean_box_uint32(npi.top));
-    lean_ctor_set(obj, 6, lean_box_uint32(npi.right));
-    lean_ctor_set(obj, 7, lean_box_uint32(npi.bottom));
-    lean_ctor_set(obj, 8, lean_box_uint32(npi.layout));
+    LEAN_POD_CTOR_SET(obj, npi.source.x, LEAN_RAYLIB_NPatchInfo_sourceX);
+    LEAN_POD_CTOR_SET(obj, npi.source.y, LEAN_RAYLIB_NPatchInfo_sourceY);
+    LEAN_POD_CTOR_SET(obj, npi.source.width, LEAN_RAYLIB_NPatchInfo_sourceWidth);
+    LEAN_POD_CTOR_SET(obj, npi.source.height, LEAN_RAYLIB_NPatchInfo_sourceHeight);
+    LEAN_POD_CTOR_SET(obj, npi.left, LEAN_RAYLIB_NPatchInfo_left);
+    LEAN_POD_CTOR_SET(obj, npi.top, LEAN_RAYLIB_NPatchInfo_top);
+    LEAN_POD_CTOR_SET(obj, npi.right, LEAN_RAYLIB_NPatchInfo_right);
+    LEAN_POD_CTOR_SET(obj, npi.bottom, LEAN_RAYLIB_NPatchInfo_bottom);
+    LEAN_POD_CTOR_SET(obj, lean_box_uint32(npi.layout), LEAN_RAYLIB_NPatchInfo_layout);
 }
 
 static inline lean_obj_res lean_raylib_NPatchInfo_box (NPatchInfo npi) {
-    lean_object* obj = lean_alloc_ctor(0, 9, 0);
+    lean_object* obj = LEAN_POD_ALLOC_CTOR(LEAN_RAYLIB_NPatchInfo_LAYOUT);
     lean_raylib_NPatchInfo_set(obj, npi);
     return obj;
 }
@@ -220,15 +237,15 @@ static inline lean_obj_res lean_raylib_NPatchInfo_box (NPatchInfo npi) {
 
 static inline NPatchInfo lean_raylib_NPatchInfo_unbox (b_lean_obj_arg obj) {
     NPatchInfo r;
-    r.source.x = lean_pod_Float32_unbox(lean_ctor_get(obj, 0));
-    r.source.y = lean_pod_Float32_unbox(lean_ctor_get(obj, 1));
-    r.source.width = lean_pod_Float32_unbox(lean_ctor_get(obj, 2));
-    r.source.height = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
-    r.left = lean_unbox_uint32(lean_ctor_get(obj, 4));
-    r.top = lean_unbox_uint32(lean_ctor_get(obj, 5));
-    r.right = lean_unbox_uint32(lean_ctor_get(obj, 6));
-    r.bottom = lean_unbox_uint32(lean_ctor_get(obj, 7));
-    r.layout = lean_unbox_uint32(lean_ctor_get(obj, 8));
+    r.source.x = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_sourceX);
+    r.source.y = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_sourceY);
+    r.source.width = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_sourceWidth);
+    r.source.height = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_sourceHeight);
+    r.left = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_left);
+    r.top = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_top);
+    r.right = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_right);
+    r.bottom = LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_bottom);
+    r.layout = lean_unbox_uint32(LEAN_POD_CTOR_GET(obj, LEAN_RAYLIB_NPatchInfo_layout));
     return r;
 }
 
@@ -298,19 +315,20 @@ static inline void lean_raylib_Camera3D_set_impl (b_lean_obj_arg obj, Camera3D c
     lean_ctor_set(obj, 0, lean_raylib_Vector3_box(cam.position));
     lean_ctor_set(obj, 1, lean_raylib_Vector3_box(cam.target));
     lean_ctor_set(obj, 2, lean_raylib_Vector3_box(cam.up));
-    lean_ctor_set(obj, 3, lean_pod_Float32_box(cam.fovy));
-    lean_ctor_set(obj, 4, lean_box_uint32(cam.projection));
+    lean_ctor_set_float32(obj, 4 * sizeof(lean_object*), cam.fovy);
+    lean_ctor_set(obj, 3, lean_box_uint32(cam.projection));
 }
 
 static inline void lean_raylib_Camera3D_set (b_lean_obj_arg obj, Camera3D cam) {
     lean_dec_ref(lean_ctor_get(obj, 0));
     lean_dec_ref(lean_ctor_get(obj, 1));
     lean_dec_ref(lean_ctor_get(obj, 2));
+    lean_dec(lean_ctor_get(obj, 3));
     lean_raylib_Camera3D_set_impl(obj, cam);
 }
 
 static inline lean_object* lean_raylib_Camera3D_box (Camera3D cam) {
-    lean_object* obj = lean_alloc_ctor(0, 5, 0);
+    lean_object* obj = lean_alloc_ctor(0, 4, sizeof(float));
     lean_raylib_Camera3D_set_impl(obj, cam);
     return obj;
 }
@@ -322,8 +340,8 @@ static inline Camera3D lean_raylib_Camera3D_unbox (b_lean_obj_arg obj) {
     cam.position = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 0));
     cam.target = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 1));
     cam.up = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 2));
-    cam.fovy = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
-    cam.projection = lean_unbox_uint32(lean_ctor_get(obj, 4));
+    cam.fovy = lean_ctor_get_float32(obj, 4 * sizeof(lean_object*));
+    cam.projection = lean_unbox_uint32(lean_ctor_get(obj, 3));
     return cam;
 }
 
@@ -335,8 +353,8 @@ static inline Camera3D lean_raylib_Camera3D_unbox (b_lean_obj_arg obj) {
 static inline void lean_raylib_Camera2D_set_impl (b_lean_obj_arg obj, Camera2D cam) {
     lean_ctor_set(obj, 0, lean_raylib_Vector2_box(cam.offset));
     lean_ctor_set(obj, 1, lean_raylib_Vector2_box(cam.target));
-    lean_ctor_set(obj, 2, lean_pod_Float32_box(cam.rotation));
-    lean_ctor_set(obj, 3, lean_pod_Float32_box(cam.zoom));
+    lean_ctor_set_float32(obj, 2 * sizeof(lean_object*), cam.rotation);
+    lean_ctor_set_float32(obj, 2 * sizeof(lean_object*) + sizeof(float), cam.zoom);
 }
 
 static inline void lean_raylib_Camera2D_set (b_lean_obj_arg obj, Camera2D cam) {
@@ -346,7 +364,7 @@ static inline void lean_raylib_Camera2D_set (b_lean_obj_arg obj, Camera2D cam) {
 }
 
 static inline lean_object* lean_raylib_Camera2D_box (Camera2D cam) {
-    lean_object* obj = lean_alloc_ctor(0, 4, 0);
+    lean_object* obj = lean_alloc_ctor(0, 2, 2 * sizeof(float));
     lean_raylib_Camera2D_set_impl(obj, cam);
     return obj;
 }
@@ -357,8 +375,8 @@ static inline Camera2D lean_raylib_Camera2D_unbox (b_lean_obj_arg obj) {
     Camera2D cam;
     cam.offset = lean_raylib_Vector2_fromRepr(lean_ctor_get(obj, 0));
     cam.target = lean_raylib_Vector2_fromRepr(lean_ctor_get(obj, 1));
-    cam.rotation = lean_pod_Float32_unbox(lean_ctor_get(obj, 2));
-    cam.zoom = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
+    cam.rotation = lean_ctor_get_float32(obj, 2 * sizeof(lean_object*));
+    cam.zoom = lean_ctor_get_float32(obj, 2 * sizeof(lean_object*) + sizeof(float));
     return cam;
 }
 
@@ -461,22 +479,27 @@ lean_obj_res lean_raylib__Shader_getDefault(lean_obj_arg ctx);
 
 // # Material
 
+#define LEAN_RAYLIB_MaterialMap_LAYOUT 0, 2, 0, 0, 1, 0, 0
+#define LEAN_RAYLIB_MaterialMap_texture BOX, 0, LEAN_RAYLIB_MaterialMap_LAYOUT
+#define LEAN_RAYLIB_MaterialMap_color BOX, 1, LEAN_RAYLIB_MaterialMap_LAYOUT
+#define LEAN_RAYLIB_MaterialMap_value F32, 0, LEAN_RAYLIB_MaterialMap_LAYOUT
+
 // NOTE: Returned mmap contains pointers to data owned by the boxed mmap!
 static inline MaterialMap lean_raylib_MaterialMap_unbox (b_lean_obj_arg mmap_box) {
     MaterialMap mmap;
-    mmap.texture = lean_raylib_Texture_unbox(lean_ctor_get(mmap_box, 0))->texture;
-    mmap.color = lean_raylib_Color_unbox(lean_ctor_get(mmap_box, 1));
-    mmap.value = lean_pod_Float32_unbox(lean_ctor_get(mmap_box, 2));
+    mmap.texture = lean_raylib_Texture_unbox(LEAN_POD_CTOR_GET(mmap_box, LEAN_RAYLIB_MaterialMap_texture))->texture;
+    mmap.color = lean_raylib_Color_unbox(LEAN_POD_CTOR_GET(mmap_box, LEAN_RAYLIB_MaterialMap_color));
+    mmap.value = LEAN_POD_CTOR_GET(mmap_box, LEAN_RAYLIB_MaterialMap_value);
     return mmap;
 }
 
 #define lean_raylib_MaterialMap_fromRepr lean_raylib_MaterialMap_unbox
 
 static inline lean_obj_res lean_raylib_MaterialMap_box (lean_obj_arg texture, Color color, float value) {
-    lean_object* mmap = lean_alloc_ctor(0, 3, 0);
-    lean_ctor_set(mmap, 0, texture);
-    lean_ctor_set(mmap, 1, lean_raylib_Color_box(color));
-    lean_ctor_set(mmap, 2, lean_pod_Float32_box(value));
+    lean_object* mmap = LEAN_POD_ALLOC_CTOR(LEAN_RAYLIB_MaterialMap_LAYOUT);
+    LEAN_POD_CTOR_SET(mmap, texture, LEAN_RAYLIB_MaterialMap_texture);
+    LEAN_POD_CTOR_SET(mmap, lean_raylib_Color_box(color), LEAN_RAYLIB_MaterialMap_color);
+    LEAN_POD_CTOR_SET(mmap, value, LEAN_RAYLIB_MaterialMap_value);
     return mmap;
 }
 
@@ -485,32 +508,40 @@ static inline lean_obj_res lean_raylib_MaterialMap_box (lean_obj_arg texture, Co
 // todo: configure from lake (and pass to raylib (config.h - MAX_MATERIAL_MAPS))
 #define LEAN_RAYLIB_MAX_MATERIAL_MAPS 12
 
+#define LEAN_RAYLIB_Material_LAYOUT 0, 2, 0, 0, 4, 0, 0
+#define LEAN_RAYLIB_Material_shader BOX, 0, LEAN_RAYLIB_Material_LAYOUT
+#define LEAN_RAYLIB_Material_maps BOX, 1, LEAN_RAYLIB_Material_LAYOUT
+#define LEAN_RAYLIB_Material_param0 F32, 0, LEAN_RAYLIB_Material_LAYOUT
+#define LEAN_RAYLIB_Material_param1 F32, 1, LEAN_RAYLIB_Material_LAYOUT
+#define LEAN_RAYLIB_Material_param2 F32, 2, LEAN_RAYLIB_Material_LAYOUT
+#define LEAN_RAYLIB_Material_param3 F32, 3, LEAN_RAYLIB_Material_LAYOUT
+
 // NOTE: Returned material contains pointers to `out_mmaps` and to data owned by the boxed material!
 static inline Material lean_raylib_Material_unbox (b_lean_obj_arg material_box, MaterialMap* out_mmaps) {
     Material material;
-    material.shader = lean_raylib_Shader_unbox(lean_ctor_get(material_box, 0))->shader;
-    lean_object* mmaps = lean_ctor_get(material_box, 1);
+    material.shader = lean_raylib_Shader_unbox(LEAN_POD_CTOR_GET(material_box, LEAN_RAYLIB_Material_shader))->shader;
+    lean_object* mmaps = LEAN_POD_CTOR_GET(material_box, LEAN_RAYLIB_Material_maps);
     for(size_t i = 0; i < LEAN_RAYLIB_MAX_MATERIAL_MAPS; ++i) {
         out_mmaps[i] = lean_raylib_MaterialMap_unbox(lean_array_get_core(mmaps, i));
     }
     material.maps = out_mmaps;
-    material.params[0] = lean_pod_Float32_unbox(lean_ctor_get(material_box, 2));
-    material.params[1] = lean_pod_Float32_unbox(lean_ctor_get(material_box, 3));
-    material.params[2] = lean_pod_Float32_unbox(lean_ctor_get(material_box, 4));
-    material.params[3] = lean_pod_Float32_unbox(lean_ctor_get(material_box, 5));
+    material.params[0] = LEAN_POD_CTOR_GET(material_box, LEAN_RAYLIB_Material_param0);
+    material.params[1] = LEAN_POD_CTOR_GET(material_box, LEAN_RAYLIB_Material_param1);
+    material.params[2] = LEAN_POD_CTOR_GET(material_box, LEAN_RAYLIB_Material_param2);
+    material.params[3] = LEAN_POD_CTOR_GET(material_box, LEAN_RAYLIB_Material_param3);
     return material;
 }
 
 #define lean_raylib_Material_fromRepr lean_raylib_Material_unbox
 
 static inline lean_obj_res lean_raylib_Material_box (lean_obj_arg shader, lean_obj_arg mmaps, Vector4 params) {
-    lean_object* material = lean_alloc_ctor(0, 6, 0);
-    lean_ctor_set(material, 0, shader);
-    lean_ctor_set(material, 1, mmaps);
-    lean_ctor_set(material, 2, lean_pod_Float32_box(params.x));
-    lean_ctor_set(material, 3, lean_pod_Float32_box(params.y));
-    lean_ctor_set(material, 4, lean_pod_Float32_box(params.z));
-    lean_ctor_set(material, 5, lean_pod_Float32_box(params.w));
+    lean_object* material = LEAN_POD_ALLOC_CTOR(LEAN_RAYLIB_Material_LAYOUT);
+    LEAN_POD_CTOR_SET(material, shader, LEAN_RAYLIB_Material_shader);
+    LEAN_POD_CTOR_SET(material, mmaps, LEAN_RAYLIB_Material_maps);
+    LEAN_POD_CTOR_SET(material, params.x, LEAN_RAYLIB_Material_param0);
+    LEAN_POD_CTOR_SET(material, params.y, LEAN_RAYLIB_Material_param1);
+    LEAN_POD_CTOR_SET(material, params.z, LEAN_RAYLIB_Material_param2);
+    LEAN_POD_CTOR_SET(material, params.w, LEAN_RAYLIB_Material_param3);
     return material;
 }
 
@@ -704,15 +735,15 @@ static inline Ray lean_raylib_Ray_unbox (b_lean_obj_arg obj) {
 // # Ray collision
 
 static inline void lean_raylib_RayCollision_set_impl (b_lean_obj_arg obj, RayCollision rayCol) {
-    lean_ctor_set(obj, 0, lean_box(rayCol.hit));
-    lean_ctor_set(obj, 1, lean_pod_Float32_box(rayCol.distance));
-    lean_ctor_set(obj, 2, lean_raylib_Vector3_box(rayCol.point));
-    lean_ctor_set(obj, 3, lean_raylib_Vector3_box(rayCol.normal));
+    lean_ctor_set_uint8(obj, 3 * sizeof(lean_object*) + sizeof(float), rayCol.hit ? 1 : 0);
+    lean_ctor_set_float32(obj, 3 * sizeof(lean_object*), rayCol.distance);
+    lean_ctor_set(obj, 0, lean_raylib_Vector3_box(rayCol.point));
+    lean_ctor_set(obj, 1, lean_raylib_Vector3_box(rayCol.normal));
 }
 
 static inline void lean_raylib_RayCollision_set (b_lean_obj_arg obj, RayCollision rayCol) {
-    lean_dec_ref(lean_ctor_get(obj, 2));
-    lean_dec_ref(lean_ctor_get(obj, 3));
+    lean_dec_ref(lean_ctor_get(obj, 0));
+    lean_dec_ref(lean_ctor_get(obj, 1));
     lean_raylib_RayCollision_set_impl(obj, rayCol);
 }
 
@@ -726,10 +757,10 @@ static inline lean_object* lean_raylib_RayCollision_box (RayCollision rayCol) {
 
 static inline RayCollision lean_raylib_RayCollision_unbox (b_lean_obj_arg obj) {
     RayCollision rayCol;
-    rayCol.hit = lean_unbox(lean_ctor_get(obj, 0));
-    rayCol.distance = lean_pod_Float32_unbox(lean_ctor_get(obj, 1));
-    rayCol.point = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 2));
-    rayCol.normal = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 3));
+    rayCol.hit = lean_ctor_get_uint8(obj, 3 * sizeof(lean_object*) + sizeof(float)) != 0;
+    rayCol.distance = lean_ctor_get_float32(obj, 3 * sizeof(lean_object*));
+    rayCol.point = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 0));
+    rayCol.normal = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 1));
     return rayCol;
 }
 
@@ -863,35 +894,35 @@ static inline lean_object* lean_raylib_Music_box (Music music, lean_obj_arg ctx)
 // # Vr device info
 
 static inline void lean_raylib_VrDeviceInfo_set_impl (b_lean_obj_arg obj, VrDeviceInfo* vrDeviceInfo) {
-    lean_ctor_set(obj, 0, lean_box_uint32(vrDeviceInfo->hResolution));
-    lean_ctor_set(obj, 1, lean_box_uint32(vrDeviceInfo->vResolution));
-    lean_ctor_set(obj, 2, lean_pod_Float32_box(vrDeviceInfo->hScreenSize));
-    lean_ctor_set(obj, 3, lean_pod_Float32_box(vrDeviceInfo->vScreenSize));
-    lean_ctor_set(obj, 4, lean_pod_Float32_box(vrDeviceInfo->eyeToScreenDistance));
-    lean_ctor_set(obj, 5, lean_pod_Float32_box(vrDeviceInfo->lensSeparationDistance));
-    lean_ctor_set(obj, 6, lean_pod_Float32_box(vrDeviceInfo->interpupillaryDistance));
+    lean_ctor_set_uint32(obj, 2 * sizeof(lean_object*) + 0 * 4, vrDeviceInfo->hResolution);
+    lean_ctor_set_uint32(obj, 2 * sizeof(lean_object*) + 1 * 4, vrDeviceInfo->vResolution);
+    lean_ctor_set_float32(obj, 2 * sizeof(lean_object*) + 2 * 4, vrDeviceInfo->hScreenSize);
+    lean_ctor_set_float32(obj, 2 * sizeof(lean_object*) + 3 * 4, vrDeviceInfo->vScreenSize);
+    lean_ctor_set_float32(obj, 2 * sizeof(lean_object*) + 4 * 4, vrDeviceInfo->eyeToScreenDistance);
+    lean_ctor_set_float32(obj, 2 * sizeof(lean_object*) + 5 * 4, vrDeviceInfo->lensSeparationDistance);
+    lean_ctor_set_float32(obj, 2 * sizeof(lean_object*) + 6 * 4, vrDeviceInfo->interpupillaryDistance);
     Vector4 lensDistortionValues;
     lensDistortionValues.x = vrDeviceInfo->lensDistortionValues[0];
     lensDistortionValues.y = vrDeviceInfo->lensDistortionValues[1];
     lensDistortionValues.z = vrDeviceInfo->lensDistortionValues[2];
     lensDistortionValues.w = vrDeviceInfo->lensDistortionValues[3];
-    lean_ctor_set(obj, 7, lean_raylib_Vector4_box(lensDistortionValues));
+    lean_ctor_set(obj, 0, lean_raylib_Vector4_box(lensDistortionValues));
     Vector4 chromaAbCorrection;
     chromaAbCorrection.x = vrDeviceInfo->chromaAbCorrection[0];
     chromaAbCorrection.y = vrDeviceInfo->chromaAbCorrection[1];
     chromaAbCorrection.z = vrDeviceInfo->chromaAbCorrection[2];
     chromaAbCorrection.w = vrDeviceInfo->chromaAbCorrection[3];
-    lean_ctor_set(obj, 8, lean_raylib_Vector4_box(chromaAbCorrection));
+    lean_ctor_set(obj, 1, lean_raylib_Vector4_box(chromaAbCorrection));
 }
 
 static inline void lean_raylib_VrDeviceInfo_set (b_lean_obj_arg obj, VrDeviceInfo* vrDeviceInfo) {
-    lean_dec_ref(lean_ctor_get(obj, 7));
-    lean_dec_ref(lean_ctor_get(obj, 8));
+    lean_dec_ref(lean_ctor_get(obj, 0));
+    lean_dec_ref(lean_ctor_get(obj, 1));
     lean_raylib_VrDeviceInfo_set_impl(obj, vrDeviceInfo);
 }
 
 static inline lean_object* lean_raylib_VrDeviceInfo_box (VrDeviceInfo* vrDeviceInfo) {
-    lean_object* obj = lean_alloc_ctor(0, 9, 0);
+    lean_object* obj = lean_alloc_ctor(0, 2, 7 * 4);
     lean_raylib_VrDeviceInfo_set_impl(obj, vrDeviceInfo);
     return obj;
 }
@@ -900,19 +931,19 @@ static inline lean_object* lean_raylib_VrDeviceInfo_box (VrDeviceInfo* vrDeviceI
 
 static inline VrDeviceInfo lean_raylib_VrDeviceInfo_unbox (b_lean_obj_arg obj) {
     VrDeviceInfo vrDeviceInfo;
-    vrDeviceInfo.hResolution = lean_unbox_uint32(lean_ctor_get(obj, 0));
-    vrDeviceInfo.vResolution = lean_unbox_uint32(lean_ctor_get(obj, 1));
-    vrDeviceInfo.hScreenSize = lean_pod_Float32_unbox(lean_ctor_get(obj, 2));
-    vrDeviceInfo.vScreenSize = lean_pod_Float32_unbox(lean_ctor_get(obj, 3));
-    vrDeviceInfo.eyeToScreenDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 4));
-    vrDeviceInfo.lensSeparationDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 5));
-    vrDeviceInfo.interpupillaryDistance = lean_pod_Float32_unbox(lean_ctor_get(obj, 6));
-    Vector4 lensDistortionValues = lean_raylib_Vector4_fromRepr(lean_ctor_get(obj, 7));
+    vrDeviceInfo.hResolution = lean_ctor_get_uint32(obj, 2 * sizeof(lean_object*) + 0 * 4);
+    vrDeviceInfo.vResolution = lean_ctor_get_uint32(obj, 2 * sizeof(lean_object*) + 1 * 4);
+    vrDeviceInfo.hScreenSize = lean_ctor_get_float32(obj, 2 * sizeof(lean_object*) + 2 * 4);
+    vrDeviceInfo.vScreenSize = lean_ctor_get_float32(obj, 2 * sizeof(lean_object*) + 3 * 4);
+    vrDeviceInfo.eyeToScreenDistance = lean_ctor_get_float32(obj, 2 * sizeof(lean_object*) + 4 * 4);
+    vrDeviceInfo.lensSeparationDistance = lean_ctor_get_float32(obj, 2 * sizeof(lean_object*) + 5 * 4);
+    vrDeviceInfo.interpupillaryDistance = lean_ctor_get_float32(obj, 2 * sizeof(lean_object*) + 6 * 4);
+    Vector4 lensDistortionValues = lean_raylib_Vector4_fromRepr(lean_ctor_get(obj, 0));
     vrDeviceInfo.lensDistortionValues[0] = lensDistortionValues.x;
     vrDeviceInfo.lensDistortionValues[1] = lensDistortionValues.y;
     vrDeviceInfo.lensDistortionValues[2] = lensDistortionValues.z;
     vrDeviceInfo.lensDistortionValues[3] = lensDistortionValues.w;
-    Vector4 chromaAbCorrection = lean_raylib_Vector4_fromRepr(lean_ctor_get(obj, 8));
+    Vector4 chromaAbCorrection = lean_raylib_Vector4_fromRepr(lean_ctor_get(obj, 1));
     vrDeviceInfo.chromaAbCorrection[0] = chromaAbCorrection.x;
     vrDeviceInfo.chromaAbCorrection[1] = chromaAbCorrection.y;
     vrDeviceInfo.chromaAbCorrection[2] = chromaAbCorrection.z;
