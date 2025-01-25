@@ -29,7 +29,7 @@ def podConfig : Lean.NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "b2d58b2" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "64be62" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -40,16 +40,16 @@ package raylib {
 
 @[default_target]
 lean_lib Raylib {
-  srcDir := "src/lean"
+  srcDir := "src"
 }
 
 lean_lib Raymath {
-  srcDir := "src/lean"
+  srcDir := "src"
   precompileModules := optionPrecompileRaymath
 }
 
 lean_lib Raygui {
-  srcDir := "src/lean"
+  srcDir := "src"
 }
 
 def examplesLinkArgs :=
@@ -196,7 +196,7 @@ def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Arra
     | some pod =>
       weakArgs := weakArgs ++ #[
         "-I",
-        (pod.dir / "src" / "native" / "include").toString
+        (pod.dir / "ffi" / "include").toString
       ]
 
   let printCmdOutput := (get_config? cmdout).isSome
@@ -255,8 +255,8 @@ extern_lib «raylib-lean» pkg := do
   let bindingsHeaders := #[
     "include/raylib_lean", "include/raymath_lean"
   ]
-  let nativeSrcDir := pkg.dir / "src" / "native"
-  let objectFileDir := pkg.irDir / "native"
+  let nativeSrcDir := pkg.dir / "ffi"
+  let objectFileDir := pkg.irDir / "__ffi__"
   let headerFile (h : String) : System.FilePath := nativeSrcDir / (h ++ ".h")
   let extraTrace ← mixTraceArray <$> (bindingsHeaders.mapM $ computeTrace ∘ headerFile)
   buildStaticLib (pkg.nativeLibDir / name)

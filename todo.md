@@ -2,7 +2,6 @@
 
 * Check if dependent `extern_lib` may not be passed to `lean_exe` link flags.
 * Fix `__dir__` in `olean` to allow running examples from a subdir.
-* Fix `Raymath` precompilation on NixOS.
 * Add scaling in an example and test it with wayland.
   See highdpi functions in raylib.
   ```
@@ -15,7 +14,6 @@
 * Is `getLeanTrace` required for `buildO`?
   Docstring: only when using builtin `leanc`.
   Example in lake repo: uses despite compiling with `c++`.
-* Restructure /src/lean -> /src, /src/native -> /ffi (same in pod)
 * Use pod's macros for structure layouts/field offsets for all Lean-side structures passing ffi
 
 
@@ -23,7 +21,7 @@
 
 * Declare all lake options at the top, validate them and enforce specific values instead of "isSome" where appropriate.
 * Separate `extern_lib` for the raylib when interdependent single-package `extern_lib`s will be possible
-* Test if VS Code + precompilation + `cc` config work on Nix OS
+* Test if VS Code + precompilation (Raymath/pod) + `cc` config work on Nix OS
 
 
 # Probably never

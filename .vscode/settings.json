@@ -5,6 +5,6 @@
         "raylib/src",
         "raylib/src/external/glfw/include",
         "raygui/src",
-        ".lake/packages/pod/src/native/include",
+        ".lake/packages/pod/ffi/include",
     ],
 }
