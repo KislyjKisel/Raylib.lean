@@ -19,6 +19,7 @@ def raylibSrc : RaylibSrc := match get_config? raylib with
 
 def optionFork := (get_config? fork).isSome
 def submoduleDir := cond optionFork "raylibFork" "raylib"
+def optionPrecompileRaymath := (get_config? precompileRaymath).isSome
 
 def podConfig : Lean.NameMap String := Id.run $ do
   let mut cfg := NameMap.empty
@@ -28,7 +29,7 @@ def podConfig : Lean.NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "450d61b" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "b2d58b2" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -44,7 +45,7 @@ lean_lib Raylib {
 
 lean_lib Raymath {
   srcDir := "src/lean"
-  precompileModules := true
+  precompileModules := optionPrecompileRaymath
 }
 
 lean_lib Raygui {
@@ -289,4 +290,5 @@ script options do
   IO.println s!"alloc={get_config? alloc}"
   IO.println s!"git={get_config? git}"
   IO.println s!"cmake={get_config? cmake}"
+  IO.println s!"precompileRaymath? {optionPrecompileRaymath}"
   return 0

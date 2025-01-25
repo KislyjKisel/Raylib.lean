@@ -84,6 +84,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
   `"lean"` (default) means using the allocator Lean uses.
   `"native"` to use `malloc` and `free` instead.
 * `git`, `cmake`: git and cmake used to build raylib submodule, or `""` (empty string) to skip their respective steps.
+* `precompileRaymath`: if set enables `precompileModules` for Raymath.
 
 There are also [options to customize raylib build](options.md).
 

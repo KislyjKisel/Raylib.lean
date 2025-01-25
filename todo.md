@@ -3,7 +3,6 @@
 * Check if dependent `extern_lib` may not be passed to `lean_exe` link flags.
 * Fix `__dir__` in `olean` to allow running examples from a subdir.
 * Fix `Raymath` precompilation on NixOS.
-* Fix `pod` precompilation producing errors in VS Code on NixOS (clang crashes, which should be because wrong CC is set, but it seems to ignore `cc` option?)
 * Add scaling in an example and test it with wayland.
   See highdpi functions in raylib.
   ```
@@ -24,6 +23,7 @@
 
 * Declare all lake options at the top, validate them and enforce specific values instead of "isSome" where appropriate.
 * Separate `extern_lib` for the raylib when interdependent single-package `extern_lib`s will be possible
+* Test if VS Code + precompilation + `cc` config work on Nix OS
 
 
 # Probably never
