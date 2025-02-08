@@ -10,6 +10,7 @@ static inline lean_obj_res lean_raylib_glfw_error_impl(int code, const char* des
     return lean_io_result_mk_error(error_box);
 }
 
+#ifndef __EMSCRIPTEN__
 static inline lean_obj_res lean_raylib_glfw_error(void) {
     const char* description = NULL;
     int code = glfwGetError(&description);
@@ -24,6 +25,13 @@ static inline lean_obj_res lean_raylib_glfw_error(void) {
         return lean_raylib_glfw_error_impl(te_code__, te_description__);\
     }\
 }
+#else
+static inline lean_obj_res lean_raylib_glfw_error(void) {
+    return lean_raylib_glfw_error_impl(GLFW_NO_ERROR, NULL);
+}
+#define lean_raylib_glfw_tryError()
+#endif
+
 
 LEAN_EXPORT lean_obj_res lean_raylib_glfw_Window_mk(lean_raylib_WindowBackendHandle handle) {
     return lean_raylib_glfw_Window_mk_(handle);

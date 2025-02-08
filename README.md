@@ -77,6 +77,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
   By default uses (ordered by priority) `LEAN_CC`, the compiler provided by Lean toolchain or `cc`.
 * `cflags`: additional flags passed to the native code compiler.
 * `lflags`: additional flags used to link examples.
+* `extraCmakeArgs`: additional arguments passed to cmake when building submodule.
 * `cmdout`: if present, print output of commands used when building submodule.
 * `fork`: use raylib's [fork](https://github.com/KislyjKisel/raylib) that provides features used by
   implementations of some functions (notably audio callbacks) and some more.
@@ -85,6 +86,13 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
   `"native"` to use `malloc` and `free` instead.
 * `git`, `cmake`: git and cmake used to build raylib submodule, or `""` (empty string) to skip their respective steps.
 * `precompileRaymath`: if set enables `precompileModules` for Raymath.
+* Web build can additionally be configured using:
+  * `emcmake`, `emcc`: build tools, defaults to `emcmake` and `emcc`.
+  * `extraEmccArgs`: extra `emcc` arguments.
+  * `extraEmccSources`: takes a spaces separated list of paths with wildcards (`*` and `**`),
+    files matching these paths will be added to `emcc` arguments.
+  * `webShell`: passed to `emcc` as a `--shell-file`, defaults to raylib's `minshell.html`.
+  * `wasmToolchain`: path to downloaded and unpacked `lean-$LEAN_VERSION-linux_wasm32`.
 
 There are also [options to customize raylib build](options.md).
 
@@ -94,3 +102,5 @@ There are also [options to customize raylib build](options.md).
 * `buildSubmodule`: initializes submodule and builds it. Runs as part of the bindings build process.
 * `cleanCmakeCache`: removes `build` directory from the submodule.
 * `options`: prints configured lake options (doesn't include cmake build options).
+* `buildWeb {exeName}`: builds an executable target without linking,
+  then compiles produced IR C sources and files matching user-provided patterns using `emcc` (see options).

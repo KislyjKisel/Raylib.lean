@@ -15,6 +15,9 @@
   Docstring: only when using builtin `leanc`.
   Example in lake repo: uses despite compiling with `c++`.
 * Use pod's macros for structure layouts/field offsets for all Lean-side structures passing ffi
+* Lakefile incremental sub-process output
+* Platform libraries bindings (e.g. when not GLFW; GLFW may be removed from platform=Web in raylib and in that case glfw bindings and link args should be disabled, and web-specific stuff enabled instead).
+* Move exes (also check pod) to avoid polluting global namespace
 
 
 # Waiting for toolchain updates
@@ -22,6 +25,7 @@
 * Declare all lake options at the top, validate them and enforce specific values instead of "isSome" where appropriate.
 * Separate `extern_lib` for the raylib when interdependent single-package `extern_lib`s will be possible
 * Test if VS Code + precompilation (Raymath/pod) + `cc` config work on Nix OS
+* Abstract lakefile helpers into a library (parsing options, running tools)
 
 
 # Probably never
