@@ -295,7 +295,7 @@ def podConfig : Lean.NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "64be62" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "cb4734e" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -573,16 +573,20 @@ script options do
   IO.println s!"extraEmccSources: {optionExtraEmccSources}"
   return 0
 
+/--
+`LeanExe.recBuildExe` changed to exclude linking.
+Used when building for wasm as linking is not needed here and will also fail.
+-/
 def buildExeWithoutLinking (self : LeanExe) : FetchM (Job Unit) :=
   withRegisterJob s!"{self.name}" do
   let mut linkJobs := #[]
   for facet in self.root.nativeFacets self.supportInterpreter do
     linkJobs := linkJobs.push <| ← fetch <| self.root.facet facet.name
-  let imports ← self.root.transImports.fetch
+  let imports ← (← self.root.transImports.fetch).await
   for mod in imports do
     for facet in mod.nativeFacets self.supportInterpreter do
       linkJobs := linkJobs.push <| ← fetch <| mod.facet facet.name
-  let deps := (← fetch <| self.pkg.facet `deps).push self.pkg
+  let deps := (← (← self.pkg.transDeps.fetch).await).push self.pkg
   for dep in deps do for lib in dep.externLibs do
     linkJobs := linkJobs.push <| ← lib.static.fetch
   (Job.collectArray linkJobs).mapM λ _ ↦ pure ()

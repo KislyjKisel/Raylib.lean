@@ -29,15 +29,15 @@ theorem i_lt_max_of_not_eq_max (i : UInt32)
 private
 theorem i_add_1_toNat_eq (i : UInt32)
   (hi : min ≤ i ∧ i ≤ max) (i_ne_max : ¬ i = max) :
-    (i + 1).val.val = i.val.val + 1 := by
-      show (i.val.val + 1 % UInt32.size) % UInt32.size = _
+    (i + 1).toNat = i.toNat + 1 := by
+      show (i.toNat + 1 % UInt32.size) % UInt32.size = _
       rewrite [Nat.mod_eq_of_lt (a := 1) (by decide)]
       exact Nat.mod_eq_of_lt $ Nat.lt_of_le_of_lt
-        (Nat.succ_le_of_lt $ i_lt_max_of_not_eq_max i hi i_ne_max) max.val.isLt
+        (Nat.succ_le_of_lt $ i_lt_max_of_not_eq_max i hi i_ne_max) max.toNat_lt
 
 def ofFn (mm : min ≤ max) (f : (i : UInt32) → min ≤ i ∧ i < max → α) :
   RangeMap min max α :=
-    go min (Array.mkEmpty (max - min).val.val)
+    go min (Array.mkEmpty (max - min).toNat)
       ⟨Nat.le_refl _, mm⟩
       (Nat.sub_eq_zero_of_le (Nat.le_of_eq rfl)).symm
 where
@@ -52,25 +52,25 @@ where
               (And.intro
                 (by
                   apply Nat.le_trans hi.1
-                  show i.val.val ≤ (i + 1).val.val
+                  show i.toNat ≤ (i + 1).toNat
                   rewrite [i_add_1_toNat_eq i hi him]
                   apply Nat.le_succ
                 )
                 (by
-                  show (i + 1).val.val ≤ max.val.val
+                  show (i + 1).toNat ≤ max.toNat
                   rewrite [i_add_1_toNat_eq i hi him]
                   exact Nat.succ_le_of_lt (i_lt_max_of_not_eq_max i hi him)
                 )
               )
               (by
-                show (vs.toList.concat _).length = (i + 1).val.val - _
+                show (vs.toList.concat _).length = (i + 1).toNat - _
                 rewrite [
                   i_add_1_toNat_eq i hi him,
                   List.length_concat _ _,
                   Nat.add_comm _ 1,
                   Nat.add_comm _ 1
                 ]
-                show _ = 1 + i.val.val - min.val.val
+                show _ = 1 + i.toNat - min.toNat
                 rewrite [Array.size] at hl
                 rewrite [hl, Nat.add_sub_assoc _ _]
                 rfl
@@ -83,15 +83,15 @@ where
       apply Nat.lt_of_le_of_ne hi.2
       intro h
       apply him
-      apply UInt32.eq_of_val_eq
+      apply UInt32.eq_of_toFin_eq
       apply Fin.eq_of_val_eq
       exact h
-    have i_succ_lt_u32 : i.val + 1 < UInt32.size := by
+    have i_succ_lt_u32 : i.toFin + 1 < UInt32.size := by
       apply Nat.lt_of_le_of_lt
       apply Nat.succ_le_of_lt i_lt_max
-      exact max.val.isLt
-    have i_succ_eq : i + 1 = UInt32.ofNatCore (i.toNat + 1) i_succ_lt_u32 := by
-      apply UInt32.eq_of_val_eq
+      exact max.toFin.isLt
+    have i_succ_eq : i + 1 = UInt32.ofNatLT (i.toNat + 1) i_succ_lt_u32 := by
+      apply UInt32.eq_of_toFin_eq
       apply Fin.eq_of_val_eq
       show (i.toNat + 1) % _ = i.toNat + 1
       apply Nat.mod_eq_of_lt
