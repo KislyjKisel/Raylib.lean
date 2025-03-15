@@ -338,16 +338,21 @@ def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Proces
   else
     pure output
 
-def tryRunProcess' {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCmdOutput : Bool) (sa : IO.Process.SpawnArgs) : m Unit := do
-  let output ← tryRunProcess sa
-  if printCmdOutput then
-    IO.eprint output.stdout
-    IO.println output.stdout
+def tryRunProcessStreaming {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCmdOutput : Bool) (sa : IO.Process.SpawnArgs) : m Unit := do
+  let process ← IO.Process.spawn { sa with
+    toStdioConfig :=
+      if printCmdOutput
+        then { stdout := .inherit, stderr := .inherit, stdin := .null }
+        else { stdout := .null, stderr := .null, stdin := .null }
+  }
+  let exit ← process.wait
+  if exit != 0 then
+    error s!"'{sa.cmd}  {sa.args}' returned {exit}"
 
 def updateRayguiSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCmdOutput : Bool) : m Unit := do
   let gitCmd := (get_config? git).getD "git"
   if gitCmd != "" then
-    tryRunProcess' printCmdOutput {
+    tryRunProcessStreaming printCmdOutput {
       cmd := gitCmd
       args := #["submodule", "update", "--init", "--force", "--recursive", "raygui"]
       cwd := __dir__
@@ -356,7 +361,7 @@ def updateRayguiSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printC
 def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCmdOutput : Bool) : m Unit := do
   let gitCmd := (get_config? git).getD "git"
   if gitCmd != "" then
-    tryRunProcess' printCmdOutput {
+    tryRunProcessStreaming printCmdOutput {
       cmd := gitCmd
       args := #["submodule", "update", "--init", "--force", "--recursive", submoduleDir]
       cwd := __dir__
@@ -448,12 +453,12 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
 
   let cmakeCmd := (get_config? cmake).getD "cmake"
   if cmakeCmd != "" then
-    tryRunProcess' printCmdOutput {
+    tryRunProcessStreaming printCmdOutput {
       cmd := if platform == .web then optionEmcmake else cmakeCmd
       args := cmakeBuildArgs
       cwd := __dir__ / submoduleDir / "build"
     }
-    tryRunProcess' printCmdOutput {
+    tryRunProcessStreaming printCmdOutput {
       cmd := cmakeCmd
       args := #["--build", ".", "--config", "Release"]
       cwd := __dir__ / submoduleDir / "build"
@@ -647,7 +652,7 @@ script buildWeb (args) do
       FilePathPattern.find acc x
     let emccArgs := emccArgs ++ cSources.map System.FilePath.toString ++ optionExtraEmccArgs
     IO.println s!"Running {optionEmcc} with args {repr emccArgs}"
-    tryRunProcess' true {
+    tryRunProcessStreaming true {
       cmd := optionEmcc
       args := emccArgs
     }
