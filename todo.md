@@ -15,7 +15,10 @@
   Docstring: only when using builtin `leanc`.
   Example in lake repo: uses despite compiling with `c++`.
 * Use pod's macros for structure layouts/field offsets for all Lean-side structures passing ffi
-* Lakefile incremental sub-process output
+
+
+# Long-term
+
 * Platform libraries bindings (e.g. when not GLFW; GLFW may be removed from platform=Web in raylib and in that case glfw bindings and link args should be disabled, and web-specific stuff enabled instead).
 
 
