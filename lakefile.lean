@@ -330,6 +330,7 @@ lean_exe "raylib-examples-minimal" { moreLinkArgs := examplesLinkArgs, srcDir :=
 lean_exe "raylib-examples-gui" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Gui }
 lean_exe "raylib-examples-audio" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Audio }
 lean_exe "raylib-examples-videoMode" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `VideoMode }
+lean_exe "raylib-examples-extras" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Extras }
 
 def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m IO.Process.Output := do
   let output ← IO.Process.output sa

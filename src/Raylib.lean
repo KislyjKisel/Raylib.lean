@@ -6,3 +6,4 @@ import Raylib.Callbacks
 import Raylib.Functions
 import Raylib.Defines
 import Raylib.Glfw
+import Raylib.Extras

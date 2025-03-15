@@ -25,6 +25,7 @@ See also: raylib's [examples](https://github.com/raysan5/raylib/tree/master/exam
   <a href="./examples/Audio.lean"><img src="./screenshots/example_audio.png" width="320" height="150"></a>
   <h4>Video mode</h4>
   <a href="./examples/VideoMode.lean"><img src="./screenshots/example_videomode.png" width="320" height="240"></a>
+  <h4><a href="./examples/Extras.lean">Extras</a></h4>
 </details>
 
 
