@@ -326,10 +326,10 @@ def examplesLinkArgs :=
       | .Custom => #[]
       | .Unknown _ => #[]
 
-lean_exe examples.Minimal { moreLinkArgs := examplesLinkArgs }
-lean_exe examples.Gui { moreLinkArgs := examplesLinkArgs }
-lean_exe examples.Audio { moreLinkArgs := examplesLinkArgs }
-lean_exe examples.VideoMode { moreLinkArgs := examplesLinkArgs }
+lean_exe "raylib-examples-minimal" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Minimal }
+lean_exe "raylib-examples-gui" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Gui }
+lean_exe "raylib-examples-audio" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Audio }
+lean_exe "raylib-examples-videoMode" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `VideoMode }
 
 def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m IO.Process.Output := do
   let output ← IO.Process.output sa
