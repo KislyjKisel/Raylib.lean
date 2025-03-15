@@ -1,7 +1,6 @@
 # Short-term
 
 * Check if dependent `extern_lib` may not be passed to `lean_exe` link flags.
-* Fix `__dir__` in `olean` to allow running examples from a subdir.
 * Add scaling in an example and test it with wayland.
   See highdpi functions in raylib.
   ```
@@ -9,11 +8,7 @@
   Raylib.setConfigFlags .windowHighdpi -- doesn't help, but is recommended?
   ```
 * Test videomodes on NixOS/Wayland, make a workaround.
-* Why wayland is not enabled by default in raylib? (it is default in glfw)
 * Test using external glfw/raylib on windows/nixos. Is using nix on windows possible?
-* Is `getLeanTrace` required for `buildO`?
-  Docstring: only when using builtin `leanc`.
-  Example in lake repo: uses despite compiling with `c++`.
 * Use pod's macros for structure layouts/field offsets for all Lean-side structures passing ffi
 
 
