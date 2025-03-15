@@ -535,7 +535,8 @@ extern_lib «raylib-lean» pkg := do
   let nativeSrcDir := pkg.dir / "ffi"
   let objectFileDir := pkg.irDir / "__ffi__"
   let headerFile (h : String) : System.FilePath := nativeSrcDir / (h ++ ".h")
-  let extraTrace ← mixTraceArray <$> (bindingsHeaders.mapM $ computeTrace ∘ headerFile)
+  let extraTrace : BuildTrace ← mixTraceArray <$> (bindingsHeaders.mapM $ computeTrace ∘ headerFile)
+  let extraTrace : BuildTrace := mixTrace extraTrace (← getLeanTrace)
   buildStaticLib (pkg.nativeLibDir / name)
     (← bindingsSources.mapM λ stem ↦ do
       buildO
