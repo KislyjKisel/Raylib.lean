@@ -11,6 +11,7 @@ To do this run lake script `buildSubmodule`.
 | `platform`         | `PLATFORM`                   |
 | `opengl`           | `OPENGL_VERSION`             |
 | `wayland`          | `GLFW_BUILD_WAYLAND`         |
+| `x11`              | `GLFW_BUILD_X11`             |
 | `macosFatlib`      | `MACOS_FATLIB`               |
 | `audio`            | `USE_AUDIO`                  |
 | `busyWaitLoop`     | `SUPPORT_BUSY_WAIT_LOOP`     |

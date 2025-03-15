@@ -399,6 +399,7 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
       else error s!"Invalid config option value: {cfgKey}={cfg}; expected ON or OFF"
   | none => pure opts
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "wayland" "-DGLFW_BUILD_WAYLAND=" (get_config? wayland)
+  cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "x11" "-DGLFW_BUILD_X11=" (get_config? x11)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "macosFatlib" "-DMACOS_FATLIB=" (get_config? macosFatlib)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "audio" "-DUSE_AUDIO=" (get_config? audio)
   cmakeBuildArgs ← binCfgToOpt cmakeBuildArgs "busyWaitLoop" "-DSUPPORT_BUSY_WAIT_LOOP=" (get_config? busyWaitLoop)
