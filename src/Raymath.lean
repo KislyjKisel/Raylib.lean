@@ -2,8 +2,6 @@ import Raymath.Core
 import Raymath.Foreign
 import Raymath.Native
 
-open Pod (Float32)
-
 namespace Raymath
 
 def toUInt32Inj {m} (n : Nat) (h₁ : n < m) (h₂ : m ≤ 2 ^ 32 := by decide) : UInt32 :=
@@ -40,7 +38,7 @@ instance : Mul Vector2 := ⟨Vector2.mul⟩
 instance : HMul Vector2 Float32 Vector2 := ⟨Vector2.scale⟩
 instance : HMul Float32 Vector2 Vector2 := ⟨λ s v ↦ v.scale s⟩
 instance : Div Vector2 := ⟨Vector2.div⟩
-instance : HDiv Vector2 Float32 Vector2 := ⟨λ v s ↦ v.scale (.one / s)⟩
+instance : HDiv Vector2 Float32 Vector2 := ⟨λ v s ↦ v.scale (1 / s)⟩
 instance : HDiv Float32 Vector2 Vector2 := ⟨λ s v ↦ ⟨s / v.x, s / v.y⟩⟩
 instance : BEq Vector2 := ⟨Vector2.beq⟩
 instance : Neg Vector2 := ⟨Vector2.neg⟩
@@ -94,7 +92,7 @@ instance : Mul Vector3 := ⟨Vector3.mul⟩
 instance : HMul Vector3 Float32 Vector3 := ⟨Vector3.scale⟩
 instance : HMul Float32 Vector3 Vector3 := ⟨λ s v ↦ v.scale s⟩
 instance : Div Vector3 := ⟨Vector3.div⟩
-instance : HDiv Vector3 Float32 Vector3 := ⟨λ v s ↦ v.scale (.one / s)⟩
+instance : HDiv Vector3 Float32 Vector3 := ⟨λ v s ↦ v.scale (1 / s)⟩
 instance : HDiv Float32 Vector3 Vector3 := ⟨λ s v ↦ ⟨s / v.x, s / v.y, s / v.z⟩⟩
 instance : BEq Vector3 := ⟨Vector3.beq⟩
 instance : Neg Vector3 := ⟨Vector3.neg⟩
@@ -149,7 +147,7 @@ instance : Mul Vector4 := ⟨Vector4.mul⟩
 instance : HMul Vector4 Float32 Vector4 := ⟨Vector4.scale⟩
 instance : HMul Float32 Vector4 Vector4 := ⟨λ s v ↦ v.scale s⟩
 instance : Div Vector4 := ⟨Vector4.div⟩
-instance : HDiv Vector4 Float32 Vector4 := ⟨λ v s ↦ v.scale (.one / s)⟩
+instance : HDiv Vector4 Float32 Vector4 := ⟨λ v s ↦ v.scale (1 / s)⟩
 instance : HDiv Float32 Vector4 Vector4 := ⟨λ s v ↦ ⟨s / v.x, s / v.y, s / v.z, s / v.w⟩⟩
 instance : BEq Vector4 := ⟨Vector4.beq⟩
 instance : Neg Vector4 := ⟨Vector4.neg⟩
