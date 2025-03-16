@@ -515,6 +515,35 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValue (b_lean_obj_arg shader_box,
             SetShaderValue(shader, loc, &value, SHADER_UNIFORM_IVEC4);
             break;
         }
+        case SHADER_UNIFORM_UINT: {
+            uint32_t value = lean_unbox_uint32(value_box);
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_UINT);
+            break;
+        }
+        case SHADER_UNIFORM_UIVEC2: {
+            uint32_t value[2];
+            value[0] = lean_unbox_uint32(lean_ctor_get(value_box, 0));
+            value[1] = lean_unbox_uint32(lean_ctor_get(value_box, 1));
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_UIVEC2);
+            break;
+        }
+        case SHADER_UNIFORM_UIVEC3: {
+            uint32_t value[3];
+            value[0] = lean_unbox_uint32(lean_ctor_get(value_box, 0));
+            value[1] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(value_box, 1), 0));
+            value[2] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(value_box, 1), 1));
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_UIVEC3);
+            break;
+        }
+        case SHADER_UNIFORM_UIVEC4: {
+            uint32_t value[4];
+            value[0] = lean_unbox_uint32(lean_ctor_get(value_box, 0));
+            value[1] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(value_box, 1), 0));
+            value[2] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(lean_ctor_get(value_box, 1), 1), 0));
+            value[3] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(lean_ctor_get(value_box, 1), 1), 1));
+            SetShaderValue(shader, loc, &value, SHADER_UNIFORM_UIVEC4);
+            break;
+        }
         case SHADER_UNIFORM_SAMPLER2D: {
             uint32_t value = lean_unbox_uint32(value_box);
             SetShaderValue(shader, loc, &value, SHADER_UNIFORM_SAMPLER2D);
@@ -606,6 +635,51 @@ LEAN_EXPORT lean_obj_res lean_raylib__SetShaderValueV (b_lean_obj_arg shader_box
                 values[4 * i + 3] = lean_pod_Int32_unbox(lean_ctor_get(lean_ctor_get(lean_ctor_get(tuple, 1), 1), 1));
             }
             SetShaderValueV(shader, loc, values, SHADER_UNIFORM_IVEC4, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_UINT: {
+            uint32_t* values = malloc(count * sizeof(uint32_t));
+            for(size_t i = 0; i < count; ++i) {
+                values[i] = lean_unbox_uint32(lean_array_get_core(values_box, i));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_UINT, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_UIVEC2: {
+            uint32_t* values = malloc(count * sizeof(uint32_t[2]));
+            for(size_t i = 0; i < count; ++i) {
+                lean_object* tuple = lean_array_get_core(values_box, i);
+                values[2 * i] = lean_unbox_uint32(lean_ctor_get(tuple, 0));
+                values[2 * i + 1] = lean_unbox_uint32(lean_ctor_get(tuple, 1));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_UIVEC2, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_UIVEC3: {
+            uint32_t* values = malloc(count * sizeof(uint32_t[3]));
+            for(size_t i = 0; i < count; ++i) {
+                lean_object* tuple = lean_array_get_core(values_box, i);
+                values[3 * i] = lean_unbox_uint32(lean_ctor_get(tuple, 0));
+                values[3 * i + 1] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(tuple, 1), 0));
+                values[3 * i + 2] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(tuple, 1), 1));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_UIVEC3, count);
+            free(values);
+            break;
+        }
+        case SHADER_UNIFORM_UIVEC4: {
+            uint32_t* values = malloc(count * sizeof(uint32_t[4]));
+            for(size_t i = 0; i < count; ++i) {
+                lean_object* tuple = lean_array_get_core(values_box, i);
+                values[4 * i] = lean_unbox_uint32(lean_ctor_get(tuple, 0));
+                values[4 * i + 1] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(tuple, 1), 0));
+                values[4 * i + 2] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(lean_ctor_get(tuple, 1), 1), 0));
+                values[4 * i + 3] = lean_unbox_uint32(lean_ctor_get(lean_ctor_get(lean_ctor_get(tuple, 1), 1), 1));
+            }
+            SetShaderValueV(shader, loc, values, SHADER_UNIFORM_UIVEC4, count);
             free(values);
             break;
         }
@@ -1161,6 +1235,10 @@ LEAN_EXPORT lean_obj_res lean_raylib__GetKeyPressed (lean_obj_arg world) {
 
 LEAN_EXPORT lean_obj_res lean_raylib__GetCharPressed (lean_obj_arg world) {
     return lean_io_result_mk_ok(lean_box_uint32(GetCharPressed()));
+}
+
+LEAN_EXPORT lean_obj_res lean_raylib__GetKeyName (uint32_t key, lean_obj_arg world) {
+    return lean_io_result_mk_ok(lean_mk_string(GetKeyName(key)));
 }
 
 LEAN_EXPORT lean_obj_res lean_raylib__SetExitKey (uint32_t key, lean_obj_arg world) {

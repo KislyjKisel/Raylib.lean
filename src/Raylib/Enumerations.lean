@@ -72,6 +72,9 @@ def msaa4xHint : ConfigFlags := ConfigFlags.mk 32
 /-- Set to try enabling interlaced video format (for V3D) -/
 def interlacedHint : ConfigFlags := ConfigFlags.mk 65536
 
+/-- Set to try enabling NOERROR context (OpenGL 4.6 only) -/
+def noerrorContext : ConfigFlags := ConfigFlags.mk 134217728
+
 end ConfigFlags
 
 
@@ -827,6 +830,7 @@ inductive ShaderLocationIndex.Is : UInt32 -> Prop where
   | vertexBoneids : ShaderLocationIndex.Is 26
   | vertexBoneweights : ShaderLocationIndex.Is 27
   | boneMatrices : ShaderLocationIndex.Is 28
+  | vertexInstanceTx : ShaderLocationIndex.Is 29
 
 def ShaderLocationIndex : Type := Subtype ShaderLocationIndex.Is
 
@@ -890,6 +894,8 @@ def vertexBoneids : ShaderLocationIndex := Subtype.mk 26 ShaderLocationIndex.Is.
 def vertexBoneweights : ShaderLocationIndex := Subtype.mk 27 ShaderLocationIndex.Is.vertexBoneweights
 /-- Shader location: array of matrices uniform: boneMatrices -/
 def boneMatrices : ShaderLocationIndex := Subtype.mk 28 ShaderLocationIndex.Is.boneMatrices
+/-- Shader location: vertex attribute: instanceTransform -/
+def vertexInstanceTx : ShaderLocationIndex := Subtype.mk 29 ShaderLocationIndex.Is.vertexInstanceTx
 
 end ShaderLocationIndex
 
@@ -907,7 +913,11 @@ inductive ShaderUniformDataType.Is : UInt32 -> Prop where
   | ivec2 : ShaderUniformDataType.Is 5
   | ivec3 : ShaderUniformDataType.Is 6
   | ivec4 : ShaderUniformDataType.Is 7
-  | sampler2d : ShaderUniformDataType.Is 8
+  | uint : ShaderUniformDataType.Is 8
+  | uivec2 : ShaderUniformDataType.Is 9
+  | uivec3 : ShaderUniformDataType.Is 10
+  | uivec4 : ShaderUniformDataType.Is 11
+  | sampler2d : ShaderUniformDataType.Is 12
 
 def ShaderUniformDataType : Type := Subtype ShaderUniformDataType.Is
 
@@ -929,8 +939,16 @@ def ivec2 : ShaderUniformDataType := Subtype.mk 5 ShaderUniformDataType.Is.ivec2
 def ivec3 : ShaderUniformDataType := Subtype.mk 6 ShaderUniformDataType.Is.ivec3
 /-- Shader uniform type: ivec4 (4 int) -/
 def ivec4 : ShaderUniformDataType := Subtype.mk 7 ShaderUniformDataType.Is.ivec4
+/-- Shader uniform type: unsigned int -/
+def uint : ShaderUniformDataType := Subtype.mk 8 ShaderUniformDataType.Is.uint
+/-- Shader uniform type: uivec2 (2 unsigned int) -/
+def uivec2: ShaderUniformDataType := Subtype.mk 9 ShaderUniformDataType.Is.uivec2
+/-- Shader uniform type: uivec3 (3 unsigned int) -/
+def uivec3 : ShaderUniformDataType := Subtype.mk 10 ShaderUniformDataType.Is.uivec3
+/-- Shader uniform type: uivec4 (4 unsigned int) -/
+def uivec4 : ShaderUniformDataType := Subtype.mk 11 ShaderUniformDataType.Is.uivec4
 /-- Shader uniform type: sampler2d -/
-def sampler2d : ShaderUniformDataType := Subtype.mk 8 ShaderUniformDataType.Is.sampler2d
+def sampler2d : ShaderUniformDataType := Subtype.mk 12 ShaderUniformDataType.Is.sampler2d
 
 end ShaderUniformDataType
 
@@ -946,6 +964,10 @@ def ShaderUniformDataType.lift : ShaderUniformDataType → Type
     | ⟨⟨6, _⟩, _⟩ => Int32 × Int32 × Int32
     | ⟨⟨7, _⟩, _⟩ => Int32 × Int32 × Int32 × Int32
     | ⟨⟨8, _⟩, _⟩ => UInt32
+    | ⟨⟨9, _⟩, _⟩ => UInt32 × UInt32
+    | ⟨⟨10, _⟩, _⟩ => UInt32 × UInt32 × UInt32
+    | ⟨⟨11, _⟩, _⟩ => UInt32 × UInt32 × UInt32 × UInt32
+    | ⟨⟨12, _⟩, _⟩ => UInt32
 
 
 /-! # Shader attribute data type -/

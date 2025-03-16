@@ -1,17 +1,17 @@
 import Raymath.Core
 
-open Raymath
+namespace Raymath
 
-namespace Pod.Float32
+namespace Float32
 
 def xx (x : Float32) : Vector2 := .mk x x
 def xxx (x : Float32) : Vector3 := .mk x x x
 def xxxx (x : Float32) : Vector4 := .mk x x x x
 
-end Pod.Float32
+end Float32
 
 
-namespace Raymath.Vector2
+namespace Vector2
 
 def xx (v : Vector2) : Vector2 := .mk v.x v.x
 def yx (v : Vector2) : Vector2 := .mk v.y v.x
@@ -43,10 +43,10 @@ def yyxy (v : Vector2) : Vector4 := .mk v.y v.y v.x v.y
 def yyyx (v : Vector2) : Vector4 := .mk v.y v.y v.y v.x
 def yyyy (v : Vector2) : Vector4 := .mk v.y v.y v.y v.y
 
-end Raymath.Vector2
+end Vector2
 
 
-namespace Raymath.Vector3
+namespace Vector3
 
 def xx (v : Vector3) : Vector2 := .mk v.x v.x
 def xy (v : Vector3) : Vector2 := .mk v.x v.y
@@ -167,10 +167,10 @@ def zzzx (v : Vector3) : Vector4 := .mk v.z v.z v.z v.x
 def zzzy (v : Vector3) : Vector4 := .mk v.z v.z v.z v.y
 def zzzz (v : Vector3) : Vector4 := .mk v.z v.z v.z v.z
 
-end Raymath.Vector3
+end Vector3
 
 
-namespace Raymath.Vector4
+namespace Vector4
 
 def xx (v : Vector4) : Vector2 := .mk v.x v.x
 def xy (v : Vector4) : Vector2 := .mk v.x v.y
@@ -510,4 +510,4 @@ def wwwy (v : Vector4) : Vector4 := .mk v.w v.w v.w v.y
 def wwwz (v : Vector4) : Vector4 := .mk v.w v.w v.w v.z
 def wwww (v : Vector4) : Vector4 := .mk v.w v.w v.w v.w
 
-end Raymath.Vector4
+end Vector4

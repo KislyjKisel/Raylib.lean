@@ -1,9 +1,9 @@
 import Pod.Float
 import Raymath.Core
 
-open Pod (Float32)
+namespace Raymath
 
-namespace Pod.Float32
+namespace Float32
 
 /-- Clamp Float32 value -/
 def clamp (value min max : Float32) : Float32 :=
@@ -28,19 +28,17 @@ def wrap (value min max : Float32) : Float32 :=
 
 /-- Check whether two given floats are almost equal -/
 def equals (x y : Float32) : Bool :=
-  (x - y).abs <= Raymath.epsilon * Float32.one.max (x.abs.max y.abs)
+  (x - y).abs <= Raymath.epsilon * max 1 (max x.abs y.abs)
 
-end Pod.Float32
-
-namespace Raymath
+end Float32
 
 namespace Vector2
 
 /-- Vector with components value 0.0 -/
-def zero : Vector2 := Vector2.mk Float32.zero Float32.zero
+def zero : Vector2 := Vector2.mk 0.0 0.0
 
-/-- Vector with components value 1.0 -/
-def one : Vector2 := Vector2.mk Float32.one Float32.one
+/-- Vector with components value 1 -/
+def one : Vector2 := Vector2.mk 1 1
 
 /-- Add two vectors (v1 + v2) -/
 def add (v1 v2 : Vector2) : Vector2 := Vector2.mk (v1.x + v2.x) (v1.y + v2.y)
@@ -106,16 +104,16 @@ def div (v1 v2 : Vector2) : Vector2 := Vector2.mk (v1.x / v2.x) (v1.y / v2.y)
 /-- Normalize provided vector -/
 def normalize (v : Vector2) : Vector2 :=
   let length := (v.x * v.x + v.y * v.y).sqrt
-  if length > .zero
+  if length > 0
     then
-      let ilength := .one / length
+      let ilength := 1 / length
       Vector2.mk (v.x * ilength) (v.y * ilength)
     else Vector2.zero
 
 /-- Transforms a `Vector2` by a given `Matrix` -/
 def transform (v : Vector2) (mat : Matrix) : Vector2 := Vector2.mk
-  (mat.m0 * v.x + mat.m4 * v.y + mat.m8 * .zero + mat.m12)
-  (mat.m1 * v.x + mat.m5 * v.y + mat.m9 * .zero + mat.m13)
+  (mat.m0 * v.x + mat.m4 * v.y + mat.m8 * 0 + mat.m12)
+  (mat.m1 * v.x + mat.m5 * v.y + mat.m9 * 0 + mat.m13)
 
 /-- Calculate linear interpolation between two vectors -/
 def lerp (v1 v2 : Vector2) (amount : Float32) : Vector2 :=
@@ -124,15 +122,15 @@ def lerp (v1 v2 : Vector2) (amount : Float32) : Vector2 :=
 /-- Calculate reflected vector to normal -/
 def reflect (v normal : Vector2) : Vector2 :=
   let dot := v.x * normal.x + v.y * normal.y
-  Vector2.mk (v.x - .two * normal.x * dot) (v.y - .two * normal.y * dot)
+  Vector2.mk (v.x - 2 * normal.x * dot) (v.y - 2 * normal.y * dot)
 
 /-- Get min value for each pair of components -/
 def min (v1 v2 : Vector2) : Vector2 :=
-  Vector2.mk (v1.x.min v2.x) (v1.y.min v2.y)
+  Vector2.mk (Min.min v1.x v2.x) (Min.min v1.y v2.y)
 
 /-- Get max value for each pair of components -/
 def max (v1 v2 : Vector2) : Vector2 :=
-  Vector2.mk (v1.x.max v2.x) (v1.y.max v2.y)
+  Vector2.mk (Max.max v1.x v2.x) (Max.max v1.y v2.y)
 
 /-- Rotate vector by angle -/
 def rotate (v : Vector2) (angle : Float32) : Vector2 :=
@@ -144,20 +142,20 @@ def rotate (v : Vector2) (angle : Float32) : Vector2 :=
 def moveTowards (v target : Vector2) (maxDistance : Float32) : Vector2 :=
   let delta := sub target v
   let distanceSqr := delta.lengthSqr
-  if distanceSqr == .zero || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
+  if distanceSqr == 0 || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
     then target
     else
       add v $ scale delta $ maxDistance / distanceSqr.sqrt
 
 /-- Invert the given vector -/
-def invert (v : Vector2) : Vector2 := Vector2.mk (.one / v.x) (.one / v.y)
+def invert (v : Vector2) : Vector2 := Vector2.mk (1 / v.x) (1 / v.y)
 
 /--
 Clamp the components of the vector between
 min and max values specified by the given vectors
 -/
 def clamp (v min max : Vector2) : Vector2 :=
-  Vector2.mk (max.x.min $ min.x.max v.x) (max.y.min $ min.y.max v.y)
+  Vector2.mk (Min.min max.x $ Max.max min.x v.x) (Min.min max.y $ Max.max min.y v.y)
 
 /-- Clamp the magnitude of the vector between two min and max values -/
 def clampValue (v : Vector2) (min max : Float32) : Vector2 :=
@@ -167,13 +165,13 @@ def clampValue (v : Vector2) (min max : Float32) : Vector2 :=
       then min / length
       else if length > max
         then max / length
-        else .one
+        else 1
   Vector2.scale v scale
 
 /-- Check whether two given vectors are almost equal -/
 def equals (p q : Vector2) : Bool :=
-  (p.x - q.x).abs <= epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
-  (p.y - q.y).abs <= epsilon * Float32.one.max (p.y.abs.max q.y.abs)
+  (p.x - q.x).abs <= epsilon * Max.max 1 (Max.max p.x.abs q.x.abs) &&
+  (p.y - q.y).abs <= epsilon * Max.max 1 (Max.max p.y.abs q.y.abs)
 
 
 def beq (v1 v2 : Vector2) : Bool :=
@@ -188,8 +186,8 @@ Compute the direction of a refracted ray where
 -/
 def refract (v n : Vector2) (r : Float32) : Vector2 :=
   let «v∙n» := dot v n
-  let d := .one - r * r * (.one - «v∙n» * «v∙n»)
-  if d >= .zero
+  let d := 1 - r * r * (1 - «v∙n» * «v∙n»)
+  if d >= 0
     then sub (scale v r) (scale n $ r * «v∙n» + d.sqrt)
     else Vector2.zero
 
@@ -199,10 +197,10 @@ end Vector2
 namespace Vector3
 
 /-- Vector with components value 0.0 -/
-def zero : Vector3 := Vector3.mk Float32.zero Float32.zero Float32.zero
+def zero : Vector3 := Vector3.mk 0.0 0.0 0.0
 
-/-- Vector with components value 1.0 -/
-def one : Vector3 := Vector3.mk Float32.one Float32.one Float32.one
+/-- Vector with components value 1 -/
+def one : Vector3 := Vector3.mk 1 1 1
 
 /-- Add two vectors -/
 def add (v1 v2 : Vector3) : Vector3 := Vector3.mk (v1.x + v2.x) (v1.y + v2.y) (v1.z + v2.z)
@@ -231,12 +229,12 @@ def cross (v1 v2 : Vector3) : Vector3 := Vector3.mk
 /-- Calculate one vector perpendicular vector -/
 def perpendicular (v : Vector3) : Vector3 :=
   let min := v.x.toFloat.abs.toFloat32
-  let cardinalAxis := Vector3.mk .one .zero .zero
+  let cardinalAxis := Vector3.mk 1 0 0
   let (min, cardinalAxis) := if v.y.abs < min
-    then (v.y.toFloat.abs.toFloat32, Vector3.mk .zero .one .zero)
+    then (v.y.toFloat.abs.toFloat32, Vector3.mk 0 1 0)
     else (min, cardinalAxis)
   let cardinalAxis := if v.z.abs < min
-    then Vector3.mk .zero .zero .one
+    then Vector3.mk 0 0 1
     else cardinalAxis
   Vector3.mk
     (v.y * cardinalAxis.z - v.z * cardinalAxis.y)
@@ -282,9 +280,9 @@ def div (v1 v2 : Vector3) : Vector3 := Vector3.mk (v1.x / v2.x) (v1.y / v2.y) (v
 /-- Normalize provided vector -/
 def normalize (v : Vector3) : Vector3 :=
   let length := (v.x * v.x + v.y * v.y + v.z * v.z).sqrt
-  if length > .zero
+  if length > 0
     then
-      let ilength := .one / length
+      let ilength := 1 / length
       Vector3.mk (v.x * ilength) (v.y * ilength) (v.z * ilength)
     else
       v
@@ -318,19 +316,19 @@ def transform (v : Vector3) (mat : Matrix) : Vector3 := Vector3.mk
 /-- Transform a vector by quaternion rotation -/
 def rotateByQuaternion (v : Vector3) (q : Quaternion) : Vector3 := Vector3.mk
   (v.x * (q.x * q.x + q.w * q.w - q.y * q.y - q.z * q.z) +
-    v.y * (.two * q.x * q.y - .two * q.w * q.z) +
-    v.z * (.two * q.x * q.z + .two * q.w * q.y))
-  (v.x * (.two * q.w * q.z + .two * q.x * q.y) +
+    v.y * (2 * q.x * q.y - 2 * q.w * q.z) +
+    v.z * (2 * q.x * q.z + 2 * q.w * q.y))
+  (v.x * (2 * q.w * q.z + 2 * q.x * q.y) +
     v.y * (q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z) +
-    v.z * (.negTwo * q.w * q.x + .two * q.y * q.z))
-  (v.x * (.negTwo * q.w * q.y + .two * q.x * q.z) +
-    v.y * (.two * q.w * q.x + .two * q.y * q.z) +
+    v.z * (-2 * q.w * q.x + 2 * q.y * q.z))
+  (v.x * (-2 * q.w * q.y + 2 * q.x * q.z) +
+    v.y * (2 * q.w * q.x + 2 * q.y * q.z) +
     v.z * (q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z))
 
 /-- Rotates a vector around axis -/
 def rotateByAxisAngle (v axis : Vector3) (angle : Float32) : Vector3 :=
   let axis := normalize axis
-  let angle := angle / .two
+  let angle := angle / 2
   let a := angle.sin
   let b := axis.x * a
   let c := axis.y * a
@@ -339,8 +337,8 @@ def rotateByAxisAngle (v axis : Vector3) (angle : Float32) : Vector3 :=
   let w := Vector3.mk b c d
   let wv := cross w v
   let wwv := cross w wv
-  let wv := scale wv (a * .two)
-  let wwv := scale wwv .two
+  let wv := scale wv (a * 2)
+  let wwv := scale wwv 2
   add (add v wv) wwv
 
 /-- Calculate linear interpolation between two vectors -/
@@ -353,31 +351,31 @@ def lerp (v1 v2 : Vector3) (amount : Float32) : Vector3 := Vector3.mk
 def cubicHermite (v1 tangent1 v2 tangent2 : Vector3) (amount : Float32) : Vector3 :=
   let «amount²» := amount * amount
   let «amount³» := «amount²» * amount
-  let sv1 := 2.0 * «amount³» - 3.0 * «amount²» + 1.0
+  let sv1 := 2.0 * «amount³» - 3.0 * «amount²» + 1
   let st1 := «amount³» - 2.0 * «amount²» + amount
   let sv2 := -2.0 * «amount³» + 3.0 * «amount²»
-  let st2 := «amount³» - «amount²» + 1.0
+  let st2 := «amount³» - «amount²» + 1
   add (scale v1 sv1) $ add (scale tangent1 st1) $
     add (scale v2 sv2) $ scale tangent2 st2
 
 /-- Calculate reflected vector to normal -/
 def reflect (v normal : Vector3) : Vector3 :=
   let dot := v.x * normal.x + v.y * normal.y + v.z * normal.z
-  Vector3.mk (v.x - .two * normal.x * dot) (v.y - .two * normal.y * dot) (v.z - .two * normal.z * dot)
+  Vector3.mk (v.x - 2 * normal.x * dot) (v.y - 2 * normal.y * dot) (v.z - 2 * normal.z * dot)
 
 /-- Get min value for each pair of components -/
 def min (v1 v2 : Vector3) : Vector3 :=
-  Vector3.mk (v1.x.min v2.x) (v1.y.min v2.y) (v1.z.min v2.z)
+  Vector3.mk (Min.min v1.x v2.x) (Min.min v1.y v2.y) (Min.min v1.z v2.z)
 
 /-- Get max value for each pair of components -/
 def max (v1 v2 : Vector3) : Vector3 :=
-  Vector3.mk (v1.x.max v2.x) (v1.y.max v2.y) (v1.z.max v2.z)
+  Vector3.mk (Max.max v1.x v2.x) (Max.max v1.y v2.y) (Max.max v1.z v2.z)
 
 /-- Move Vector towards target -/
 def moveTowards (v target : Vector3) (maxDistance : Float32) : Vector3 :=
   let delta := sub target v
   let distanceSqr := delta.lengthSqr
-  if distanceSqr == .zero || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
+  if distanceSqr == 0 || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
     then target
     else
       add v $ scale delta $ maxDistance / distanceSqr.sqrt
@@ -399,21 +397,21 @@ def barycenter (p a b c : Vector3) : Vector3 :=
   let resultY := (d11 * d20 - d01 * d21) / denom
   let resultZ := (d00 * d21 - d01 * d20) / denom
   Vector3.mk
-    (.one - (resultZ + resultY))
+    (1 - (resultZ + resultY))
     resultY
     resultZ
 
 /-- Invert the given vector -/
-def invert (v : Vector3) : Vector3 := Vector3.mk (.one / v.x) (.one / v.y) (.one / v.z)
+def invert (v : Vector3) : Vector3 := Vector3.mk (1 / v.x) (1 / v.y) (1 / v.z)
 
 /--
 Clamp the components of the vector between
 min and max values specified by the given vectors
 -/
 def clamp (v min max : Vector3) : Vector3 := Vector3.mk
-  (max.x.min $ min.x.max v.x)
-  (max.y.min $ min.y.max v.y)
-  (max.z.min $ min.z.max v.z)
+  (Min.min max.x $ Max.max min.x v.x)
+  (Min.min max.y $ Max.max min.y v.y)
+  (Min.min max.z $ Max.max min.z v.z)
 
 /-- Clamp the magnitude of the vector between two and values -/
 def clampValue (v : Vector3) (min max : Float32) : Vector3 :=
@@ -423,14 +421,14 @@ def clampValue (v : Vector3) (min max : Float32) : Vector3 :=
       then min / length
       else if length > max
         then max / length
-        else .one
+        else 1
   Vector3.scale v scale
 
 /-- Check whether two given vectors are almost equal -/
 def equals (p q : Vector3) : Bool :=
-  (p.x - q.x).abs <= epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
-  (p.y - q.y).abs <= epsilon * Float32.one.max (p.y.abs.max q.y.abs) &&
-  (p.z - q.z).abs <= epsilon * Float32.one.max (p.z.abs.max q.z.abs)
+  (p.x - q.x).abs <= epsilon * Max.max 1 (Max.max p.x.abs q.x.abs) &&
+  (p.y - q.y).abs <= epsilon * Max.max 1 (Max.max p.y.abs q.y.abs) &&
+  (p.z - q.z).abs <= epsilon * Max.max 1 (Max.max p.z.abs q.z.abs)
 
 def beq (v1 v2 : Vector3) : Bool :=
   v1.x == v2.x && v1.y == v2.y && v1.z == v2.z
@@ -444,8 +442,8 @@ Compute the direction of a refracted ray where
 -/
 def refract (v n : Vector3) (r : Float32) : Vector3 :=
   let «v∙n» := v.x * n.x + v.y * n.y + v.z * n.z
-  let d := .one - r * r * (.one - «v∙n» * «v∙n»)
-  if d >= .zero
+  let d := 1 - r * r * (1 - «v∙n» * «v∙n»)
+  if d >= 0
     then sub (scale v r) (scale n $ r * «v∙n» + d.sqrt)
     else Vector3.zero
 
@@ -455,10 +453,10 @@ end Vector3
 namespace Vector4
 
 /-- Vector with components value 0.0 -/
-def zero : Vector4 := Vector4.mk Float32.zero Float32.zero Float32.zero Float32.zero
+def zero : Vector4 := Vector4.mk 0.0 0.0 0.0 0.0
 
-/-- Vector with components value 1.0 -/
-def one : Vector4 := Vector4.mk Float32.one Float32.one Float32.one Float32.one
+/-- Vector with components value 1 -/
+def one : Vector4 := Vector4.mk 1 1 1 1
 
 /-- Add two vectors -/
 def add (v1 v2 : Vector4) : Vector4 := Vector4.mk (v1.x + v2.x) (v1.y + v2.y) (v1.z + v2.z) (v1.w + v2.w)
@@ -508,7 +506,7 @@ def div (v1 v2 : Vector4) : Vector4 := Vector4.mk (v1.x / v2.x) (v1.y / v2.y) (v
 /-- Normalize provided vector -/
 def normalize (v : Vector4) : Vector4 :=
   let length := Vector4.length v
-  if length > .zero then Vector4.scale v (1 / length) else Vector4.zero
+  if length > 0 then Vector4.scale v (1 / length) else Vector4.zero
 
 /-- Multiply a `Vector4` by a given `Matrix` -/
 def mulMatrix (v : Vector4) (m : Matrix) : Vector4 := Vector4.mk
@@ -528,32 +526,32 @@ def lerp (v1 v2 : Vector4) (amount : Float32) : Vector4 := Vector4.mk
 def moveTowards (v target : Vector4) (maxDistance : Float32) : Vector4 :=
   let delta := sub target v
   let distanceSqr := delta.lengthSqr
-  if distanceSqr == .zero || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
+  if distanceSqr == 0 || (maxDistance >= 0 && distanceSqr <= maxDistance * maxDistance)
     then target
     else
       add v $ scale delta $ maxDistance / distanceSqr.sqrt
 
 /-- Get min value for each pair of components -/
 def min (v1 v2 : Vector4) : Vector4 :=
-  Vector4.mk (v1.x.min v2.x) (v1.y.min v2.y) (v1.z.min v2.z) (v1.w.min v2.w)
+  Vector4.mk (Min.min v1.x v2.x) (Min.min v1.y v2.y) (Min.min v1.z v2.z) (Min.min v1.w v2.w)
 
 /-- Get max value for each pair of components -/
 def max (v1 v2 : Vector4) : Vector4 :=
-  Vector4.mk (v1.x.max v2.x) (v1.y.max v2.y) (v1.z.max v2.z) (v1.w.max v2.w)
+  Vector4.mk (Max.max v1.x v2.x) (Max.max v1.y v2.y) (Max.max v1.z v2.z) (Max.max v1.w v2.w)
 
 /-- Invert the given vector -/
 def invert (v : Vector4) : Vector4 :=
-  Vector4.mk (.one / v.x) (.one / v.y) (.one / v.z) (.one / v.w)
+  Vector4.mk (1 / v.x) (1 / v.y) (1 / v.z) (1 / v.w)
 
 /--
 Clamp the components of the vector between
 min and max values specified by the given vectors
 -/
 def clamp (v min max : Vector4) : Vector4 := Vector4.mk
-  (max.x.min $ min.x.max v.x)
-  (max.y.min $ min.y.max v.y)
-  (max.z.min $ min.z.max v.z)
-  (max.w.min $ min.w.max v.w)
+  (Min.min max.x $ Max.max min.x v.x)
+  (Min.min max.y $ Max.max min.y v.y)
+  (Min.min max.z $ Max.max min.z v.z)
+  (Min.min max.w $ Max.max min.w v.w)
 
 /-- Clamp the magnitude of the vector between two and values -/
 def clampValue (v : Vector4) (min max : Float32) : Vector4 :=
@@ -563,15 +561,15 @@ def clampValue (v : Vector4) (min max : Float32) : Vector4 :=
       then min / length
       else if length > max
         then max / length
-        else .one
+        else 1
   Vector4.scale v scale
 
 /-- Check whether two given vectors are almost equal -/
 def equals (p q : Vector4) : Bool :=
-  (p.x - q.x).abs <= epsilon * Float32.one.max (p.x.abs.max q.x.abs) &&
-  (p.y - q.y).abs <= epsilon * Float32.one.max (p.y.abs.max q.y.abs) &&
-  (p.z - q.z).abs <= epsilon * Float32.one.max (p.z.abs.max q.z.abs) &&
-  (p.w - q.w).abs <= epsilon * Float32.one.max (p.w.abs.max q.w.abs)
+  (p.x - q.x).abs <= epsilon * Max.max 1 (Max.max p.x.abs q.x.abs) &&
+  (p.y - q.y).abs <= epsilon * Max.max 1 (Max.max p.y.abs q.y.abs) &&
+  (p.z - q.z).abs <= epsilon * Max.max 1 (Max.max p.z.abs q.z.abs) &&
+  (p.w - q.w).abs <= epsilon * Max.max 1 (Max.max p.w.abs q.w.abs)
 
 def beq (v1 v2 : Vector4) : Bool :=
   v1.x == v2.x && v1.y == v2.y && v1.z == v2.z && v1.w == v2.w
@@ -944,7 +942,7 @@ def slerp (q1 q2 : Quaternion) (amount : Float32) : Quaternion :=
       then nlerp q1 q2 amount
       else
         let halfTheta := cosHalfTheta.acos
-        let sinHalfTheta := (1 - cosHalfTheta.sqr).sqrt
+        let sinHalfTheta := (1 - cosHalfTheta * cosHalfTheta).sqrt
         if sinHalfTheta.abs < 0.001
           then Vector4.mk
             (q1.x * 0.5 + q2.x * 0.5)
@@ -964,14 +962,14 @@ def slerp (q1 q2 : Quaternion) (amount : Float32) : Quaternion :=
 def cubicSplineSQUAD (q1 tangent1 q2 tangent2 : Quaternion) (amount : Float32) : Quaternion :=
   let slerp1 := slerp q1 q2 amount
   let slerp2 := slerp tangent1 tangent2 amount
-  let t := 2.0 * amount * (1.0 - amount)
+  let t := 2.0 * amount * (1 - amount)
   slerp slerp1 slerp2 t
 
 /-- Calculate quaternion cubic spline interpolation using Cubic Hermite Spline algorithm -/
 def cubicSpline (q₁ outTangent₁ q₂ inTangent₂ : Quaternion) (t : Float32) : Quaternion :=
   let «t²» := t * t
   let «t³» := «t²» * t
-  let h₀₀ := 2.0 * «t³» - 3.0 * «t²» + 1.0
+  let h₀₀ := 2.0 * «t³» - 3.0 * «t²» + 1
   let h₁₀ := «t³» - 2.0 * «t²» + t
   let h₀₁ := -2.0 * «t³» + 3.0 * «t²»
   let h₁₁ := «t³» - «t²»
@@ -1005,7 +1003,7 @@ def fromMatrix (mat : Matrix) : Quaternion :=
     if fourZSquaredMinus1 > fourBiggestSquaredMinus1 then
       fourBiggestSquaredMinus1 := fourZSquaredMinus1
       biggestIndex := 3
-    let biggestVal := (fourBiggestSquaredMinus1 + 1.0).sqrt * 0.5
+    let biggestVal := (fourBiggestSquaredMinus1 + 1).sqrt * 0.5
     let mult := 0.25 / biggestVal
     match biggestIndex with
     | ⟨0, _⟩ => ({
@@ -1102,9 +1100,9 @@ def Matrix.decompose (mat : Matrix) : Vector3 × Quaternion × Vector3 :=
   let «def»: Vector3 := ⟨d, e, f⟩
   let ghi: Vector3 := ⟨g, h, i⟩
   let scale := ⟨abc.length, «def».length, «ghi».length⟩
-  let scale := if det < 0.0 then scale.neg else scale
+  let scale := if det < 0 then scale.neg else scale
   let rotation :=
-    if det.equals 0.0
+    if Float32.equals det 0
       then Quaternion.identity
       else Quaternion.fromMatrix { mat with
         m0 := mat.m0 / scale.x

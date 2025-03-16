@@ -354,7 +354,7 @@ opaque setShaderValueV (shader : @& Shader) (locIndex : UInt32) (type : ShaderUn
 @[extern "lean_raylib__SetShaderValueMatrix"]
 opaque setShaderValueMatrix (shader : @& Shader) (locIndex : UInt32) (mat : @& Matrix) : BaseIO Unit
 
-/-- Set shader uniform value for texture (sampler2d) -/
+/-- Set shader uniform value and bind the texture (sampler2d) -/
 @[extern "lean_raylib__SetShaderValueTexture"]
 opaque setShaderValueTexture (shader : @& Shader) (locIndex : UInt32) (texture : @& Texture2D) : BaseIO Unit
 
@@ -751,6 +751,13 @@ opaque getKeyPressed : BaseIO KeyboardKey
 /-- Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty -/
 @[extern "lean_raylib__GetCharPressed"]
 opaque getCharPressed : BaseIO Char
+
+/--
+Get name of a QWERTY key on the current keyboard layout
+(eg returns string 'q' for `KeyboardKey.a` on an AZERTY keyboard)
+-/
+@[extern "lean_raylib__GetKeyName"]
+opaque getKeyName (key : KeyboardKey) : BaseIO String
 
 /-- Set a custom key to exit program (default is ESC) -/
 @[extern "lean_raylib__SetExitKey"]

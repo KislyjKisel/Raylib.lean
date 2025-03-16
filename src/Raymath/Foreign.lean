@@ -1,8 +1,5 @@
-import Pod.Float
 import Pod.Instances
 import Raymath.Core
-
-open Pod (Float32)
 
 namespace Raymath
 
