@@ -5,7 +5,15 @@ permissions:
 
 on:
   workflow_dispatch:
-  # push:
+  push:
+    paths:
+      - 'src/**'
+      - 'ffi/**'
+      - 'raylib/**'
+      - 'raylibFork/**'
+      - 'lakefile.lean'
+      - 'lean-toolchain'
+      - '.github/workflows/lean_action_ci.yml'
   pull_request:
     paths:
       - 'src/**'
