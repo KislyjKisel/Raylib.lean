@@ -94,6 +94,7 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
     files matching these paths will be added to `emcc` arguments.
   * `webShell`: passed to `emcc` as a `--shell-file`, defaults to raylib's `minshell.html`.
   * `wasmToolchain`: path to downloaded and unpacked `lean-$LEAN_VERSION-linux_wasm32`.
+* `disableMacosLinkArgs`: do not add macos specific link arguments to examples.
 
 There are also [options to customize raylib build](options.md).
 

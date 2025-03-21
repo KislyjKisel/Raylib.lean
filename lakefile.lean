@@ -256,6 +256,7 @@ def optionExtraEmccArgs := get_config? extraEmccArgs |>.map splitArgStr |>.getD 
 def optionWebShell := get_config? webShell |>.getD s!"{submoduleDir}/src/minshell.html"
 def optionWasmToolchain := get_config? wasmToolchain
 def optionExtraEmccSources : Array String := get_config? extraEmccSources |>.map splitArgStr |>.getD #[]
+def optionDisableMacosLinkArgs := get_config? disableMacosLinkArgs |>.isSome
 
 inductive RaylibPlatform where
 | desktop
@@ -318,13 +319,30 @@ lean_lib Raygui {
   srcDir := "src"
 }
 
+def leanSystemLibDir := run_io
+  (Option.map (·.systemLibDir)) <$> Lake.findLeanInstall?
+
+def leanSystemLibDirLinkArgs :=
+  match leanSystemLibDir with
+  | none => #[]
+  | some libDir => #[s!"-L{libDir}"]
+
 def examplesLinkArgs :=
-  (splitArgStr <| (get_config? lflags).getD "").append <|
-    match raylibSrc with
+  (splitArgStr <| (get_config? lflags).getD "")
+  ++ (if optionDisableMacosLinkArgs || System.Platform.isOSX.not
+      then #[]
+      else leanSystemLibDirLinkArgs ++ #[
+        "-framework", "CoreVideo",
+        "-framework", "IOKit",
+        "-framework", "Cocoa",
+        "-framework", "GLUT",
+        "-framework", "OpenGL"
+      ])
+  ++ (match raylibSrc with
       | .System => #["-L/usr/local/lib64", "-lraylib"]
       | .Submodule => #[s!"-L{submoduleDir}/build/raylib", "-lraylib"]
       | .Custom => #[]
-      | .Unknown _ => #[]
+      | .Unknown _ => #[])
 
 lean_exe "raylib-examples-minimal" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Minimal }
 lean_exe "raylib-examples-gui" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Gui }
