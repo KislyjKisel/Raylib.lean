@@ -535,7 +535,7 @@ def bindingsCFlags (pkg : NPackage _package.name) : FetchM (Array String × Arra
   | .some "native" => traceArgs := traceArgs.push "-DLEAN_RAYLIB_ALLOC_NATIVE"
   | .some _ => error "Unknown `alloc` option value"
 
-  if (get_config? cc).isNone then
+  if (get_config? cc).isNone && (← getLeanCc?).isNone && (← IO.getEnv "CC").isNone then
     weakArgs := weakArgs ++ #["-I", ((← getLeanIncludeDir) / "clang").toString]
 
   pure (weakArgs, traceArgs)
