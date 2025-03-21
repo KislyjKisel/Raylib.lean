@@ -25,9 +25,8 @@ on:
       - '.github/workflows/lean_action_ci.yml'
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
-
     steps:
       - name: Install system dependencies
         run: |
@@ -36,3 +35,30 @@ jobs:
           sudo apt-get install -y --no-install-recommends libglfw3 libglfw3-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libxext-dev libxfixes-dev libwayland-dev libxkbcommon-dev
       - uses: actions/checkout@v4
       - uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+      - name: Build (minimal; using default raylib)
+        run: |
+          lake build raylib-examples-minimal
+      - name: Build (gui; using raylib fork)
+        run: |
+          lake build -R -Kraygui -Kfork -Kopengl=4.6 raylib-examples-gui
+  build-macos:
+    runs-on: macos-latest
+    env:
+      LEAN_CC=/opt/homebrew/opt/llvm/bin/clang
+    steps:
+      - name: Homebrew clang
+        run: |
+          brew update
+          brew install llvm
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+      - name: Build (minimal; using default raylib)
+        run: |
+          lake build -R raylib-examples-minimal
+      - name: Build (gui; using raylib fork)
+        run: |
+          lake build -R -Kraygui -Kfork raylib-examples-gui
