@@ -46,7 +46,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     env:
-      LEAN_CC=/opt/homebrew/opt/llvm/bin/clang
+      LEAN_CC: /opt/homebrew/opt/llvm/bin/clang
     steps:
       - name: Homebrew clang
         run: |
