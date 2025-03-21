@@ -1,3 +1,5 @@
+import Raymath
+import Raymath.Swizzling
 import Raylib.Util
 import Raylib.Enumerations
 import Raylib.Structures
