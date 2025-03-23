@@ -73,8 +73,10 @@ jobs:
         with:
           auto-config: false
       - name: Build (minimal; using default raylib)
+        shell: bash
         run: |
           lake build -R -KenableWindowsMingw raylib-examples-minimal
       - name: Build (gui; using raylib fork)
+        shell: bash
         run: |
           lake build -R -KenableWindowsMingw -Kraygui -Kfork raylib-examples-gui
