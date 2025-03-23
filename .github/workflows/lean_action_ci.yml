@@ -62,3 +62,19 @@ jobs:
       - name: Build (gui; using raylib fork)
         run: |
           lake build -R -Kraygui -Kfork raylib-examples-gui
+  build-windows:
+    runs-on: windows-latest
+    env:
+      # Used when building raylib _and_ bindings
+      CC: x86_64-w64-mingw32-gcc.exe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+      - name: Build (minimal; using default raylib)
+        run: |
+          lake build -R -KenableWindowsMingw raylib-examples-minimal
+      - name: Build (gui; using raylib fork)
+        run: |
+          lake build -R -KenableWindowsMingw -Kraygui -Kfork raylib-examples-gui
