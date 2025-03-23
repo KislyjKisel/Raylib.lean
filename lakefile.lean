@@ -343,7 +343,6 @@ def examplesLinkArgs :=
       then leanSystemLibDirLinkArgs ++ #[
         "-LC:/Windows/System32",
         "-lgdi32",
-        "-lwinmm",
         "-lopengl32",
         "-lmsvcrt",
       ]
@@ -410,7 +409,7 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
     "-DBUILD_EXAMPLES=OFF"
   ]
   if optionEnableWindowsMingw && System.Platform.isWindows then
-    cmakeBuildArgs := cmakeBuildArgs.push "-G Unix Makefiles"
+    cmakeBuildArgs := cmakeBuildArgs ++ #["-G Unix Makefiles", "-DSUPPORT_WINMM_HIGHRES_TIMER=OFF"]
   if let some extGlfw := get_config? externalGlfw then
     let values := #["OFF", "ON", "IF_POSSIBLE"]
     if values.contains extGlfw
