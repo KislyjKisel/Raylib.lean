@@ -257,6 +257,7 @@ def optionWebShell := get_config? webShell |>.getD s!"{submoduleDir}/src/minshel
 def optionWasmToolchain := get_config? wasmToolchain
 def optionExtraEmccSources : Array String := get_config? extraEmccSources |>.map splitArgStr |>.getD #[]
 def optionDisableMacosLinkArgs := get_config? disableMacosLinkArgs |>.isSome
+def optionEnableWindowsMingw := get_config? enableWindowsMingw |>.isSome
 
 inductive RaylibPlatform where
 | desktop
@@ -338,6 +339,15 @@ def examplesLinkArgs :=
         "-framework", "GLUT",
         "-framework", "OpenGL"
       ])
+  ++ (if optionEnableWindowsMingw && System.Platform.isWindows
+      then leanSystemLibDirLinkArgs ++ #[
+        "-LC:/Windows/System32",
+        "-lgdi32",
+        "-lwinmm",
+        "-lopengl32",
+        "-lmsvcrt",
+      ]
+      else #[])
   ++ (match raylibSrc with
       | .System => #["-L/usr/local/lib64", "-lraylib"]
       | .Submodule => #[s!"-L{submoduleDir}/build/raylib", "-lraylib"]
@@ -399,6 +409,8 @@ def buildRaylibSubmodule {m} [Monad m] [MonadError m] [MonadLiftT IO m] (printCm
     "-DCMAKE_BUILD_TYPE=Release",
     "-DBUILD_EXAMPLES=OFF"
   ]
+  if optionEnableWindowsMingw && System.Platform.isWindows then
+    cmakeBuildArgs := cmakeBuildArgs.push "-G Unix Makefiles"
   if let some extGlfw := get_config? externalGlfw then
     let values := #["OFF", "ON", "IF_POSSIBLE"]
     if values.contains extGlfw
