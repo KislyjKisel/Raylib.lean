@@ -52,7 +52,7 @@ Then run `lake update` and `lake run raylib/buildSubmodule`.
 * On the first build git may return error 128.
   Usually restarting the build or re-cloning the raylib's repo helps.
 * By default Lean's built-in C compiler is used to build ffi.
-  On Windows it fails due to missing stdlib headers.
+  On **Windows** it fails due to missing stdlib headers.
   You can use a different C compiler by passing the `cc` option
   with the compilers path (options are described above).
   To build raylib `cmake` and `git` from `PATH` are used.
@@ -61,6 +61,16 @@ Then run `lake update` and `lake run raylib/buildSubmodule`.
   and then run required commands (which can be found in the [lakefile](/lakefile.lean) in `buildRaylibSubmodule`).
   You can also use `raylib` option set to `custom` and provide separately built raylib via the `cflags` options (and `lflags` for examples).
   See [#3](https://github.com/KislyjKisel/Raylib.lean/issues/3) and [#5](https://github.com/KislyjKisel/Raylib.lean/issues/5).
+* On **macOS** additional link arguments are required to build executables using raylib,
+  see [#6](https://github.com/KislyjKisel/Raylib.lean/issues/6).
+  Lean's builtin C compiler, which is used for linking by default,
+  can have trouble finding required frameworks.
+  You can use another C compiler for linking by setting `LEAN_CC` environment variable.
+  Then you need to add `-L.../toolchains/..lean4../lib`,
+  see examples link arguments in the [lakefile](lakefile.lean).
+
+  By default `cmake` and `git` are assumed to be in `PATH`.
+  Their use can be configured via lake options.
 
 </details>
 
