@@ -60,7 +60,8 @@ Then run `lake update` and `lake run raylib/buildSubmodule`.
   If you want to clone and/or build raylib manually you can provide empty `git` and `cmake` options
   and then run required commands (which can be found in the [lakefile](/lakefile.lean) in `buildRaylibSubmodule`).
   You can also use `raylib` option set to `custom` and provide separately built raylib via the `cflags` options (and `lflags` for examples).
-  See [#3](https://github.com/KislyjKisel/Raylib.lean/issues/3) and [#5](https://github.com/KislyjKisel/Raylib.lean/issues/5).
+  See [#3](https://github.com/KislyjKisel/Raylib.lean/issues/3) and [#5](https://github.com/KislyjKisel/Raylib.lean/issues/5), [actions](.github/workflows/lean_action_ci.yml).
+  [This](https://github.com/raysan5/raylib/issues/1217#issuecomment-2334966852) may help too (fixed `ld.lld: PlaySound was replaced` for me).
 * On **macOS** additional link arguments are required to build executables using raylib,
   see [#6](https://github.com/KislyjKisel/Raylib.lean/issues/6).
   Lean's builtin C compiler, which is used for linking by default,
@@ -106,8 +107,8 @@ Options can be specified by appending `with $opts` (where `$opts` is a `NameMap`
   * `wasmToolchain`: path to downloaded and unpacked `lean-$LEAN_VERSION-linux_wasm32`.
 * `disableMacosLinkArgs`: do not add macos specific link arguments to examples.
 * `enableWindowsMingw`: add lean's "lib" directory,
-  `System32`, `-lgdi32`, `-lwinmm`, `-lopengl32`, `-lmsvcrt` to examples link arguments;
-  add `-G Unix Makefiles` to cmake build arguments.
+  `System32`, `-lgdi32`, `-lopengl32`, `-lmsvcrt` to examples link arguments;
+  add `-G Unix Makefiles` and `-DSUPPORT_WINMM_HIGHRES_TIMER=OFF` to cmake build arguments.
 
 There are also [options to customize raylib build](options.md).
 
