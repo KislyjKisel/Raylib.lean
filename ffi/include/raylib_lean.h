@@ -757,8 +757,8 @@ static inline lean_object* lean_raylib_RayCollision_box (RayCollision rayCol) {
 
 static inline RayCollision lean_raylib_RayCollision_unbox (b_lean_obj_arg obj) {
     RayCollision rayCol;
-    rayCol.hit = lean_ctor_get_uint8(obj, 3 * sizeof(lean_object*) + sizeof(float)) != 0;
-    rayCol.distance = lean_ctor_get_float32(obj, 3 * sizeof(lean_object*));
+    rayCol.hit = lean_ctor_get_uint8(obj, 2 * sizeof(lean_object*) + sizeof(float)) != 0;
+    rayCol.distance = lean_ctor_get_float32(obj, 2 * sizeof(lean_object*));
     rayCol.point = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 0));
     rayCol.normal = lean_raylib_Vector3_fromRepr(lean_ctor_get(obj, 1));
     return rayCol;
