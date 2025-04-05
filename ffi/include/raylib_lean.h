@@ -735,8 +735,8 @@ static inline Ray lean_raylib_Ray_unbox (b_lean_obj_arg obj) {
 // # Ray collision
 
 static inline void lean_raylib_RayCollision_set_impl (b_lean_obj_arg obj, RayCollision rayCol) {
-    lean_ctor_set_uint8(obj, 3 * sizeof(lean_object*) + sizeof(float), rayCol.hit ? 1 : 0);
-    lean_ctor_set_float32(obj, 3 * sizeof(lean_object*), rayCol.distance);
+    lean_ctor_set_uint8(obj, 2 * sizeof(lean_object*) + sizeof(float), rayCol.hit ? 1 : 0);
+    lean_ctor_set_float32(obj, 2 * sizeof(lean_object*), rayCol.distance);
     lean_ctor_set(obj, 0, lean_raylib_Vector3_box(rayCol.point));
     lean_ctor_set(obj, 1, lean_raylib_Vector3_box(rayCol.normal));
 }
@@ -748,7 +748,7 @@ static inline void lean_raylib_RayCollision_set (b_lean_obj_arg obj, RayCollisio
 }
 
 static inline lean_object* lean_raylib_RayCollision_box (RayCollision rayCol) {
-    lean_object* obj = lean_alloc_ctor(0, 4, 0);
+    lean_object* obj = lean_alloc_ctor(0, 2, sizeof(uint8_t) + sizeof(float));
     lean_raylib_RayCollision_set_impl(obj, rayCol);
     return obj;
 }
