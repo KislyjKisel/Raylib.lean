@@ -297,7 +297,7 @@ def podConfig : Lean.NameMap String := Id.run $ do
     cfg := cfg.insert `alloc alloc
   cfg
 
-require pod from git "https://github.com/KislyjKisel/lean-pod" @ "d22c2c9" with podConfig
+require pod from git "https://github.com/KislyjKisel/lean-pod" @ "5409735" with podConfig
 
 def packagesDir := defaultPackagesDir
 
@@ -353,11 +353,11 @@ def examplesLinkArgs :=
       | .Custom => #[]
       | .Unknown _ => #[])
 
-lean_exe "raylib-examples-minimal" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Minimal }
-lean_exe "raylib-examples-gui" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Gui }
-lean_exe "raylib-examples-audio" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Audio }
-lean_exe "raylib-examples-videoMode" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `VideoMode }
-lean_exe "raylib-examples-extras" { moreLinkArgs := examplesLinkArgs, srcDir := "examples", root := `Extras }
+lean_exe "raylib-examples-minimal" { moreLinkArgs := examplesLinkArgs; srcDir := "examples"; root := `Minimal }
+lean_exe "raylib-examples-gui" { moreLinkArgs := examplesLinkArgs; srcDir := "examples"; root := `Gui }
+lean_exe "raylib-examples-audio" { moreLinkArgs := examplesLinkArgs; srcDir := "examples"; root := `Audio }
+lean_exe "raylib-examples-videoMode" { moreLinkArgs := examplesLinkArgs; srcDir := "examples"; root := `VideoMode }
+lean_exe "raylib-examples-extras" { moreLinkArgs := examplesLinkArgs; srcDir := "examples"; root := `Extras }
 
 def tryRunProcess {m} [Monad m] [MonadError m] [MonadLiftT IO m] (sa : IO.Process.SpawnArgs) : m IO.Process.Output := do
   let output ← IO.Process.output sa
@@ -568,7 +568,7 @@ extern_lib «raylib-lean» pkg := do
   let headerFile (h : String) : System.FilePath := nativeSrcDir / (h ++ ".h")
   let extraTrace : BuildTrace ← mixTraceArray <$> (bindingsHeaders.mapM $ computeTrace ∘ headerFile)
   let extraTrace : BuildTrace := mixTrace extraTrace (← getLeanTrace)
-  buildStaticLib (pkg.nativeLibDir / name)
+  buildStaticLib (pkg.staticLibDir / name)
     (← bindingsSources.mapM λ stem ↦ do
       buildO
         (objectFileDir / (stem ++ ".o"))
@@ -616,17 +616,33 @@ Used when building for wasm as linking is not needed here and will also fail.
 -/
 def buildExeWithoutLinking (self : LeanExe) : FetchM (Job Unit) :=
   withRegisterJob s!"{self.name}" do
-  let mut linkJobs := #[]
-  for facet in self.root.nativeFacets self.supportInterpreter do
-    linkJobs := linkJobs.push <| ← fetch <| self.root.facet facet.name
+  /-
+  Remark: We must build the root before we fetch the transitive imports
+  so that errors in the import block of transitive imports will not kill this
+  job before the root is built.
+  -/
+  let mut objJobs := #[]
+  let mut libJobs := #[]
+  let shouldExport := self.supportInterpreter
+  for facet in self.root.nativeFacets shouldExport do
+    objJobs := objJobs.push <| ← facet.fetch self.root
   let imports ← (← self.root.transImports.fetch).await
   for mod in imports do
-    for facet in mod.nativeFacets self.supportInterpreter do
-      linkJobs := linkJobs.push <| ← fetch <| mod.facet facet.name
+    for facet in mod.nativeFacets shouldExport do
+      objJobs := objJobs.push <| ← facet.fetch mod
+  let libs := imports.foldl (·.insert ·.lib) OrdHashSet.empty |>.toArray
+  for lib in libs do
+    for link in lib.moreLinkObjs do
+      objJobs := objJobs.push <| ← link.fetchIn lib.pkg
+    for link in lib.moreLinkLibs do
+      libJobs := libJobs.push <| ← link.fetchIn lib.pkg
   let deps := (← (← self.pkg.transDeps.fetch).await).push self.pkg
-  for dep in deps do for lib in dep.externLibs do
-    linkJobs := linkJobs.push <| ← lib.static.fetch
-  (Job.collectArray linkJobs).mapM λ _ ↦ pure ()
+  for dep in deps do
+    for lib in dep.externLibs do
+      objJobs := objJobs.push <| ← lib.static.fetch
+  (Job.collectArray objJobs).bindM λ _ ↦
+    (Job.collectArray libJobs).mapM λ _ ↦
+      pure ()
 
 script buildWeb (args) do
   let targetName ← if h: args.length = 1

@@ -671,22 +671,22 @@ opaque computeCRC32ST {σ} {size : @& Nat} (data : @& Pod.BytesRefImm σ size 1)
 /-- Compute MD5 hash code (not threadsafe - uses `static`) -/
 @[extern "lean_raylib__ComputeMD5"]
 opaque computeMD5 {size : @& Nat} (data : @& Pod.BytesView size 1) : { hash : ByteArray // hash.size = 16 } :=
-  .mk (ByteArray.mk <| Array.mkArray 16 0) rfl
+  .mk (ByteArray.mk <| Array.replicate 16 0) Array.size_replicate
 
 /-- Compute MD5 hash code (not threadsafe - uses `static`) -/
 @[extern "lean_raylib__ComputeMD5ST"]
 opaque computeMD5ST {σ} {size : @& Nat} (data : @& Pod.BytesRefImm σ size 1) : ST σ { hash : ByteArray // hash.size = 16 } :=
-  pure <| .mk (ByteArray.mk <| Array.mkArray 16 0) rfl
+  pure <| .mk (ByteArray.mk <| Array.replicate 16 0) Array.size_replicate
 
 /-- Compute SHA1 hash code (not threadsafe - uses `static`) -/
 @[extern "lean_raylib__ComputeSHA1"]
 opaque computeSHA1 {size : @& Nat} (data : @& Pod.BytesView size 1) : { hash : ByteArray // hash.size = 20 } :=
-  .mk (ByteArray.mk <| Array.mkArray 20 0) rfl
+  .mk (ByteArray.mk <| Array.replicate 20 0) Array.size_replicate
 
 /-- Compute SHA1 hash code (not threadsafe - uses `static`) -/
 @[extern "lean_raylib__ComputeSHA1ST"]
 opaque computeSHA1ST {σ} {size : @& Nat} (data : @& Pod.BytesRefImm σ size 1) : ST σ { hash : ByteArray // hash.size = 20 } :=
-  pure <| .mk (ByteArray.mk <| Array.mkArray 20 0) rfl
+  pure <| .mk (ByteArray.mk <| Array.replicate 20 0) Array.size_replicate
 
 /-- Load automation events list from file -/
 @[extern "lean_raylib__LoadAutomationEventList"]

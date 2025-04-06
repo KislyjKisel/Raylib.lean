@@ -11,8 +11,8 @@ def RangeMap (min max : UInt32) (α : Type u) : Type u := Subtype
 
 instance [instNonemptyAlpha : Nonempty α] : Nonempty (RangeMap min max α) :=
   Nonempty.intro $ Subtype.mk
-    (Array.mkArray (max.toNat - min.toNat) (Classical.choice instNonemptyAlpha))
-    (Array.size_mkArray _ _)
+    (Array.replicate (max.toNat - min.toNat) (Classical.choice instNonemptyAlpha))
+    Array.size_replicate
 
 namespace RangeMap
 
@@ -66,7 +66,7 @@ where
                 show (vs.toList.concat _).length = (i + 1).toNat - _
                 rewrite [
                   i_add_1_toNat_eq i hi him,
-                  List.length_concat _ _,
+                  List.length_concat,
                   Nat.add_comm _ 1,
                   Nat.add_comm _ 1
                 ]
