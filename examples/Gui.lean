@@ -62,7 +62,7 @@ def main : IO Unit := do
       Raylib.drawTriangle (point 30) (point 270) (point 150) color
     Raylib.endDrawing
 
-    Raygui.drawIcon iconNames[selectedIcon.toNat]! 650 50 2 .black
+    discard <| iconNames[selectedIcon.toNat]?.mapM (Raygui.drawIcon · 650 50 2 .black)
     (iconScrollIndex, selectedIcon) ←
       Raygui.listView ⟨650, 100, 100, 380⟩ iconNamesString iconScrollIndex selectedIcon
 
